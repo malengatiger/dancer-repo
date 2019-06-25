@@ -1,0 +1,8 @@
+## MONGO SHELL - to create indexes and shit
+// mongo "mongodb+srv://ar001-1xhdt.mongodb.net/ardb" --username aubs
+// db.cities.createIndex( { position : "2dsphere" } )
+// db.vehicleLocations.createIndex( { position : "2dsphere" } )
+
+
+# dates with Moment library
+https://flaviocopes.com/momentjs/

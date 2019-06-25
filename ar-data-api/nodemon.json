@@ -1,0 +1,17 @@
+{
+    "watch": [
+        "server"
+    ],
+    "ext": "ts",
+    "ignore": [
+        "*.test.ts"
+    ],
+    "delay": "3",
+    "execMap": {
+        "ts": "ts-node"
+    },
+    "env": {
+        "MONGODB_PASSWORD": "aubrey3",
+        "MONGODB_USER": "aubs"
+    }
+}
