@@ -1,4 +1,9 @@
-import { CollectionReference, Firestore, Query, QuerySnapshot } from "@google-cloud/firestore";
+import {
+  CollectionReference,
+  Firestore,
+  Query,
+  QuerySnapshot,
+} from "@google-cloud/firestore";
 import * as admin from "firebase-admin";
 import polyline from "google-polyline";
 import { AssociationHelper } from "../helpers/association_helper";
@@ -7,6 +12,8 @@ import { VehicleHelper } from "../helpers/vehicle_helper";
 import { CommuterRequestHelper } from "./../helpers/commuter_request_helper";
 import { CityHelper, CountryHelper } from "./../helpers/country_helper";
 import { LandmarkHelper } from "./../helpers/landmark_helper";
+import Position from "../models/position";
+import { stringify } from "querystring";
 const z = "\n";
 console.log(
   `\n\n👺 👺 👺 🔑 Migrator: getting serviceAccount from json file  🔑 🔑...`,
@@ -23,16 +30,26 @@ console.log(serviceAccount1);
 console.log(`📌 📌 📌 📌 📌 📌 📌 📌 `);
 console.log(serviceAccount2);
 console.log(`serviceAccount: 😍 😍 😍 ...`);
-const appFrom = admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount1),
-  databaseURL: "https://aftarobot2019-dev3.firebaseio.com",
-}, 'appFrom');
-console.log(`🔑🔑🔑 appFrom = admin.initializeApp done: 😍 😍 😍 ... ${appFrom.name}`);
-const  appTo = admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount2),
-  databaseURL: "https://dancer-3303.firebaseio.com",
-}, 'appTo');
-console.log(`🔑🔑🔑 appTo = admin.initializeApp done: 😍 😍 😍 ... ${appTo.name}`);
+const appFrom = admin.initializeApp(
+  {
+    credential: admin.credential.cert(serviceAccount1),
+    databaseURL: "https://aftarobot2019-dev3.firebaseio.com",
+  },
+  "appFrom",
+);
+console.log(
+  `🔑🔑🔑 appFrom = admin.initializeApp done: 😍 😍 😍 ... ${appFrom.name}`,
+);
+const appTo = admin.initializeApp(
+  {
+    credential: admin.credential.cert(serviceAccount2),
+    databaseURL: "https://dancer-3303.firebaseio.com",
+  },
+  "appTo",
+);
+console.log(
+  `🔑🔑🔑 appTo = admin.initializeApp done: 😍 😍 😍 ... ${appTo.name}`,
+);
 
 export const fs1: Firestore = appFrom.firestore();
 export const fs2: Firestore = appTo.firestore();
@@ -82,11 +99,13 @@ class Migrator {
     // await this.migrateCities("5ced8952fc6e4ef1f1cfc7ae");
     // await this.migrateVehicleTypes();
     // await this.migrateVehicles();
-    //await this.migrateRoutes();
-    // await this.migrateCommuterRequests();
+    // await this.migrateRoutes();
+    
     // await this.encodePolyline();
-    //await this.toDancer();
-    await this.landmarksToDancer();
+    // await this.toDancer();
+    // await this.landmarksToDancer();
+    // await this.commuterRequestsToDancer();
+    await this.migrateCommuterRequests();
 
     const end = new Date().getTime();
     console.log(
@@ -103,44 +122,88 @@ class Migrator {
     };
   }
 
+  public static async commuterRequestsToDancer(): Promise<any> {
+    console.log(
+      `\n\n\n🍎 🍎 migrating commuterRequests to Dancer ....  🍎 \n\n`,
+    );
+    const qs1 = await fs1.collection("commuterRequests").get();
+    let cnt = 0;
+    for (const doc of qs1.docs) {
+      const id = doc.ref.id;
+      const data = doc.data();
+      if (data.fromLandmarkId && data.routeName && data.routeId) {
+        await fs2
+          .collection("commuterRequests")
+          .doc(id)
+          .set(data);
+        cnt++;
+        console.log(
+          `🧡🧡 commuterRequest #${cnt} added ${doc.data().stringTime}  🍎🍎 \n\n`,
+        );
+      }
+    }
+    console.log(`\n\n🧡🧡🧡🧡🧡🧡 ${cnt} commuterRequests added:  🍎\n\n`);
+  }
   public static async landmarksToDancer(): Promise<any> {
     console.log(`\n\n\n🍎 🍎 migrating landmarks to Dancer ....  🍎 \n\n`);
-    const qs1 = await fs1.collection('newLandmarks').get();
+    const qs1 = await fs1.collection("newLandmarks").get();
     let cnt = 0;
     for (const doc of qs1.docs) {
       const id = doc.data().landmarkID;
-      await fs2.collection('newLandmarks').doc(id).set(doc.data());
+      await fs2
+        .collection("newLandmarks")
+        .doc(id)
+        .set(doc.data());
       cnt++;
-      console.log(`🧡🧡 landmark #${cnt} added ${doc.data().landmarkName}  🍎🍎 \n\n`);
+      console.log(
+        `🧡🧡 landmark #${cnt} added ${doc.data().landmarkName}  🍎🍎 \n\n`,
+      );
     }
     console.log(`\n\n🧡🧡🧡🧡🧡🧡 ${cnt} landmarks added:  🍎\n\n`);
   }
   public static async toDancer(): Promise<any> {
     console.log(`\n\n\n🍎 🍎 migrating data to Dancer ....  🍎 \n\n`);
-    const qs1 = await fs1.collection('associations').get();
+    const qs1 = await fs1.collection("associations").get();
     for (const doc of qs1.docs) {
       const id = doc.data().associationID;
-      await fs2.collection('associations').doc(id).set(doc.data());
-      console.log(`🧡🧡 association added ${doc.data().associationName}  🍎🍎 \n\n`);
+      await fs2
+        .collection("associations")
+        .doc(id)
+        .set(doc.data());
+      console.log(
+        `🧡🧡 association added ${doc.data().associationName}  🍎🍎 \n\n`,
+      );
     }
-    const qs2 = await fs1.collection('newRoutes').get();
+    const qs2 = await fs1.collection("newRoutes").get();
     for (const doc of qs2.docs) {
       const id = doc.data().routeID;
-      await fs2.collection('newRoutes').doc(id).set(doc.data());
-      let cnt = 0, cnt2 = 0;
-      const qs3 = await doc.ref.collection('rawRoutePoints').get();
+      await fs2
+        .collection("newRoutes")
+        .doc(id)
+        .set(doc.data());
+      let cnt = 0;
+      let cnt2 = 0;
+      const qs3 = await doc.ref.collection("rawRoutePoints").get();
       for (const m of qs3.docs) {
-        await fs2.collection('newRoutes').doc(id).collection('rawRoutePoints').add(m.data());
+        await fs2
+          .collection("newRoutes")
+          .doc(id)
+          .collection("rawRoutePoints")
+          .add(m.data());
         cnt++;
-        
       }
-      const qs4 = await doc.ref.collection('routePoints').get();
+      const qs4 = await doc.ref.collection("routePoints").get();
       for (const m of qs4.docs) {
-        await fs2.collection('newRoutes').doc(id).collection('routePoints').add(m.data());
+        await fs2
+          .collection("newRoutes")
+          .doc(id)
+          .collection("routePoints")
+          .add(m.data());
         cnt2++;
-        
       }
-      console.log(`rawRoutePoints added:  🍎 ${cnt} routePoints added:  🍎 ${cnt2}`);
+      console.log(
+        `rawRoutePoints added:  🍎 ${cnt} routePoints added:  🍎 ${cnt2}`,
+      );
       console.log(`🧡🧡 route added ${doc.data().name} 🧡🧡\n\n`);
     }
   }
@@ -170,24 +233,29 @@ class Migrator {
     console.log(`\n🔑 🔑 🔑   route points encoded:  🍀  ${cnt}  🍀`);
   }
   public static async migrateCommuterRequests(): Promise<any> {
-    console.log(`\n\n🍎  Migrating commuter requests ........................`);
-    const qs = await fs1.collection("commuterRequests").get();
+    console.log(`\n\n🍎  Migrating commuter requests to Mongo........................`);
+    const qs = await fs2.collection("commuterRequests").get();
     console.log(
-      `....... Firestore commuterRequests found:  🍎 ${qs.docs.length}`,
+      `\n\n....... Firestore commuterRequests found:  🍎 ${qs.docs.length}`,
     );
 
     let cnt = 0;
     for (const doc of qs.docs) {
       const data: any = doc.data();
-      cnt++;
-
-      if (data.fromLandmarkId && data.routeId) {
+      const loc = data.commuterLocation;
+      const point = new Position();
+      point.type = 'Point';
+      if (loc.lng && loc.lat) {
+        point.coordinates = [parseFloat(loc.lng), parseFloat(loc.lat)];
+        data.position = point;
+        console.log(`about to write ${JSON.stringify(data)}`);
         const cr = await CommuterRequestHelper.addCommuterRequest(data);
+        cnt++;
         console.log(
-          ` 🍀 🍀 🍀 #${cnt} commuter request migrated:  🍀 ${cr.createdAt}`,
+          `🍀 🍀 🍎 #${cnt} 🍎 commuter request migrated:  🍀 ${cr.stringTime}`,
         );
       } else {
-        console.log(`👿 some data missing, #${cnt} 👿👿👿 IGNORED`);
+        console.error('👿 👿 👿 fucked up! 👿 coordinates missing ');
       }
     }
     console.log(
@@ -328,11 +396,15 @@ class Migrator {
   public static async migrateRoutes(): Promise<any> {
     console.log(`\n\n🍎  Migrating routes ............. 🍎🍎🍎\n\n`);
     const s = new Date().getTime();
-    const routesQuerySnap: QuerySnapshot = await fs1.collection("newRoutes").get();
+    const routesQuerySnap: QuerySnapshot = await fs1
+      .collection("newRoutes")
+      .get();
     console.log(
       `🍎  Firestore routes found:  🍎  ${routesQuerySnap.docs.length}`,
     );
-    const landmarksQuerySnap: QuerySnapshot = await fs1.collection("newLandmarks").get();
+    const landmarksQuerySnap: QuerySnapshot = await fs1
+      .collection("newLandmarks")
+      .get();
     console.log(
       `🍎  Firestore landmarks found:  🍎  ${landmarksQuerySnap.docs.length}`,
     );
@@ -356,12 +428,22 @@ class Migrator {
               association.associationName,
             )
           ) {
-            await this.processRoute(route, association, cnt, landmarksQuerySnap);
+            await this.processRoute(
+              route,
+              association,
+              cnt,
+              landmarksQuerySnap,
+            );
             cnt++;
           }
         } else {
           if (route.associationName === association.associationName) {
-            await this.processRoute(route, association, cnt, landmarksQuerySnap);
+            await this.processRoute(
+              route,
+              association,
+              cnt,
+              landmarksQuerySnap,
+            );
             cnt++;
           }
         }
@@ -377,8 +459,15 @@ class Migrator {
   }
   private static countries: any = [];
 
-  private static async processRoute(route, association, cnt, landmarksQuerySnapshot: QuerySnapshot) {
-    console.log(`💛 💛 💛 about to call: RouteHelper.addRoute(): 🎀 ${route.name}`);
+  private static async processRoute(
+    route,
+    association,
+    cnt,
+    landmarksQuerySnapshot: QuerySnapshot,
+  ) {
+    console.log(
+      `💛 💛 💛 about to call: RouteHelper.addRoute(): 🎀 ${route.name}`,
+    );
     const mRoute = await RouteHelper.addRoute(
       route.name,
       [association.associationID],
@@ -386,7 +475,9 @@ class Migrator {
     );
     cnt++;
     console.log(
-      `\n💛 💛 💛  Migrator: route #${cnt} added  💛 ${mRoute.name}, will do the  landmarks ...\n`,
+      `\n💛 💛 💛  Migrator: route #${cnt} added  💛 ${
+        mRoute.name
+      }, will do the  landmarks ...\n`,
     );
     // get all route landmarks by name and migrate
     console.log(mRoute);
@@ -404,10 +495,7 @@ class Migrator {
     });
     return isFound;
   }
-  private static isRouteFound(
-    routeNames: any[],
-    name: string,
-  ): boolean {
+  private static isRouteFound(routeNames: any[], name: string): boolean {
     let isFound = false;
     routeNames.forEach((routeDetail) => {
       if (routeDetail.name === name) {
@@ -416,9 +504,14 @@ class Migrator {
     });
     return isFound;
   }
-  private static async processRouteLandmarks(mRoute, landmarksQuerySnapshot: QuerySnapshot) {
+  private static async processRouteLandmarks(
+    mRoute,
+    landmarksQuerySnapshot: QuerySnapshot,
+  ) {
     console.log(
-      `\n\nroute ....... about to loop thru ${landmarksQuerySnapshot.docs.length} landmarks ... 😍 ${mRoute.name} \n`,
+      `\n\nroute ....... about to loop thru ${
+        landmarksQuerySnapshot.docs.length
+      } landmarks ... 😍 ${mRoute.name} \n`,
     );
 
     const landmarks: any = [];
@@ -444,7 +537,7 @@ class Migrator {
         mark.latitude,
         mark.longitude,
         [mRoute.routeID],
-        [{routeID: mRoute.routeID, name: mRoute.name}],
+        [{ routeID: mRoute.routeID, name: mRoute.name }],
       );
     }
   }

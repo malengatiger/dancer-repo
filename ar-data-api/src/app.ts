@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import {  AppExpressRoutes } from "./routes/app_routes";
+import { DispatchRecordExpressRoutes } from './routes/dispatch_record_routes';
 import { LandmarkExpressRoutes } from "./routes/landmark_routes";
 import { VehicleExpressRoutes } from "./routes/vehicle_routes";
 const mPort = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ const appName = "AR MongoDB API";
 const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
 import MongoListeners from "./listeners";
 import AssociationExpressRoutes from "./routes/assoc_routes";
+import { CommuterRequestExpressRoutes } from "./routes/commuter_request_routes";
 import { CountryExpressRoutes } from "./routes/country_routes";
 import { RouteExpressRoutes } from "./routes/route_routes";
 
@@ -41,6 +43,9 @@ class AftaRobotApp {
   public appRoutes: AppExpressRoutes = new AppExpressRoutes();
   public vehicleRoutes: VehicleExpressRoutes = new VehicleExpressRoutes();
   public countryRoutes: CountryExpressRoutes = new CountryExpressRoutes();
+  public dispatchRoutes: DispatchRecordExpressRoutes = new DispatchRecordExpressRoutes();
+
+  public commuterRequestRoutes: CommuterRequestExpressRoutes = new CommuterRequestExpressRoutes();
 
   constructor() {
     console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside AftaRobotApp constructor `);
@@ -53,6 +58,9 @@ class AftaRobotApp {
     this.appRoutes.routes(this.app);
     this.vehicleRoutes.routes(this.app);
     this.countryRoutes.routes(this.app);
+    this.commuterRequestRoutes.routes(this.app);
+    this.dispatchRoutes.routes(this.app);
+
     console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed: `);
 
   }

@@ -8,6 +8,10 @@
         "no-console": false,
         "quotemark": false,
         "semicolon": false,
+        "no-trailing-whitespace":false,
+        "object-literal-sort-keys":false,
+        "max-line-length":false,
+        "radix":false
     },
     "rulesDirectory": []
 }

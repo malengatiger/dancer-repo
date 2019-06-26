@@ -1,11 +1,7 @@
-import { getDistance } from "geolib";
-import Moment from "moment";
-import { BulkWriteOpResultObject } from "mongodb";
-import * as mongoose from "mongoose";
+import * as Moment from 'moment';
 import CommuterRequest from "../models/commuter_request";
-import Route from "../models/route";
-
 export class CommuterRequestHelper {
+
   public static async onCommuterRequestAdded(event: any) {
     console.log(
       `\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${
@@ -35,56 +31,80 @@ export class CommuterRequestHelper {
       routeId: request.routeId,
       routeName: request.routeName,
       scanned: request.scanned,
-      stringTime: request.stringTime,
-      time: request.time,
+      stringTime: new Date().toISOString(),
+      time: new Date().getTime(),
       toLandmarkId: request.toLandmarkId,
       toLandmarkName: request.toLandmarkName,
       user: request.user,
       vehicleId: request.vehicleId,
     });
     const m = await commuterRequest.save();
+    m.commuterRequestId = m.id;
+    await m.save();
     console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterRequest added  for: 🍎  ${commuterRequest.fromLandmarkName} \n\n`);
     console.log(commuterRequest);
     return m;
   }
 
-  public static async findByLocation(
+   public static async findByLocation(
     latitude: number,
     longitude: number,
     radiusInKM: number,
-    withinMinutes: number,
+    minutes: number,
   ) {
-    console.log(
-// tslint:disable-next-line: max-line-length
-      `\n💦 💦  find CommuterRequests ByLocation .... 🔆 lat: ${latitude}  🔆 lng: ${longitude} radiusInKM: ${radiusInKM}`,
-    );
-    const start = new Date().getTime();
-    const time = Moment().subtract(withinMinutes, "minutes");
+    const time = Moment.utc().subtract(minutes, "minutes");
     const RADIUS = radiusInKM * 1000;
     const CommuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
-    const list: any = await CommuterRequestModel
-      .find({
-        position: {
-          $near: {
-            $geometry: {
-              coordinates: [longitude, latitude],
-              type: "Point",
-            },
-            $maxDistance: RADIUS,
-          },
+    console.log(`about to search coords: 🔆 ${latitude} ${longitude}  🌽  radiusInKM: ${radiusInKM}  ❤️ minutes: ${minutes} cutoff: ${time.toISOString()}`);
+    const coords: number[] = [latitude, longitude];
+  
+    const mm = await CommuterRequestModel.find({
+      stringTime: { $gt: time.toISOString() },
+     }).where('position')
+      .near({
+        center: {
+          type: 'Point',
+          coordinates: coords,
+          spherical: true,
+          maxDistance: RADIUS,
         },
-        stringTime: {$gt: time},
-      })
-      .catch((err) => {
-        console.error(err);
+        
+      }).exec().catch((reason) => {
+        console.log(`ppfffffffft! fucked!`)
+        console.error(reason);
+        throw reason;
       });
-    const end = new Date().getTime();
-    console.log(
-      `\n🏓  🏓  CommuterRequests found:   🌺 ${
-        list.length
-      }  elapsed: 💙  ${(end - start) / 1000} seconds  💙 💚 💛\n`,
-    );
+    
+    console.log(`☘️ ☘️ ☘️ Commuter Request search found  🍎  ${mm.length}  🍎 `);
+    return mm;
+  }
+  public static async findByFromLandmark(landmarkID: string, minutes: number): Promise<any> {
+    const CommuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
+    const list = await CommuterRequestModel.findByFromLandmarkId(landmarkID, minutes);
+    return list;
+  }
 
+  public static async findByToLandmark(landmarkID: string, minutes: number): Promise<any> {
+    const CommuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
+    const list = await CommuterRequestModel.findByToLandmarkId(landmarkID, minutes);
+    return list;
+  }
+
+  public static async findByRoute(routeID: string, minutes: number): Promise<any> {
+    const CommuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
+    const list = await CommuterRequestModel.findByRouteId(routeID, minutes);
+    return list;
+  }
+
+  public static async findByUser(user: string): Promise<any> {
+    const CommuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
+    const list = await CommuterRequestModel.findByUser(user);
+    return list;
+  }
+
+  public static async findAll(minutes: number): Promise<any> {
+    const CommuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
+    const list = await CommuterRequestModel.findAll(minutes);
     return list;
   }
 

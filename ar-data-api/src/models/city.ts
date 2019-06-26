@@ -1,11 +1,5 @@
 import {
-  arrayProp,
-  instanceMethod,
-  InstanceType,
-  ModelType,
   prop,
-  Ref,
-  staticMethod,
   Typegoose,
 } from "typegoose";
 import Association from "./association";

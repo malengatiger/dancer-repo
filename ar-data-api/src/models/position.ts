@@ -1,10 +1,10 @@
 class Position {
   public type: string;
-  public coordinates: [];
+  public coordinates: number[];
 
   constructor() {
     this.type = "Point";
-    this.coordinates = [];
+    this.coordinates = [0.0,0.0];
   }
 }
 
