@@ -106,7 +106,6 @@ export class LandmarkHelper {
     );
     return m;
   }
-
   public static async addRoute(
     landmarkID: string,
     routeID: string,
@@ -130,7 +129,6 @@ export class LandmarkHelper {
       routeName: route.name,
     });
   }
-
   public static async findAll(): Promise<any> {
     console.log(` 🌀 LandmarkHelper: findAll ....   🌀  🌀  🌀 `);
     const landmarkModel = new Landmark().getModelForClass(Landmark);

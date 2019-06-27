@@ -44,6 +44,8 @@ export class VehicleExpressRoutes {
           req.body.landmarkId,
           req.body.latitude,
           req.body.longitude,
+          req.body.make, req.body.model,
+          parseInt(req.body.capacity),
         );
         res.status(200).json({
           message: `🏓  🏓  🏓  addVehicleArrival: ${req.body.vehicleReg} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
@@ -66,6 +68,8 @@ export class VehicleExpressRoutes {
           req.body.landmarkId,
           req.body.latitude,
           req.body.longitude,
+          req.body.make, req.body.model,
+          parseInt(req.body.capacity),
         );
         res.status(200).json({
           message: `🏓  🏓  🏓  addVehicleDeparture: ${req.body.vehicleReg} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,

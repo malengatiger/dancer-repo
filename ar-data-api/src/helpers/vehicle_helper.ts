@@ -4,9 +4,9 @@ import Photo from "../models/photo";
 import Position from "../models/position";
 import Vehicle from "../models/vehicle";
 import VehicleArrival from "../models/vehicle_arrival";
+import VehicleDeparture from "../models/vehicle_departure";
 import VehicleLocation from "../models/vehicle_location";
 import VehicleType from "../models/vehicle_type";
-import VehicleDeparture from "../models/vehicle_departure";
 
 export class VehicleHelper {
   public static async onVehicleAdded(event: any) {
@@ -73,7 +73,6 @@ export class VehicleHelper {
     );
     return m;
   }
-
   public static async addVehicleArrival(
     vehicleReg: string,
     vehicleId: string,
@@ -81,9 +80,10 @@ export class VehicleHelper {
     landmarkId: string,
     latitude: number,
     longitude: number,
+    make: string, model: string, capacity: number,
   ): Promise<any> {
     console.log(
-      `\n\n🌀🌀🌀  VehicleHelper: addVehicleArrival  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀   ${associationName}\n`,
+      `\n\n🌀🌀🌀  VehicleHelper: addVehicleArrival  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀 \n`,
     );
 
     const vehicleArrivalModel = new VehicleArrival().getModelForClass(
@@ -101,6 +101,7 @@ export class VehicleHelper {
       position,
       vehicleReg,
       dateArrived: new Date().toISOString(),
+      make, model, capacity,
     });
     const m = await vehicleArrival.save();
     m.vehicleArrivalId = m.id;
@@ -119,9 +120,10 @@ export class VehicleHelper {
     landmarkId: string,
     latitude: number,
     longitude: number,
+    make: string, model: string, capacity: number,
   ): Promise<any> {
     console.log(
-      `\n\n🌀🌀🌀  VehicleHelper: addVehicleDeparture  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀   ${associationName}\n`,
+      `\n\n🌀🌀🌀  VehicleHelper: addVehicleDeparture  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀  \n`,
     );
 
     const vehicleDepModel = new VehicleDeparture().getModelForClass(
@@ -139,6 +141,7 @@ export class VehicleHelper {
       position,
       vehicleReg,
       dateDeparted: new Date().toISOString(),
+      make, model, capacity,
     });
     const m = await vehicleDeparture.save();
     m.vehicleDepartureId = m.id;
@@ -150,14 +153,12 @@ export class VehicleHelper {
     );
     return m;
   }
-
   public static async getVehicles(): Promise<any> {
     console.log(` 🌀 getVehicles ....   🌀  🌀  🌀 `);
     const VehicleModel = new Vehicle().getModelForClass(Vehicle);
     const list = await VehicleModel.find();
     return list;
   }
-
   public static async addVehicleType(
     make: string,
     model: string,
@@ -183,7 +184,6 @@ export class VehicleHelper {
     const m = await u.save();
     return m;
   }
-
   public static async getVehicleTypes(): Promise<any> {
     console.log(`🌀 getVehicleTypes ....   🌀 🌀 🌀 `);
     const vehicleModel = new VehicleType().getModelForClass(VehicleType);

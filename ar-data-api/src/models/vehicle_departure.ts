@@ -9,7 +9,6 @@ import {
 } from "typegoose";
 
 class VehicleDeparture extends Typegoose {
-  
   //
   @staticMethod
   public static findByLandmarkId(
@@ -37,30 +36,30 @@ class VehicleDeparture extends Typegoose {
       dateDeparted: { $gt: cutOffDate.toISOString() },
     });
   }
-    //
-    @staticMethod
-    public static findByVehicleId(
-      this: ModelType<VehicleDeparture> & typeof VehicleDeparture,
-      vehicleId: string,
-      minutes: number,
-    ) {
-      const cutOffDate: Moment.Moment = Moment.utc().subtract(minutes, "minutes");
-      return this.find({
-        vehicleId,
-        dateDeparted: { $gt: cutOffDate.toISOString() },
-      });
-    }
   //
-    //
-    @staticMethod
-    public static findAllByVehicleId(
-      this: ModelType<VehicleDeparture> & typeof VehicleDeparture,
-      vehicleId: string,
-    ) {
-      return this.find({
-        vehicleId,
-      });
-    }
+  @staticMethod
+  public static findByVehicleId(
+    this: ModelType<VehicleDeparture> & typeof VehicleDeparture,
+    vehicleId: string,
+    minutes: number,
+  ) {
+    const cutOffDate: Moment.Moment = Moment.utc().subtract(minutes, "minutes");
+    return this.find({
+      vehicleId,
+      dateDeparted: { $gt: cutOffDate.toISOString() },
+    });
+  }
+  //
+  //
+  @staticMethod
+  public static findAllByVehicleId(
+    this: ModelType<VehicleDeparture> & typeof VehicleDeparture,
+    vehicleId: string,
+  ) {
+    return this.find({
+      vehicleId,
+    });
+  }
   //
   @staticMethod
   public static async findAll(
@@ -68,21 +67,23 @@ class VehicleDeparture extends Typegoose {
     minutes: number,
   ) {
     const cutOffDate: Moment.Moment = Moment.utc().subtract(minutes, "minutes");
-    console.log(`💦 💦 findAll: minutes: ${minutes} cutoffDate: ${cutOffDate.toISOString()}`)
+    console.log(
+      `💦 💦 findAll: minutes: ${minutes} cutoffDate: ${cutOffDate.toISOString()}`,
+    );
     const list = await this.find({
-        dateDeparted: { $gt: cutOffDate.toISOString() },
+      dateDeparted: { $gt: cutOffDate.toISOString() },
     });
     console.log(`\n🏓  ${list.length} requests found in Mongo\n\n`);
     return list;
   }
- 
+
   @prop({ required: true, trim: true })
   public landmarkId?: string;
   //
   @prop({ required: true, trim: true })
   public landmarkName?: string;
 
-  @prop({ required: true})
+  @prop({ required: true })
   public position?: Position;
   //
   @prop({ trim: true })
@@ -93,7 +94,16 @@ class VehicleDeparture extends Typegoose {
   //
   @prop({ required: true, trim: true })
   public vehicleId?: string;
-//
+  //
+  @prop({ required: true, trim: true })
+  public make?: string;
+  //
+  @prop({ required: true })
+  public capacity?: number;
+  //
+  @prop({ required: true, trim: true })
+  public model?: string;
+  //
   @prop({ required: true, default: new Date().toISOString() })
   public dateDeparted?: string;
   //
@@ -103,7 +113,6 @@ class VehicleDeparture extends Typegoose {
     await this.save();
     console.log("vehicleDeparture: vehicleDepartureId set to _id");
   }
-
 }
 
 export default VehicleDeparture;

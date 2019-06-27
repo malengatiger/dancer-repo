@@ -13,13 +13,16 @@ import { CommuterRequestHelper } from "./../helpers/commuter_request_helper";
 import { CityHelper, CountryHelper } from "./../helpers/country_helper";
 import { LandmarkHelper } from "./../helpers/landmark_helper";
 import Position from "../models/position";
-import { stringify } from "querystring";
+import VehicleArrival from "../models/vehicle_arrival";
+import VehicleDeparture from "../models/vehicle_departure";
+import moment = require("moment");
 const z = "\n";
 console.log(
   `\n\n👺 👺 👺 🔑 Migrator: getting serviceAccount from json file  🔑 🔑...`,
 );
 // tslint:disable-next-line: no-var-requires
 const serviceAccount1 = require("../../ar.json");
+// tslint:disable-next-line: no-var-requires
 const serviceAccount2 = require("../../dancer.json");
 
 // tslint:disable-next-line: no-var-requires
@@ -100,12 +103,15 @@ class Migrator {
     // await this.migrateVehicleTypes();
     // await this.migrateVehicles();
     // await this.migrateRoutes();
-    
+
     // await this.encodePolyline();
     // await this.toDancer();
     // await this.landmarksToDancer();
     // await this.commuterRequestsToDancer();
-    await this.migrateCommuterRequests();
+    // await this.migrateCommuterRequests();
+
+    // await this.migrateVehicleArrivals();
+    await this.migrateVehicleDepartures();
 
     const end = new Date().getTime();
     console.log(
@@ -138,7 +144,9 @@ class Migrator {
           .set(data);
         cnt++;
         console.log(
-          `🧡🧡 commuterRequest #${cnt} added ${doc.data().stringTime}  🍎🍎 \n\n`,
+          `🧡🧡 commuterRequest #${cnt} added ${
+            doc.data().stringTime
+          }  🍎🍎 \n\n`,
         );
       }
     }
@@ -233,7 +241,9 @@ class Migrator {
     console.log(`\n🔑 🔑 🔑   route points encoded:  🍀  ${cnt}  🍀`);
   }
   public static async migrateCommuterRequests(): Promise<any> {
-    console.log(`\n\n🍎  Migrating commuter requests to Mongo........................`);
+    console.log(
+      `\n\n🍎  Migrating commuter requests to Mongo........................`,
+    );
     const qs = await fs2.collection("commuterRequests").get();
     console.log(
       `\n\n....... Firestore commuterRequests found:  🍎 ${qs.docs.length}`,
@@ -244,7 +254,7 @@ class Migrator {
       const data: any = doc.data();
       const loc = data.commuterLocation;
       const point = new Position();
-      point.type = 'Point';
+      point.type = "Point";
       if (loc.lng && loc.lat) {
         point.coordinates = [parseFloat(loc.lng), parseFloat(loc.lat)];
         data.position = point;
@@ -255,11 +265,141 @@ class Migrator {
           `🍀 🍀 🍎 #${cnt} 🍎 commuter request migrated:  🍀 ${cr.stringTime}`,
         );
       } else {
-        console.error('👿 👿 👿 fucked up! 👿 coordinates missing ');
+        console.error("👿 👿 👿 fucked up! 👿 coordinates missing ");
       }
     }
     console.log(
       `\n🔑 🔑 🔑   commuterRequests migrated:  🍀  ${qs.docs.length}  🍀`,
+    );
+  }
+  public static async migrateVehicleDepartures(): Promise<any> {
+    console.log(
+      `\n\n🍎  Migrating migrateVehicleDepartures to Mongo........................`,
+    );
+    const qs = await fs1.collection("vehicleDepartures").get();
+    console.log(
+      `\n\n....... Firestore vehicleDepartures found:  🍎 ${qs.docs.length}`,
+    );
+
+    let cnt = 0;
+    for (const doc of qs.docs) {
+      const docRef = await fs1
+        .collection("newLandmarks")
+        .where('landmarkName', '==', doc.data().landmarkName)
+        .get();
+      if (docRef.docs.length > 0) {
+        const mark = docRef.docs[0].data();
+        const position = new Position();
+        position.type = "Point";
+        position.coordinates = [mark.longitude, mark.latitude];
+        const data: any = doc.data();
+        const veh = data.vehicle;
+        const departure = new VehicleDeparture();
+        departure.capacity = veh.vehicleType.capacity;
+        departure.make = veh.vehicleType.make;
+        departure.model = veh.vehicleType.model;
+        const date = new Date(data.dateDeparted).toISOString();
+        departure.dateDeparted = date;
+        departure.landmarkId = data.landmarkID;
+        departure.landmarkName = data.landmarkName;
+        departure.vehicleId = veh.vehicleID;
+        departure.vehicleReg = veh.vehicleReg;
+
+        console.log(`about to write ${JSON.stringify(departure)}`);
+        const vehicleDepModel = new VehicleDeparture().getModelForClass(
+          VehicleDeparture,
+        );
+
+        const vehicleDeparture = new vehicleDepModel({
+          vehicleId: departure.vehicleId,
+          landmarkName: departure.landmarkName,
+          landmarkId: departure.landmarkId,
+          position,
+          vehicleReg: departure.vehicleReg,
+          dateDeparted: departure.dateDeparted,
+          make: departure.make,
+          model: departure.model,
+          capacity: departure.capacity,
+          latitude: mark.latitude,
+          longitude: mark.longitude,
+        });
+        const m = await vehicleDeparture.save();
+        m.vehicleDepartureId = m.id;
+        await m.save();
+        cnt++;
+        console.log(
+          `🍀 🍀 🍎 #${cnt} 🍎 vehicle departure migrated:  🍀 ${vehicleDeparture.vehicleReg} at ${vehicleDeparture.landmarkName}`,
+        );
+      } else {
+        console.log(`landmark not found: ${doc.data().landmarkID} ${doc.data().landmarkName}`);
+      }
+    }
+    console.log(
+      `\n🔑 🔑 🔑   vehicle departures migrated:  🍀  ${cnt}  🍀`,
+    );
+  }
+  public static async migrateVehicleArrivals(): Promise<any> {
+    console.log(
+      `\n\n🍎  Migrating migrateVehicleArrivals to Mongo........................`,
+    );
+    const qs = await fs1.collection("vehicleArrivals").get();
+    console.log(
+      `\n\n....... Firestore VehicleArrivals found:  🍎 ${qs.docs.length}`,
+    );
+
+    let cnt = 0;
+    for (const doc of qs.docs) {
+      const docRef = await fs1
+        .collection("newLandmarks")
+        .where('landmarkName', '==', doc.data().landmarkName)
+        .get();
+      if (docRef.docs.length > 0) {
+        const mark = docRef.docs[0].data();
+        const position = new Position();
+        position.type = "Point";
+        position.coordinates = [mark.longitude, mark.latitude];
+        const data: any = doc.data();
+        const veh = data.vehicle;
+        const arr = new VehicleArrival();
+        arr.capacity = veh.vehicleType.capacity;
+        arr.make = veh.vehicleType.make;
+        arr.model = veh.vehicleType.model;
+        const date = new Date(data.dateArrived).toISOString();
+        arr.dateArrived = date;
+        arr.landmarkId = data.landmarkID;
+        arr.landmarkName = data.landmarkName;
+        arr.vehicleId = veh.vehicleID;
+        arr.vehicleReg = veh.vehicleReg;
+
+        console.log(`about to write ${JSON.stringify(arr)}`);
+        const vehicleArrivalModel = new VehicleArrival().getModelForClass(
+          VehicleArrival,
+        );
+  
+        const vehicleArrival = new vehicleArrivalModel({
+          vehicleId: arr.vehicleId,
+          landmarkName: arr.landmarkName,
+          landmarkId: arr.landmarkId,
+          position,
+          vehicleReg: arr.vehicleReg,
+          dateArrived: arr.dateArrived,
+          make: arr.make, model: arr.model, capacity: arr.capacity,
+          latitude: mark.latitude,
+          longitude: mark.longitude,
+        });
+        const m = await vehicleArrival.save();
+        m.vehicleArrivalId = m.id;
+        await m.save();
+        cnt++;
+        console.log(
+          `🍀 🍀 🍎 #${cnt} 🍎 vehicle arrival migrated:  🍀 ${arr.vehicleReg} at  ${arr.landmarkName}`,
+        );
+      } else {
+        console.log(`landmark not found: ${doc.data().landmarkID} ${doc.data().landmarkName}`);
+      }
+    }
+    console.log(
+      `\n🔑 🔑 🔑   vehicle arrivals migrated:  🍀  ${cnt}  🍀`,
     );
   }
   public static async migrateCountries(): Promise<any> {

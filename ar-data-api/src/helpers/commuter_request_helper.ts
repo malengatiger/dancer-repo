@@ -37,6 +37,7 @@ export class CommuterRequestHelper {
       toLandmarkName: request.toLandmarkName,
       user: request.user,
       vehicleId: request.vehicleId,
+      vehicleReg: request.vehicleReg,
     });
     const m = await commuterRequest.save();
     m.commuterRequestId = m.id;
