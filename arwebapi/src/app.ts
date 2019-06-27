@@ -1,4 +1,4 @@
-// import { CommuterArrivalLandmarkExpressRoutes } from "./routes/commuter_arrival_routes";
+import { CommuterArrivalLandmarkExpressRoutes } from "./routes/commuter_arrival_routes";
 import * as bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
@@ -47,21 +47,8 @@ mongoose
     console.error(err);
   });
 //
-import { app } from './server/server';
-import http from "http";
+import { app } from "./server/server";
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
-// const server = http.createServer(app);
-// server.listen(port, () => {
-//   console.info(
-//     `\n\n🔵 🔵 🔵  -- ARAPI started and listening on http://localhost:${port} 💦 💦 💦 💦`,
-//   );
-//   console.info(
-//     `🙄 🙄 🙄  -- Application name:  💕 💕 💕 💕  ARAPI running at: 💦 ${new Date().toISOString() +
-//       "  🙄 🙄 🙄"}`,
-//   );
-// });
 class AftaRobotApp {
   public app: express.Application;
   public port: string;
@@ -74,7 +61,7 @@ class AftaRobotApp {
   public countryRoutes: CountryExpressRoutes = new CountryExpressRoutes();
   public dispatchRoutes: DispatchRecordExpressRoutes = new DispatchRecordExpressRoutes();
   public commuterArrivalRoutes: DispatchRecordExpressRoutes = new DispatchRecordExpressRoutes();
-  // public commuterRequestRoutes: CommuterArrivalLandmarkExpressRoutes = new CommuterArrivalLandmarkExpressRoutes();
+  public commuterRequestRoutes: CommuterArrivalLandmarkExpressRoutes = new CommuterArrivalLandmarkExpressRoutes();
 
   constructor() {
     console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside AftaRobotApp constructor `);
@@ -87,7 +74,7 @@ class AftaRobotApp {
     this.appRoutes.routes(this.app);
     this.vehicleRoutes.routes(this.app);
     this.countryRoutes.routes(this.app);
-    // this.commuterRequestRoutes.routes(this.app);
+    this.commuterRequestRoutes.routes(this.app);
     this.dispatchRoutes.routes(this.app);
     this.commuterArrivalRoutes.routes(this.app);
     this.commuterRoutes.routes(this.app);
@@ -96,16 +83,6 @@ class AftaRobotApp {
       `\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed: `,
     );
   }
-
-  // public listen() {
-  //   this.app.listen(this.port, () => {
-  //     console.log(
-  //       `\n\n🥦 🥦 🥦 🥦   ---   AR MongoDB API listening on port 🥦  💦  ${
-  //         this.port
-  //       }  💦`,
-  //     );
-  //   });
-  // }
 
   private initializeMiddlewares() {
     console.log(`\n🥦 🥦  initializeMiddleware .... `);

@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { AssociationHelper } from "../helpers/association_helper";
 import { LandmarkHelper } from "../helpers/landmark_helper";
-import Util from "./util";
+import Util from "../util";
 
 export class LandmarkExpressRoutes {
   public routes(app: any): void {
     console.log(
-      `\n\n🏓 🏓 🏓 🏓 🏓    LandmarkExpressRoutes: 💙  setting up default landmark related express routes ...`,
+      `\n\n🏓🏓🏓🏓🏓    LandmarkExpressRoutes: 💙  setting up default landmark related express routes ...`,
     );
 
     app.route("/addLandmark").post(async (req: Request, res: Response) => {

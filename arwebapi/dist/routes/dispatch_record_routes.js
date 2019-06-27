@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dispatch_record_helper_1 = require("../helpers/dispatch_record_helper");
-const util_1 = __importDefault(require("./util"));
+const util_1 = __importDefault(require("../util"));
 class DispatchRecordExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    DispatchRecordExpressRoutes:  💙  setting up default DispatchRecord Routes routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    DispatchRecordExpressRoutes:  💙  setting up default DispatchRecord Routes routes ...`);
         app
             .route("/addDispatchRecord")
             .post((req, res) => __awaiter(this, void 0, void 0, function* () {

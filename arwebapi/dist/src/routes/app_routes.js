@@ -5,10 +5,10 @@ const migrator_1 = tslib_1.__importDefault(require("../migration/migrator"));
 const util_1 = tslib_1.__importDefault(require("./util"));
 class AppExpressRoutes {
     constructor() {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    AppExpressRoutes:  💙  in constructor ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    AppExpressRoutes:  💙  in constructor ...`);
     }
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    AppExpressRoutes:  💙  setting up default home routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    AppExpressRoutes:  💙  setting up default home routes ...`);
         app.route("/").get((req, res) => {
             const msg = `🏓  🏓  🏓  home route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);

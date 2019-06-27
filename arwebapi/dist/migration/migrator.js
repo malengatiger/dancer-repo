@@ -22,45 +22,12 @@ const position_1 = __importDefault(require("../models/position"));
 const vehicle_arrival_1 = __importDefault(require("../models/vehicle_arrival"));
 const vehicle_departure_1 = __importDefault(require("../models/vehicle_departure"));
 const z = "\n";
-console.log(`\n\n👺 👺 👺 🔑 Migrator: getting serviceAccount from json file  🔑 🔑...`);
-// tslint:disable-next-line: no-var-requires
-//  const serviceAccount1 = require("../../ar.json");
-// tslint:disable-next-line: no-var-requires
-//  const serviceAccount2 = require("../../dancer.json");
-// tslint:disable-next-line: no-var-requires
-// const citiesJson = require("../../cities.json");
-// console.log(`📌 📌 📌 📌 📌 📌 📌 📌  `);
-// console.log(serviceAccount1);
-// console.log(`📌 📌 📌 📌 📌 📌 📌 📌 `);
-// console.log(serviceAccount2);
-// console.log(`serviceAccount: 😍 😍 😍 ...`);
-// const appFrom = admin.initializeApp(
-//   {
-//     credential: admin.credential.cert(serviceAccount1),
-//     databaseURL: "https://aftarobot2019-dev3.firebaseio.com",
-//   },
-//   "appFrom",
-// );
-// console.log(
-//   `🔑🔑🔑 appFrom = admin.initializeApp done: 😍 😍 😍 ... ${appFrom.name}`,
-// );
-// const appTo = admin.initializeApp(
-//   {
-//     credential: admin.credential.cert(serviceAccount2),
-//     databaseURL: "https://dancer-3303.firebaseio.com",
-//   },
-//   "appTo",
-// );
-// console.log(
-//   `🔑🔑🔑 appTo = admin.initializeApp done: 😍 😍 😍 ... ${appTo.name}`,
-// );
+console.log(`\n\n👺👺👺 🔑 Migrator: getting serviceAccount from json file  🔑🔑...`);
 const server_1 = require("../server/server");
-// export const fs1: Firestore = appFrom.firestore();
-// export const fs2: Firestore = appTo.firestore();
 class Migrator {
     static start() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n\n......Migrator is starting up ... ❤️  ❤️  ❤️  ....\n`);
+            console.log(`\n\n......Migrator is starting up ... ❤️ ❤️ ❤️  ....\n`);
             const start = new Date().getTime();
             // await this.migrateCountries();
             // await this.migrateAssociations();

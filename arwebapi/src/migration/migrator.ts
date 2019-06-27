@@ -19,48 +19,13 @@ import VehicleDeparture from "../models/vehicle_departure";
 import moment = require("moment");
 const z = "\n";
 console.log(
-  `\n\n👺 👺 👺 🔑 Migrator: getting serviceAccount from json file  🔑 🔑...`,
+  `\n\n👺👺👺 🔑 Migrator: getting serviceAccount from json file  🔑🔑...`,
 );
-// tslint:disable-next-line: no-var-requires
-//  const serviceAccount1 = require("../../ar.json");
-// tslint:disable-next-line: no-var-requires
-//  const serviceAccount2 = require("../../dancer.json");
-
-// tslint:disable-next-line: no-var-requires
-// const citiesJson = require("../../cities.json");
-// console.log(`📌 📌 📌 📌 📌 📌 📌 📌  `);
-// console.log(serviceAccount1);
-// console.log(`📌 📌 📌 📌 📌 📌 📌 📌 `);
-// console.log(serviceAccount2);
-// console.log(`serviceAccount: 😍 😍 😍 ...`);
-// const appFrom = admin.initializeApp(
-//   {
-//     credential: admin.credential.cert(serviceAccount1),
-//     databaseURL: "https://aftarobot2019-dev3.firebaseio.com",
-//   },
-//   "appFrom",
-// );
-// console.log(
-//   `🔑🔑🔑 appFrom = admin.initializeApp done: 😍 😍 😍 ... ${appFrom.name}`,
-// );
-// const appTo = admin.initializeApp(
-//   {
-//     credential: admin.credential.cert(serviceAccount2),
-//     databaseURL: "https://dancer-3303.firebaseio.com",
-//   },
-//   "appTo",
-// );
-// console.log(
-//   `🔑🔑🔑 appTo = admin.initializeApp done: 😍 😍 😍 ... ${appTo.name}`,
-// );
-
 import { fs1, fs2 } from '../server/server';
-// export const fs1: Firestore = appFrom.firestore();
-// export const fs2: Firestore = appTo.firestore();
 
 class Migrator {
   public static async start() {
-    console.log(`\n\n......Migrator is starting up ... ❤️  ❤️  ❤️  ....\n`);
+    console.log(`\n\n......Migrator is starting up ... ❤️ ❤️ ❤️  ....\n`);
     const start = new Date().getTime();
 
     // await this.migrateCountries();
@@ -94,7 +59,6 @@ class Migrator {
       xdate: new Date(),
     };
   }
-
   public static async commuterRequestsToDancer(): Promise<any> {
     console.log(
       `\n\n\n🍎 🍎 migrating commuterRequests to Dancer ....  🍎 \n\n`,
@@ -182,7 +146,6 @@ class Migrator {
       console.log(`🧡🧡 route added ${doc.data().name} 🧡🧡\n\n`);
     }
   }
-
   public static async encodePolyline() {
     const routeID = "-LgWJGYelWehA41IfbsS";
     const qs = await fs1

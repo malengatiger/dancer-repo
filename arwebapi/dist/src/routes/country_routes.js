@@ -5,7 +5,7 @@ const country_helper_1 = require("../helpers/country_helper");
 const util_1 = tslib_1.__importDefault(require("./util"));
 class CountryExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    CountryExpressRoutes: 💙  setting up default Country related express routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    CountryExpressRoutes: 💙  setting up default Country related express routes ...`);
         app.route("/addCountry").post((req, res) => tslib_1.__awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n💦  POST: /addCountry requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);

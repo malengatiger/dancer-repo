@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const migrator_1 = __importDefault(require("../migration/migrator"));
-const util_1 = __importDefault(require("./util"));
+const util_1 = __importDefault(require("../util"));
 class AppExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    AppExpressRoutes:  💙  setting up default home routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    AppExpressRoutes:  💙  setting up default home routes ...`);
         app.route("/").get((req, res) => {
-            const msg = `🏓  🏓  🏓  home route picked   🌽 ${new Date().toISOString()}`;
+            const msg = `🏓🏓🏓  Hello World from Dancer   🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
             console.log(msg);
             res.status(200).json({
                 message: msg,
@@ -25,10 +25,9 @@ class AppExpressRoutes {
         });
         app.route("/ping").get((req, res) => {
             console.log(`\n\n💦  pinged!. 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
-            console.log('Does this color shit work?');
             console.log('GET /ping', JSON.stringify(req.headers, null, 2));
             res.status(200).json({
-                message: `🏓  🏓 pinged : 💙  ${new Date()}  💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+                message: `🏓🏓 ARWebAPI pinged !!! : 💙  ${new Date()}  💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
             });
         });
         app.route("/startMigrator").post((req, res) => __awaiter(this, void 0, void 0, function* () {

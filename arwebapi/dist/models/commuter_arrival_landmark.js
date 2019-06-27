@@ -85,6 +85,10 @@ class CommuterArrivalLandmark extends typegoose_1.Typegoose {
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
+], CommuterArrivalLandmark.prototype, "fromLandmarkId", void 0);
+__decorate([
+    typegoose_1.prop({ required: true, trim: true }),
+    __metadata("design:type", String)
 ], CommuterArrivalLandmark.prototype, "fromLandmarkName", void 0);
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),

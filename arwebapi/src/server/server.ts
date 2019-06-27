@@ -101,18 +101,18 @@ console.log(
 
 export const fs1: Firestore = appFrom.firestore();
 export const fs2: Firestore = appTo.firestore();
-console.log(`\n\n💋  💋  💋  Migrator: -- firebase admin initialized; 💦 
+console.log(`\n\n💋💋💋  Server: -- firebase admin 1 initialized; 💦 
 ${appFrom.name} ❤️  from SDK_VERSION: ${
   admin.SDK_VERSION
 }  😍 😍 😍 ${new Date().toUTCString()}`);
-console.log(`\n\n💋  💋  💋  Migrator: -- firebase admin initialized; 💦 
+console.log(`\n\n💋💋💋  Server: -- firebase admin 2 initialized; 💦 
 ${appTo.name} ❤️  to SDK_VERSION: ${
   admin.SDK_VERSION
 }  😍 😍 😍 ${new Date().toUTCString()}`);
 
 async function getCollections() {
   console.log(
-    `\n🌸  🌸  🌸 Getting list of collections from  🌸 Firestore ...\n`,
+    `\n🌸🌸🌸  Getting list of collections from  🌸 Firestore ...\n`,
   );
   const colRef: CollectionReference[] = await fs1.listCollections();
   console.log(`\n\n💦 💦 💦 💦 collections in Firestore FROM database: \n\n`);

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { VehicleHelper } from "../helpers/vehicle_helper";
-import Util from "./util";
+import Util from "../util";
 
 export class VehicleExpressRoutes {
   public routes(app: any): void {
     console.log(
-      `\n\n🏓 🏓 🏓 🏓 🏓    VehicleExpressRoutes: 💙  setting up default Vehicle related express routes ...`,
+      `\n\n🏓🏓🏓🏓🏓    VehicleExpressRoutes: 💙  setting up default Vehicle related express routes ...`,
     );
 
     app.route("/addVehicle").post(async (req: Request, res: Response) => {

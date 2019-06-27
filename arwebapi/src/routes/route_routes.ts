@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { RouteHelper } from "../helpers/route_helper";
-import Util from "./util";
+import Util from "../util";
 
 export class RouteExpressRoutes {
   public routes(app: any): void {
     console.log(
-      `\n\n🏓 🏓 🏓 🏓 🏓    RouteExpressRoutes: 💙  setting up default route routes ...`,
+      `\n\n🏓🏓🏓🏓🏓    RouteExpressRoutes: 💙  setting up default route routes ...`,
     );
     /////////
     app.route("/addRoute").post(async (req: Request, res: Response) => {

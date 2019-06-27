@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const landmark_helper_1 = require("../helpers/landmark_helper");
-const util_1 = __importDefault(require("./util"));
+const util_1 = __importDefault(require("../util"));
 class LandmarkExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    LandmarkExpressRoutes: 💙  setting up default landmark related express routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    LandmarkExpressRoutes: 💙  setting up default landmark related express routes ...`);
         app.route("/addLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n💦  POST: /addLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);

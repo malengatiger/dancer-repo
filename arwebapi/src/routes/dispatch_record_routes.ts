@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { DispatchRecordHelper } from "../helpers/dispatch_record_helper";
-import Util from "./util";
+import Util from "../util";
 
 export class DispatchRecordExpressRoutes {
   public routes(app: any): void {
     console.log(
-      `\n\n🏓 🏓 🏓 🏓 🏓    DispatchRecordExpressRoutes:  💙  setting up default DispatchRecord Routes routes ...`,
+      `\n\n🏓🏓🏓🏓🏓    DispatchRecordExpressRoutes:  💙  setting up default DispatchRecord Routes routes ...`,
     );
     app
       .route("/addDispatchRecord")

@@ -36,11 +36,13 @@ const admin = __importStar(require("firebase-admin"));
 const app_1 = __importDefault(require("../app"));
 /*
 BUILD AND DEPLOY VIA CLOUD RUN
-gcloud builds submit --tag gcr.io/business-finance-dev/bfnwebapi
-gcloud beta run deploy --image gcr.io/business-finance-dev/bfnwebapi
+gcloud builds submit --tag gcr.io/dancer-3303/arapi
+gcloud beta run deploy --image gcr.io/dancer-3303/arapi --platform-managed
 
 RESULT:
 Service [bfnwebapi] revision [bfnwebapi-00003] has been deployed and is serving traffic at https://bfnwebapi-hn3wjaywza-uc.a.run.app
+
+https://arapi-7amgwbyxjq-uc.a.run.app/getAssociations
 */
 const http = require("http");
 // const localConfig = require('./config/local.json');
@@ -88,13 +90,13 @@ const appTo = admin.initializeApp({
 console.log(`🔑🔑🔑 appTo = admin.initializeApp done: 😍 😍 😍 ... ${appTo.name}`);
 exports.fs1 = appFrom.firestore();
 exports.fs2 = appTo.firestore();
-console.log(`\n\n💋  💋  💋  Migrator: -- firebase admin initialized; 💦 
+console.log(`\n\n💋💋💋  Server: -- firebase admin 1 initialized; 💦 
 ${appFrom.name} ❤️  from SDK_VERSION: ${admin.SDK_VERSION}  😍 😍 😍 ${new Date().toUTCString()}`);
-console.log(`\n\n💋  💋  💋  Migrator: -- firebase admin initialized; 💦 
+console.log(`\n\n💋💋💋  Server: -- firebase admin 2 initialized; 💦 
 ${appTo.name} ❤️  to SDK_VERSION: ${admin.SDK_VERSION}  😍 😍 😍 ${new Date().toUTCString()}`);
 function getCollections() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(`\n🌸  🌸  🌸 Getting list of collections from  🌸 Firestore ...\n`);
+        console.log(`\n🌸🌸🌸  Getting list of collections from  🌸 Firestore ...\n`);
         const colRef = yield exports.fs1.listCollections();
         console.log(`\n\n💦 💦 💦 💦 collections in Firestore FROM database: \n\n`);
         colRef.forEach((m) => {

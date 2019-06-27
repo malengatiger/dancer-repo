@@ -5,7 +5,7 @@ const Vehicle_helper_1 = require("../helpers/Vehicle_helper");
 const util_1 = tslib_1.__importDefault(require("./util"));
 class VehicleExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    VehicleExpressRoutes: 💙  setting up default Vehicle related express routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    VehicleExpressRoutes: 💙  setting up default Vehicle related express routes ...`);
         app.route("/addVehicle").post((req, res) => tslib_1.__awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n💦  POST: /addVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);

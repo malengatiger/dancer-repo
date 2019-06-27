@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { AssociationHelper } from "../helpers/association_helper";
 import { RouteHelper } from "../helpers/route_helper";
-import Util from "./util";
+import Util from "../util";
 
 export class AssociationExpressRoutes {
   public routes(app: any): void {
     console.log(
-      `\n\n🏓 🏓 🏓 🏓 🏓    AssociationExpressRoutes:  💙  setting up default Association Routes ...`,
+      `\n\n🏓🏓🏓🏓🏓    AssociationExpressRoutes:  💙  setting up default Association Routes ...`,
     );
 
     app.route("/addAssociation").post(async (req: Request, res: Response) => {

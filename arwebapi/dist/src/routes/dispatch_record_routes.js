@@ -5,7 +5,7 @@ const dispatch_record_helper_1 = require("../helpers/dispatch_record_helper");
 const util_1 = tslib_1.__importDefault(require("./util"));
 class DispatchRecordExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    DispatchRecordExpressRoutes:  💙  setting up default home routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    DispatchRecordExpressRoutes:  💙  setting up default home routes ...`);
         app
             .route("/addDispatchRecord")
             .post((req, res) => tslib_1.__awaiter(this, void 0, void 0, function* () {

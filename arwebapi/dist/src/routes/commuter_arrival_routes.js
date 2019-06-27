@@ -5,7 +5,7 @@ const commuter_arrival_helper_1 = require("../helpers/commuter_arrival_helper");
 const util_1 = tslib_1.__importDefault(require("./util"));
 class CommuterArrivalLandmarkExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    CommuterArrivalLandmarkExpressRoutes:  💙  setting up default home routes ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    CommuterArrivalLandmarkExpressRoutes:  💙  setting up default home routes ...`);
         app.route("/addCommuterArrivalLandmark").post((req, res) => tslib_1.__awaiter(this, void 0, void 0, function* () {
             const msg = `🏓  🏓  🏓  addCommuterArrivalLandmark route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);

@@ -5,7 +5,7 @@ const association_helper_1 = require("../helpers/association_helper");
 const util_1 = tslib_1.__importDefault(require("./util"));
 class AssociationExpressRoutes {
     routes(app) {
-        console.log(`\n\n🏓 🏓 🏓 🏓 🏓    AssociationExpressRoutes:  💙  setting up default assoc route ...`);
+        console.log(`\n\n🏓🏓🏓🏓🏓    AssociationExpressRoutes:  💙  setting up default assoc route ...`);
         app.route("/addAssociation").post((req, res) => tslib_1.__awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n💦  POST: /associations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
