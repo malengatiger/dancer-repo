@@ -1,9 +1,12 @@
 import moment from "moment";
 import v1 from "uuid/v1";
 import Photo from "../models/photo";
+import Position from "../models/position";
 import Vehicle from "../models/vehicle";
+import VehicleArrival from "../models/vehicle_arrival";
 import VehicleLocation from "../models/vehicle_location";
 import VehicleType from "../models/vehicle_type";
+import VehicleDeparture from "../models/vehicle_departure";
 
 export class VehicleHelper {
   public static async onVehicleAdded(event: any) {
@@ -61,7 +64,90 @@ export class VehicleHelper {
       vehicleType: type,
     });
     const m = await vehicle.save();
-    console.log(`🍊 🍊  vehicle added:  🍊 ${m.vehicleReg} ${m.vehicleType.make} ${m.vehicleType.model}  🚗 🚗 `);
+    m.vehicleId = m.id;
+    await m.save();
+    console.log(
+      `🍊 🍊  vehicle added:  🍊 ${m.vehicleReg} ${m.vehicleType.make} ${
+        m.vehicleType.model
+      }  🚗 🚗 `,
+    );
+    return m;
+  }
+
+  public static async addVehicleArrival(
+    vehicleReg: string,
+    vehicleId: string,
+    landmarkName: string,
+    landmarkId: string,
+    latitude: number,
+    longitude: number,
+  ): Promise<any> {
+    console.log(
+      `\n\n🌀🌀🌀  VehicleHelper: addVehicleArrival  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀   ${associationName}\n`,
+    );
+
+    const vehicleArrivalModel = new VehicleArrival().getModelForClass(
+      VehicleArrival,
+    );
+
+    const position = new Position();
+    position.type = "Point";
+    position.coordinates = [longitude, latitude];
+
+    const vehicleArrival = new vehicleArrivalModel({
+      vehicleId,
+      landmarkName,
+      landmarkId,
+      position,
+      vehicleReg,
+      dateArrived: new Date().toISOString(),
+    });
+    const m = await vehicleArrival.save();
+    m.vehicleArrivalId = m.id;
+    await m.save();
+    console.log(
+      `🍊 🍊  vehicleArrival added:  🍊 ${m.vehicleReg} ${
+        m.landmarkName
+      }  🚗 🚗 `,
+    );
+    return m;
+  }
+  public static async addVehicleDeparture(
+    vehicleReg: string,
+    vehicleId: string,
+    landmarkName: string,
+    landmarkId: string,
+    latitude: number,
+    longitude: number,
+  ): Promise<any> {
+    console.log(
+      `\n\n🌀🌀🌀  VehicleHelper: addVehicleDeparture  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀   ${associationName}\n`,
+    );
+
+    const vehicleDepModel = new VehicleDeparture().getModelForClass(
+      VehicleDeparture,
+    );
+
+    const position = new Position();
+    position.type = "Point";
+    position.coordinates = [longitude, latitude];
+
+    const vehicleDeparture = new vehicleDepModel({
+      vehicleId,
+      landmarkName,
+      landmarkId,
+      position,
+      vehicleReg,
+      dateDeparted: new Date().toISOString(),
+    });
+    const m = await vehicleDeparture.save();
+    m.vehicleDepartureId = m.id;
+    await m.save();
+    console.log(
+      `🍊 🍊  vehicleDeparture added:  🍊 ${m.vehicleReg} ${
+        m.landmarkName
+      }  🚗 🚗 `,
+    );
     return m;
   }
 
@@ -122,11 +208,15 @@ export class VehicleHelper {
   public static async findVehiclesByLocation(
     latitude: number,
     longitude: number,
-    withinMinutes: number,
+    minutes: number,
     radiusInKM: number,
   ) {
-    console.log(`find vehicles: lat: ${latitude} lng: ${longitude} radius: ${radiusInKM} minutes: ${withinMinutes}`);
-    const cutOff: string = moment().subtract(withinMinutes, "minutes").toISOString();
+    console.log(
+      `find vehicles: lat: ${latitude} lng: ${longitude} radius: ${radiusInKM} minutes: ${minutes}`,
+    );
+    const cutOff: string = moment()
+      .subtract(minutes, "minutes")
+      .toISOString();
     const METERS = radiusInKM * 1000;
     const vehicleLocationModel = new VehicleLocation().getModelForClass(
       VehicleLocation,
@@ -149,6 +239,166 @@ export class VehicleHelper {
       });
     console.log(`🏓  🏓  vehicleLocations found ${list.length}`);
     console.log(list);
+    return list;
+  }
+  ///////////
+  public static async findVehicleArrivalsByLocation(
+    latitude: number,
+    longitude: number,
+    minutes: number,
+    radiusInKM: number,
+  ) {
+    console.log(
+      `find vehicles: lat: ${latitude} lng: ${longitude} radius: ${radiusInKM} minutes: ${minutes}`,
+    );
+    const cutOff: string = moment()
+      .subtract(minutes, "minutes")
+      .toISOString();
+    const METERS = radiusInKM * 1000;
+    const vehicleArrivalModel = new VehicleArrival().getModelForClass(VehicleArrival);
+    const list: any = await vehicleArrivalModel
+      .find({
+        dateArrived: { $gt: cutOff },
+        position: {
+          $near: {
+            $geometry: {
+              coordinates: [longitude, latitude],
+              type: "Point",
+            },
+            $maxDistance: METERS,
+          },
+        },
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    console.log(`🏓  🏓  vehicleArrivals found ${list.length}`);
+    return list;
+  }
+  public static async findVehicleArrivalsByLandmark(
+    landmarkId: string,
+    minutes: number,
+  ) {
+
+    const vehicleArrivalModel = new VehicleArrival().getModelForClass(
+      VehicleArrival,
+    );
+    const list = await vehicleArrivalModel.findByLandmarkId(landmarkId, minutes);
+    console.log(`🏓  🏓  vehicleArrivalss found ${list.length}`);
+    return list;
+  }
+  public static async findVehicleArrivalsByVehicle(
+    vehicleId: string,
+    minutes: number,
+  ) {
+
+    const vehicleArrivalModel = new VehicleArrival().getModelForClass(
+      VehicleArrival,
+    );
+    const list = await vehicleArrivalModel.findByVehicleId(vehicleId, minutes);
+    console.log(`🏓  🏓  findVehicleArrivalsByVehicle found ${list.length}`);
+    return list;
+  }
+  public static async findAllVehicleArrivalsByVehicle(
+    vehicleId: string,
+  ) {
+
+    const vehicleArrivalModel = new VehicleArrival().getModelForClass(
+      VehicleArrival,
+    );
+    const list = await vehicleArrivalModel.findAllByVehicleId(vehicleId);
+    console.log(`🏓  🏓  findAllVehicleArrivalsByVehicle found ${list.length}`);
+    return list;
+  }
+  public static async findAllVehicleArrivals(
+    minutes: number,
+  ) {
+
+    const vehicleArrivalModel = new VehicleArrival().getModelForClass(
+      VehicleArrival,
+    );
+    const list = await vehicleArrivalModel.findAll(minutes);
+    console.log(`c  🏓  findAllVehicleArrivals found ${list.length}`);
+    return list;
+  }
+  /////////////
+  public static async findVehicleDeparturesByLocation(
+    latitude: number,
+    longitude: number,
+    minutes: number,
+    radiusInKM: number,
+  ) {
+    console.log(
+      `find vehicles: lat: ${latitude} lng: ${longitude} radius: ${radiusInKM} minutes: ${minutes}`,
+    );
+    const cutOff: string = moment()
+      .subtract(minutes, "minutes")
+      .toISOString();
+    const METERS = radiusInKM * 1000;
+    const vehicleArrivalModel = new VehicleDeparture().getModelForClass(VehicleArrival);
+    const list: any = await vehicleArrivalModel
+      .find({
+        dateArrived: { $gt: cutOff },
+        position: {
+          $near: {
+            $geometry: {
+              coordinates: [longitude, latitude],
+              type: "Point",
+            },
+            $maxDistance: METERS,
+          },
+        },
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    console.log(`🏓  🏓  vehicleArrivals found ${list.length}`);
+    return list;
+  }
+  public static async findVehicleDeparturesByLandmark(
+    landmarkId: string,
+    minutes: number,
+  ) {
+
+    const vehicleDepModel = new VehicleDeparture().getModelForClass(
+      VehicleDeparture,
+    );
+    const list = await vehicleDepModel.findByLandmarkId(landmarkId, minutes);
+    console.log(`🏓  🏓  findVehicleDeparturesByLandmark found ${list.length}`);
+    return list;
+  }
+  public static async findVehicleDeparturesByVehicle(
+    vehicleId: string,
+    minutes: number,
+  ) {
+
+    const vehicleDepModel = new VehicleDeparture().getModelForClass(
+      VehicleDeparture,
+    );
+    const list = await vehicleDepModel.findByVehicleId(vehicleId, minutes);
+    console.log(`🏓  🏓  findVehicleArrivalsByVehicle found ${list.length}`);
+    return list;
+  }
+  public static async findAllVehicleDeparturesByVehicle(
+    vehicleId: string,
+  ) {
+
+    const vehicleDepModel = new VehicleDeparture().getModelForClass(
+      VehicleDeparture,
+    );
+    const list = await vehicleDepModel.findAllByVehicleId(vehicleId);
+    console.log(`🏓  🏓  findAllVehicleDeparturesByVehicle found ${list.length}`);
+    return list;
+  }
+  public static async findAllVehicleDepartures(
+    minutes: number,
+  ) {
+
+    const vehicleDepModel = new VehicleDeparture().getModelForClass(
+      VehicleDeparture,
+    );
+    const list = await vehicleDepModel.findAll(minutes);
+    console.log(`🏓  🏓  findAllVehicleDepartures found ${list.length}`);
     return list;
   }
 }

@@ -25,6 +25,9 @@ class Vehicle extends Typegoose {
   public vehicleReg?: string;
   //
   @prop({ required: true, index: true, trim: true })
+  public vehicleId?: string;
+  //
+  @prop({ required: true, index: true, trim: true })
   public associationID?: string;
   //
   @prop({ required: true, index: true, trim: true })
