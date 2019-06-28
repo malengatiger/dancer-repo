@@ -114,6 +114,6 @@ function getCollections() {
 }
 getCollections();
 const myApp = new app_1.default();
-console.log(`AftaRobot app has been created and stood up!`);
+console.log(`DancerWebAPI has been created and stood up!`);
 module.exports = server;
 //# sourceMappingURL=server.js.map

@@ -74,6 +74,7 @@ export class CountryExpressRoutes {
         console.log(
           `\n\n💦  POST: /findCitiesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}  💦`,
         );
+        console.log(req.body);
         try {
           const result = await CityHelper.findCitiesByLocation(
             parseFloat(req.body.latitude),

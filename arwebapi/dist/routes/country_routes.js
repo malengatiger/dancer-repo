@@ -66,6 +66,7 @@ class CountryExpressRoutes {
             .route("/findCitiesByLocation")
             .post((req, res) => __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n💦  POST: /findCitiesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}  💦`);
+            console.log(req.body);
             try {
                 const result = yield country_helper_1.CityHelper.findCitiesByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM));
                 res.status(200).json({
