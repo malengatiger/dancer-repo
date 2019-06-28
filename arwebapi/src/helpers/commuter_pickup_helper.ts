@@ -6,9 +6,7 @@ export class CommuterPickupLandmarkHelper {
     console.log(
       `\n👽 👽 👽 onCommuterPickupLandmarkChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
-      },  CommuterPickupLandmark in stream:   🍀   🍀  ${
-        event.fullDocument.CommuterPickupLandmarkName
-      } 🍎  `,
+      },  CommuterPickupLandmark in stream:   🍀  🍎  `,
     );
   }
 

@@ -15,9 +15,7 @@ export class VehicleHelper {
     console.log(
       `operationType: 👽 👽 👽  ${
         event.operationType
-      },  vehicle in stream:   🍀   🍀  ${event.fullDocument.name} 🍎  _id: ${
-        event.fullDocument._id
-      } 🍎 `,
+      },  vehicle in stream:   🍀  🍎 `,
     );
   }
   public static async addVehicle(

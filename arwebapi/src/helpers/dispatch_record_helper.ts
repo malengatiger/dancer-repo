@@ -5,9 +5,7 @@ export class DispatchRecordHelper {
     console.log(
       `\n👽 👽 👽 onDispatchRecordAddedEvent: operationType: 👽 👽 👽  ${
         event.operationType
-      },  DispatchRecord in stream:   🍀   🍀  ${
-        event.fullDocument.CommuterRequestName
-      } 🍎  `,
+      },  DispatchRecord in stream:   🍀 🍎  `,
     );
   }
 

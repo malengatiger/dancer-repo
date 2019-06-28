@@ -9,9 +9,7 @@ export class LandmarkHelper {
     console.log(
       `\n👽 👽 👽 onLandmarkChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
-      },  landmark in stream:   🍀   🍀  ${
-        event.fullDocument.landmarkName
-      } 🍎  `,
+      },  landmark in stream:   🍀  🍎  `,
     );
   }
   public static async addLandmarks(

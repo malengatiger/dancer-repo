@@ -11,8 +11,7 @@ export class CountryHelper {
     console.log(
       `operationType: 👽 👽 👽  ${
         event.operationType
-      },  Country in stream:   🍀   🍀  ${event.fullDocument.name} 🍎
-      _id: ${event.fullDocument._id} 🍎 `,
+      },  Country in stream:   🍀 🍎 `,
     );
   }
   public static async addCountry(

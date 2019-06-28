@@ -23,7 +23,7 @@ const dispatch_record_1 = __importDefault(require("../models/dispatch_record"));
 class DispatchRecordHelper {
     static onDispatchRecordAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onDispatchRecordAddedEvent: operationType: 👽 👽 👽  ${event.operationType},  DispatchRecord in stream:   🍀   🍀  ${event.fullDocument.CommuterRequestName} 🍎  `);
+            console.log(`\n👽 👽 👽 onDispatchRecordAddedEvent: operationType: 👽 👽 👽  ${event.operationType},  DispatchRecord in stream:   🍀 🍎  `);
         });
     }
     static addDispatchRecord(request) {

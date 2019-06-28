@@ -21,8 +21,7 @@ class CountryHelper {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`Country event has occured ....`);
             console.log(event);
-            console.log(`operationType: 👽 👽 👽  ${event.operationType},  Country in stream:   🍀   🍀  ${event.fullDocument.name} 🍎
-      _id: ${event.fullDocument._id} 🍎 `);
+            console.log(`operationType: 👽 👽 👽  ${event.operationType},  Country in stream:   🍀 🍎 `);
         });
     }
     static addCountry(name, countryCode) {

@@ -7,9 +7,7 @@ export class CommuterRatingHelper {
     console.log(
       `\n👽 👽 👽 onCommuterRatingChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
-      },  CommuterRating in stream:   🍀   🍀  ${
-        event.fullDocument.CommuterRatingName
-      } 🍎  `,
+      }, 🍎  `,
     );
   }
 
@@ -26,7 +24,7 @@ export class CommuterRatingHelper {
       userId,
     });
     const m = await mRating.save();
-    console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterRating added  for: 🍎  ${CommuterRating.fromLandmarkName} \n\n`);
+    console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterRating added  for: 🍎  ${mRating.userId} \n\n`);
     console.log(mRating);
     return m;
   }

@@ -18,7 +18,7 @@ const route_1 = __importDefault(require("../models/route"));
 class LandmarkHelper {
     static onLandmarkAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  landmark in stream:   🍀   🍀  ${event.fullDocument.landmarkName} 🍎  `);
+            console.log(`\n👽 👽 👽 onLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  landmark in stream:   🍀  🍎  `);
         });
     }
     static addLandmarks(landmarks, routeID) {

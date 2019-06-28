@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const commuter_rating_routes_1 = require("./routes/commuter_rating_routes");
 const commuter_pickup_routes_1 = require("./routes/commuter_pickup_routes");
 const commuter_arrival_routes_1 = require("./routes/commuter_arrival_routes");
 const bodyParser = __importStar(require("body-parser"));
@@ -60,6 +61,7 @@ class AftaRobotApp {
         this.dispatchRoutes = new dispatch_record_routes_1.DispatchRecordExpressRoutes();
         this.commuterArrivalRoutes = new dispatch_record_routes_1.DispatchRecordExpressRoutes();
         this.commuterRequestRoutes = new commuter_arrival_routes_1.CommuterArrivalLandmarkExpressRoutes();
+        this.commuterRatingRoutes = new commuter_rating_routes_1.CommuterRatingExpressRoutes();
         console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside AftaRobotApp constructor `);
         this.app = server_1.app;
         this.port = port;
@@ -75,7 +77,8 @@ class AftaRobotApp {
         this.commuterArrivalRoutes.routes(this.app);
         this.commuterRoutes.routes(this.app);
         this.commuterPickupRoutes.routes(this.app);
-        console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed: `);
+        this.commuterRatingRoutes.routes(this.app);
+        console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed setting up express routes \n\n `);
     }
     initializeMiddlewares() {
         console.log(`\n🥦 🥦  initializeMiddleware .... `);

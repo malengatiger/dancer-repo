@@ -23,7 +23,7 @@ const commuter_request_1 = __importDefault(require("../models/commuter_request")
 class CommuterRequestHelper {
     static onCommuterRequestAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterRequest in stream:   🍀   🍀  ${event.fullDocument.CommuterRequestName} 🍎  `);
+            console.log(`\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterRequest in stream:   🍀  🍎  `);
         });
     }
     static addCommuterRequest(request) {

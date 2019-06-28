@@ -23,7 +23,7 @@ const commuter_arrival_landmark_1 = __importDefault(require("../models/commuter_
 class CommuterArrivalLandmarkHelper {
     static onCommuterArrivalLandmarkAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterArrivalLandmark in stream:   🍀   🍀  ${event.fullDocument.CommuterArrivalLandmarkName} 🍎  `);
+            console.log(`\n👽 👽 👽 onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterArrivalLandmark in stream:   🍀  🍎  `);
         });
     }
     static addCommuterArrivalLandmark(request) {

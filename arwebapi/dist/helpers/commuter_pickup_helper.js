@@ -23,7 +23,7 @@ const commuter_pickup_landmark_1 = __importDefault(require("../models/commuter_p
 class CommuterPickupLandmarkHelper {
     static onCommuterPickupLandmarkAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onCommuterPickupLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterPickupLandmark in stream:   🍀   🍀  ${event.fullDocument.CommuterPickupLandmarkName} 🍎  `);
+            console.log(`\n👽 👽 👽 onCommuterPickupLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterPickupLandmark in stream:   🍀  🍎  `);
         });
     }
     static addCommuterPickupLandmark(commuterRequestId, fromLandmarkId, toLandmarkId, fromLandmarkName, toLandmarkName, latitude, longitude, vehicleId, vehicleReg, userId, routeId, routeName) {

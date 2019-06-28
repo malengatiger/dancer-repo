@@ -6,9 +6,7 @@ export class CommuterArrivalLandmarkHelper {
     console.log(
       `\n👽 👽 👽 onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
-      },  CommuterArrivalLandmark in stream:   🍀   🍀  ${
-        event.fullDocument.CommuterArrivalLandmarkName
-      } 🍎  `,
+      },  CommuterArrivalLandmark in stream:   🍀  🍎  `,
     );
   }
 
