@@ -17,8 +17,8 @@ export class LandmarkExpressRoutes {
       try {
         const result = await LandmarkHelper.addLandmark(
           req.body.landmarkName,
-          req.body.latitude,
-          req.body.longitude,
+          parseFloat(req.body.latitude),
+          parseFloat(req.body.longitude),
           req.body.routeIDs,
           req.body.routeDetails,
         );

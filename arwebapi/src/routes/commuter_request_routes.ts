@@ -24,7 +24,6 @@ export class CommuterRequestExpressRoutes {
       try {
         const result = await CommuterRequestHelper.findByLocation(
           parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM),
-// tslint:disable-next-line: radix
           parseInt(req.body.minutes));
          
         res.status(200).json(result);
@@ -38,7 +37,7 @@ export class CommuterRequestExpressRoutes {
       console.log(msg);
       try {
         const result = await CommuterRequestHelper.findByFromLandmark(
-          req.body.landmarkID, req.body.minutes);
+          req.body.landmarkID,  parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findCommuterRequestsByFromLandmark failed");
@@ -50,7 +49,7 @@ export class CommuterRequestExpressRoutes {
       console.log(msg);
       try {
         const result = await CommuterRequestHelper.findByToLandmark(
-          req.body.landmarkID, req.body.minutes);
+          req.body.landmarkID,  parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findCommuterRequestsByToLandmark failed");
@@ -62,7 +61,7 @@ export class CommuterRequestExpressRoutes {
       console.log(msg);
       try {
         const result = await CommuterRequestHelper.findByRoute(
-          req.body.routeID, req.body.minutes);
+          req.body.routeID,  parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findCommuterRequestsByRoute failed");
@@ -86,7 +85,7 @@ export class CommuterRequestExpressRoutes {
       console.log(msg);
       try {
         const result = await CommuterRequestHelper.findAll(
-          req.body.minutes);
+          parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findAllCommuterRequests failed");

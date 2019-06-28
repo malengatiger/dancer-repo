@@ -35,9 +35,7 @@ class DispatchRecordExpressRoutes {
             const msg = `🏓  🏓  🏓  findDispatchRecordsByLocation route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield dispatch_record_helper_1.DispatchRecordHelper.findByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM), 
-                // tslint:disable-next-line: radix
-                parseInt(req.body.minutes));
+                const result = yield dispatch_record_helper_1.DispatchRecordHelper.findByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM), parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {

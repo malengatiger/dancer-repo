@@ -34,7 +34,7 @@ class VehicleExpressRoutes {
             console.log(`\n\n💦  POST: /addVehicleArrival requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const result = yield vehicle_helper_1.VehicleHelper.addVehicleArrival(req.body.vehicleReg, req.body.vehicleId, req.body.landmarkName, req.body.landmarkId, req.body.latitude, req.body.longitude, req.body.make, req.body.model, parseInt(req.body.capacity));
+                const result = yield vehicle_helper_1.VehicleHelper.addVehicleArrival(req.body.vehicleReg, req.body.vehicleId, req.body.landmarkName, req.body.landmarkId, parseFloat(req.body.latitude), parseFloat(req.body.longitude), req.body.make, req.body.model, parseInt(req.body.capacity));
                 res.status(200).json({
                     message: `🏓  🏓  🏓  addVehicleArrival: ${req.body.vehicleReg} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
                     result,
@@ -48,7 +48,7 @@ class VehicleExpressRoutes {
             console.log(`\n\n💦  POST: /addVehicleDeparture requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const result = yield vehicle_helper_1.VehicleHelper.addVehicleDeparture(req.body.vehicleReg, req.body.vehicleId, req.body.landmarkName, req.body.landmarkId, req.body.latitude, req.body.longitude, req.body.make, req.body.model, parseInt(req.body.capacity));
+                const result = yield vehicle_helper_1.VehicleHelper.addVehicleDeparture(req.body.vehicleReg, req.body.vehicleId, req.body.landmarkName, req.body.landmarkId, parseFloat(req.body.latitude), parseFloat(req.body.longitude), req.body.make, req.body.model, parseInt(req.body.capacity));
                 res.status(200).json({
                     message: `🏓  🏓  🏓  addVehicleDeparture: ${req.body.vehicleReg} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
                     result,
@@ -62,7 +62,7 @@ class VehicleExpressRoutes {
             console.log(`\n\n💦  POST: /addVehicleType requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const result = yield vehicle_helper_1.VehicleHelper.addVehicleType(req.body.make, req.body.model, req.body.capacity, req.body.countryID, req.body.countryName);
+                const result = yield vehicle_helper_1.VehicleHelper.addVehicleType(req.body.make, req.body.model, parseInt(req.body.capacity), req.body.countryID, req.body.countryName);
                 res.status(200).json({
                     message: `🏓  🏓  addVehicleType: ${req.body.vehicleReg} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
                     result,
@@ -77,7 +77,7 @@ class VehicleExpressRoutes {
             console.log(`\n\n💦  POST: /getVehiclesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const result = yield vehicle_helper_1.VehicleHelper.findVehiclesByLocation(req.body.latitude, req.body.longitude, req.body.withinMinutes, req.body.radiusInKM);
+                const result = yield vehicle_helper_1.VehicleHelper.findVehiclesByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseInt(req.body.withinMinutes), req.body.radiusInKM);
                 res.status(200).json({
                     message: `🏓  🏓  🏓  getVehiclesByLocation OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
                     result,

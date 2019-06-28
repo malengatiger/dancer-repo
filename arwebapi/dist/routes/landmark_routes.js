@@ -20,7 +20,7 @@ class LandmarkExpressRoutes {
             console.log(`\n\n💦  POST: /addLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const result = yield landmark_helper_1.LandmarkHelper.addLandmark(req.body.landmarkName, req.body.latitude, req.body.longitude, req.body.routeIDs, req.body.routeDetails);
+                const result = yield landmark_helper_1.LandmarkHelper.addLandmark(req.body.landmarkName, parseFloat(req.body.latitude), parseFloat(req.body.longitude), req.body.routeIDs, req.body.routeDetails);
                 res.status(200).json({
                     message: `🏓  🏓  🏓  landmark: ${req.body.name} : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
                     result,

@@ -31,9 +31,7 @@ class CommuterRequestExpressRoutes {
             const msg = `🏓  🏓  🏓  findCommuterRequestsByLocation route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM), 
-                // tslint:disable-next-line: radix
-                parseInt(req.body.minutes));
+                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM), parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {
@@ -44,7 +42,7 @@ class CommuterRequestExpressRoutes {
             const msg = `🏓  🏓  🏓  findCommuterRequestsByFromLandmark route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByFromLandmark(req.body.landmarkID, req.body.minutes);
+                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByFromLandmark(req.body.landmarkID, parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {
@@ -55,7 +53,7 @@ class CommuterRequestExpressRoutes {
             const msg = `🏓  🏓  🏓  findCommuterRequestsByToLandmark route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByToLandmark(req.body.landmarkID, req.body.minutes);
+                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByToLandmark(req.body.landmarkID, parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {
@@ -66,7 +64,7 @@ class CommuterRequestExpressRoutes {
             const msg = `🏓  🏓  🏓  findCommuterRequestsByRoute route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByRoute(req.body.routeID, req.body.minutes);
+                const result = yield commuter_request_helper_1.CommuterRequestHelper.findByRoute(req.body.routeID, parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {
@@ -88,7 +86,7 @@ class CommuterRequestExpressRoutes {
             const msg = `🏓  🏓  🏓  findAllCommuterRequests route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_request_helper_1.CommuterRequestHelper.findAll(req.body.minutes);
+                const result = yield commuter_request_helper_1.CommuterRequestHelper.findAll(parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {

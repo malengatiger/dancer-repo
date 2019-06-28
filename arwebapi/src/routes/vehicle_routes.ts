@@ -42,8 +42,8 @@ export class VehicleExpressRoutes {
           req.body.vehicleId,
           req.body.landmarkName,
           req.body.landmarkId,
-          req.body.latitude,
-          req.body.longitude,
+          parseFloat(req.body.latitude),
+          parseFloat(req.body.longitude),
           req.body.make, req.body.model,
           parseInt(req.body.capacity),
         );
@@ -66,8 +66,8 @@ export class VehicleExpressRoutes {
           req.body.vehicleId,
           req.body.landmarkName,
           req.body.landmarkId,
-          req.body.latitude,
-          req.body.longitude,
+          parseFloat(req.body.latitude),
+          parseFloat(req.body.longitude),
           req.body.make, req.body.model,
           parseInt(req.body.capacity),
         );
@@ -88,7 +88,7 @@ export class VehicleExpressRoutes {
         const result = await VehicleHelper.addVehicleType(
           req.body.make,
           req.body.model,
-          req.body.capacity,
+          parseInt(req.body.capacity),
           req.body.countryID,
           req.body.countryName,
         );
@@ -109,9 +109,9 @@ export class VehicleExpressRoutes {
       console.log(req.body);
       try {
         const result = await VehicleHelper.findVehiclesByLocation(
-          req.body.latitude,
-          req.body.longitude,
-          req.body.withinMinutes,
+          parseFloat(req.body.latitude),
+          parseFloat(req.body.longitude),
+          parseInt(req.body.withinMinutes),
           req.body.radiusInKM,
 
         );

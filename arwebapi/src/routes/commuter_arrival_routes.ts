@@ -85,7 +85,7 @@ export class CommuterArrivalLandmarkExpressRoutes {
       console.log(msg);
       try {
         const result = await CommuterArrivalLandmarkHelper.findAll(
-          req.body.minutes);
+          parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findAllCommuterArrivalLandmarks failed");

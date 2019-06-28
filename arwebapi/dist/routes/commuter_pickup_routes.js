@@ -48,7 +48,7 @@ class CommuterPickupLandmarkExpressRoutes {
             const msg = `🏓🏓  findCommuterPickupLandmarksByFromLandmark route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findByFromLandmark(req.body.landmarkID, req.body.minutes);
+                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findByFromLandmark(req.body.landmarkID, parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {
@@ -61,7 +61,7 @@ class CommuterPickupLandmarkExpressRoutes {
             const msg = `🏓  🏓  🏓  findCommuterPickupLandmarksByToLandmark route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findByToLandmark(req.body.landmarkID, req.body.minutes);
+                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findByToLandmark(req.body.landmarkID, parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {
@@ -74,7 +74,7 @@ class CommuterPickupLandmarkExpressRoutes {
             const msg = `🏓🏓🏓  findCommuterPickupLandmarksByRoute route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findByRoute(req.body.routeID, req.body.minutes);
+                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findByRoute(req.body.routeID, parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {
@@ -100,7 +100,7 @@ class CommuterPickupLandmarkExpressRoutes {
             const msg = `🏓🏓🏓  findAllCommuterPickupLandmarks route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findAll(req.body.minutes);
+                const result = yield commuter_pickup_helper_1.CommuterPickupLandmarkHelper.findAll(parseInt(req.body.minutes));
                 res.status(200).json(result);
             }
             catch (e) {

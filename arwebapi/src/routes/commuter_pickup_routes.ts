@@ -64,7 +64,7 @@ export class CommuterPickupLandmarkExpressRoutes {
         try {
           const result = await CommuterPickupLandmarkHelper.findByFromLandmark(
             req.body.landmarkID,
-            req.body.minutes,
+            parseInt(req.body.minutes),
           );
           res.status(200).json(result);
         } catch (e) {
@@ -84,7 +84,7 @@ export class CommuterPickupLandmarkExpressRoutes {
         try {
           const result = await CommuterPickupLandmarkHelper.findByToLandmark(
             req.body.landmarkID,
-            req.body.minutes,
+            parseInt(req.body.minutes),
           );
           res.status(200).json(result);
         } catch (e) {
@@ -104,7 +104,7 @@ export class CommuterPickupLandmarkExpressRoutes {
         try {
           const result = await CommuterPickupLandmarkHelper.findByRoute(
             req.body.routeID,
-            req.body.minutes,
+            parseInt(req.body.minutes),
           );
           res.status(200).json(result);
         } catch (e) {
@@ -134,7 +134,7 @@ export class CommuterPickupLandmarkExpressRoutes {
         console.log(msg);
         try {
           const result = await CommuterPickupLandmarkHelper.findAll(
-            req.body.minutes,
+            parseInt(req.body.minutes),
           );
           res.status(200).json(result);
         } catch (e) {

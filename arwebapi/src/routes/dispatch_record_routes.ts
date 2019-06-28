@@ -30,7 +30,6 @@ export class DispatchRecordExpressRoutes {
             parseFloat(req.body.latitude),
             parseFloat(req.body.longitude),
             parseFloat(req.body.radiusInKM),
-            // tslint:disable-next-line: radix
             parseInt(req.body.minutes),
           );
 
