@@ -68,10 +68,6 @@ __decorate([
     __metadata("design:type", position_1.default)
 ], Landmark.prototype, "position", void 0);
 __decorate([
-    typegoose_1.prop({ required: true, default: 0 }),
-    __metadata("design:type", Number)
-], Landmark.prototype, "rankSequenceNumber", void 0);
-__decorate([
     typegoose_1.prop({ required: true, default: [] }),
     __metadata("design:type", Array)
 ], Landmark.prototype, "routeIDs", void 0);
@@ -80,8 +76,12 @@ __decorate([
     __metadata("design:type", Array)
 ], Landmark.prototype, "routeDetails", void 0);
 __decorate([
-    typegoose_1.prop({ trim: true }),
-    __metadata("design:type", String)
+    typegoose_1.prop({ required: true, default: [] }),
+    __metadata("design:type", Array)
+], Landmark.prototype, "cities", void 0);
+__decorate([
+    typegoose_1.prop({ default: 0.0 }),
+    __metadata("design:type", Number)
 ], Landmark.prototype, "distance", void 0);
 __decorate([
     typegoose_1.prop({ required: true, default: new Date().toISOString() }),

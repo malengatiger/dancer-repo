@@ -1,3 +1,4 @@
+import { CommuterPickupLandmarkExpressRoutes } from './routes/commuter_pickup_routes';
 import { CommuterArrivalLandmarkExpressRoutes } from "./routes/commuter_arrival_routes";
 import * as bodyParser from "body-parser";
 import cors from "cors";
@@ -59,6 +60,7 @@ class AftaRobotApp {
   public appRoutes: AppExpressRoutes = new AppExpressRoutes();
   public vehicleRoutes: VehicleExpressRoutes = new VehicleExpressRoutes();
   public countryRoutes: CountryExpressRoutes = new CountryExpressRoutes();
+  public commuterPickupRoutes: CommuterPickupLandmarkExpressRoutes = new CommuterPickupLandmarkExpressRoutes();
   public dispatchRoutes: DispatchRecordExpressRoutes = new DispatchRecordExpressRoutes();
   public commuterArrivalRoutes: DispatchRecordExpressRoutes = new DispatchRecordExpressRoutes();
   public commuterRequestRoutes: CommuterArrivalLandmarkExpressRoutes = new CommuterArrivalLandmarkExpressRoutes();
@@ -78,6 +80,7 @@ class AftaRobotApp {
     this.dispatchRoutes.routes(this.app);
     this.commuterArrivalRoutes.routes(this.app);
     this.commuterRoutes.routes(this.app);
+    this.commuterPickupRoutes.routes(this.app);
 
     console.log(
       `\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed: `,

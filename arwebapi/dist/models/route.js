@@ -99,6 +99,10 @@ __decorate([
     __metadata("design:type", Array)
 ], Route.prototype, "routePoints", void 0);
 __decorate([
+    typegoose_1.prop({ required: true, default: [] }),
+    __metadata("design:type", Array)
+], Route.prototype, "calculatedDistances", void 0);
+__decorate([
     typegoose_1.prop({ required: true, default: new Date().toISOString() }),
     __metadata("design:type", String)
 ], Route.prototype, "created", void 0);

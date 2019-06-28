@@ -65,9 +65,7 @@ export class RouteHelper {
     
   }
   public static async addRoute(
-    name: string,
-    assocs: string[],
-    color: string,
+    route: Route,
   ): Promise<any> {
 
     const routeModel = new Route().getModelForClass(Route);
@@ -75,7 +73,8 @@ export class RouteHelper {
     const list1: any[] = [];
     const list2: any[] = [];
 
-    for (const id of assocs) {
+
+    for (const id of route.associationIDs) {
       const ass = await assModel.findByAssociationID(id);
       if (ass) {
         list1.push(ass.associationID);
@@ -86,26 +85,32 @@ export class RouteHelper {
       }
     }
 
-    if (!color) {
-      color = "BLUE";
+    if (!route.color) {
+      route.color = "white";
     }
-    const routeID = v1();
-    const route = new routeModel({
+    const mRoute = new routeModel({
       associationDetails: list2,
       associationIDs: list1,
-      color,
-      name,
-      routeID,
+      color: route.color,
+      name: route.name,
+      routePoints: route.routePoints,
+      rawRoutePoints: route.rawRoutePoints,
+      calculatedDistances: route.calculatedDistances,
+      routeID: route.routeID,
     });
-    const m = await route.save();
+    const m = await mRoute.save();
+    if (!route.routeID) {
+      m.routeID = m.id;
+      await m.save();
+    }
     console.log(
-      `\n\n💙 💚 💛  RouteHelper: Yebo Gogo!!!! - saved  🔆 🔆  ${name}  💙  💚  💛`,
+      `\n\n💙 💚 💛  RouteHelper: Yebo Gogo!!!! - saved  🔆 🔆  ${route.name}  💙  💚  💛`,
     );
     return m;
   }
 
   public static async getRoutes(): Promise<any> {
-    console.log(` 🌀 getRoutes find all routes in Mongo ....   🌀  🌀  🌀 `);
+    console.log(` 🌀 getRoutes find all routes in Mongo ....   c  🌀  🌀 `);
     const routeModel = new Route().getModelForClass(Route);
     const list = await routeModel.find();
     return list;

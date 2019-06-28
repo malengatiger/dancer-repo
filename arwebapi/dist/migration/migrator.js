@@ -17,13 +17,14 @@ const route_helper_1 = require("../helpers/route_helper");
 const vehicle_helper_1 = require("../helpers/vehicle_helper");
 const commuter_request_helper_1 = require("./../helpers/commuter_request_helper");
 const country_helper_1 = require("./../helpers/country_helper");
-const landmark_helper_1 = require("./../helpers/landmark_helper");
 const position_1 = __importDefault(require("../models/position"));
 const vehicle_arrival_1 = __importDefault(require("../models/vehicle_arrival"));
 const vehicle_departure_1 = __importDefault(require("../models/vehicle_departure"));
 const z = "\n";
 console.log(`\n\n👺👺👺 🔑 Migrator: getting serviceAccount from json file  🔑🔑...`);
 const server_1 = require("../server/server");
+const route_point_1 = __importDefault(require("../models/route_point"));
+const landmark_1 = __importDefault(require("../models/landmark"));
 class Migrator {
     static start() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -34,7 +35,8 @@ class Migrator {
             // await this.migrateCities("5ced8952fc6e4ef1f1cfc7ae");
             // await this.migrateVehicleTypes();
             // await this.migrateVehicles();
-            // await this.migrateRoutes();
+            yield this.migrateRoutes();
+            yield this.migrateLandmarks();
             // await this.encodePolyline();
             // await this.toDancer();
             // await this.landmarksToDancer();
@@ -448,14 +450,10 @@ class Migrator {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n🍎  Migrating routes ............. 🍎🍎🍎\n\n`);
             const s = new Date().getTime();
-            const routesQuerySnap = yield server_1.fs1
+            const routesQuerySnap = yield server_1.fs2
                 .collection("newRoutes")
                 .get();
             console.log(`🍎  Firestore routes found:  🍎  ${routesQuerySnap.docs.length}`);
-            const landmarksQuerySnap = yield server_1.fs1
-                .collection("newLandmarks")
-                .get();
-            console.log(`🍎  Firestore landmarks found:  🍎  ${landmarksQuerySnap.docs.length}`);
             // get assocs from mongo
             const assocs = yield association_helper_1.AssociationHelper.getAssociations();
             console.log(`\n\nmigrateRoutes: 👽 👽 👽 👽 👽 👽 👽 👽  ${assocs.length} Associations from Mongo 💛 💛\n\n`);
@@ -465,13 +463,13 @@ class Migrator {
                 for (const association of assocs) {
                     if (route.associationNames) {
                         if (this.isAssociationFound(route.associationNames, association.associationName)) {
-                            yield this.processRoute(route, association, cnt, landmarksQuerySnap);
+                            yield this.processRoute(route, association, cnt);
                             cnt++;
                         }
                     }
                     else {
                         if (route.associationName === association.associationName) {
-                            yield this.processRoute(route, association, cnt, landmarksQuerySnap);
+                            yield this.processRoute(route, association, cnt);
                             cnt++;
                         }
                     }
@@ -485,15 +483,42 @@ class Migrator {
             console.log(elapsed);
         });
     }
-    static processRoute(route, association, cnt, landmarksQuerySnapshot) {
+    static processRoute(route, association, cnt) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`💛 💛 💛 about to call: RouteHelper.addRoute(): 🎀 ${route.name}`);
-            const mRoute = yield route_helper_1.RouteHelper.addRoute(route.name, [association.associationID], route.color);
+            console.log(`\n\n💛💛💛  ... about to call: RouteHelper.addRoute(): 🎀 ${route.name}`);
+            // get route points into Mongo
+            const qs = yield server_1.fs2.collection('newRoutes').doc(route.routeID).collection('routePoints').get();
+            route.routePoints = [];
+            for (const doc of qs.docs) {
+                const point = doc.data();
+                const mPoint = new route_point_1.default();
+                mPoint.routeId = route.routeID;
+                mPoint.latitude = point.latitude;
+                mPoint.longitude = point.longitude;
+                const pos = {
+                    type: 'Point',
+                    coordinates: [point.longitude, point.latitude],
+                };
+                mPoint.position = pos;
+                route.routePoints.push(mPoint);
+            }
+            const qs2 = yield server_1.fs2.collection('newRoutes').doc(route.routeID).collection('rawRoutePoints').get();
+            route.rawRoutePoints = [];
+            for (const doc of qs2.docs) {
+                const point = doc.data();
+                const mPoint = new route_point_1.default();
+                mPoint.routeId = route.routeID;
+                mPoint.latitude = point.latitude;
+                mPoint.longitude = point.longitude;
+                route.rawRoutePoints.push(mPoint);
+            }
+            console.log(`💛 routePoints: ${qs.docs.length}  💛  rawRoutePoints ${qs2.docs.length}`);
+            route.associationIDs = [association.associationID];
+            const mRoute = yield route_helper_1.RouteHelper.addRoute(route);
             cnt++;
-            console.log(`\n💛 💛 💛  Migrator: route #${cnt} added  💛 ${mRoute.name}, will do the  landmarks ...\n`);
+            console.log(`\n💛💛💛  Migrator: route #${cnt} added  💛 ${mRoute.name}, will do the  landmarks ...\n`);
             // get all route landmarks by name and migrate
             console.log(mRoute);
-            this.processRouteLandmarks(mRoute, landmarksQuerySnapshot);
         });
     }
     static isAssociationFound(associations, associationID) {
@@ -514,25 +539,30 @@ class Migrator {
         });
         return isFound;
     }
-    static processRouteLandmarks(mRoute, landmarksQuerySnapshot) {
+    static migrateLandmarks() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n\nroute ....... about to loop thru ${landmarksQuerySnapshot.docs.length} landmarks ... 😍 ${mRoute.name} \n`);
-            const landmarks = [];
+            const landmarkModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const landmarksQuerySnapshot = yield server_1.fs2.collection('newLandmarks').get();
+            console.log(`😍 😍 😍  about to add landmarks: ${landmarksQuerySnapshot.docs.length}`);
             for (const mdoc of landmarksQuerySnapshot.docs) {
-                const old = mdoc.data();
-                const routeNames = old.routeNames;
-                if (this.isRouteFound(routeNames, mRoute.name)) {
-                    landmarks.push({
-                        landmarkName: old.landmarkName,
-                        latitude: old.latitude,
-                        longitude: old.longitude,
-                    });
-                }
+                const data = mdoc.data();
+                const landmark = new landmarkModel({
+                    landmarkID: data.landmarkID,
+                    landmarkName: data.landmarkName,
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                    position: {
+                        coordinates: [data.longitude, data.latitude],
+                        type: "Point",
+                    },
+                    routeDetails: data.routeNames,
+                    routeIDs: data.routeIDs,
+                    cities: data.cities,
+                });
+                const m = yield landmark.save();
+                console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  Landmark added  🍎  ${m.landmarkName} \n\n`);
             }
-            console.log(`\nsending 🎀 🎀 🎀 🎀 🎀 🎀 ${landmarks.length} landmarks; route: (${mRoute.name}) to mongo`);
-            for (const mark of landmarks) {
-                yield landmark_helper_1.LandmarkHelper.addLandmark(mark.landmarkName, mark.latitude, mark.longitude, [mRoute.routeID], [{ routeID: mRoute.routeID, name: mRoute.name }]);
-            }
+            return null;
         });
     }
 }

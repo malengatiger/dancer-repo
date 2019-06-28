@@ -63,32 +63,32 @@ class Landmark extends Typegoose {
   //
 
   @prop({ required: true, trim: true })
-  public landmarkName?: string;
+  public landmarkName!: string;
   @prop({ required: true, index: true, trim: true })
-  public landmarkID?: string;
+  public landmarkID!: string;
 
   @prop({ required: true })
-  public latitude?: number;
+  public latitude!: number;
   @prop({ required: true })
-  public longitude?: number;
+  public longitude!: number;
 
   @prop({ required: true })
-  public position?: Position;
-  //
-  @prop({ required: true, default: 0 })
-  public rankSequenceNumber?: number;
+  public position!: Position;
   //
   @prop({ required: true, default: [] })
-  public routeIDs?: string[];
+  public routeIDs!: string[];
   //
   @prop({ required: true, default: [] })
-  public routeDetails?: any[];
+  public routeDetails!: any[];
   //
-  @prop({ trim: true })
-  public distance?: string;
+  @prop({ required: true, default: [] })
+  public cities!: any[];
+  //
+  @prop({ default: 0.0 })
+  public distance?: number;
   //
   @prop({ required: true, default: new Date().toISOString() })
-  public created?: string;
+  public created!: string;
   //
 
   @instanceMethod

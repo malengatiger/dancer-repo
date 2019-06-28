@@ -15,7 +15,7 @@ class Association extends Typegoose {
     }
 
     @prop({required: true, unique: true, trim: true})
-    public associationName?: string;
+    public associationName!: string;
     @prop()
     public email?: string;
     //
@@ -26,7 +26,7 @@ class Association extends Typegoose {
     public countryID?: string;
     //
     @prop({required: true, trim: true})
-    public associationID?: string;
+    public associationID!: string;
     //
     @prop({required: true})
     public countryName?: string;

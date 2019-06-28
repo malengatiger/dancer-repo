@@ -8,6 +8,7 @@ import {
   staticMethod,
   Typegoose,
 } from "typegoose";
+import RoutePoint from './route_point';
 
 class Route extends Typegoose {
   @staticMethod
@@ -50,26 +51,30 @@ class Route extends Typegoose {
     return this.findOne({ routeID });
   }
   //
+  //
   @prop({ required: true, trim: true })
-  public name?: string;
+  public name!: string;
   //
   @prop({ required: true, index: true, trim: true })
-  public routeID?: string;
+  public routeID!: string;
   //
   @prop({ required: true, default: [] })
   public associationDetails?: any[];
 
   @prop({ required: true, default: [] })
-  public associationIDs?: string[];
+  public associationIDs!: string[];
   //
   @prop({ required: true, default: "black" })
-  public color?: string;
+  public color!: string;
   //
   @prop({ required: true, default: [] })
-  public rawRoutePoints?: any[];
+  public rawRoutePoints!: RoutePoint[];
   //
   @prop({ required: true, default: [] })
-  public routePoints?: any[];
+  public routePoints!: RoutePoint[];
+  //
+  @prop({ required: true, default: [] })
+  public calculatedDistances!: any[];
   //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;

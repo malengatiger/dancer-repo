@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const commuter_pickup_routes_1 = require("./routes/commuter_pickup_routes");
 const commuter_arrival_routes_1 = require("./routes/commuter_arrival_routes");
 const bodyParser = __importStar(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
@@ -55,6 +56,7 @@ class AftaRobotApp {
         this.appRoutes = new app_routes_1.AppExpressRoutes();
         this.vehicleRoutes = new vehicle_routes_1.VehicleExpressRoutes();
         this.countryRoutes = new country_routes_1.CountryExpressRoutes();
+        this.commuterPickupRoutes = new commuter_pickup_routes_1.CommuterPickupLandmarkExpressRoutes();
         this.dispatchRoutes = new dispatch_record_routes_1.DispatchRecordExpressRoutes();
         this.commuterArrivalRoutes = new dispatch_record_routes_1.DispatchRecordExpressRoutes();
         this.commuterRequestRoutes = new commuter_arrival_routes_1.CommuterArrivalLandmarkExpressRoutes();
@@ -72,6 +74,7 @@ class AftaRobotApp {
         this.dispatchRoutes.routes(this.app);
         this.commuterArrivalRoutes.routes(this.app);
         this.commuterRoutes.routes(this.app);
+        this.commuterPickupRoutes.routes(this.app);
         console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed: `);
     }
     initializeMiddlewares() {

@@ -103,6 +103,8 @@ export class LandmarkHelper {
       routeIDs,
     });
     const m = await landmark.save();
+    m.landmarkID = m.id;
+    m.save();
     console.log(
       `\n👽 👽 👽 👽 👽 👽 👽 👽  Landmark added  🍎  ${landmarkName} \n\n`,
     );

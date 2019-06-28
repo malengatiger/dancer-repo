@@ -22,6 +22,10 @@ console.log(
   `\n\n👺👺👺 🔑 Migrator: getting serviceAccount from json file  🔑🔑...`,
 );
 import { fs1, fs2 } from '../server/server';
+import Route from '../models/route';
+import Association from '../models/association';
+import RoutePoint from '../models/route_point';
+import Landmark from '../models/landmark';
 
 class Migrator {
   public static async start() {
@@ -33,7 +37,8 @@ class Migrator {
     // await this.migrateCities("5ced8952fc6e4ef1f1cfc7ae");
     // await this.migrateVehicleTypes();
     // await this.migrateVehicles();
-    // await this.migrateRoutes();
+    await this.migrateRoutes();
+    await this.migrateLandmarks();
 
     // await this.encodePolyline();
     // await this.toDancer();
@@ -503,19 +508,13 @@ class Migrator {
   public static async migrateRoutes(): Promise<any> {
     console.log(`\n\n🍎  Migrating routes ............. 🍎🍎🍎\n\n`);
     const s = new Date().getTime();
-    const routesQuerySnap: QuerySnapshot = await fs1
+    const routesQuerySnap: QuerySnapshot = await fs2
       .collection("newRoutes")
       .get();
     console.log(
       `🍎  Firestore routes found:  🍎  ${routesQuerySnap.docs.length}`,
     );
-    const landmarksQuerySnap: QuerySnapshot = await fs1
-      .collection("newLandmarks")
-      .get();
-    console.log(
-      `🍎  Firestore landmarks found:  🍎  ${landmarksQuerySnap.docs.length}`,
-    );
-
+    
     // get assocs from mongo
     const assocs: any = await AssociationHelper.getAssociations();
     console.log(
@@ -539,7 +538,6 @@ class Migrator {
               route,
               association,
               cnt,
-              landmarksQuerySnap,
             );
             cnt++;
           }
@@ -549,7 +547,6 @@ class Migrator {
               route,
               association,
               cnt,
-              landmarksQuerySnap,
             );
             cnt++;
           }
@@ -567,28 +564,51 @@ class Migrator {
   private static countries: any = [];
 
   private static async processRoute(
-    route: any,
-    association:  any,
+    route: Route,
+    association:  Association,
     cnt: number,
-    landmarksQuerySnapshot: QuerySnapshot,
   ) {
     console.log(
-      `💛 💛 💛 about to call: RouteHelper.addRoute(): 🎀 ${route.name}`,
+      `\n\n💛💛💛  ... about to call: RouteHelper.addRoute(): 🎀 ${route.name}`,
     );
-    const mRoute = await RouteHelper.addRoute(
-      route.name,
-      [association.associationID],
-      route.color,
-    );
+    // get route points into Mongo
+    const qs = await fs2.collection('newRoutes').doc(route.routeID).collection('routePoints').get();
+    route.routePoints = [];
+    for (const doc of qs.docs) {
+      const point = doc.data();
+      const mPoint: RoutePoint = new RoutePoint();
+      mPoint.routeId = route.routeID;
+      mPoint.latitude = point.latitude;
+      mPoint.longitude = point.longitude;
+      const pos = {
+        type: 'Point',
+        coordinates: [point.longitude, point.latitude],
+      }
+      mPoint.position = pos;
+      route.routePoints.push(mPoint);
+    }
+    const qs2 = await fs2.collection('newRoutes').doc(route.routeID).collection('rawRoutePoints').get();
+    route.rawRoutePoints = [];
+    for (const doc of qs2.docs) {
+      const point = doc.data();
+      const mPoint: RoutePoint = new RoutePoint();
+      mPoint.routeId = route.routeID;
+      mPoint.latitude = point.latitude;
+      mPoint.longitude = point.longitude;
+      route.rawRoutePoints.push(mPoint);
+    }
+    console.log(`💛 routePoints: ${qs.docs.length}  💛  rawRoutePoints ${qs2.docs.length}`);
+    route.associationIDs = [association.associationID];
+    
+    const mRoute = await RouteHelper.addRoute(route);
     cnt++;
     console.log(
-      `\n💛 💛 💛  Migrator: route #${cnt} added  💛 ${
+      `\n💛💛💛  Migrator: route #${cnt} added  💛 ${
         mRoute.name
       }, will do the  landmarks ...\n`,
     );
     // get all route landmarks by name and migrate
     console.log(mRoute);
-    this.processRouteLandmarks(mRoute, landmarksQuerySnapshot);
   }
   private static isAssociationFound(
     associations: string[],
@@ -611,42 +631,32 @@ class Migrator {
     });
     return isFound;
   }
-  private static async processRouteLandmarks(
-    mRoute: any,
-    landmarksQuerySnapshot: QuerySnapshot,
-  ) {
-    console.log(
-      `\n\nroute ....... about to loop thru ${
-        landmarksQuerySnapshot.docs.length
-      } landmarks ... 😍 ${mRoute.name} \n`,
-    );
-
-    const landmarks: any = [];
+  private static async migrateLandmarks() {
+    
+    const landmarkModel = new Landmark().getModelForClass(Landmark);
+    const landmarksQuerySnapshot = await fs2.collection('newLandmarks').get();
+    console.log(`😍 😍 😍  about to add landmarks: ${landmarksQuerySnapshot.docs.length}`);
     for (const mdoc of landmarksQuerySnapshot.docs) {
-      const old = mdoc.data();
-      const routeNames: [any] = old.routeNames;
-      if (this.isRouteFound(routeNames, mRoute.name)) {
-        landmarks.push({
-          landmarkName: old.landmarkName,
-          latitude: old.latitude,
-          longitude: old.longitude,
-        });
-      }
-    }
-    console.log(
-      `\nsending 🎀 🎀 🎀 🎀 🎀 🎀 ${landmarks.length} landmarks; route: (${
-        mRoute.name
-      }) to mongo`,
-    );
-    for (const mark of landmarks) {
-      await LandmarkHelper.addLandmark(
-        mark.landmarkName,
-        mark.latitude,
-        mark.longitude,
-        [mRoute.routeID],
-        [{ routeID: mRoute.routeID, name: mRoute.name }],
+      const data = mdoc.data();    
+      const landmark = new landmarkModel({
+        landmarkID: data.landmarkID,
+        landmarkName: data.landmarkName,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        position: {
+          coordinates: [data.longitude, data.latitude],
+          type: "Point",
+        },
+        routeDetails: data.routeNames,
+        routeIDs: data.routeIDs,
+        cities: data.cities,
+      });
+      const m = await landmark.save();
+      console.log(
+        `\n👽 👽 👽 👽 👽 👽 👽 👽  Landmark added  🍎  ${m.landmarkName} \n\n`,
       );
     }
+    return null;
   }
 }
 

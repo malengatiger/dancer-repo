@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const firebase_admin_1 = require("firebase-admin");
-const v1_1 = __importDefault(require("uuid/v1"));
 const association_1 = __importDefault(require("../models/association"));
 const route_1 = __importDefault(require("../models/route"));
 // TODO - build web map with 🍎 🍎 🍎 Javascript Maps API for creating manual snap feature
@@ -69,13 +68,13 @@ class RouteHelper {
             }
         });
     }
-    static addRoute(name, assocs, color) {
+    static addRoute(route) {
         return __awaiter(this, void 0, void 0, function* () {
             const routeModel = new route_1.default().getModelForClass(route_1.default);
             const assModel = new association_1.default().getModelForClass(association_1.default);
             const list1 = [];
             const list2 = [];
-            for (const id of assocs) {
+            for (const id of route.associationIDs) {
                 const ass = yield assModel.findByAssociationID(id);
                 if (ass) {
                     list1.push(ass.associationID);
@@ -85,25 +84,31 @@ class RouteHelper {
                     });
                 }
             }
-            if (!color) {
-                color = "BLUE";
+            if (!route.color) {
+                route.color = "white";
             }
-            const routeID = v1_1.default();
-            const route = new routeModel({
+            const mRoute = new routeModel({
                 associationDetails: list2,
                 associationIDs: list1,
-                color,
-                name,
-                routeID,
+                color: route.color,
+                name: route.name,
+                routePoints: route.routePoints,
+                rawRoutePoints: route.rawRoutePoints,
+                calculatedDistances: route.calculatedDistances,
+                routeID: route.routeID,
             });
-            const m = yield route.save();
-            console.log(`\n\n💙 💚 💛  RouteHelper: Yebo Gogo!!!! - saved  🔆 🔆  ${name}  💙  💚  💛`);
+            const m = yield mRoute.save();
+            if (!route.routeID) {
+                m.routeID = m.id;
+                yield m.save();
+            }
+            console.log(`\n\n💙 💚 💛  RouteHelper: Yebo Gogo!!!! - saved  🔆 🔆  ${route.name}  💙  💚  💛`);
             return m;
         });
     }
     static getRoutes() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(` 🌀 getRoutes find all routes in Mongo ....   🌀  🌀  🌀 `);
+            console.log(` 🌀 getRoutes find all routes in Mongo ....   c  🌀  🌀 `);
             const routeModel = new route_1.default().getModelForClass(route_1.default);
             const list = yield routeModel.find();
             return list;
