@@ -6,8 +6,6 @@ import Country from "../models/country";
 
 export class CountryHelper {
   public static async onCountryAdded(event: any) {
-    console.log(`Country event has occured ....`);
-    console.log(event);
     console.log(
       `operationType: 👽 👽 👽  ${
         event.operationType

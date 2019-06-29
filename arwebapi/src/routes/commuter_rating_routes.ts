@@ -22,7 +22,7 @@ export class CommuterRatingExpressRoutes {
     });
 
     app.route("/findCommuterRatingsByUser").post(async (req: Request, res: Response) => {
-      const msg = `🏓  🏓  🏓  findCommuterRatingsByUser route picked   🌽 ${new Date().toISOString()}`;
+      const msg = `🏓🏓🏓  findCommuterRatingsByUser route picked   🌽 ${new Date().toISOString()}`;
       console.log(msg);
       try {
         const result = await CommuterRatingHelper.findByUser(
@@ -34,11 +34,11 @@ export class CommuterRatingExpressRoutes {
     });
 
     app.route("/findAllCommuterRatings").post(async (req: Request, res: Response) => {
-      const msg = `🏓  🏓  🏓  findAllCommuterRatings route picked   🌽 ${new Date().toISOString()}`;
+      const msg = `🏓🏓🏓  findAllCommuterRatings route picked   🌽 ${new Date().toISOString()}`;
       console.log(msg);
       try {
         const result = await CommuterRatingHelper.findAll(
-          req.body.minutes);
+          parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findAllCommuterRatings failed");

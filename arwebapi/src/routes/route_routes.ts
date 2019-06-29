@@ -25,7 +25,7 @@ export class RouteExpressRoutes {
         const result = await RouteHelper.addRoute(route);
         console.log("about to return result from Helper ............");
         res.status(200).json({
-          message: `🏓  🏓  route: ${req.body.name} :
+          message: `🏓🏓  route: ${req.body.name} :
             🏓  ${
               req.body.associationName
             }: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
@@ -46,7 +46,7 @@ export class RouteExpressRoutes {
         try {
           const result = await RouteHelper.deleteRoutePoints(req.body.routeID);
           res.status(200).json({
-            message: `🏓  🏓  route: ${req.body.routeID} points deleted :
+            message: `🏓🏓  route: ${req.body.routeID} points deleted :
            🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
             result,
           });
@@ -66,7 +66,7 @@ export class RouteExpressRoutes {
         );
         console.log(result);
         res.status(200).json({
-          message: `🏓  🏓  getRoutes OK :: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+          message: `🏓 🏓  getRoutes OK :: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
           result,
         });
       } catch (err) {

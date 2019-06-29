@@ -33,11 +33,11 @@ export class CommuterArrivalLandmarkExpressRoutes {
     });
 
     app.route("/findCommuterArrivalLandmarksByFromLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🏓  🏓  🏓  findCommuterArrivalLandmarksByFromLandmark route picked   🌽 ${new Date().toISOString()}`;
+      const msg = `🏓🏓🏓  findCommuterArrivalLandmarksByFromLandmark route picked   🌽 ${new Date().toISOString()}`;
       console.log(msg);
       try {
         const result = await CommuterArrivalLandmarkHelper.findByFromLandmark(
-          req.body.landmarkID, req.body.minutes);
+          req.body.landmarkID, parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findCommuterArrivalLandmarksByFromLandmark failed");
@@ -45,11 +45,11 @@ export class CommuterArrivalLandmarkExpressRoutes {
     });
 
     app.route("/findCommuterArrivalLandmarksByToLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🏓  🏓  🏓  findCommuterArrivalLandmarksByToLandmark route picked   🌽 ${new Date().toISOString()}`;
+      const msg = `🏓🏓🏓  findCommuterArrivalLandmarksByToLandmark route picked   🌽 ${new Date().toISOString()}`;
       console.log(msg);
       try {
         const result = await CommuterArrivalLandmarkHelper.findByToLandmark(
-          req.body.landmarkID, req.body.minutes);
+          req.body.landmarkID, parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findCommuterArrivalLandmarksByToLandmark failed");
@@ -57,11 +57,11 @@ export class CommuterArrivalLandmarkExpressRoutes {
     });
 
     app.route("/findCommuterArrivalLandmarksByRoute").post(async (req: Request, res: Response) => {
-      const msg = `🏓  🏓  🏓  findCommuterArrivalLandmarksByRoute route picked   🌽 ${new Date().toISOString()}`;
+      const msg = `🏓🏓🏓  findCommuterArrivalLandmarksByRoute route picked   🌽 ${new Date().toISOString()}`;
       console.log(msg);
       try {
         const result = await CommuterArrivalLandmarkHelper.findByRoute(
-          req.body.routeID, req.body.minutes);
+          req.body.routeID, parseInt(req.body.minutes));
         res.status(200).json(result);
       } catch (e) {
         Util.sendError(res, e, "findCommuterArrivalLandmarksByRoute failed");
@@ -69,7 +69,7 @@ export class CommuterArrivalLandmarkExpressRoutes {
     });
 
     app.route("/findCommuterArrivalLandmarksByUser").post(async (req: Request, res: Response) => {
-      const msg = `🏓  🏓  🏓  findCommuterArrivalLandmarksByUser route picked   🌽 ${new Date().toISOString()}`;
+      const msg = `🏓🏓🏓  findCommuterArrivalLandmarksByUser route picked   🌽 ${new Date().toISOString()}`;
       console.log(msg);
       try {
         const result = await CommuterArrivalLandmarkHelper.findByUser(
@@ -81,7 +81,7 @@ export class CommuterArrivalLandmarkExpressRoutes {
     });
 
     app.route("/findAllCommuterArrivalLandmarks").post(async (req: Request, res: Response) => {
-      const msg = `🏓  🏓  🏓  findAllCommuterArrivalLandmarks route picked   🌽 ${new Date().toISOString()}`;
+      const msg = `🏓🏓🏓  findAllCommuterArrivalLandmarks route picked   🌽 ${new Date().toISOString()}`;
       console.log(msg);
       try {
         const result = await CommuterArrivalLandmarkHelper.findAll(

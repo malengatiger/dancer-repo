@@ -77,7 +77,7 @@ console.log(`📌 📌 📌 📌 📌 📌 📌 📌  `);
 console.log(ssa1);
 console.log(`📌 📌 📌 📌 📌 📌 📌 📌 `);
 console.log(ssa2);
-console.log(`\n☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...\n\n`);
+console.log(`\n☘️ serviceAccounts listed ☘️ ok: 😍😍😍 ...\n\n`);
 const appFrom = admin.initializeApp(
   {
     credential: admin.credential.cert(ssa1),
@@ -86,7 +86,7 @@ const appFrom = admin.initializeApp(
   "appFrom",
 );
 console.log(
-  `🔑🔑🔑 appFrom = admin.initializeApp done: 😍 😍 😍 ... ${appFrom.name}`,
+  `🔑🔑🔑 appFrom = admin.initializeApp done: 😍😍😍 ... ${appFrom.name}`,
 );
 const appTo = admin.initializeApp(
   {
@@ -96,7 +96,7 @@ const appTo = admin.initializeApp(
   "appTo",
 );
 console.log(
-  `🔑🔑🔑 appTo = admin.initializeApp done: 😍 😍 😍 ... ${appTo.name}`,
+  `🔑🔑🔑 appTo = admin.initializeApp done: 😍😍😍 ... ${appTo.name}`,
 );
 
 export const fs1: Firestore = appFrom.firestore();
@@ -104,11 +104,11 @@ export const fs2: Firestore = appTo.firestore();
 console.log(`\n\n💋💋💋  Server: -- firebase admin 1 initialized; 💦 
 ${appFrom.name} ❤️  from SDK_VERSION: ${
   admin.SDK_VERSION
-}  😍 😍 😍 ${new Date().toUTCString()}`);
+}  😍😍😍 ${new Date().toUTCString()}`);
 console.log(`\n\n💋💋💋  Server: -- firebase admin 2 initialized; 💦 
 ${appTo.name} ❤️  to SDK_VERSION: ${
   admin.SDK_VERSION
-}  😍 😍 😍 ${new Date().toUTCString()}`);
+}  😍😍😍 ${new Date().toUTCString()}`);
 
 async function getCollections() {
   console.log(

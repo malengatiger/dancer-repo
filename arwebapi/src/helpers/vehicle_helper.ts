@@ -10,8 +10,6 @@ import VehicleType from "../models/vehicle_type";
 
 export class VehicleHelper {
   public static async onVehicleAdded(event: any) {
-    console.log(`onVehicleAdded event has occured ....`);
-    console.log(event);
     console.log(
       `operationType: 👽 👽 👽  ${
         event.operationType

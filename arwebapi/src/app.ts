@@ -68,10 +68,10 @@ class AftaRobotApp {
   public commuterRatingRoutes: CommuterRatingExpressRoutes = new CommuterRatingExpressRoutes();
   
   constructor() {
-    console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside AftaRobotApp constructor `);
+    console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 Inside DancerWebAPI constructor `);
     this.app = app;
     this.port = port;
-    this.initializeMiddlewares();
+    this.initializeMiddleware();
     this.landmarkRoutes.routes(this.app);
     this.routeRoutes.routes(this.app);
     this.associationRoutes.routes(this.app);
@@ -86,11 +86,11 @@ class AftaRobotApp {
     this.commuterRatingRoutes.routes(this.app);
 
     console.log(
-      `\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed setting up express routes \n\n `,
+      `\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦  DancerWebAPI constructor : 🥦🥦🥦 Completed setting up express routes \n\n `,
     );
   }
 
-  private initializeMiddlewares() {
+  private initializeMiddleware() {
     console.log(`\n🥦 🥦  initializeMiddleware .... `);
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
