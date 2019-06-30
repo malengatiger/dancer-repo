@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart for Kubernetes
+name: dancer3033
+version: 1.0.0

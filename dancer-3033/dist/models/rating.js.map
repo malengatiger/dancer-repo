@@ -1,0 +1,1 @@
+{"version":3,"file":"rating.js","sourceRoot":"","sources":["../../src/models/rating.ts"],"names":[],"mappings":";;AAAA,MAAM,MAAM;IAMV;QACE,IAAI,CAAC,MAAM,GAAG,EAAE,CAAC;QACjB,IAAI,CAAC,OAAO,GAAG,EAAE,CAAC;QAClB,IAAI,CAAC,IAAI,GAAG,EAAE,CAAC;QACf,IAAI,CAAC,OAAO,GAAG,EAAE,CAAC;IACpB,CAAC;CACF;AAED,kBAAe,MAAM,CAAC"}
