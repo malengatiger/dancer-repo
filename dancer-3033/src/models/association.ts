@@ -9,9 +9,9 @@ class Association extends Typegoose {
       return this.findOne({ name });
     }
     @staticMethod
-    public static findByAssociationID(this: ModelType<Association> & typeof Association, associationID: string) {
-      console.log("#####  🥦  🥦  🥦 Finding association by ID:  💦  💦  💦  :: 🥦 " + associationID);
-      return this.findOne({ associationID });
+    public static findByAssociationId(this: ModelType<Association> & typeof Association, associationId: string) {
+      console.log("#####  🥦  🥦  🥦 Finding association by ID:  💦  💦  💦  :: 🥦 " + associationId);
+      return this.findOne({ associationId });
     }
 
     @prop({required: true, unique: true, trim: true})
@@ -26,7 +26,7 @@ class Association extends Typegoose {
     public countryID?: string;
     //
     @prop({required: true, trim: true})
-    public associationID!: string;
+    public associationId!: string;
     //
     @prop({required: true})
     public countryName?: string;

@@ -1,6 +1,5 @@
 import { getDistance } from "geolib";
 import Moment from "moment";
-import v1 from "uuid/v1";
 import City from "../models/city";
 import Country from "../models/country";
 
@@ -27,13 +26,13 @@ export class CountryHelper {
       countryCode = "ZA";
     }
     const CountryModel = new Country().getModelForClass(Country);
-    const countryID = v1();
     const u = new CountryModel({
       countryCode,
-      countryID,
       name,
     });
     const m = await u.save();
+    m.countryID = m.id;
+    await m.save();
     return m;
   }
 
@@ -72,9 +71,8 @@ export class CityHelper {
       coordinates: [longitude, latitude],
       type: "Point",
     };
-    const cityID = v1();
+    
     const u = new cityModel({
-      cityID,
       countryID,
       countryName,
       latitude,
@@ -84,6 +82,8 @@ export class CityHelper {
       provinceName,
     });
     const m = await u.save();
+    m.cityID = m.id;
+    await m.save();
     console.log(`\n\n🌀  🌀  🌀  CityHelper: city added:   🍀   ${name} \n`);
 
     return m;

@@ -44,12 +44,8 @@ export class RouteExpressRoutes {
         );
         console.log(req.body);
         try {
-          const result = await RouteHelper.deleteRoutePoints(req.body.routeID);
-          res.status(200).json({
-            message: `🏓🏓  route: ${req.body.routeID} points deleted :
-           🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-            result,
-          });
+          const result = 'Not constructed  yet';
+          res.send(200).send(result);
         } catch (err) {
           Util.sendError(res, err, "deleteRoutePoints failed");
         }

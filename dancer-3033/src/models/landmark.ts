@@ -92,11 +92,9 @@ class Landmark extends Typegoose {
   //
 
   @instanceMethod
-  public updateLocation(this: InstanceType<Landmark>, id: string, latitude: number, longitude: number) {
-    this.position = {
-      coordinates: [longitude, latitude],
-      type: "Point",
-    };
+  public updateLocation(this: InstanceType<Landmark>, latitude: number, longitude: number) {
+    this.position = new Position();
+    this.position.coordinates = [longitude, latitude];
     this.save();
   }
 

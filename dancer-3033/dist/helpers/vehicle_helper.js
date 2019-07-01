@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment_1 = __importDefault(require("moment"));
-const v1_1 = __importDefault(require("uuid/v1"));
 const photo_1 = __importDefault(require("../models/photo"));
 const position_1 = __importDefault(require("../models/position"));
 const vehicle_1 = __importDefault(require("../models/vehicle"));
@@ -46,14 +45,12 @@ class VehicleHelper {
                     list.push(photo);
                 }
             }
-            const vehicleID = v1_1.default();
             const vehicle = new vehicleModel({
                 associationID,
                 associationName,
                 ownerID,
                 ownerName,
                 photos: list,
-                vehicleID,
                 vehicleReg,
                 vehicleType: type,
             });
@@ -123,7 +120,6 @@ class VehicleHelper {
     static addVehicleType(make, model, capacity, countryID, countryName) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n🌀 🌀  VehicleHelper: addVehicleType  🍀  ${make} ${model} capacity: ${capacity}\n`);
-            const vehicleTypeID = v1_1.default();
             const vehicleTypeModel = new vehicle_type_1.default().getModelForClass(vehicle_type_1.default);
             const u = new vehicleTypeModel({
                 capacity,
@@ -131,9 +127,9 @@ class VehicleHelper {
                 countryName,
                 make,
                 model,
-                vehicleTypeID,
             });
             const m = yield u.save();
+            m.vehicleTypeID = m.id;
             return m;
         });
     }

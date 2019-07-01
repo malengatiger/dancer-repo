@@ -1,4 +1,3 @@
-import v1 from "uuid/v1";
 import Association from "../models/association";
 
 export class AssociationHelper {
@@ -17,10 +16,8 @@ export class AssociationHelper {
       `\n👽 👽 👽 👽  AssocHelper: attempting MongoDB write using Typegoose  🍎  getModelForClass  .......... 👽 👽 👽\n`,
     );
 
-    const associationID =  v1();
     const associationModel = new Association().getModelForClass(Association);
     const assocModel = new associationModel({
-      associationID,
       associationName,
       cellphone,
       countryID,
@@ -28,6 +25,8 @@ export class AssociationHelper {
       email,
     });
     const m = await assocModel.save();
+    m.associationId = m.id;
+    await m.save();
     console.log(
       `\n\n💙  💚  💛   AssocHelper: Yebo Gogo!!!! - MongoDB has saved ${associationName} !!!!!  💙  💚  💛`,
     );

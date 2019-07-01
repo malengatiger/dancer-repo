@@ -1,6 +1,3 @@
-import { DocumentSnapshot, QuerySnapshot } from "@google-cloud/firestore";
-import { firestore } from "firebase-admin";
-import v1 from "uuid/v1";
 import Association from "../models/association";
 import Route from "../models/route";
 // TODO - build web map with 🍎 🍎 🍎 Javascript Maps API for creating manual snap feature
@@ -12,58 +9,7 @@ export class RouteHelper {
       },  route in stream:  🍀  🍀  🍎 `,
     );
   }
-  public static async deleteRoutePoints(routeID: string): Promise<any> {
-    console.log(`Deleting route points for routeID: ${routeID}`);
-    const qs: QuerySnapshot = await firestore().collection('newRoutes')
-    .doc(routeID).collection('rawRoutePoints').get()
 
-    await deleteCollection(firestore(), `newRoutes/${routeID}/rawRoutePoints`, 200);
-    console.log(`${qs.docs.length} route points deleted from routeID: ${routeID}`);
-    return 0;
-
-    function deleteCollection(db: any, collectionPath: any, batchSize: any) {
-      let collectionRef = db.collection(collectionPath);
-      let query = collectionRef.orderBy('__name__').limit(batchSize);
-    
-      return new Promise((resolve, reject) => {
-        deleteQueryBatch(db, query, batchSize, resolve, reject);
-      });
-    }
-    
-    function deleteQueryBatch(db: any, query: any, batchSize: number, resolve: any, reject: any) {
-      query.get()
-        .then((snapshot: any) => {
-          // When there are no documents left, we are done
-          if (snapshot.size == 0) {
-            console.log(` 💦 💦 💦 deleteQueryBatch done ❤️ ❤️ for routeID: ${routeID}`);
-            return 0;
-          }
-    
-          // 
-          console.log(`deleteQueryBatch:  💦 💦 💦 Delete documents in a batch for routeID: ${routeID}`);
-          let batch = db.batch();
-          snapshot.docs.forEach((doc: any) => {
-            batch.delete(doc.ref);
-          });
-    
-          return batch.commit().then(() => {
-            return snapshot.size;
-          });
-        }).then((numDeleted: any) => {
-          if (numDeleted === 0) {
-            resolve();
-            return;
-          }
-          // Recurse on the next process tick, to avoid
-          // exploding the stack.
-          process.nextTick(() => {
-            deleteQueryBatch(db, query, batchSize, resolve, reject);
-          });
-        })
-        .catch(reject);
-    }
-    
-  }
   public static async addRoute(
     route: Route,
   ): Promise<any> {
@@ -75,11 +21,11 @@ export class RouteHelper {
 
 
     for (const id of route.associationIDs) {
-      const ass = await assModel.findByAssociationID(id);
+      const ass = await assModel.findByAssociationId(id);
       if (ass) {
-        list1.push(ass.associationID);
+        list1.push(ass.associationId);
         list2.push({
-          associationID: ass.associationID,
+          associationId: ass.associationId,
           associationName: ass.associationName,
         });
       }

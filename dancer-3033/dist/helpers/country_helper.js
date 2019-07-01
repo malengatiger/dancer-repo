@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const geolib_1 = require("geolib");
 const moment_1 = __importDefault(require("moment"));
-const v1_1 = __importDefault(require("uuid/v1"));
 const city_1 = __importDefault(require("../models/city"));
 const country_1 = __importDefault(require("../models/country"));
 class CountryHelper {
@@ -32,13 +31,13 @@ class CountryHelper {
                 countryCode = "ZA";
             }
             const CountryModel = new country_1.default().getModelForClass(country_1.default);
-            const countryID = v1_1.default();
             const u = new CountryModel({
                 countryCode,
-                countryID,
                 name,
             });
             const m = yield u.save();
+            m.countryID = m.id;
+            yield m.save();
             return m;
         });
     }
@@ -69,9 +68,7 @@ class CityHelper {
                 coordinates: [longitude, latitude],
                 type: "Point",
             };
-            const cityID = v1_1.default();
             const u = new cityModel({
-                cityID,
                 countryID,
                 countryName,
                 latitude,
@@ -81,6 +78,8 @@ class CityHelper {
                 provinceName,
             });
             const m = yield u.save();
+            m.cityID = m.id;
+            yield m.save();
             console.log(`\n\n🌀  🌀  🌀  CityHelper: city added:   🍀   ${name} \n`);
             return m;
         });

@@ -39,11 +39,9 @@ class Landmark extends typegoose_1.Typegoose {
         return this.findOne({ landmarkID });
     }
     //
-    updateLocation(id, latitude, longitude) {
-        this.position = {
-            coordinates: [longitude, latitude],
-            type: "Point",
-        };
+    updateLocation(latitude, longitude) {
+        this.position = new position_1.default();
+        this.position.coordinates = [longitude, latitude];
         this.save();
     }
 }
@@ -90,7 +88,7 @@ __decorate([
 __decorate([
     typegoose_1.instanceMethod,
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", void 0)
 ], Landmark.prototype, "updateLocation", null);
 __decorate([

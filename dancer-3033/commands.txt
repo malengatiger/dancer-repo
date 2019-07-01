@@ -1,0 +1,13 @@
+### IBM CLOUD ###############
+
+ibmcloud api https://api.eu-gb.bluemix.net
+ibmcloud login -u aubrey@aftarobot.com -o lesego@oneconnectgroup.com -s OneConnect
+bluemix app push Dancer3033
+
+### AZURE ###################
+
+
+### GOOGLE ##################
+
+
+### AWS #####################

@@ -1,5 +1,4 @@
 import moment from "moment";
-import v1 from "uuid/v1";
 import Photo from "../models/photo";
 import Position from "../models/position";
 import Vehicle from "../models/vehicle";
@@ -48,14 +47,12 @@ export class VehicleHelper {
         list.push(photo);
       }
     }
-    const vehicleID = v1();
     const vehicle = new vehicleModel({
       associationID,
       associationName,
       ownerID,
       ownerName,
       photos: list,
-      vehicleID,
       vehicleReg,
       vehicleType: type,
     });
@@ -168,7 +165,6 @@ export class VehicleHelper {
       `\n\n🌀 🌀  VehicleHelper: addVehicleType  🍀  ${make} ${model} capacity: ${capacity}\n`,
     );
 
-    const vehicleTypeID = v1();
     const vehicleTypeModel = new VehicleType().getModelForClass(VehicleType);
     const u = new vehicleTypeModel({
       capacity,
@@ -176,10 +172,11 @@ export class VehicleHelper {
       countryName,
       make,
       model,
-      vehicleTypeID,
+      
     });
 
     const m = await u.save();
+    m.vehicleTypeID = m.id;
     return m;
   }
   public static async getVehicleTypes(): Promise<any> {

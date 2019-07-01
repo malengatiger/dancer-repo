@@ -1,6 +1,5 @@
 import { getDistance } from "geolib";
 import { BulkWriteOpResultObject } from "mongodb";
-import v1 from "uuid/v1";
 import Landmark from "../models/landmark";
 import Route from "../models/route";
 
@@ -87,9 +86,8 @@ export class LandmarkHelper {
     const landmarkModel = new Landmark().getModelForClass(Landmark);
 
     console.log(`😍 😍 😍  about to add landmark: ${landmarkName}`);
-    const landmarkID = v1();
+    
     const landmark = new landmarkModel({
-      landmarkID,
       landmarkName,
       latitude,
       longitude,

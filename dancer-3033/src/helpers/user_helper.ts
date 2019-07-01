@@ -1,6 +1,4 @@
-import { DocumentSnapshot, QuerySnapshot } from "@google-cloud/firestore";
-import { firestore } from "firebase-admin";
-import v1 from "uuid/v1";
+
 import Association from "../models/association";
 import User from "../models/user";
 // TODO - build web map with 🍎 🍎 🍎 Javascript Maps API for creating manual snap feature
@@ -33,7 +31,7 @@ export class UserHelper {
     });
     if (associationId) {
       const assModel = new Association().getModelForClass(Association);
-      const ass = await assModel.findByAssociationID(associationId);
+      const ass = await assModel.findByAssociationId(associationId);
       if (ass) {
         mUser.associationId = associationId;
         mUser.associationName = ass.associationName;
