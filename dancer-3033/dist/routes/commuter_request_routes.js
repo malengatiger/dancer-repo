@@ -20,7 +20,7 @@ class CommuterRequestExpressRoutes {
             const msg = `🏓  🏓  🏓  addCommuterRequest route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_request_helper_1.CommuterRequestHelper.addCommuterRequest(req.body);
+                const result = yield commuter_request_helper_1.CommuterRequestHelper.addCommuterRequest(req.body.fromLandmarkId, req.body.routeId, req.body.toLandmarkId, req.body.passengers, req.body.userId, req.body.latitude, req.body.longitude);
                 res.status(200).json(result);
             }
             catch (e) {

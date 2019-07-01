@@ -1,3 +1,4 @@
+import { CommuterStartingLandmarkExpressRoutes } from './routes/commuter_starting_routes';
 import { CommuterPanicExpressRoutes } from './routes/commuter_panic_routes';
 import { CommuterRatingExpressRoutes } from './routes/commuter_rating_routes';
 import { CommuterPickupLandmarkExpressRoutes } from './routes/commuter_pickup_routes';
@@ -67,6 +68,7 @@ class AftaRobotApp {
   public userRoutes: UserExpressRoutes = new UserExpressRoutes();
   public commuterPickupRoutes: CommuterPickupLandmarkExpressRoutes = new CommuterPickupLandmarkExpressRoutes();
 
+  public commuterSatrtingRoutes: CommuterStartingLandmarkExpressRoutes = new CommuterStartingLandmarkExpressRoutes();
   public commuterPanicRoutes: CommuterPanicExpressRoutes = new CommuterPanicExpressRoutes();
   public dispatchRoutes: DispatchRecordExpressRoutes = new DispatchRecordExpressRoutes();
   public commuterArrivalRoutes: DispatchRecordExpressRoutes = new DispatchRecordExpressRoutes();
@@ -92,6 +94,7 @@ class AftaRobotApp {
     this.commuterRatingRoutes.routes(this.app);
     this.userRoutes.routes(this.app);
     this.commuterPanicRoutes.routes(this.app);
+    this.commuterSatrtingRoutes.routes(this.app);
 
     console.log(
       `\n🦀 🦀  🥦  DancerWebAPI constructor : 🥦🥦🥦 Completed setting up express routes `,

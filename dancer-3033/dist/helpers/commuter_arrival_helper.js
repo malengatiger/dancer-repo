@@ -20,38 +20,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Moment = __importStar(require("moment"));
 const commuter_arrival_landmark_1 = __importDefault(require("../models/commuter_arrival_landmark"));
+const position_1 = __importDefault(require("../models/position"));
+const landmark_1 = __importDefault(require("../models/landmark"));
+const route_1 = __importDefault(require("../models/route"));
+const vehicle_1 = __importDefault(require("../models/vehicle"));
 class CommuterArrivalLandmarkHelper {
     static onCommuterArrivalLandmarkAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n👽 👽 👽 onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterArrivalLandmark in stream:   🍀  🍎  `);
         });
     }
-    static addCommuterArrivalLandmark(request) {
+    static addCommuterArrivalLandmark(commuterRequestId, fromLandmarkId, routeId, toLandmarkId, vehicleId, departureId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const CommuterArrivalLandmarkModel = new commuter_arrival_landmark_1.default().getModelForClass(commuter_arrival_landmark_1.default);
-            console.log(`....... 😍 😍 😍  about to add CommuterArrivalLandmark:  👽 👽 👽`);
-            console.log(request);
-            const commuterArrivalLandmark = new CommuterArrivalLandmarkModel({
-                commuterRequestId: request.commuterRequestId,
-                fromLandmarkId: request.fromLandmarkId,
-                fromLandmarkName: request.fromLandmarkName,
-                position: request.position,
-                routeId: request.routeId,
-                routeName: request.routeName,
-                createdAt: new Date().toISOString(),
-                toLandmarkId: request.toLandmarkId,
-                toLandmarkName: request.toLandmarkName,
-                userId: request.userId,
-                vehicleId: request.vehicleId,
-                vehicleReg: request.vehicleReg,
-                departureId: request.departureId,
-            });
-            const m = yield commuterArrivalLandmark.save();
-            m.commuterArrivalLandmarkId = m.id;
-            yield m.save();
-            console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterArrivalLandmark added  for: 🍎  ${commuterArrivalLandmark.fromLandmarkName} \n\n`);
-            console.log(commuter_arrival_landmark_1.default);
-            return m;
+            const fromModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const from = yield fromModel.findByLandmarkID(fromLandmarkId);
+            const toModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const to = yield toModel.findByLandmarkID(toLandmarkId);
+            const routeModel = new route_1.default().getModelForClass(route_1.default);
+            const route = yield routeModel.findByRouteID(routeId);
+            const vehModel = new vehicle_1.default().getModelForClass(vehicle_1.default);
+            const veh = yield vehModel.findByVehicleID(vehicleId);
+            if (from && to && route && veh) {
+                const position = new position_1.default();
+                position.coordinates = [from.longitude, from.latitude];
+                const commuterArrivalLandmark = new CommuterArrivalLandmarkModel({
+                    commuterRequestId,
+                    fromLandmarkId,
+                    fromLandmarkName: from.landmarkName,
+                    position,
+                    routeId,
+                    routeName: route.name,
+                    createdAt: new Date().toISOString(),
+                    toLandmarkId,
+                    toLandmarkName: to.landmarkName,
+                    userId,
+                    vehicleId,
+                    vehicleReg: veh.vehicleReg,
+                    departureId,
+                });
+                const m = yield commuterArrivalLandmark.save();
+                m.commuterArrivalLandmarkId = m.id;
+                yield m.save();
+                console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterArrivalLandmark added  for: 🍎  ${commuterArrivalLandmark.fromLandmarkName} \n\n`);
+                console.log(commuter_arrival_landmark_1.default);
+                return m;
+            }
+            else {
+                throw new Error('Missing input data');
+            }
         });
     }
     static findByLocation(latitude, longitude, radiusInKM, minutes) {

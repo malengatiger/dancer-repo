@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const commuter_starting_routes_1 = require("./routes/commuter_starting_routes");
 const commuter_panic_routes_1 = require("./routes/commuter_panic_routes");
 const commuter_rating_routes_1 = require("./routes/commuter_rating_routes");
 const commuter_pickup_routes_1 = require("./routes/commuter_pickup_routes");
@@ -61,6 +62,7 @@ class AftaRobotApp {
         this.countryRoutes = new country_routes_1.CountryExpressRoutes();
         this.userRoutes = new user_routes_1.default();
         this.commuterPickupRoutes = new commuter_pickup_routes_1.CommuterPickupLandmarkExpressRoutes();
+        this.commuterSatrtingRoutes = new commuter_starting_routes_1.CommuterStartingLandmarkExpressRoutes();
         this.commuterPanicRoutes = new commuter_panic_routes_1.CommuterPanicExpressRoutes();
         this.dispatchRoutes = new dispatch_record_routes_1.DispatchRecordExpressRoutes();
         this.commuterArrivalRoutes = new dispatch_record_routes_1.DispatchRecordExpressRoutes();
@@ -84,6 +86,7 @@ class AftaRobotApp {
         this.commuterRatingRoutes.routes(this.app);
         this.userRoutes.routes(this.app);
         this.commuterPanicRoutes.routes(this.app);
+        this.commuterSatrtingRoutes.routes(this.app);
         console.log(`\n🦀 🦀  🥦  DancerWebAPI constructor : 🥦🥦🥦 Completed setting up express routes `);
     }
     initializeMiddleware() {

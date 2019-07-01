@@ -82,9 +82,6 @@ class CommuterRequest extends Typegoose {
   @prop({ required: true, default: false })
   public scanned?: boolean;
   //
-  @prop({ required: true })
-  public commuterLocation?: any;
-  //
   @prop({ required: true, trim: true })
   public fromLandmarkId?: string;
   //

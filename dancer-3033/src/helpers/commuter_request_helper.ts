@@ -1,5 +1,9 @@
 import * as Moment from 'moment';
 import CommuterRequest from "../models/commuter_request";
+import Landmark from '../models/landmark';
+import Route from '../models/route';
+import Vehicle from '../models/vehicle';
+import Position from '../models/position';
 export class CommuterRequestHelper {
 
   public static async onCommuterRequestAdded(event: any) {
@@ -11,38 +15,52 @@ export class CommuterRequestHelper {
   }
 
   public static async addCommuterRequest(
-    request: any,
+    fromLandmarkId: string,
+    routeId: string,
+    toLandmarkId: string,
+    passengers: number,
+    userId: string,
+    latitude: number, longitude: number,
   ): Promise<any> {
     const commuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
-    console.log(`....... 😍 😍 😍  about to add CommuterRequest:  👽 👽 👽`);
-    console.log(request);
-    const commuterRequest = new commuterRequestModel({
-      autoDetected: request.autoDetected,
-      commuterLocation: request.commuterLocation,
-      fromLandmarkId: request.fromLandmarkId,
-      fromLandmarkName: request.fromLandmarkName,
-      passengers: request.passengers,
-      position: {
-        coordinates: [request.commuterLocation.lng, request.commuterLocation.lat],
-        type: "Point",
-      },
-      routeId: request.routeId,
-      routeName: request.routeName,
-      scanned: request.scanned,
-      stringTime: new Date().toISOString(),
-      time: new Date().getTime(),
-      toLandmarkId: request.toLandmarkId,
-      toLandmarkName: request.toLandmarkName,
-      user: request.user,
-      vehicleId: request.vehicleId,
-      vehicleReg: request.vehicleReg,
-    });
-    const m = await commuterRequest.save();
-    m.commuterRequestId = m.id;
-    await m.save();
-    console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterRequest added  for: 🍎  ${commuterRequest.fromLandmarkName} \n\n`);
-    console.log(commuterRequest);
-    return m;
+    const fromModel = new Landmark().getModelForClass(Landmark);
+    const from = await fromModel.findByLandmarkID(fromLandmarkId);
+
+    const toModel = new Landmark().getModelForClass(Landmark);
+    const to = await toModel.findByLandmarkID(toLandmarkId);
+
+    const routeModel = new Route().getModelForClass(Route);
+    const route = await routeModel.findByRouteID(routeId);
+
+  
+    const pos = new Position();
+    pos.coordinates = [longitude, latitude];
+    if (from && to && route) {
+      const commuterRequest = new commuterRequestModel({
+        autoDetected: false,
+        fromLandmarkId,
+        fromLandmarkName: from.landmarkName,
+        passengers,
+        position: pos,
+        routeId,
+        routeName: route.name,
+        scanned: false,
+        stringTime: new Date().toISOString(),
+        time: new Date().getTime(),
+        toLandmarkId,
+        toLandmarkName: to.landmarkName,
+        userId,
+        
+      });
+      const m = await commuterRequest.save();
+      m.commuterRequestId = m.id;
+      await m.save();
+      console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterRequest added  for: 🍎  ${commuterRequest.fromLandmarkName} \n\n`);
+      console.log(commuterRequest);
+      return m;
+    } else {
+      throw new Error('Missing or ivalid input data');
+    }
   }
 
    public static async findByLocation(
