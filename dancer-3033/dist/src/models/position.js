@@ -4,6 +4,7 @@ class Position {
     constructor() {
         this.type = "Point";
         this.coordinates = [0.0, 0.0];
+        this.createdAt = new Date().toISOString();
     }
 }
 exports.default = Position;

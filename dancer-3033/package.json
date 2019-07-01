@@ -1,7 +1,7 @@
 {
   "name": "dancer3033",
   "version": "1.0.1",
-  "description": "Dancer, gotta find a place to be",
+  "description": "Dancer, dances everywhere",
   "main": "dist/server/server.js",
   "engines": {
     "node": "^8.11.1"

@@ -15,9 +15,9 @@ class Association extends typegoose_1.Typegoose {
         console.log("#####  🥦  🥦  🥦 Finding association by name:  💦  💦  💦  :: 🥦 " + name);
         return this.findOne({ name });
     }
-    static findByAssociationID(associationID) {
-        console.log("#####  🥦  🥦  🥦 Finding association by ID:  💦  💦  💦  :: 🥦 " + associationID);
-        return this.findOne({ associationID });
+    static findByAssociationId(associationId) {
+        console.log("#####  🥦  🥦  🥦 Finding association by ID:  💦  💦  💦  :: 🥦 " + associationId);
+        return this.findOne({ associationId });
     }
     updateEmail(email) {
         this.email = email;
@@ -47,7 +47,7 @@ __decorate([
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
-], Association.prototype, "associationID", void 0);
+], Association.prototype, "associationId", void 0);
 __decorate([
     typegoose_1.prop({ required: true }),
     __metadata("design:type", String)
@@ -79,6 +79,6 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], Association, "findByAssociationID", null);
+], Association, "findByAssociationId", null);
 exports.default = Association;
 //# sourceMappingURL=association.js.map

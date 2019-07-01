@@ -56,3 +56,5 @@ version : "0.0.3"
 ibm-generated-id : "919ac92d-8cda-4c96-90ee-250ca9cde78a"
 ibm-cloud-app-id : "a8e42241-75a5-4b2b-878a-d2b6ec2ff0c2"
 credentials-filepath : "server/localdev-config.json, vcap-local.js, credentials.json, localdev-config.json"
+
+# end of file

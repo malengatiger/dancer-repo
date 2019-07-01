@@ -10,7 +10,9 @@
     "outDir": "dist",
     "rootDir": "src",
     "noImplicitAny":true,
-    "strict": true
+    "strict": true,
+    "allowJs": false
+
   },
   "lib": ["es2016"]
 }

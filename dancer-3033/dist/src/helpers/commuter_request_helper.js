@@ -20,44 +20,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Moment = __importStar(require("moment"));
 const commuter_request_1 = __importDefault(require("../models/commuter_request"));
+const landmark_1 = __importDefault(require("../models/landmark"));
+const route_1 = __importDefault(require("../models/route"));
+const position_1 = __importDefault(require("../models/position"));
 class CommuterRequestHelper {
     static onCommuterRequestAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterRequest in stream:   🍀  🍎  `);
+            console.log(`\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterRequest in stream:   🍀 🍎  `);
         });
     }
-    static addCommuterRequest(request) {
+    static addCommuterRequest(fromLandmarkId, routeId, toLandmarkId, passengers, userId, latitude, longitude) {
         return __awaiter(this, void 0, void 0, function* () {
             const commuterRequestModel = new commuter_request_1.default().getModelForClass(commuter_request_1.default);
-            console.log(`....... 😍 😍 😍  about to add CommuterRequest:  👽 👽 👽`);
-            console.log(request);
-            const commuterRequest = new commuterRequestModel({
-                autoDetected: request.autoDetected,
-                commuterLocation: request.commuterLocation,
-                fromLandmarkId: request.fromLandmarkId,
-                fromLandmarkName: request.fromLandmarkName,
-                passengers: request.passengers,
-                position: {
-                    coordinates: [request.commuterLocation.lng, request.commuterLocation.lat],
-                    type: "Point",
-                },
-                routeId: request.routeId,
-                routeName: request.routeName,
-                scanned: request.scanned,
-                stringTime: new Date().toISOString(),
-                time: new Date().getTime(),
-                toLandmarkId: request.toLandmarkId,
-                toLandmarkName: request.toLandmarkName,
-                user: request.user,
-                vehicleId: request.vehicleId,
-                vehicleReg: request.vehicleReg,
-            });
-            const m = yield commuterRequest.save();
-            m.commuterRequestId = m.id;
-            yield m.save();
-            console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterRequest added  for: 🍎  ${commuterRequest.fromLandmarkName} \n\n`);
-            console.log(commuterRequest);
-            return m;
+            const fromModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const from = yield fromModel.findByLandmarkID(fromLandmarkId);
+            const toModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const to = yield toModel.findByLandmarkID(toLandmarkId);
+            const routeModel = new route_1.default().getModelForClass(route_1.default);
+            const route = yield routeModel.findByRouteID(routeId);
+            const pos = new position_1.default();
+            pos.coordinates = [longitude, latitude];
+            if (from && to && route) {
+                const commuterRequest = new commuterRequestModel({
+                    autoDetected: false,
+                    fromLandmarkId,
+                    fromLandmarkName: from.landmarkName,
+                    passengers,
+                    position: pos,
+                    routeId,
+                    routeName: route.name,
+                    scanned: false,
+                    stringTime: new Date().toISOString(),
+                    time: new Date().getTime(),
+                    toLandmarkId,
+                    toLandmarkName: to.landmarkName,
+                    userId,
+                });
+                const m = yield commuterRequest.save();
+                m.commuterRequestId = m.id;
+                yield m.save();
+                console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterRequest added  for: 🍎  ${commuterRequest.fromLandmarkName} \n\n`);
+                console.log(commuterRequest);
+                return m;
+            }
+            else {
+                throw new Error('Missing or ivalid input data');
+            }
         });
     }
     static findByLocation(latitude, longitude, radiusInKM, minutes) {

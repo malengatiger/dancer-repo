@@ -26,7 +26,7 @@ const position_1 = __importDefault(require("../models/position"));
 class CommuterRequestHelper {
     static onCommuterRequestAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterRequest in stream:   🍀  🍎  `);
+            console.log(`\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterRequest in stream:   🍀 🍎  `);
         });
     }
     static addCommuterRequest(fromLandmarkId, routeId, toLandmarkId, passengers, userId, latitude, longitude) {

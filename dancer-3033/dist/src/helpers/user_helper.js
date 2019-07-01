@@ -33,7 +33,7 @@ class UserHelper {
             });
             if (associationId) {
                 const assModel = new association_1.default().getModelForClass(association_1.default);
-                const ass = yield assModel.findByAssociationID(associationId);
+                const ass = yield assModel.findByAssociationId(associationId);
                 if (ass) {
                     mUser.associationId = associationId;
                     mUser.associationName = ass.associationName;

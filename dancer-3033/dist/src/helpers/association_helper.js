@@ -11,7 +11,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const v1_1 = __importDefault(require("uuid/v1"));
 const association_1 = __importDefault(require("../models/association"));
 class AssociationHelper {
     static addAssociation(associationName, email, cellphone, countryID, countryName) {
@@ -20,10 +19,8 @@ class AssociationHelper {
             console.log(
             // tslint:disable-next-line: max-line-length
             `\n👽 👽 👽 👽  AssocHelper: attempting MongoDB write using Typegoose  🍎  getModelForClass  .......... 👽 👽 👽\n`);
-            const associationID = v1_1.default();
             const associationModel = new association_1.default().getModelForClass(association_1.default);
             const assocModel = new associationModel({
-                associationID,
                 associationName,
                 cellphone,
                 countryID,
@@ -31,6 +28,8 @@ class AssociationHelper {
                 email,
             });
             const m = yield assocModel.save();
+            m.associationId = m.id;
+            yield m.save();
             console.log(`\n\n💙  💚  💛   AssocHelper: Yebo Gogo!!!! - MongoDB has saved ${associationName} !!!!!  💙  💚  💛`);
             const ass = yield associationModel.findByName("MongoDataX Taxi Association");
             console.log(`\n💛 💛 💛 💛  Association found in Mofo: 💚  ${ass}`);

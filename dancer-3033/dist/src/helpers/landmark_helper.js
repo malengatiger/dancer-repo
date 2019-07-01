@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const geolib_1 = require("geolib");
-const v1_1 = __importDefault(require("uuid/v1"));
 const landmark_1 = __importDefault(require("../models/landmark"));
 const route_1 = __importDefault(require("../models/route"));
 class LandmarkHelper {
@@ -72,9 +71,7 @@ class LandmarkHelper {
             }
             const landmarkModel = new landmark_1.default().getModelForClass(landmark_1.default);
             console.log(`😍 😍 😍  about to add landmark: ${landmarkName}`);
-            const landmarkID = v1_1.default();
             const landmark = new landmarkModel({
-                landmarkID,
                 landmarkName,
                 latitude,
                 longitude,

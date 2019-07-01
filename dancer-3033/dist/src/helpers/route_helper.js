@@ -27,11 +27,11 @@ class RouteHelper {
             const list1 = [];
             const list2 = [];
             for (const id of route.associationIDs) {
-                const ass = yield assModel.findByAssociationID(id);
+                const ass = yield assModel.findByAssociationId(id);
                 if (ass) {
-                    list1.push(ass.associationID);
+                    list1.push(ass.associationId);
                     list2.push({
-                        associationID: ass.associationID,
+                        associationId: ass.associationId,
                         associationName: ass.associationName,
                     });
                 }
