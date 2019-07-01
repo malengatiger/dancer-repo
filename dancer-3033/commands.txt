@@ -4,10 +4,22 @@ ibmcloud api https://api.eu-gb.bluemix.net
 ibmcloud login -u aubrey@aftarobot.com -o lesego@oneconnectgroup.com -s OneConnect
 bluemix app push Dancer3033
 
+https://dancer3033a1.eu-gb.cf.appdomain.cloud/
+
+aubrey@aftarobot.com kkTiger3$
+
 ### AZURE ###################
+aubrey@oneconnect.co.za 
 
 
 ### GOOGLE ##################
 
+aubrey@dancertmx.com kk#tiger$33x
+
+BUILD AND DEPLOY VIA CLOUD RUN
+gcloud builds submit --tag gcr.io/dancermx/arwebapi
+gcloud beta run deploy --image gcr.io/dancermx/arwebapi --platform managed
+
+https://arwebapi-l6yxaajtwq-uc.a.run.app/
 
 ### AWS #####################

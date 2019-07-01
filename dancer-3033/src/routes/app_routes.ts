@@ -8,7 +8,7 @@ export class AppExpressRoutes {
       `\n🏓🏓🏓🏓🏓    AppExpressRoutes:  💙  setting up default home routes ...`,
     );
     app.route("/").get((req: Request, res: Response) => {
-      const msg = `🏓🏓🏓  Hello World from Dancer, independence is coming!!!  IBM Cloud is UP! 🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
+      const msg = `🏓🏓🏓  Hello World from Dancer, independence is coming!!! 💙 IBM Cloud is UP! 💙 GCP is UP! 🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
       console.log(msg);
       res.status(200).json({
         message: msg,
@@ -20,7 +20,7 @@ export class AppExpressRoutes {
       );
       console.log('GET /ping', JSON.stringify(req.headers, null, 2));
       res.status(200).json({
-        message: `🏓🏓 Dancer, aka ARWebAPI pinged !!! : 💙  ${new Date()}  💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+        message: `🏓🏓 Dancer, aka ARWebAPI pinged !!! 💙 IBM Cloud is UP! 💙 GCP is UP! 💙  ${new Date()}  💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
       });
     });
     

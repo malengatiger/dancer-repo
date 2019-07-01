@@ -10,7 +10,7 @@ export class CommuterRequestHelper {
     console.log(
       `\n👽 👽 👽 onCommuterRequestChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
-      },  CommuterRequest in stream:   🍀  🍎  `,
+      },  CommuterRequest in stream:   🍀 🍎  `,
     );
   }
 
