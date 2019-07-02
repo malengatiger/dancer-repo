@@ -1,4 +1,4 @@
-FROM node:8-stretch
+FROM node:10
 
 # Change working directory
 WORKDIR "/app"

@@ -21,9 +21,9 @@ app.use((req: Request, res: Response, next) => {
     "Origin, X-Requested-With-Content-Type, Accept",
   );
   next();
-}); 
+});
 
-const port = process.env.PORT || 1337;
+const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.info(
     `\n🔵🔵🔵  DancerWebAPI started and listening on 🧡 💛  http://localhost:${port} 🧡 💛`,
@@ -35,6 +35,8 @@ server.listen(port, () => {
 });
 
 const myApp = new AftaRobotApp();
-console.log(`🔆 🔆 DancerWebAPI has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
+console.log(
+  `🔆 🔆 DancerWebAPI has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`,
+);
 
 module.exports = server;
