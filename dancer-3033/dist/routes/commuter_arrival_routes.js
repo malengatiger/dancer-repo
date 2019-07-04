@@ -87,7 +87,7 @@ class CommuterArrivalLandmarkExpressRoutes {
             const msg = `🏓🏓🏓  findCommuterArrivalLandmarksByUser route picked   🌽 ${new Date().toISOString()}`;
             console.log(msg);
             try {
-                const result = yield commuter_arrival_helper_1.CommuterArrivalLandmarkHelper.findByUser(req.body.user);
+                const result = yield commuter_arrival_helper_1.CommuterArrivalLandmarkHelper.findByUserId(req.body.user);
                 res.status(200).json(result);
             }
             catch (e) {

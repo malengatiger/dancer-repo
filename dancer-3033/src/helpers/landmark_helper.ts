@@ -2,6 +2,7 @@ import { getDistance } from "geolib";
 import { BulkWriteOpResultObject } from "mongodb";
 import Landmark from "../models/landmark";
 import Route from "../models/route";
+import City from "../models/city";
 
 export class LandmarkHelper {
   public static async onLandmarkAdded(event: any) {
@@ -214,6 +215,63 @@ export class LandmarkHelper {
           m.routeDetails[0].name
         }`,
       );
+    }
+  }
+   public static  async addRouteToLandmark(routeId: string, landmarkId: string) {
+    const landmarkModel = new Landmark().getModelForClass(Landmark);
+    const mark = await landmarkModel.findByLandmarkID(landmarkId).exec();
+    if (!mark) {
+      const msg = `landmark ${landmarkId} not found`;
+      console.log(msg);
+      throw new Error(msg);
+    }
+    const routeModel = new Route().getModelForClass(Route);
+    const route = await routeModel.findByRouteID(routeId).exec();
+    if (!route) {
+      const msg = `route ${routeId} not found`;
+      console.log(msg);
+      throw new Error(msg);
+    }
+    mark.routeIDs.push(route.routeID);
+    mark.routeDetails.push({
+      routeID: routeId,
+      name: route.name,
+    });
+    await mark.save();
+    const msg = `🍎🍎  route ${route.name} added to landmark ${mark.landmarkName}`;
+    console.log(msg);
+    return {
+      message: msg,
+    }
+  }
+  public static async getRouteLandmarks(routeId: string) {
+    const landmarkModel = new Landmark().getModelForClass(Landmark);
+    const list = await landmarkModel.findByRouteID(routeId).exec();
+
+    return list;
+  }
+
+    public static  async addCityToLandmark(landmarkId: string, cityId: string) {
+    const landmarkModel = new Landmark().getModelForClass(Landmark);
+    const mark = await landmarkModel.findByLandmarkID(landmarkId).exec();
+    if (!mark) {
+      const msg = `landmark ${landmarkId} not found`;
+      console.log(msg);
+      throw new Error(msg);
+    }
+    const cityModel = new City().getModelForClass(City);
+    const city = await cityModel.findOne(cityId).exec();
+    if (!city) {
+      const msg = `city ${cityId} not found`;
+      console.log(msg);
+      throw new Error(msg);
+    }
+    mark.cities.push(city);
+    await mark.save();
+    const msg = `🍎🍎  city ${city.name} added to landmark ${mark.landmarkName}`;
+    console.log(msg);
+    return {
+      message: msg,
     }
   }
 }

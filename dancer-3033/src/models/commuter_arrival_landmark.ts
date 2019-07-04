@@ -12,12 +12,12 @@ import Position from './position';
 class CommuterArrivalLandmark extends Typegoose {
   //
   @staticMethod
-  public static findByUser(
+  public static findByUserId(
     this: ModelType<CommuterArrivalLandmark> & typeof CommuterArrivalLandmark,
-    user: string,
+    userId: string,
   ) {
     return this.find({
-      user,
+      userId,
     });
   }
   //

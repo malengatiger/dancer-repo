@@ -49,8 +49,7 @@ class Route extends Typegoose {
     routeID: string,
   ) {
     return this.findOne({ routeID });
-  }
-  //
+  } 
   //
   @prop({ required: true, trim: true })
   public name!: string;
@@ -84,6 +83,7 @@ class Route extends Typegoose {
     this.color = color;
     this.save();
   }
+ 
   //
   @instanceMethod
   public async addAssociation(

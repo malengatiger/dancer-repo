@@ -13,10 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const commuter_panic_1 = __importDefault(require("../models/commuter_panic"));
 const position_1 = __importDefault(require("../models/position"));
+const messaging_1 = __importDefault(require("../server/messaging"));
 class CommuterPanicHelper {
-    static onCommuterPanicAdded(event) {
+    static onCommuterPanicChanged(event) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n👽 👽 👽 onCommuterPanicChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterPanic in stream:   🍀  🍎  `);
+            const data = event.fullDocument;
+            yield messaging_1.default.sendPanic(data);
         });
     }
     static addCommuterPanic(active, type, userId, latitude, longitude, vehicleId, vehicleReg) {
@@ -58,8 +61,6 @@ class CommuterPanicHelper {
                 throw new Error('Original panic record not found');
             }
             const m = yield panic.save();
-            m.commuterPanicId = m.id;
-            yield m.save();
             console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterPanic location added  for: 🍎  ${m.userId} \n\n`);
             console.log(m);
             return m;

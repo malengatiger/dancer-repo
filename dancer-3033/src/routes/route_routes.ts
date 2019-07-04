@@ -14,42 +14,17 @@ export class RouteExpressRoutes {
         `\n\n💦  POST: /routes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
       );
       console.log(req.body);
-      const route: Route = new Route();
-      route.associationDetails = [];
-      route.associationIDs = [];
-      route.name = req.body.name;
-      route.associationIDs.push(req.body.associationId);
-      route.associationDetails.push(req.body.associationDetails);
-      route.color = req.body.color;
       try {
-        const result = await RouteHelper.addRoute(route);
-        console.log("about to return result from Helper ............");
-        res.status(200).json({
-          message: `🏓🏓  route: ${req.body.name} :
-            🏓  ${
-              req.body.associationName
-            }: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-          result,
-        });
+        const result = await RouteHelper.addRoute(
+          req.body.name,
+          req.body.color,
+          req.body.associationID,
+        );
+        res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "addRoute failed");
       }
     });
-    /////////
-    app
-      .route("/deleteRoutePoints")
-      .post(async (req: Request, res: Response) => {
-        console.log(
-          `\n\n💦  POST: /deleteRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-        );
-        console.log(req.body);
-        try {
-          const result = 'Not constructed  yet';
-          res.send(200).send(result);
-        } catch (err) {
-          Util.sendError(res, err, "deleteRoutePoints failed");
-        }
-      });
     /////////
     app.route("/getRoutes").post(async (req: Request, res: Response) => {
       console.log(
@@ -57,17 +32,105 @@ export class RouteExpressRoutes {
       );
       try {
         const result = await RouteHelper.getRoutes();
-        console.log(
-          "\n................ about to return result from Helper ............",
-        );
         console.log(result);
-        res.status(200).json({
-          message: `🏓 🏓  getRoutes OK :: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-          result,
-        });
+        res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "getRoutes failed");
       }
     });
+    /////////
+    app
+      .route("/addRoutePoints")
+      .post(async (req: Request, res: Response) => {
+        console.log(
+          `\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        );
+        console.log(req.body);
+        try {
+          const result = RouteHelper.addRoutePoints(
+            req.body.routeId,
+            req.body.routePoints,
+            req.body.clear,
+          );
+          res.send(200).send(result);
+        } catch (err) {
+          Util.sendError(res, err, "addRoutePoints failed");
+        }
+      });
+      ///////
+    app
+      .route("/addRawRoutePoints")
+      .post(async (req: Request, res: Response) => {
+        console.log(
+          `\n\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        );
+        console.log(req.body);
+        try {
+          const result = RouteHelper.addRawRoutePoints(
+            req.body.routeId,
+            req.body.routePoints,
+            req.body.clear,
+          );
+          res.send(200).send(result);
+        } catch (err) {
+          Util.sendError(res, err, "addRawRoutePoints failed");
+        }
+      });
+      /////////
+    app
+      .route("/updateRoute")
+      .post(async (req: Request, res: Response) => {
+        console.log(
+          `\n\n💦  POST: /updateRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        );
+        console.log(req.body);
+        try {
+          const result = RouteHelper.updateRoute(
+            req.body.routeId,
+            req.body.name,
+            req.body.color,
+          );
+          res.send(200).send(result);
+        } catch (err) {
+          Util.sendError(res, err, "updateRoute failed");
+        }
+      });
+    app
+      .route("/updateRoutePoint")
+      .post(async (req: Request, res: Response) => {
+        console.log(
+          `\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        );
+        console.log(req.body);
+        try {
+          const result = RouteHelper.updateRoutePoint(
+            req.body.routeId,
+            req.body.created,
+            req.body.landmarkId,
+          );
+          res.send(200).send(result);
+        } catch (err) {
+          Util.sendError(res, err, "updateRoutePoint failed");
+        }
+      });
+    app
+      .route("/findRoutePointsByLocation")
+      .post(async (req: Request, res: Response) => {
+        console.log(
+          `\n\n💦  POST: /findRoutePointsByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        );
+        console.log(req.body);
+        try {
+          const result = RouteHelper.findRoutePointsByLocation(
+            req.body.routeId,
+            parseFloat(req.body.latitude),
+            parseFloat(req.body.longitude),
+            parseFloat(req.body.radiusInKM),
+          );
+          res.send(200).send(result);
+        } catch (err) {
+          Util.sendError(res, err, "findRoutePointsByLocation failed");
+        }
+      });
   }
 }

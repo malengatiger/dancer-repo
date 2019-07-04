@@ -13,6 +13,8 @@ class Constants {
     public static COMMUTER_ARRIVAL_LANDMARKS = 'commuterarrivallandmarks';
     public static COMMUTER_REQUESTS = 'commuterrequests';
     public static DISPATCH_RECORDS = 'dispatchrecords';
+    public static COMMUTER_PANICS = 'commuterpanics';
+    public static USERS = 'users';
 }
 
 export default Constants;

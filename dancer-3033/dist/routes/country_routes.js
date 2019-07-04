@@ -21,10 +21,7 @@ class CountryExpressRoutes {
             console.log(req.body);
             try {
                 const result = yield country_helper_1.CountryHelper.addCountry(req.body.name, req.body.countryCode);
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  addCountry: ${req.body.CountryReg} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "addCountry failed");
@@ -35,10 +32,7 @@ class CountryExpressRoutes {
             console.log(req.body);
             try {
                 const result = yield country_helper_1.CountryHelper.getCountries();
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  getCountries: ${result.length} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "getCountries failed");
@@ -49,10 +43,7 @@ class CountryExpressRoutes {
             console.log(req.body);
             try {
                 const result = yield country_helper_1.CityHelper.getCities(req.body.countryID);
-                res.status(200).json({
-                    message: `🏓  🏓 getCountryCities:  found: ${result.length}: ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 res.status(400).json({
@@ -69,10 +60,7 @@ class CountryExpressRoutes {
             console.log(req.body);
             try {
                 const result = yield country_helper_1.CityHelper.findCitiesByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM));
-                res.status(200).json({
-                    message: `🏓  🏓  findCitiesByLocation OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "findCitiesByLocation failed");

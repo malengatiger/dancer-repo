@@ -8,14 +8,7 @@ export class AssociationHelper {
     countryID: string,
     countryName: string,
   ): Promise<any> {
-    console.log(
-      `\n\n🌀  🌀  🌀  AssocHelper: addAssociation   🍀   ${associationName} -   🍀   ${cellphone}   🍀   ${email}\n`,
-    );
-    console.log(
-      // tslint:disable-next-line: max-line-length
-      `\n👽 👽 👽 👽  AssocHelper: attempting MongoDB write using Typegoose  🍎  getModelForClass  .......... 👽 👽 👽\n`,
-    );
-
+   
     const associationModel = new Association().getModelForClass(Association);
     const assocModel = new associationModel({
       associationName,
@@ -28,20 +21,10 @@ export class AssociationHelper {
     m.associationId = m.id;
     await m.save();
     console.log(
-      `\n\n💙  💚  💛   AssocHelper: Yebo Gogo!!!! - MongoDB has saved ${associationName} !!!!!  💙  💚  💛`,
+      `\n\n💙💚💛   AssocHelper: Yebo Gogo!!!! - MongoDB has saved ${associationName} !!!!!  💙💚💛`,
     );
 
-    const ass = await associationModel.findByName(
-      "MongoDataX Taxi Association",
-    );
-    console.log(`\n💛 💛 💛 💛  Association found in Mofo: 💚  ${ass}`);
-    console.log(ass);
-    console.log(
-      `🏓  db: ${m.db.db.databaseName} 💛 💛 collection: ${
-        m.collection.collectionName
-      } 💙 💙  id: ${m.id}`,
-    );
-
+    console.log(m);
     return m;
   }
 
@@ -52,6 +35,7 @@ export class AssociationHelper {
     console.log(list);
     return list;
   }
+
   public static async onAssociationAdded(event: any) {
     console.log(`onAssociationAdded event has occured .... 👽 👽 👽`);
     console.log(event);

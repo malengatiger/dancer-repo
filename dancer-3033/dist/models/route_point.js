@@ -11,6 +11,9 @@ class RoutePoint {
         this.longitude = 0.0;
         this.routeId = '';
         this.index = 0;
+        this.landmarkId = '';
+        this.landmarkName = '';
+        this.created = new Date().toISOString();
     }
 }
 exports.default = RoutePoint;

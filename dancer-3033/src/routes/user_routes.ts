@@ -20,15 +20,13 @@ export class UserExpressRoutes {
           req.body.email,
           req.body.cellphone,
           req.body.userType,
-          req.body.associationId,
+          req.body.associationID,
+          req.body.countryID,
+          req.body.gender,
+          req.body.fcmToken,
         );
         console.log("about to return result from Helper ............");
-        res.status(200).json({
-          message: `🏓  🏓  🏓  User: ${
-            req.body.firstName
-          } : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-          result,
-        });
+        res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "addUser failed");
       }
@@ -40,10 +38,7 @@ export class UserExpressRoutes {
       );
       try {
         const result = await UserHelper.getAllUsers();
-        res.status(200).json({
-          message: `🏓  🏓  🏓  getAllUsers OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-          result,
-        });
+        res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "getAllUsers failed");
       }
@@ -58,10 +53,7 @@ export class UserExpressRoutes {
           const result = await UserHelper.getUsersByAssociation(
             req.body.associationId,
           );
-          res.status(200).json({
-            message: `🏓  🏓  🏓  getUsersByAssociation OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-            result,
-          });
+          res.status(200).json(result);
         } catch (err) {
           Util.sendError(res, err, "getUsersByAssociation failed");
         }
@@ -72,10 +64,7 @@ export class UserExpressRoutes {
       );
       try {
         const result = await UserHelper.getUserById(req.body.userId);
-        res.status(200).json({
-          message: `🏓  🏓  🏓  getUserById OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-          result,
-        });
+        res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "getUserById failed");
       }

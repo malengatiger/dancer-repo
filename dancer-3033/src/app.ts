@@ -54,6 +54,7 @@ mongoose
 //
 import { app } from "./server/server";
 import UserExpressRoutes from './routes/user_routes';
+import { MongoClient } from 'mongodb';
 
 class AftaRobotApp {
   public app: express.Application;

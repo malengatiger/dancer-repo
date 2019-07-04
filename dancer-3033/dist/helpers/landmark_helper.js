@@ -175,6 +175,42 @@ class LandmarkHelper {
             }
         });
     }
+    static addRouteToLandmark(routeId, landmarkId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const landmarkModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const mark = yield landmarkModel.findByLandmarkID(landmarkId).exec();
+            if (!mark) {
+                const msg = `landmark ${landmarkId} not found`;
+                console.log(msg);
+                throw new Error(msg);
+            }
+            const routeModel = new route_1.default().getModelForClass(route_1.default);
+            const route = yield routeModel.findByRouteID(routeId).exec();
+            if (!route) {
+                const msg = `route ${routeId} not found`;
+                console.log(msg);
+                throw new Error(msg);
+            }
+            mark.routeIDs.push(route.routeID);
+            mark.routeDetails.push({
+                routeID: routeId,
+                name: route.name,
+            });
+            yield mark.save();
+            const msg = `🍎🍎  route ${route.name} added to landmark ${mark.landmarkName}`;
+            console.log(msg);
+            return {
+                message: msg,
+            };
+        });
+    }
+    static getRouteLandmarks(routeId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const landmarkModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const list = yield landmarkModel.findByRouteID(routeId).exec();
+            return list;
+        });
+    }
 }
 exports.LandmarkHelper = LandmarkHelper;
 //# sourceMappingURL=landmark_helper.js.map

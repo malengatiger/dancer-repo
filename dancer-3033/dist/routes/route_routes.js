@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const route_helper_1 = require("../helpers/route_helper");
 const util_1 = __importDefault(require("../util"));
-const route_1 = __importDefault(require("../models/route"));
 class RouteExpressRoutes {
     routes(app) {
         console.log(`\n🏓🏓🏓🏓🏓    RouteExpressRoutes: 💙  setting up default route routes ...`);
@@ -21,38 +20,12 @@ class RouteExpressRoutes {
         app.route("/addRoute").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n💦  POST: /routes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
-            const route = new route_1.default();
-            route.associationDetails = [];
-            route.associationIDs = [];
-            route.name = req.body.name;
-            route.associationIDs.push(req.body.associationId);
-            route.associationDetails.push(req.body.associationDetails);
-            route.color = req.body.color;
             try {
-                const result = yield route_helper_1.RouteHelper.addRoute(route);
-                console.log("about to return result from Helper ............");
-                res.status(200).json({
-                    message: `🏓🏓  route: ${req.body.name} :
-            🏓  ${req.body.associationName}: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                const result = yield route_helper_1.RouteHelper.addRoute(req.body.name, req.body.color, req.body.associationID);
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "addRoute failed");
-            }
-        }));
-        /////////
-        app
-            .route("/deleteRoutePoints")
-            .post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n\n💦  POST: /deleteRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
-            console.log(req.body);
-            try {
-                const result = 'Not constructed  yet';
-                res.send(200).send(result);
-            }
-            catch (err) {
-                util_1.default.sendError(res, err, "deleteRoutePoints failed");
             }
         }));
         /////////
@@ -60,15 +33,79 @@ class RouteExpressRoutes {
             console.log(`\n\n💦  POST: /getRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
                 const result = yield route_helper_1.RouteHelper.getRoutes();
-                console.log("\n................ about to return result from Helper ............");
                 console.log(result);
-                res.status(200).json({
-                    message: `🏓 🏓  getRoutes OK :: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "getRoutes failed");
+            }
+        }));
+        /////////
+        app
+            .route("/addRoutePoints")
+            .post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const result = route_helper_1.RouteHelper.addRoutePoints(req.body.routeId, req.body.routePoints, req.body.clear);
+                res.send(200).send(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "addRoutePoints failed");
+            }
+        }));
+        ///////
+        app
+            .route("/addRawRoutePoints")
+            .post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const result = route_helper_1.RouteHelper.addRawRoutePoints(req.body.routeId, req.body.routePoints, req.body.clear);
+                res.send(200).send(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "addRawRoutePoints failed");
+            }
+        }));
+        /////////
+        app
+            .route("/updateRoute")
+            .post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /updateRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const result = route_helper_1.RouteHelper.updateRoute(req.body.routeId, req.body.name, req.body.color);
+                res.send(200).send(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "updateRoute failed");
+            }
+        }));
+        app
+            .route("/updateRoutePoint")
+            .post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const result = route_helper_1.RouteHelper.updateRoutePoint(req.body.routeId, req.body.created, req.body.landmarkId);
+                res.send(200).send(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "updateRoutePoint failed");
+            }
+        }));
+        app
+            .route("/findRoutePointsByLocation")
+            .post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /findRoutePointsByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const result = route_helper_1.RouteHelper.findRoutePointsByLocation(req.body.routeId, parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM));
+                res.send(200).send(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "findRoutePointsByLocation failed");
             }
         }));
     }

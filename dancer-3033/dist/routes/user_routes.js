@@ -20,12 +20,9 @@ class UserExpressRoutes {
             console.log(`\n\n💦  POST: /Users requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const result = yield user_helper_1.UserHelper.addUser(req.body.firstName, req.body.lastName, req.body.email, req.body.cellphone, req.body.userType, req.body.associationId);
+                const result = yield user_helper_1.UserHelper.addUser(req.body.firstName, req.body.lastName, req.body.email, req.body.cellphone, req.body.userType, req.body.associationID, req.body.countryID, req.body.gender, req.body.fcmToken);
                 console.log("about to return result from Helper ............");
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  User: ${req.body.firstName} : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "addUser failed");
@@ -35,10 +32,7 @@ class UserExpressRoutes {
             console.log(`\n\n💦  POST: /getAllUsers requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
                 const result = yield user_helper_1.UserHelper.getAllUsers();
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  getAllUsers OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "getAllUsers failed");
@@ -50,10 +44,7 @@ class UserExpressRoutes {
             console.log(`\n\n💦  POST: /getUsersByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
                 const result = yield user_helper_1.UserHelper.getUsersByAssociation(req.body.associationId);
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  getUsersByAssociation OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "getUsersByAssociation failed");
@@ -63,10 +54,7 @@ class UserExpressRoutes {
             console.log(`\n\n💦  POST: /getUserById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
                 const result = yield user_helper_1.UserHelper.getUserById(req.body.userId);
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  getUserById OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "getUserById failed");

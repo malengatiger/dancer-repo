@@ -21,10 +21,7 @@ class LandmarkExpressRoutes {
             console.log(req.body);
             try {
                 const result = yield landmark_helper_1.LandmarkHelper.addLandmark(req.body.landmarkName, parseFloat(req.body.latitude), parseFloat(req.body.longitude), req.body.routeIDs, req.body.routeDetails);
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  landmark: ${req.body.name} : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "addLandmark failed");
@@ -35,10 +32,7 @@ class LandmarkExpressRoutes {
             console.log(req.body);
             try {
                 const result = yield landmark_helper_1.LandmarkHelper.findByLocation(parseFloat(req.body.latitude), parseFloat(req.body.longitude), parseFloat(req.body.radiusInKM));
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  findLandmarksByLocation: OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "findLandmarksByLocation failed");
@@ -49,10 +43,7 @@ class LandmarkExpressRoutes {
             console.log(req.body);
             try {
                 const result = yield landmark_helper_1.LandmarkHelper.addRoute(req.body.landmarkID, req.body.routeID);
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  addLandmarkRoute: OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "addLandmarkRoute failed");
@@ -62,13 +53,30 @@ class LandmarkExpressRoutes {
             console.log(`\n\n💦  POST: /getLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
                 const result = yield landmark_helper_1.LandmarkHelper.findAll();
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  getLandmarks: OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "getLandmarks failed");
+            }
+        }));
+        app.route("/getRouteLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /getRouteLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            try {
+                const result = yield landmark_helper_1.LandmarkHelper.getRouteLandmarks(req.body.routeId);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "getRouteLandmarks failed");
+            }
+        }));
+        app.route("/addRouteToLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /addRouteToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            try {
+                const result = yield landmark_helper_1.LandmarkHelper.addRouteToLandmark(req.body.routeId, req.body.landmarkId);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "addRouteToLandmark failed");
             }
         }));
     }

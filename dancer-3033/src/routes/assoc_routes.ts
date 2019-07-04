@@ -16,17 +16,14 @@ export class AssociationExpressRoutes {
       console.log(req.body);
       try {
         const result = await AssociationHelper.addAssociation(
-          req.body.name,
+          req.body.associationName,
           req.body.email,
           req.body.cellphone,
           req.body.countryID,
           req.body.countryName,
         );
         console.log("about to return result from Helper ............");
-        res.status(200).json({
-          message: `🏓  🏓  🏓  association: ${req.body.name} : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-          result,
-        });
+        res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "addAssociation failed");
       }
@@ -38,10 +35,7 @@ export class AssociationExpressRoutes {
       );
       try {
         const result = await AssociationHelper.getAssociations();
-        res.status(200).json({
-          message: `🏓  🏓  🏓  getAssociations OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-          result,
-        });
+        res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "getAssociations failed");
       }

@@ -20,12 +20,9 @@ class AssociationExpressRoutes {
             console.log(`\n\n💦  POST: /associations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const result = yield association_helper_1.AssociationHelper.addAssociation(req.body.name, req.body.email, req.body.cellphone, req.body.countryID, req.body.countryName);
+                const result = yield association_helper_1.AssociationHelper.addAssociation(req.body.associationName, req.body.email, req.body.cellphone, req.body.countryID, req.body.countryName);
                 console.log("about to return result from Helper ............");
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  association: ${req.body.name} : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "addAssociation failed");
@@ -35,10 +32,7 @@ class AssociationExpressRoutes {
             console.log(`\n\n💦  POST: /getAssociations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
                 const result = yield association_helper_1.AssociationHelper.getAssociations();
-                res.status(200).json({
-                    message: `🏓  🏓  🏓  getAssociations OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-                    result,
-                });
+                res.status(200).json(result);
             }
             catch (err) {
                 util_1.default.sendError(res, err, "getAssociations failed");

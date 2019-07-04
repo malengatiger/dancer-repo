@@ -98,16 +98,19 @@ class DispatchRecord extends Typegoose {
   public landmarkName?: string;
 
   @prop({ required: true, trim: true })
-  public routeId?: string;
+  public routeId!: string;
   //
   @prop({ required: true})
   public position?: Position;
   //
-  @prop({ trim: true })
-  public routeName?: string;
+  @prop({ required: true, trim: true })
+  public routeName!: string;
   //
-  @prop({ trim: true })
-  public vehicleReg?: string;
+  @prop({ required: true, trim: true })
+  public vehicleReg!: string;
+  //
+  @prop({ required: true, trim: true })
+  public vehicleId!: string;
   //
   @prop({ required: true })
   public vehicleType?: VehicleType;
@@ -116,7 +119,7 @@ class DispatchRecord extends Typegoose {
   public dispatchRecordId?: string;
   //
   @prop({ required: true, trim: true })
-  public marshalId?: string;
+  public userId?: string;
   //
   @prop({ required: true })
   public passengers?: number;

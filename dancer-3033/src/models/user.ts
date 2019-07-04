@@ -51,7 +51,16 @@ class User extends Typegoose {
   public userID!: string;
   //
   @prop({ trim: true })
-  public associationId?: string;
+  public associationID?: string;
+  //
+  @prop({ trim: true })
+  public fcmToken?: string;
+  //
+  @prop({ trim: true })
+  public gender?: string;
+  //
+  @prop({ trim: true })
+  public countryID?: string;
   //
   @prop({ trim: true })
   public associationName?: string;

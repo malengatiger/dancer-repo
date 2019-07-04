@@ -24,10 +24,15 @@ const position_1 = __importDefault(require("../models/position"));
 const landmark_1 = __importDefault(require("../models/landmark"));
 const route_1 = __importDefault(require("../models/route"));
 const vehicle_1 = __importDefault(require("../models/vehicle"));
+const messaging_1 = __importDefault(require("../server/messaging"));
 class CommuterArrivalLandmarkHelper {
     static onCommuterArrivalLandmarkAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterArrivalLandmark in stream:   🍀  🍎  `);
+            console.log(`\n👽 👽 c onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  CommuterArrivalLandmark in stream:   🍀  🍎  `);
+            console.log(event);
+            const data = new commuter_arrival_landmark_1.default();
+            data.commuterArrivalLandmarkId = event.fullDocument;
+            yield messaging_1.default.sendCommuterArrivalLandmark(data);
         });
     }
     static addCommuterArrivalLandmark(commuterRequestId, fromLandmarkId, routeId, toLandmarkId, vehicleId, departureId, userId) {
@@ -118,10 +123,10 @@ class CommuterArrivalLandmarkHelper {
             return list;
         });
     }
-    static findByUser(user) {
+    static findByUserId(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const CommuterArrivalLandmarkModel = new commuter_arrival_landmark_1.default().getModelForClass(commuter_arrival_landmark_1.default);
-            const list = yield CommuterArrivalLandmarkModel.findByUser(user);
+            const list = yield CommuterArrivalLandmarkModel.findByUserId(userId);
             return list;
         });
     }

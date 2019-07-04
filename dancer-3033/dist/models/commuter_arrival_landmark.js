@@ -32,9 +32,9 @@ const typegoose_1 = require("typegoose");
 const position_1 = __importDefault(require("./position"));
 class CommuterArrivalLandmark extends typegoose_1.Typegoose {
     //
-    static findByUser(user) {
+    static findByUserId(userId) {
         return this.find({
-            user,
+            userId,
         });
     }
     //
@@ -149,7 +149,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], CommuterArrivalLandmark, "findByUser", null);
+], CommuterArrivalLandmark, "findByUserId", null);
 __decorate([
     typegoose_1.staticMethod,
     __metadata("design:type", Function),

@@ -1,14 +1,17 @@
 import * as Moment from 'moment';
 import CommuterPanic from '../models/commuter_panic';
 import Position from '../models/position';
+import Messaging from '../server/messaging';
 export class CommuterPanicHelper {
 
-  public static async onCommuterPanicAdded(event: any) {
+  public static async onCommuterPanicChanged(event: any) {
     console.log(
       `\n👽 👽 👽 onCommuterPanicChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
       },  CommuterPanic in stream:   🍀  🍎  `,
     );
+    const data = event.fullDocument;
+    await Messaging.sendPanic(data);
   }
 
   public static async addCommuterPanic(
@@ -62,8 +65,6 @@ export class CommuterPanicHelper {
       throw new Error('Original panic record not found');
     }
     const m = await panic.save();
-    m.commuterPanicId = m.id;
-    await m.save();
     console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  CommuterPanic location added  for: 🍎  ${m.userId} \n\n`);
     console.log(m);
     return m;

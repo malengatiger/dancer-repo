@@ -111,13 +111,17 @@ __decorate([
     __metadata("design:type", position_1.default)
 ], DispatchRecord.prototype, "position", void 0);
 __decorate([
-    typegoose_1.prop({ trim: true }),
+    typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
 ], DispatchRecord.prototype, "routeName", void 0);
 __decorate([
-    typegoose_1.prop({ trim: true }),
+    typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
 ], DispatchRecord.prototype, "vehicleReg", void 0);
+__decorate([
+    typegoose_1.prop({ required: true, trim: true }),
+    __metadata("design:type", String)
+], DispatchRecord.prototype, "vehicleId", void 0);
 __decorate([
     typegoose_1.prop({ required: true }),
     __metadata("design:type", vehicle_type_1.default)
@@ -129,7 +133,7 @@ __decorate([
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
-], DispatchRecord.prototype, "marshalId", void 0);
+], DispatchRecord.prototype, "userId", void 0);
 __decorate([
     typegoose_1.prop({ required: true }),
     __metadata("design:type", Number)

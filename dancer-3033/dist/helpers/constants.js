@@ -15,5 +15,7 @@ Constants.VEHICLE_TYPES = 'vehicletypes';
 Constants.COMMUTER_ARRIVAL_LANDMARKS = 'commuterarrivallandmarks';
 Constants.COMMUTER_REQUESTS = 'commuterrequests';
 Constants.DISPATCH_RECORDS = 'dispatchrecords';
+Constants.COMMUTER_PANICS = 'commuterpanics';
+Constants.USERS = 'users';
 exports.default = Constants;
 //# sourceMappingURL=constants.js.map

@@ -1,6 +1,7 @@
 
 import Association from "../models/association";
 import User from "../models/user";
+import Messaging from "../server/messaging";
 // TODO - build web map with 🍎 🍎 🍎 Javascript Maps API for creating manual snap feature
 export class UserHelper {
   public static async onUserAdded(event: any) {
@@ -9,6 +10,19 @@ export class UserHelper {
         event.operationType
       },  user in stream:  🍀  🍀  🍎 `,
     );
+    if (event.operationType === 'insert') {
+      const user = new User();
+      const data = event.fullDocument;
+      if (data) { 
+        user.firstName = data.firstName;
+        user.lastName = data.lastName;
+        user.email = data.email;
+        user.cellphone = data.cellphone;
+        user.associationID = data.associationID;
+        
+        await Messaging.sendUser(user);
+    }
+    }
   }
 
   public static async addUser(
@@ -17,7 +31,10 @@ export class UserHelper {
     email: string,
     cellphone: string,
     userType: string,
-    associationId: string,
+    associationID: string,
+    countryID: string,
+    gender: string,
+    fcmToken: string,
   ): Promise<any> {
     const userModel = new User().getModelForClass(User);
 
@@ -27,16 +44,17 @@ export class UserHelper {
       email,
       cellphone,
       userType,
-      associationId,
+      associationID,
+      countryID, gender, fcmToken,
     });
-    if (associationId) {
+    if (associationID) {
       const assModel = new Association().getModelForClass(Association);
-      const ass = await assModel.findByAssociationId(associationId);
+      const ass: any = await assModel.findByAssociationId(associationID);
       if (ass) {
-        mUser.associationId = associationId;
+        mUser.associationID = associationID;
         mUser.associationName = ass.associationName;
       } else {
-        throw new Error("Invalid association");
+        throw new Error(`Invalid association: ${associationID}`);
       }
     }
     const m = await mUser.save();

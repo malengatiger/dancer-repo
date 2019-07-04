@@ -12,12 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typegoose_1 = require("typegoose");
 class Association extends typegoose_1.Typegoose {
     static findByName(name) {
-        console.log("#####  🥦  🥦  🥦 Finding association by name:  💦  💦  💦  :: 🥦 " + name);
+        console.log("#####  🥦  🥦  🥦 Finding association by name:  💦  💦  💦  :: 🥦 " +
+            name);
         return this.findOne({ name });
     }
-    static findByAssociationId(associationId) {
-        console.log("#####  🥦  🥦  🥦 Finding association by ID:  💦  💦  💦  :: 🥦 " + associationId);
-        return this.findOne({ associationId });
+    static findByAssociationId(associationID) {
+        console.log("#####  🥦  🥦  🥦 Finding association by ID:  💦  💦  💦  :: 🥦 " +
+            associationID);
+        return this.findOne({ associationID });
     }
     updateEmail(email) {
         this.email = email;
@@ -33,11 +35,11 @@ __decorate([
     __metadata("design:type", String)
 ], Association.prototype, "associationName", void 0);
 __decorate([
-    typegoose_1.prop(),
+    typegoose_1.prop({ trim: true }),
     __metadata("design:type", String)
 ], Association.prototype, "email", void 0);
 __decorate([
-    typegoose_1.prop(),
+    typegoose_1.prop({ trim: true }),
     __metadata("design:type", String)
 ], Association.prototype, "cellphone", void 0);
 __decorate([

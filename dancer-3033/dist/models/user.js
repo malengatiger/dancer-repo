@@ -52,7 +52,19 @@ __decorate([
 __decorate([
     typegoose_1.prop({ trim: true }),
     __metadata("design:type", String)
-], User.prototype, "associationId", void 0);
+], User.prototype, "associationID", void 0);
+__decorate([
+    typegoose_1.prop({ trim: true }),
+    __metadata("design:type", String)
+], User.prototype, "fcmToken", void 0);
+__decorate([
+    typegoose_1.prop({ trim: true }),
+    __metadata("design:type", String)
+], User.prototype, "gender", void 0);
+__decorate([
+    typegoose_1.prop({ trim: true }),
+    __metadata("design:type", String)
+], User.prototype, "countryID", void 0);
 __decorate([
     typegoose_1.prop({ trim: true }),
     __metadata("design:type", String)

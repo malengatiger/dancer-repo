@@ -4,14 +4,20 @@ import Position from '../models/position';
 import Landmark from '../models/landmark';
 import Route from '../models/route';
 import Vehicle from '../models/vehicle';
+import Messaging from '../server/messaging'
 export class CommuterArrivalLandmarkHelper {
 
   public static async onCommuterArrivalLandmarkAdded(event: any) {
     console.log(
-      `\n👽 👽 👽 onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${
+      `\n👽 👽 c onCommuterArrivalLandmarkChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
       },  CommuterArrivalLandmark in stream:   🍀  🍎  `,
     );
+    console.log(event);
+    const data = new CommuterArrivalLandmark();
+    data.commuterArrivalLandmarkId = event.fullDocument;
+    
+    await Messaging.sendCommuterArrivalLandmark(data);
   }
 
   public static async addCommuterArrivalLandmark(
@@ -116,9 +122,9 @@ export class CommuterArrivalLandmarkHelper {
     return list;
   }
 
-  public static async findByUser(user: string): Promise<any> {
+  public static async findByUserId(userId: string): Promise<any> {
     const CommuterArrivalLandmarkModel = new CommuterArrivalLandmark().getModelForClass(CommuterArrivalLandmark);
-    const list = await CommuterArrivalLandmarkModel.findByUser(user);
+    const list = await CommuterArrivalLandmarkModel.findByUserId(userId);
     return list;
   }
 
