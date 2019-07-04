@@ -577,8 +577,8 @@ class LandmarksPageState extends State<LandmarksPage>
         backgroundColor: Colors.black);
     try {
       for (var mark in landmarks) {
-        await routeBuilderBloc.findRoutePointNearLandmark(
-            landmark: mark, routeID: widget.route.routeID, listener: this);
+        await routeBuilderBloc.findRoutePointsNearLandmark(
+            landmark: mark, routeId: widget.route.routeID, listener: this);
       }
       if (_key.currentState != null) _key.currentState.removeCurrentSnackBar();
     } catch (e) {
@@ -693,7 +693,7 @@ class LandmarksPageState extends State<LandmarksPage>
         provinceName: c.provinceName,
       ));
     });
-    await routeBuilderBloc.updateLandmark(landmark);
+    await routeBuilderBloc.addCityToLandmark(landmark);
     debugPrint(
         '\n\n❤️ 🧡 💛  LandmarksPage: ️♻️♻️♻️ landmark updated: ${landmark.landmarkName} and has  💛 ${landmark.cities.length} cities️ 💛 \n\n');
     if (_key.currentState != null) {

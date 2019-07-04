@@ -143,7 +143,7 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
     });
 
     try {
-      await routeBuilderBloc.updateLandmark(widget.landmark);
+      await routeBuilderBloc.addCityToLandmark(widget.landmark);
       setState(() {});
       AppSnackbar.showSnackbarWithAction(
           scaffoldKey: _key,

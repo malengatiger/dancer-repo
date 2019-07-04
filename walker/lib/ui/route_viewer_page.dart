@@ -69,7 +69,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
         backgroundColor: Colors.black);
 
     await routeBuilderBloc.getRoutesByAssociation(association.associationID);
-    await routeBuilderBloc.getLandmarksByAssociation(association.associationID);
     _key.currentState.removeCurrentSnackBar();
   }
 
