@@ -153,7 +153,7 @@ __decorate([
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
-], CommuterRequest.prototype, "user", void 0);
+], CommuterRequest.prototype, "userId", void 0);
 __decorate([
     typegoose_1.prop({ required: true, default: new Date().toISOString() }),
     __metadata("design:type", String)

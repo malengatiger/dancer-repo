@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const landmark_helper_1 = require("../helpers/landmark_helper");
 const util_1 = __importDefault(require("../util"));
+const route_helper_1 = require("../helpers/route_helper");
 class LandmarkExpressRoutes {
     routes(app) {
         console.log(`\n🏓🏓🏓🏓🏓    LandmarkExpressRoutes: 💙  setting up default landmark related express routes ...`);
@@ -69,6 +70,16 @@ class LandmarkExpressRoutes {
                 util_1.default.sendError(res, err, "getRouteLandmarks failed");
             }
         }));
+        app.route("/getRoute").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /getRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            try {
+                const result = yield route_helper_1.RouteHelper.getRoute(req.body.routeID);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "getRoute failed");
+            }
+        }));
         app.route("/addRouteToLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n💦  POST: /addRouteToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
@@ -77,6 +88,16 @@ class LandmarkExpressRoutes {
             }
             catch (err) {
                 util_1.default.sendError(res, err, "addRouteToLandmark failed");
+            }
+        }));
+        app.route("/addCityToLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /addCityToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            try {
+                const result = yield landmark_helper_1.LandmarkHelper.addCityToLandmark(req.body.landmarkId, req.body.cityId);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "addCityToLandmark failed");
             }
         }));
     }

@@ -19,7 +19,7 @@ exports.app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With-Content-Type, Accept");
     next();
 });
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3003;
 server.listen(port, () => {
     console.info(`\n🔵🔵🔵  DancerWebAPI started and listening on 🧡 💛  http://localhost:${port} 🧡 💛`);
     console.info(`💕 💕 💕 💕  DancerWepAPI running at: 🧡💛  ${new Date().toISOString() +

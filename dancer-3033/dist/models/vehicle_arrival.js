@@ -114,7 +114,7 @@ __decorate([
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
-], VehicleArrival.prototype, "model", void 0);
+], VehicleArrival.prototype, "modelType", void 0);
 __decorate([
     typegoose_1.prop({ trim: true }),
     __metadata("design:type", String)

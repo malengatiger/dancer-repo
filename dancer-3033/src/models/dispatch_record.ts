@@ -95,6 +95,12 @@ class DispatchRecord extends Typegoose {
   public landmarkId?: string;
   //
   @prop({ required: true, trim: true })
+  public marshalId?: string;
+  //
+  @prop({ required: true, trim: true })
+  public marshalName?: string;
+  //
+  @prop({ required: true, trim: true })
   public landmarkName?: string;
 
   @prop({ required: true, trim: true })

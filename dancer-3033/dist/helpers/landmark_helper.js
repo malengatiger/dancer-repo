@@ -14,54 +14,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const geolib_1 = require("geolib");
 const landmark_1 = __importDefault(require("../models/landmark"));
 const route_1 = __importDefault(require("../models/route"));
+const city_1 = __importDefault(require("../models/city"));
 class LandmarkHelper {
     static onLandmarkAdded(event) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n👽 👽 👽 onLandmarkChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  landmark in stream:   🍀  🍎  `);
-        });
-    }
-    static addLandmarks(landmarks, routeID) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const landmarkModel = new landmark_1.default().getModelForClass(landmark_1.default);
-            const routeModel = new route_1.default().getModelForClass(route_1.default);
-            const route = yield routeModel.findById(routeID);
-            if (route) {
-                console.log(`💦 💦  adding landmarks - 👽 route from mongo: 💦 💦 ${route.name}`);
-            }
-            const bulkWriteList = [];
-            for (const m of landmarks) {
-                if (m.latitude && m.longitude) {
-                    const landmark = new landmarkModel({
-                        landmarkName: m.landmarkName,
-                        position: {
-                            coordinates: [m.longitude, m.latitude],
-                            type: "Point",
-                        },
-                        routes: [route],
-                    });
-                    bulkWriteList.push({
-                        insertOne: {
-                            document: landmark,
-                        },
-                    });
-                }
-                else {
-                    console.warn(`\n\n👿👿👿👿👿👿👿👿👿👿👿👿👿 coordinates missing for ${m.landmarkName} 👿👿👿👿👿👿👿`);
-                }
-            }
-            console.log(`\n\n🍀 🍀 🍀 🍀  ..... about to write batch: ${bulkWriteList.length} 🍀 🍀`);
-            if (bulkWriteList.length === 0) {
-                console.error(`👿👿👿👿👿👿👿 Ignoring empty batch ... 🍀  ciao!`);
-                return;
-            }
-            try {
-                const res = yield landmarkModel.bulkWrite(bulkWriteList);
-                console.log(`\n\n🍀 🍀 🍀 🍀  Batched: ${landmarks.length}. inserted: 🍎  ${res.insertedCount} 🍎`);
-                console.log(res);
-            }
-            catch (e) {
-                console.error(`👿👿👿👿👿👿👿 Something fucked up! 👿👿👿👿👿👿👿👿\n`, e);
-            }
         });
     }
     static addLandmark(landmarkName, latitude, longitude, routeIDs, routeDetails) {
@@ -78,6 +35,7 @@ class LandmarkHelper {
                 position: {
                     coordinates: [longitude, latitude],
                     type: "Point",
+                    createdAt: new Date().toISOString(),
                 },
                 routeDetails,
                 routeIDs,
@@ -209,6 +167,31 @@ class LandmarkHelper {
             const landmarkModel = new landmark_1.default().getModelForClass(landmark_1.default);
             const list = yield landmarkModel.findByRouteID(routeId).exec();
             return list;
+        });
+    }
+    static addCityToLandmark(landmarkId, cityId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const landmarkModel = new landmark_1.default().getModelForClass(landmark_1.default);
+            const mark = yield landmarkModel.findByLandmarkID(landmarkId).exec();
+            if (!mark) {
+                const msg = `landmark ${landmarkId} not found`;
+                console.log(msg);
+                throw new Error(msg);
+            }
+            const cityModel = new city_1.default().getModelForClass(city_1.default);
+            const city = yield cityModel.findOne(cityId).exec();
+            if (!city) {
+                const msg = `city ${cityId} not found`;
+                console.log(msg);
+                throw new Error(msg);
+            }
+            mark.cities.push(city);
+            yield mark.save();
+            const msg = `🍎🍎  city ${city.name} added to landmark ${mark.landmarkName}`;
+            console.log(msg);
+            return {
+                message: msg,
+            };
         });
     }
 }

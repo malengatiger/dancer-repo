@@ -74,14 +74,6 @@ class VehicleDeparture extends typegoose_1.Typegoose {
             return list;
         });
     }
-    //
-    setVehicleArrivalId() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.vehicleDepartureId = this.id;
-            yield this.save();
-            console.log("vehicleDeparture: vehicleDepartureId set to _id");
-        });
-    }
 }
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
@@ -100,10 +92,6 @@ __decorate([
     __metadata("design:type", String)
 ], VehicleDeparture.prototype, "vehicleReg", void 0);
 __decorate([
-    typegoose_1.prop({ trim: true }),
-    __metadata("design:type", String)
-], VehicleDeparture.prototype, "vehicleDepartureId", void 0);
-__decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
 ], VehicleDeparture.prototype, "vehicleId", void 0);
@@ -118,17 +106,11 @@ __decorate([
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
-], VehicleDeparture.prototype, "model", void 0);
+], VehicleDeparture.prototype, "modelType", void 0);
 __decorate([
     typegoose_1.prop({ required: true, default: new Date().toISOString() }),
     __metadata("design:type", String)
 ], VehicleDeparture.prototype, "dateDeparted", void 0);
-__decorate([
-    typegoose_1.instanceMethod,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], VehicleDeparture.prototype, "setVehicleArrivalId", null);
 __decorate([
     typegoose_1.staticMethod,
     __metadata("design:type", Function),

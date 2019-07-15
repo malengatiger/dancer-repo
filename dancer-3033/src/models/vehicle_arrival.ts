@@ -79,37 +79,37 @@ class VehicleArrival extends Typegoose {
   }
 
   @prop({ required: true, default: false })
-  public dispatched?: boolean;
+  public dispatched!: boolean;
   //
   @prop({ required: true, trim: true })
-  public landmarkId?: string;
+  public landmarkId!: string;
   //
   @prop({ required: true, trim: true })
-  public landmarkName?: string;
+  public landmarkName!: string;
 
   @prop({ required: true })
-  public position?: Position;
+  public position!: Position;
   //
   @prop({ required: true, trim: true })
-  public vehicleReg?: string;
+  public vehicleReg!: string;
   //
   @prop({ required: true, trim: true })
-  public make?: string;
+  public make!: string;
   //
   @prop({ required: true })
-  public capacity?: number;
+  public capacity!: number;
   //
   @prop({ required: true, trim: true })
-  public model?: string;
+  public modelType!: string;
   //
   @prop({ trim: true })
-  public vehicleArrivalId?: string;
+  public vehicleArrivalId!: string;
   //
   @prop({ required: true, trim: true })
-  public vehicleId?: string;
+  public vehicleId!: string;
   //
   @prop({ required: true, default: new Date().toISOString() })
-  public dateArrived?: string;
+  public dateArrived!: string;
   //
   @instanceMethod
   public async setVehicleArrivalId(this: InstanceType<VehicleArrival>) {

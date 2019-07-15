@@ -8,3 +8,5 @@ credentials.json
 localdev-config.json
 commands.txt
 *.zip
+.env
+dancer.json

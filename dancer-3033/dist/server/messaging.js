@@ -20,9 +20,6 @@ const admin = __importStar(require("firebase-admin"));
 console.log(`\n\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...\n\n`);
 const sa1 = process.env.DANCER_CONFIG || "config 1 not found";
 const ssa1 = JSON.parse(sa1);
-console.log(`📌 📌 📌 📌 📌 📌 📌 📌  `);
-console.log(ssa1);
-console.log(`📌 📌 📌 📌 📌 📌 📌 📌 `);
 console.log(`\n☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...\n\n`);
 const appTo = admin.initializeApp({
     credential: admin.credential.cert(ssa1),

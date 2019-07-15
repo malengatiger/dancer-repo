@@ -65,8 +65,8 @@ class User extends Typegoose {
   @prop({ trim: true })
   public associationName?: string;
   //
-  @prop({ required: true })
-  public userType!: UserType;
+  @prop({ required: true, trim: true })
+  public userType!: string;
   //
   @prop({ required: true, default: new Date().toISOString() })
   public created!: string;

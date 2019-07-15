@@ -29,7 +29,7 @@ export class VehicleHelper {
     );
 
     const vehicleTypeModel = new VehicleType().getModelForClass(VehicleType);
-    const type: any = await vehicleTypeModel.getVehicleTypeByID(vehicleTypeID);
+    const type: any = await vehicleTypeModel.findById(vehicleTypeID);
     if (!type) {
       const msg = "Vehicle Type not found";
       console.log(`👿👿👿👿 ${msg} 👿👿👿👿`);
@@ -57,15 +57,6 @@ export class VehicleHelper {
       vehicleType: type,
     });
     const m = await vehicle.save();
-    m.vehicleId = m.id;
-    await m.save();
-    if (m && m.vehicleType) {
-      console.log(
-        `🍊 🍊  vehicle added:  🍊 ${m.vehicleReg} ${m.vehicleType.make} ${
-        m.vehicleType.model
-        }  🚗 🚗 `,
-      );
-    }
     return m;
   }
   public static async addVehicleArrival(
@@ -75,7 +66,7 @@ export class VehicleHelper {
     landmarkId: string,
     latitude: number,
     longitude: number,
-    make: string, model: string, capacity: number,
+    make: string, modelType: string, capacity: number,
   ): Promise<any> {
     console.log(
       `\n\n🌀🌀🌀  VehicleHelper: addVehicleArrival  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀 \n`,
@@ -90,13 +81,14 @@ export class VehicleHelper {
     position.coordinates = [longitude, latitude];
 
     const vehicleArrival = new vehicleArrivalModel({
+      dispatched: false,
       vehicleId,
       landmarkName,
       landmarkId,
       position,
       vehicleReg,
       dateArrived: new Date().toISOString(),
-      make, model, capacity,
+      make, modelType, capacity,
     });
     const m = await vehicleArrival.save();
     m.vehicleArrivalId = m.id;
@@ -115,7 +107,7 @@ export class VehicleHelper {
     landmarkId: string,
     latitude: number,
     longitude: number,
-    make: string, model: string, capacity: number,
+    make: string, modelType: string, capacity: number,
   ): Promise<any> {
     console.log(
       `\n\n🌀🌀🌀  VehicleHelper: addVehicleDeparture  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀  \n`,
@@ -136,11 +128,9 @@ export class VehicleHelper {
       position,
       vehicleReg,
       dateDeparted: new Date().toISOString(),
-      make, model, capacity,
+      make, modelType, capacity,
     });
     const m = await vehicleDeparture.save();
-    m.vehicleDepartureId = m.id;
-    await m.save();
     console.log(
       `🍊 🍊  vehicleDeparture added:  🍊 ${m.vehicleReg} ${
         m.landmarkName
@@ -156,27 +146,25 @@ export class VehicleHelper {
   }
   public static async addVehicleType(
     make: string,
-    model: string,
+    modelType: string,
     capacity: number,
     countryID: string,
     countryName: string,
   ): Promise<any> {
     console.log(
-      `\n\n🌀 🌀  VehicleHelper: addVehicleType  🍀  ${make} ${model} capacity: ${capacity}\n`,
+      `\n\n🌀 🌀  VehicleHelper: addVehicleType  🍀  ${make} ${modelType} capacity: ${capacity}\n`,
     );
 
     const vehicleTypeModel = new VehicleType().getModelForClass(VehicleType);
-    const u = new vehicleTypeModel({
+    const mm = new vehicleTypeModel({
+      make,
       capacity,
       countryID,
       countryName,
-      make,
-      model,
-      
+      modelType,
     });
-
-    const m = await u.save();
-    m.vehicleTypeID = m.id;
+   
+    const m = await mm.save();
     return m;
   }
   public static async getVehicleTypes(): Promise<any> {

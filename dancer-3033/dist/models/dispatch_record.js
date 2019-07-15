@@ -101,6 +101,14 @@ __decorate([
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
+], DispatchRecord.prototype, "marshalId", void 0);
+__decorate([
+    typegoose_1.prop({ required: true, trim: true }),
+    __metadata("design:type", String)
+], DispatchRecord.prototype, "marshalName", void 0);
+__decorate([
+    typegoose_1.prop({ required: true, trim: true }),
+    __metadata("design:type", String)
 ], DispatchRecord.prototype, "landmarkName", void 0);
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),

@@ -67,10 +67,6 @@ export class CityHelper {
     longitude: number,
   ): Promise<any> {
     const cityModel = new City().getModelForClass(City);
-    const position = {
-      coordinates: [longitude, latitude],
-      type: "Point",
-    };
     
     const u = new cityModel({
       countryID,
@@ -78,7 +74,11 @@ export class CityHelper {
       latitude,
       longitude,
       name,
-      position,
+      position: {
+        coordinates: [longitude, latitude],
+        type: "Point",
+        createdAt: new Date().toISOString(),
+      },
       provinceName,
     });
     const m = await u.save();

@@ -12,29 +12,29 @@ import {
 class VehicleType extends Typegoose {
   //
 
-  @staticMethod
-  public static getVehicleTypeByID(this: ModelType<VehicleType> & typeof VehicleType, vehicleTypeID: string) {
-    console.log("#####  🥦  🥦  🥦 Finding vehicleType by ID:  💦  💦  💦  :: 🥦 " + vehicleTypeID);
-    return this.findOne({ vehicleTypeID });
-  }
+  // @staticMethod
+  // public static getVehicleTypeByID(this: ModelType<VehicleType> & typeof VehicleType, vehicleTypeID: string) {
+  //   console.log("#####  🥦  🥦  🥦 Finding vehicleType by ID:  💦  💦  💦  :: 🥦 " + vehicleTypeID);
+  //   return this.findOne({ vehicleTypeID });
+  // }
 
+  // @prop({ required: true, trim: true })
+  // public vehicleTypeID?: string;
+  // //
   @prop({ required: true, trim: true })
-  public vehicleTypeID?: string;
+  public make!: string;
   //
   @prop({ required: true, trim: true })
-  public make?: string;
+  public modelType!: string;
+  // //
+  @prop({ required: false, default: 0})
+  public capacity!: number;
   //
   @prop({ required: true, trim: true })
-  public model?: string;
-  //
-  @prop({ required: true})
-  public capacity?: number;
+  public countryID!: string;
   //
   @prop({ required: true, trim: true })
-  public countryID?: string;
-  //
-  @prop({ required: true, trim: true })
-  public countryName?: string;
+  public countryName!: string;
   //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;

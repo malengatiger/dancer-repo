@@ -37,6 +37,7 @@ export class DispatchRecordHelper {
         position: {
           coordinates: [landmark.longitude, landmark.latitude],
           type: "Point",
+          createdAt: new Date().toISOString(),
         },
         routeId,
         routeName: route.name,

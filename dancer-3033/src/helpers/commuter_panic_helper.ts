@@ -24,16 +24,17 @@ export class CommuterPanicHelper {
     vehicleReg: string,
   ): Promise<any> {
 
-    const pos = new Position();
-    pos.coordinates = [longitude, latitude];
+    const pos = {
+      coordinates:  [longitude, latitude],
+      type: 'Point',
+      createdAt: new Date().toISOString()
+    }
 
     const commuterPanicModel = new CommuterPanic().getModelForClass(CommuterPanic);
     const commuterPanic = new commuterPanicModel({
       active,
       type,
       userId,
-      latitude,
-      longitude,
       vehicleId,
       vehicleReg,
       locations: [pos],

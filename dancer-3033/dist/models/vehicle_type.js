@@ -11,16 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const typegoose_1 = require("typegoose");
 class VehicleType extends typegoose_1.Typegoose {
-    //
-    static getVehicleTypeByID(vehicleTypeID) {
-        console.log("#####  🥦  🥦  🥦 Finding vehicleType by ID:  💦  💦  💦  :: 🥦 " + vehicleTypeID);
-        return this.findOne({ vehicleTypeID });
-    }
 }
-__decorate([
-    typegoose_1.prop({ required: true, trim: true }),
-    __metadata("design:type", String)
-], VehicleType.prototype, "vehicleTypeID", void 0);
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
@@ -28,9 +19,9 @@ __decorate([
 __decorate([
     typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
-], VehicleType.prototype, "model", void 0);
+], VehicleType.prototype, "modelType", void 0);
 __decorate([
-    typegoose_1.prop({ required: true }),
+    typegoose_1.prop({ required: false, default: 0 }),
     __metadata("design:type", Number)
 ], VehicleType.prototype, "capacity", void 0);
 __decorate([
@@ -45,11 +36,5 @@ __decorate([
     typegoose_1.prop({ required: true, default: new Date().toISOString() }),
     __metadata("design:type", String)
 ], VehicleType.prototype, "created", void 0);
-__decorate([
-    typegoose_1.staticMethod,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], VehicleType, "getVehicleTypeByID", null);
 exports.default = VehicleType;
 //# sourceMappingURL=vehicle_type.js.map

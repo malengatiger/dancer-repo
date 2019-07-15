@@ -70,7 +70,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "associationName", void 0);
 __decorate([
-    typegoose_1.prop({ required: true }),
+    typegoose_1.prop({ required: true, trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "userType", void 0);
 __decorate([

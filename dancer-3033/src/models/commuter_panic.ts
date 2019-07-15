@@ -63,7 +63,7 @@ class CommuterPanic extends Typegoose {
   public active!: boolean;
   //
   @prop({ required: true, default: false })
-  public type!: PanicType;
+  public type!: string;
   //
   @prop({ required: true })
   public userId!: string;

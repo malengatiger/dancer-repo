@@ -23,7 +23,7 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3003;
 server.listen(port, () => {
   console.info(
     `\n🔵🔵🔵  DancerWebAPI started and listening on 🧡 💛  http://localhost:${port} 🧡 💛`,

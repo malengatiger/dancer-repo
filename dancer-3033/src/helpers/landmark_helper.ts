@@ -12,68 +12,7 @@ export class LandmarkHelper {
       },  landmark in stream:   🍀  🍎  `,
     );
   }
-  public static async addLandmarks(
-    landmarks: any[],
-    routeID: string,
-  ): Promise<any> {
-    const landmarkModel = new Landmark().getModelForClass(Landmark);
-    const routeModel = new Route().getModelForClass(Route);
-    const route = await routeModel.findById(routeID);
-    if (route) {
-      console.log(
-        `💦 💦  adding landmarks - 👽 route from mongo: 💦 💦 ${route.name}`,
-      );
-    }
-    const bulkWriteList: any = [];
-    for (const m of landmarks) {
-      if (m.latitude && m.longitude) {
-        const landmark = new landmarkModel({
-          landmarkName: m.landmarkName,
-          position: {
-            coordinates: [m.longitude, m.latitude],
-            type: "Point",
-          },
-          routes: [route],
-        });
-        bulkWriteList.push({
-          insertOne: {
-            document: landmark,
-          },
-        });
-      } else {
-        console.warn(
-          `\n\n👿👿👿👿👿👿👿👿👿👿👿👿👿 coordinates missing for ${
-            m.landmarkName
-          } 👿👿👿👿👿👿👿`,
-        );
-      }
-    }
-    console.log(
-      `\n\n🍀 🍀 🍀 🍀  ..... about to write batch: ${
-        bulkWriteList.length
-      } 🍀 🍀`,
-    );
-    if (bulkWriteList.length === 0) {
-      console.error(`👿👿👿👿👿👿👿 Ignoring empty batch ... 🍀  ciao!`);
-      return;
-    }
-    try {
-      const res: BulkWriteOpResultObject = await landmarkModel.bulkWrite(
-        bulkWriteList,
-      );
-      console.log(
-        `\n\n🍀 🍀 🍀 🍀  Batched: ${landmarks.length}. inserted: 🍎  ${
-          res.insertedCount
-        } 🍎`,
-      );
-      console.log(res);
-    } catch (e) {
-      console.error(
-        `👿👿👿👿👿👿👿 Something fucked up! 👿👿👿👿👿👿👿👿\n`,
-        e,
-      );
-    }
-  }
+
   public static async addLandmark(
     landmarkName: string,
     latitude: number,
@@ -95,6 +34,7 @@ export class LandmarkHelper {
       position: {
         coordinates: [longitude, latitude],
         type: "Point",
+        createdAt: new Date().toISOString(),
       },
       routeDetails,
       routeIDs,

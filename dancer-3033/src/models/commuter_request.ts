@@ -116,7 +116,7 @@ class CommuterRequest extends Typegoose {
   public routeName?: string;
   //
   @prop({ required: true, trim: true })
-  public user?: string;
+  public userId?: string;
   //
   @prop({ required: true, default: new Date().toISOString() })
   public stringTime?: string;

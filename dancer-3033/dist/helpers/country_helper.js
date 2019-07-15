@@ -64,17 +64,17 @@ class CityHelper {
     static addCity(name, provinceName, countryID, countryName, latitude, longitude) {
         return __awaiter(this, void 0, void 0, function* () {
             const cityModel = new city_1.default().getModelForClass(city_1.default);
-            const position = {
-                coordinates: [longitude, latitude],
-                type: "Point",
-            };
             const u = new cityModel({
                 countryID,
                 countryName,
                 latitude,
                 longitude,
                 name,
-                position,
+                position: {
+                    coordinates: [longitude, latitude],
+                    type: "Point",
+                    createdAt: new Date().toISOString(),
+                },
                 provinceName,
             });
             const m = yield u.save();

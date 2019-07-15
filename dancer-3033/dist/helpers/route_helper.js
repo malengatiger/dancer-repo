@@ -176,6 +176,13 @@ class RouteHelper {
             }
         });
     }
+    static getRoute(routeID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const routeModel = new route_1.default().getModelForClass(route_1.default);
+            const route = yield routeModel.findByRouteID(routeID).exec();
+            return route;
+        });
+    }
 }
 exports.RouteHelper = RouteHelper;
 //# sourceMappingURL=route_helper.js.map

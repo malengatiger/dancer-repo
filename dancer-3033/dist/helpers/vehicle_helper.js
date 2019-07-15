@@ -29,7 +29,7 @@ class VehicleHelper {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n🌀🌀🌀  VehicleHelper: addVehicle  🍀  ${vehicleReg}  🍀   ${associationID}  🍀   ${associationName}\n`);
             const vehicleTypeModel = new vehicle_type_1.default().getModelForClass(vehicle_type_1.default);
-            const type = yield vehicleTypeModel.getVehicleTypeByID(vehicleTypeID);
+            const type = yield vehicleTypeModel.findById(vehicleTypeID);
             if (!type) {
                 const msg = "Vehicle Type not found";
                 console.log(`👿👿👿👿 ${msg} 👿👿👿👿`);
@@ -55,15 +55,10 @@ class VehicleHelper {
                 vehicleType: type,
             });
             const m = yield vehicle.save();
-            m.vehicleId = m.id;
-            yield m.save();
-            if (m && m.vehicleType) {
-                console.log(`🍊 🍊  vehicle added:  🍊 ${m.vehicleReg} ${m.vehicleType.make} ${m.vehicleType.model}  🚗 🚗 `);
-            }
             return m;
         });
     }
-    static addVehicleArrival(vehicleReg, vehicleId, landmarkName, landmarkId, latitude, longitude, make, model, capacity) {
+    static addVehicleArrival(vehicleReg, vehicleId, landmarkName, landmarkId, latitude, longitude, make, modelType, capacity) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n🌀🌀🌀  VehicleHelper: addVehicleArrival  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀 \n`);
             const vehicleArrivalModel = new vehicle_arrival_1.default().getModelForClass(vehicle_arrival_1.default);
@@ -71,13 +66,14 @@ class VehicleHelper {
             position.type = "Point";
             position.coordinates = [longitude, latitude];
             const vehicleArrival = new vehicleArrivalModel({
+                dispatched: false,
                 vehicleId,
                 landmarkName,
                 landmarkId,
                 position,
                 vehicleReg,
                 dateArrived: new Date().toISOString(),
-                make, model, capacity,
+                make, modelType, capacity,
             });
             const m = yield vehicleArrival.save();
             m.vehicleArrivalId = m.id;
@@ -86,7 +82,7 @@ class VehicleHelper {
             return m;
         });
     }
-    static addVehicleDeparture(vehicleReg, vehicleId, landmarkName, landmarkId, latitude, longitude, make, model, capacity) {
+    static addVehicleDeparture(vehicleReg, vehicleId, landmarkName, landmarkId, latitude, longitude, make, modelType, capacity) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`\n\n🌀🌀🌀  VehicleHelper: addVehicleDeparture  🍀  ${vehicleReg}  🍀   ${landmarkName}  🍀  \n`);
             const vehicleDepModel = new vehicle_departure_1.default().getModelForClass(vehicle_departure_1.default);
@@ -100,11 +96,9 @@ class VehicleHelper {
                 position,
                 vehicleReg,
                 dateDeparted: new Date().toISOString(),
-                make, model, capacity,
+                make, modelType, capacity,
             });
             const m = yield vehicleDeparture.save();
-            m.vehicleDepartureId = m.id;
-            yield m.save();
             console.log(`🍊 🍊  vehicleDeparture added:  🍊 ${m.vehicleReg} ${m.landmarkName}  🚗 🚗 `);
             return m;
         });
@@ -117,19 +111,18 @@ class VehicleHelper {
             return list;
         });
     }
-    static addVehicleType(make, model, capacity, countryID, countryName) {
+    static addVehicleType(make, modelType, capacity, countryID, countryName) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n\n🌀 🌀  VehicleHelper: addVehicleType  🍀  ${make} ${model} capacity: ${capacity}\n`);
+            console.log(`\n\n🌀 🌀  VehicleHelper: addVehicleType  🍀  ${make} ${modelType} capacity: ${capacity}\n`);
             const vehicleTypeModel = new vehicle_type_1.default().getModelForClass(vehicle_type_1.default);
-            const u = new vehicleTypeModel({
+            const mm = new vehicleTypeModel({
+                make,
                 capacity,
                 countryID,
                 countryName,
-                make,
-                model,
+                modelType,
             });
-            const m = yield u.save();
-            m.vehicleTypeID = m.id;
+            const m = yield mm.save();
             return m;
         });
     }

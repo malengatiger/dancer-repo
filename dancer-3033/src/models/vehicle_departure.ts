@@ -79,41 +79,32 @@ class VehicleDeparture extends Typegoose {
   }
 
   @prop({ required: true, trim: true })
-  public landmarkId?: string;
+  public landmarkId!: string;
   //
   @prop({ required: true, trim: true })
-  public landmarkName?: string;
+  public landmarkName!: string;
 
   @prop({ required: true })
-  public position?: Position;
+  public position!: Position;
   //
   @prop({ trim: true })
-  public vehicleReg?: string;
-  //
-  @prop({ trim: true })
-  public vehicleDepartureId?: string;
+  public vehicleReg!: string;
   //
   @prop({ required: true, trim: true })
-  public vehicleId?: string;
+  public vehicleId!: string;
   //
   @prop({ required: true, trim: true })
-  public make?: string;
+  public make!: string;
   //
   @prop({ required: true })
-  public capacity?: number;
+  public capacity!: number;
   //
   @prop({ required: true, trim: true })
-  public model?: string;
+  public modelType!: string;
   //
   @prop({ required: true, default: new Date().toISOString() })
-  public dateDeparted?: string;
-  //
-  @instanceMethod
-  public async setVehicleArrivalId(this: InstanceType<VehicleDeparture>) {
-    this.vehicleDepartureId = this.id;
-    await this.save();
-    console.log("vehicleDeparture: vehicleDepartureId set to _id");
-  }
+  public dateDeparted!: string;
+  
 }
 
 export default VehicleDeparture;

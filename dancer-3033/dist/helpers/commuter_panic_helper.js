@@ -24,15 +24,16 @@ class CommuterPanicHelper {
     }
     static addCommuterPanic(active, type, userId, latitude, longitude, vehicleId, vehicleReg) {
         return __awaiter(this, void 0, void 0, function* () {
-            const pos = new position_1.default();
-            pos.coordinates = [longitude, latitude];
+            const pos = {
+                coordinates: [longitude, latitude],
+                type: 'Point',
+                createdAt: new Date().toISOString()
+            };
             const commuterPanicModel = new commuter_panic_1.default().getModelForClass(commuter_panic_1.default);
             const commuterPanic = new commuterPanicModel({
                 active,
                 type,
                 userId,
-                latitude,
-                longitude,
                 vehicleId,
                 vehicleReg,
                 locations: [pos],

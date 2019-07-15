@@ -29,6 +29,7 @@ export class CommuterPickupLandmarkHelper {
     const position = {
       type: 'Point',
       coordinates: [longitude, latitude],
+      createdAt: new Date().toISOString()
     }
     const cplModel = new commuterPickupLandmarkModel({
       commuterRequestId,
