@@ -78,10 +78,10 @@ export class UserHelper {
     const list = await userModel.find();
     return list;
   }
-  public static async getUserById(userId: string): Promise<any> {
-    console.log(` 🌀 getUsers find user ....   c  🌀  🌀 `);
+  public static async getUserByEmail(email: string): Promise<any> {
+    console.log(` 🌀 getUserByEmail find user ....   c  🌀  🌀 `);
     const userModel = new User().getModelForClass(User);
-    const user = await userModel.findByUserID(userId);
+    const user = await userModel.find({email: email});
     return user;
   }
 }

@@ -2,12 +2,25 @@ import Association from "../models/association";
 import Route from "../models/route";
 import RoutePoint from "../models/route_point";
 import Landmark from "../models/landmark";
+
+const password = process.env.MONGODB_PASSWORD || "aubrey3";
+const user = process.env.MONGODB_USER || "aubs";
+const MongoClient = require('mongodb').MongoClient;
+const mongoConnectionString = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
+const client = new MongoClient(mongoConnectionString, { useNewUrlParser: true });
+client.connect((err: any) => {
+  console.log('are we connected ????');
+  const collection: any = client.db("monitordb").collection("routes");
+  console.log(`🥦🥦🥦🥦🥦🥦🥦🥦🥦🥦🥦🥦 ${collection}`);
+  // perform actions on the collection object
+  //client.close();
+});
 // TODO - build web map with 🍎 🍎 🍎 Javascript Maps API for creating manual snap feature
 export class RouteHelper {
   public static async onRouteAdded(event: any) {
     console.log(
       `\n👽 👽 👽 onRouteChangeEvent: operationType: 👽 👽 👽  ${
-        event.operationType
+      event.operationType
       },  route in stream:  🍀  🍀  🍎 `,
     );
   }
@@ -22,11 +35,11 @@ export class RouteHelper {
     const list1: any[] = [];
     const list2: any[] = [];
 
-    const ass = await assModel.findByAssociationId(associationID).exec();
+    const ass: any = await assModel.findById(associationID).exec();
     if (ass) {
-      list1.push(ass.associationId);
+      list1.push(ass.associationID);
       list2.push({
-        associationId: ass.associationId,
+        associationID: ass.associationID,
         associationName: ass.associationName,
       });
     }
@@ -59,6 +72,17 @@ export class RouteHelper {
     const list = await routeModel.find();
     return list;
   }
+  public static async getRoutesByAssociation(associationID: string): Promise<any> {
+    console.log(` 🌀 getRoutesByAssociation....   ${associationID}  🌀  🌀 `);
+
+    try {
+      const routeModel = new Route().getModelForClass(Route);
+      const list = await routeModel.find({'associationIDs': associationID});
+      return list;
+    } catch (e) {
+      console.log('wtf wtf wtf');
+    }
+  }
   public static async addRoutePoints(
     routeId: string,
     routePoints: RoutePoint[],
@@ -78,7 +102,7 @@ export class RouteHelper {
     await route.save();
     const msg = `${routePoints.length} route points added to route  ${
       route.name
-    }`;
+      }`;
     console.log(`💛💛 ${msg}`);
     return {
       message: msg,
@@ -103,7 +127,7 @@ export class RouteHelper {
     await route.save();
     const msg = `${routePoints.length} route points added to route  ${
       route.name
-    }`;
+      }`;
     console.log(`💛💛 ${msg}`);
     return {
       message: msg,

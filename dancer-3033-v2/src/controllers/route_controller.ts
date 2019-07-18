@@ -84,6 +84,7 @@ export class RouteController {
             console.log(req.body);
             try {
                 const route: any = await Route.findOne({ routeID: req.body.routeID });
+                // check clear flag
                 if (req.body.clear == true) {
                     route.routePoints = [];
                 }

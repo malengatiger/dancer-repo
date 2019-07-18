@@ -12,7 +12,7 @@ class LandmarkRoutesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    landmark.routeNames.sort((a,b) => a.name.compareTo(b.name));
+    landmark.routeDetails.sort((a,b) => a.name.compareTo(b.name));
     return Scaffold(
       appBar: AppBar(
         title: Text('Landmark Routes'),
@@ -49,14 +49,14 @@ class LandmarkRoutesPage extends StatelessWidget {
       ),
       backgroundColor: Colors.brown[50],
       body: ListView.builder(
-          itemCount: landmark.routeNames.length,
+          itemCount: landmark.routeDetails.length,
           itemBuilder: (context, index) {
 
             return Padding(
               padding: const EdgeInsets.only(left:12.0, right: 12, top: 4, bottom: 0),
               child: GestureDetector(
                 onTap: () async {
-                  var route = await routeBuilderBloc.getRouteByID(landmark.routeNames.elementAt(index).routeID);
+                  var route = await routeBuilderBloc.getRouteByID(landmark.routeDetails.elementAt(index).routeID);
                   Navigator.push(context, SlideRightRoute(widget: RouteMap(
                     routes: [route],
                     hideAppBar: false,
@@ -72,7 +72,7 @@ class LandmarkRoutesPage extends StatelessWidget {
                       children: <Widget>[
                         ListTile(
                           leading: Icon(Icons.ac_unit, color: getRandomPastelColor(),),
-                          title: Text('${landmark.routeNames.elementAt(index).name}', style: TextStyle(fontSize: 16),),
+                          title: Text('${landmark.routeDetails.elementAt(index).name}', style: TextStyle(fontSize: 16),),
                         ),
                       ],
                     ),

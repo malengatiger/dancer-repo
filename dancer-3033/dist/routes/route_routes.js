@@ -108,6 +108,19 @@ class RouteExpressRoutes {
                 util_1.default.sendError(res, err, "findRoutePointsByLocation failed");
             }
         }));
+        //
+        app.route("/getRoutesByAssociation")
+            .post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const result = route_helper_1.RouteHelper.getRoutesByAssociation(req.body.associationID);
+                res.send(200).send(result);
+            }
+            catch (err) {
+                util_1.default.sendError(res, err, "getRoutesByAssociation failed");
+            }
+        }));
     }
 }
 exports.RouteExpressRoutes = RouteExpressRoutes;

@@ -14,6 +14,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const association_1 = __importDefault(require("../models/association"));
 const route_1 = __importDefault(require("../models/route"));
 const landmark_1 = __importDefault(require("../models/landmark"));
+const password = process.env.MONGODB_PASSWORD || "aubrey3";
+const user = process.env.MONGODB_USER || "aubs";
+const MongoClient = require('mongodb').MongoClient;
+const mongoConnectionString = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
+const client = new MongoClient(mongoConnectionString, { useNewUrlParser: true });
+client.connect((err) => {
+    console.log('are we connected ????');
+    const collection = client.db("monitordb").collection("routes");
+    console.log(`🥦🥦🥦🥦🥦🥦🥦🥦🥦🥦🥦🥦 ${collection}`);
+    // perform actions on the collection object
+    //client.close();
+});
 // TODO - build web map with 🍎 🍎 🍎 Javascript Maps API for creating manual snap feature
 class RouteHelper {
     static onRouteAdded(event) {
@@ -27,11 +39,11 @@ class RouteHelper {
             const assModel = new association_1.default().getModelForClass(association_1.default);
             const list1 = [];
             const list2 = [];
-            const ass = yield assModel.findByAssociationId(associationID).exec();
+            const ass = yield assModel.findById(associationID).exec();
             if (ass) {
-                list1.push(ass.associationId);
+                list1.push(ass.associationID);
                 list2.push({
-                    associationId: ass.associationId,
+                    associationID: ass.associationID,
                     associationName: ass.associationName,
                 });
             }
@@ -60,6 +72,19 @@ class RouteHelper {
             const routeModel = new route_1.default().getModelForClass(route_1.default);
             const list = yield routeModel.find();
             return list;
+        });
+    }
+    static getRoutesByAssociation(associationID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(` 🌀 getRoutesByAssociation....   ${associationID}  🌀  🌀 `);
+            try {
+                const routeModel = new route_1.default().getModelForClass(route_1.default);
+                const list = yield routeModel.find({ 'associationIDs': associationID });
+                return list;
+            }
+            catch (e) {
+                console.log('wtf wtf wtf');
+            }
         });
     }
     static addRoutePoints(routeId, routePoints, clear) {

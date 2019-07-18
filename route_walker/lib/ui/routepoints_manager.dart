@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/landmarkdto.dart';
 import 'package:aftarobotlibrary4/data/routedto.dart';
 import 'package:aftarobotlibrary4/data/routepointdto.dart';
+import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
@@ -57,7 +59,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   Future _getLandmarks() async {
     _landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
     _buildItems();
-    return null;
+    setState(() {});
+    ;
   }
 
   Future _buildMarkerIcon() async {
@@ -93,19 +96,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   StreamSubscription<List<RoutePointDTO>> _subscription;
   Future _getRoutePoints() async {
     assert(_route != null);
-    _subscription = routeBuilderBloc.routePointsStream.listen((snapshot) {
-      _routePoints = snapshot;
-      if (_routePoints.isNotEmpty) {
-        showButton = false;
-      }
-      if (mounted) {
-        setState(() {});
-        _setRoutePolyline();
-      }
-    });
 
-    _rawRoutePoints = await routeBuilderBloc.getRawRoutePoints(route: _route);
-    _routePoints = await routeBuilderBloc.getRoutePoints(route: _route);
+    _rawRoutePoints = _route.rawRoutePoints;
+    _routePoints = _route.routePoints;
 
     if (_rawRoutePoints.isNotEmpty) {
       showButton = true;
@@ -165,7 +158,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     _markers.clear();
     var icon =
         BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
-    await _buildMarkerIcon();
+    // await _buildMarkerIcon();
     try {
       _rawRoutePoints.forEach((m) {
         if (m.landmarkID != null) {
@@ -180,7 +173,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
               _onMarkerTapped(m);
             },
             icon: icon,
-            markerId: MarkerId(m.created),
+            markerId: MarkerId(DateTime.now().toIso8601String()),
             position: LatLng(m.latitude, m.longitude),
             infoWindow: InfoWindow(title: m.created, snippet: m.created)));
       });
@@ -201,7 +194,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     try {
       List<LatLng> polylineLatLngs = List();
       try {
-        _routePoints.sort((a, b) => a.index.compareTo(b.index));
+        //_routePoints.sort((a, b) => a.index.compareTo(b.index));
         _routePoints.forEach((m) {
           polylineLatLngs.add(LatLng(m.latitude, m.longitude));
         });
@@ -295,56 +288,56 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             ],
           ),
           body: Stack(
-                  children: <Widget>[
-                    GoogleMap(
-                      initialCameraPosition: _cameraPosition,
-                      mapType: MapType.hybrid,
-                      markers: _markers,
-                      polylines: polylines,
-                      myLocationEnabled: true,
-                      compassEnabled: true,
-                      zoomGesturesEnabled: true,
-                      rotateGesturesEnabled: true,
-                      scrollGesturesEnabled: true,
-                      tiltGesturesEnabled: true,
-                      onLongPress: _onLongPress,
-                      onMapCreated: (mapController) {
-                        if (!_completer.isCompleted) {
-                          _completer.complete(mapController);
-                          _mapController = mapController;
-                        }
-                        _setRawRouteMarkers();
-                        if (_rawRoutePoints == null ||
-                            _rawRoutePoints.isNotEmpty) {
-                          _mapController.animateCamera(
-                              CameraUpdate.newLatLngZoom(
-                                  LatLng(_rawRoutePoints.elementAt(0).latitude,
-                                      _rawRoutePoints.elementAt(0).longitude),
-                                  16.0));
-                        }
-                      },
-                    ),
-                    Positioned(
-                      top: 12,
-                      left: 12,
-                      child: FloatingActionButton(
-                        backgroundColor: Colors.pink.shade900,
-                        elevation: 16,
-                        child: Icon(Icons.airport_shuttle),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            SlideRightRoute(
-                              widget: LandmarksPage(
-                                route: _route,
-                              ),
-                            ),
-                          );
-//                  _setRoutePolyline();
-                        },
+            children: <Widget>[
+              GoogleMap(
+                initialCameraPosition: _cameraPosition,
+                mapType: MapType.hybrid,
+                markers: _markers,
+                polylines: polylines,
+                myLocationEnabled: true,
+                compassEnabled: true,
+                zoomGesturesEnabled: true,
+                rotateGesturesEnabled: true,
+                scrollGesturesEnabled: true,
+                tiltGesturesEnabled: true,
+                onLongPress: _onLongPress,
+                onMapCreated: (mapController) {
+                  if (!_completer.isCompleted) {
+                    _completer.complete(mapController);
+                    _mapController = mapController;
+                  }
+                  _setRawRouteMarkers();
+                  if (_rawRoutePoints == null || _rawRoutePoints.isNotEmpty) {
+                    _mapController.animateCamera(CameraUpdate.newLatLngZoom(
+                        LatLng(_rawRoutePoints.elementAt(0).latitude,
+                            _rawRoutePoints.elementAt(0).longitude),
+                        16.0));
+                  }
+                },
+              ),
+              Positioned(
+                top: 12,
+                left: 12,
+                child: FloatingActionButton(
+                  backgroundColor: Colors.pink.shade900,
+                  elevation: 16,
+                  child: Icon(Icons.airport_shuttle),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                        widget: LandmarksPage(
+                          route: _route,
+                        ),
                       ),
-                    ),
-                    isBusy == false? Container(): Card(
+                    );
+//                  _setRoutePolyline();
+                  },
+                ),
+              ),
+              isBusy == false
+                  ? Container()
+                  : Card(
                       child: Center(
                         child: Column(
                           children: <Widget>[
@@ -370,28 +363,28 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                         ),
                       ),
                     ),
-                    showButton == false
-                        ? Container()
-                        : Positioned(
-                            bottom: 12,
-                            right: 12,
-                            child: RaisedButton(
-                              color: Colors.indigo.shade900,
-                              elevation: 16,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  'Confirm Points',
-                                  style: Styles.whiteSmall,
-                                ),
-                              ),
-                              onPressed: () {
-                                _snapPoints();
-                              },
-                            ),
+              showButton == false
+                  ? Container()
+                  : Positioned(
+                      bottom: 12,
+                      right: 12,
+                      child: RaisedButton(
+                        color: Colors.indigo.shade900,
+                        elevation: 16,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Confirm Points',
+                            style: Styles.whiteSmall,
                           ),
-                  ],
-                ),
+                        ),
+                        onPressed: () {
+                          _snapPoints();
+                        },
+                      ),
+                    ),
+            ],
+          ),
         );
       },
     );
@@ -556,9 +549,11 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       },
       position: {},
       routeIDs: [_route.routeID],
-      routeNames: [
+      routeDetails: [
         RouteInfo(
-            name: _route.name, routeID: _route.routeID, rankSequenceNumber: 0)
+          name: _route.name,
+          routeID: _route.routeID,
+        )
       ],
     );
     await routeBuilderBloc.addLandmark(m);
@@ -570,7 +565,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   onLandmarkInfoWindowTapped(LandmarkDTO landmark) {
     debugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkInfoWindowTapped: 🧩🧩 ${landmark.landmarkName}  🍎 ');
-    landmark.routeNames.forEach((m) {
+    landmark.routeDetails.forEach((m) {
       debugPrint(
           ' 🐸 🐸 🐸  You can get on route :  🍎 ${m.name} from 🧩🧩 ${landmark.landmarkName}');
     });
@@ -672,17 +667,102 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     });
     debugPrint(
         '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw: ${_rawRoutePoints.length}....');
+    assert(_rawRoutePoints.isNotEmpty);
     _routePoints = await SnapToRoads.getSnappedPoints(
         route: _route, routePoints: _rawRoutePoints);
-    await SnapToRoads.createRoutePoints(
-        route: _route, snappedPoints: _routePoints);
+    _route.routePoints = _routePoints;
+    try {
+      if (_routePoints.length < 301) {
+        print(
+            '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${_route.name} ...');
+        await DancerDataAPI.addRoutePoints(
+            routeId: _route.routeID, routePoints: _routePoints, clear: true);
+        await _connectPoints();
+      } else {
+        //batches of 30
+        var rem = _routePoints.length % 300;
+        var pages = _routePoints.length ~/ 300;
+
+        var map = Map<int, List<RoutePointDTO>>();
+        if (rem > 0) {
+          pages++;
+        }
+        int startIndex = 0;
+
+        for (var i = 0; i < pages; i++) {
+          map[i] = List<RoutePointDTO>();
+          for (var j = startIndex; j < (startIndex + 300); j++) {
+            try {
+              map[i].add(_routePoints.elementAt(j));
+
+            } catch (e) {}
+          }
+          print(
+              '🍎🍎🍎🍎 adding ${map[i].length} route points to 🍎 ${_route.name} ...');
+          _route.routePoints = map[i];
+          await DancerDataAPI.addRoutePoints(
+              routeId: _route.routeID, routePoints: map[i], clear: false);
+          print(
+              '🧩🧩🧩🧩🧩 calculating distances for route  🍎 ${_route.name} ...');
+          await _connectPoints();
+          setState(() {
+
+          });
+        }
+      }
+    } catch (e) {
+      print(e);
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key,
+          message: "Berlin Wall fell down. ${e.message}",
+          actionLabel: "Err",
+          listener: this);
+    }
+
     debugPrint(
         '\n\nManager: 🍏 🍎 route points added to database. Done  for ${_route.name}');
-    await routeBuilderBloc.getRawRoutePoints(route: _route);
+    //await routeBuilderBloc.getRawRoutePoints(route: _route);
     setState(() {
       isBusy = false;
       showButton = false;
     });
     _setRoutePolyline();
+  }
+  _connectPoints() async {
+    debugPrint('🔆🔆🔆🔆🔆🔆🔆🔆🔆🔆 _connectPoints ... calculate distances 🔆🔆');
+    try {
+      List<RoutePointDTO> landmarkPoints = List();
+      var landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
+      if (landmarks.isEmpty) {
+        print('💜💜💜 no landmarks in this route yet, so no calculations');
+        return;
+      }
+      for (var mark in landmarks) {
+        RoutePointDTO point = await routeBuilderBloc.findRoutePointNearestLandmark(
+            route: _route,
+            landmark: mark);
+        landmarkPoints.add(point);
+        _route.routePoints.forEach((p) {
+          if (point.latitude == p.latitude && point.longitude == p.latitude) {
+            p.landmarkID = mark.landmarkID;
+            p.landmarkName = mark.landmarkName;
+          }
+        });
+
+
+      }
+      var cnt = 0;
+      _route.routePoints.forEach((p) {
+        if (p.landmarkID != null) {
+          cnt++;
+          prettyPrint(p.toJson(), '🔴 🔴 🔴 🔴 #$cnt -  💛 Route point that is a LANDMARK  💛');
+        }
+      });
+      await routeBuilderBloc.updateRoutePoints(routeID: _route.routeID, points: landmarkPoints);
+      await RouteDistanceCalculator.calculate(route: _route);
+      if (_key.currentState != null) _key.currentState.removeCurrentSnackBar();
+    } catch (e) {
+      print(e);
+    }
   }
 }

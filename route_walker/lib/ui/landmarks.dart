@@ -35,11 +35,10 @@ class LandmarksPageState extends State<LandmarksPage>
     implements
         LandmarkCardListener,
         SnackBarListener,
-        LocationBlocListener,
         NearbyLandmarkListener,
         RouteMapListener,
         LandmarkEditorListener,
-        CityLocationListener {
+        CityLocationListener, LocationListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   List<BottomNavigationBarItem> _navItems = [
     BottomNavigationBarItem(
@@ -68,7 +67,7 @@ class LandmarksPageState extends State<LandmarksPage>
           backgroundColor: Colors.black);
 
       List<CalculatedDistance> list =
-          await RouteDistanceCalculator.saveLandmarkDistances(
+          await RouteDistanceCalculator.calculate(
               route: widget.route);
       if (_key.currentState != null) {
         _key.currentState.removeCurrentSnackBar();
@@ -368,7 +367,7 @@ class LandmarksPageState extends State<LandmarksPage>
       landmarks.forEach((mx) {
         if (m.landmarkID == mx.landmarkID) {
           m.routeIDs = mx.routeIDs;
-          m.routeNames = mx.routeNames;
+          m.routeDetails = mx.routeDetails;
           m.cities = mx.cities;
           m.latitude = mx.latitude;
           m.longitude = mx.longitude;
@@ -384,7 +383,7 @@ class LandmarksPageState extends State<LandmarksPage>
     landmarks.forEach((m) {
       if (m.landmarkID == widget.route.calculatedDistances.last.toLandmarkID) {
         mz.routeIDs = m.routeIDs;
-        mz.routeNames = m.routeNames;
+        mz.routeDetails = m.routeDetails;
         mz.cities = m.cities;
         mz.latitude = m.latitude;
         mz.longitude = m.longitude;
@@ -468,17 +467,28 @@ class LandmarksPageState extends State<LandmarksPage>
     debugPrint(
         '\n\nLandmarksPage: 🍏🍏 _addRouteToLandmark: ... about to add ${widget.route.name} '
         'to  🔴 ${nearest.landmarkName} by calling routeBuilderBloc.addRouteToLandmark\n');
-    await routeBuilderBloc.addRouteToLandmark(
-        route: widget.route, landmark: nearest);
-    await routeBuilderBloc.updateRoutePointLandmark(
-        routeID: widget.route.routeID,
-        landmark: nearest,
-        routePoint: widget.routePoint);
-    nearest = null;
-    setState(() {
-      hidePopup = true;
-    });
+
+    try {
+      await routeBuilderBloc.addRouteToLandmark(
+          route: widget.route, landmark: nearest);
+//      await routeBuilderBloc.updateRoutePointLandmark(
+//          routeID: widget.route.routeID,
+//          landmark: nearest,
+//          routePoint: widget.routePoint);
+      nearest = null;
+      setState(() {
+        hidePopup = true;
+      });
+    } catch (e) {
+      Navigator.pop(context);
+//      AppSnackbar.showErrorSnackbar(
+//          scaffoldKey: _key,
+//          message: "Unable to add route to landmark, may exist already",
+//          actionLabel: 'Cancel',
+//          listener: this);
+    }
   }
+
 
   @override
   onLandmarkNameTapped(LandmarkDTO landmark) {
@@ -502,22 +512,6 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   @override
-  onLandmarksFound(List<LandmarkDTO> landmarks) {
-    AppSnackbar.showSnackbarWithAction(
-        scaffoldKey: _key,
-        message: 'Landmarks found',
-        textColor: Colors.greenAccent,
-        backgroundColor: Colors.black);
-    return null;
-  }
-
-  @override
-  onVehicleLocationsFound(List<VehicleLocation> vehicleLocations) {
-    // TODO: implement onVehicleLocationsFound
-    return null;
-  }
-
-  @override
   onNearbyLandmarkTapped(LandmarkDTO landmark) {
     debugPrint('${landmark.landmarkName} received from tap');
     return null;
@@ -530,15 +524,24 @@ class LandmarksPageState extends State<LandmarksPage>
       return;
     }
     prettyPrint(nearest.toJson(), '🔵🔵🔵 Nearest Landmark');
-    var res = await routeBuilderBloc.addRouteToLandmark(
-        route: widget.route, landmark: nearest);
-    await routeBuilderBloc.updateRoutePointLandmark(
-        routePoint: widget.routePoint,
-        landmark: nearest,
-        routeID: widget.route.routeID);
-    debugPrint(
-        'LandmarksPage: 🧩🧩🧩 Route ${widget.route.name} added to landmark: ${nearest.landmarkName}');
-    debugPrint('Result 🔵🔵🔵 : $res');
+//    try {
+//      var res = await routeBuilderBloc.addRouteToLandmark(
+//          route: widget.route, landmark: nearest);
+//      await routeBuilderBloc.updateRoutePointLandmark(
+//          routePoint: widget.routePoint,
+//          landmark: nearest,
+//          routeID: widget.route.routeID);
+//      debugPrint(
+//          'LandmarksPage: 🧩🧩🧩 Route ${widget.route
+//              .name} added to landmark: ${nearest.landmarkName}');
+//      debugPrint('Result 🔵🔵🔵 : $res');
+//    } catch (e) {
+//      AppSnackbar.showErrorSnackbar(
+//          scaffoldKey: _key,
+//          message: e.message,
+//          actionLabel: 'Err',
+//          listener: this);
+//    }
   }
 
   @override
@@ -566,53 +569,53 @@ class LandmarksPageState extends State<LandmarksPage>
     });
   }
 
-  static Geoflutterfire _geo = Geoflutterfire();
 
   void _connectRoutePoints() async {
     debugPrint(
         '\n\n🔵🔵🔵 _connectRoutePoints ....... this may take a while ....');
     //get every route point a position
     assert(widget.route != null);
+    assert(widget.route.routePoints.isNotEmpty);
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key,
         message: 'Connecting route points ...',
         textColor: Colors.white,
         backgroundColor: Colors.black);
     try {
+      List<RoutePointDTO> landmarkPoints = List();
       for (var mark in landmarks) {
-//        await routeBuilderBloc.findRoutePointsNearLandmark(
-//            landmark: mark, routeId: widget.route.routeID, listener: this);
+        RoutePointDTO point = await routeBuilderBloc.findRoutePointNearestLandmark(
+          route: widget.route,
+            landmark: mark);
+          landmarkPoints.add(point);
+          widget.route.routePoints.forEach((p) {
+            if (point.latitude == p.latitude && point.longitude == p.latitude) {
+              p.landmarkID = mark.landmarkID;
+              p.landmarkName = mark.landmarkName;
+            }
+          });
+
+
       }
+      var cnt = 0;
+      widget.route.routePoints.forEach((p) {
+        if (p.landmarkID != null) {
+          cnt++;
+          prettyPrint(p.toJson(), '🔴🔴🔴🔴 #$cnt -  💛 Route point that is a LANDMARK  💛');
+        }
+      });
+      await routeBuilderBloc.updateRoutePoints(routeID: widget.route.routeID, points: landmarkPoints);
+      await RouteDistanceCalculator.calculate(route: widget.route);
       if (_key.currentState != null) _key.currentState.removeCurrentSnackBar();
     } catch (e) {
       print(e);
     }
   }
 
-  @override
-  onRoutePointsFound(
-      String routeID, List<RoutePointDTO> list, LandmarkDTO mark) async {
-    debugPrint(
-        '\n\n🔆🔆🔆 🍎🍎🍎 LandmarksPage: onRoutePointsFound: $routeID points: ${list.length}  🍎 ${mark.landmarkName}  🔆');
-
-    if (list.isNotEmpty) {
-      prettyPrint(list.elementAt(0).toJson(),
-          '🍎🍎 NEAREST ROUTE POINT to ${mark.landmarkName}');
-      await routeBuilderBloc.updateRoutePointLandmark(
-          routeID: widget.route.routeID,
-          routePoint: list.elementAt(0),
-          landmark: mark);
-      debugPrint(
-          '🍎🍎 route point has been updated with landmark: ${mark.landmarkName} point: ${list.elementAt(0).toJson()}');
-    } else {
-      debugPrint(
-          '👿👿👿👿 route point NOT FOUND for 👿👿 ${mark.landmarkName}');
-    }
-  }
 
   @override
   onLandmarkInfoWindowTapped(LandmarkDTO landmark) {
-    if (landmark.routeNames.isNotEmpty && landmark.routeIDs.isNotEmpty) {
+    if (landmark.routeDetails.isNotEmpty && landmark.routeIDs.isNotEmpty) {
       Navigator.push(
           context, SlideRightRoute(widget: LandmarkRoutesPage(landmark)));
     }
@@ -703,6 +706,12 @@ class LandmarksPageState extends State<LandmarksPage>
       _key.currentState.removeCurrentSnackBar();
     }
     setState(() {});
+  }
+
+  @override
+  void onRoutePointsFound(String routeID, List<RoutePointDTO> routePoints) {
+    debugPrint('♻️♻️♻️♻️♻️♻️ onRoutePointsFound $routeID -  💛 points ${routePoints.length}');
+    //todo - this route point must be updated to contain landmark data
   }
 }
 
@@ -804,11 +813,10 @@ class _LandmarkEditorState extends State<LandmarkEditor> {
       longitude: widget.routePoint.longitude,
     );
     landmark.routeIDs = List();
-    landmark.routeNames = List();
+    landmark.routeDetails = List();
     landmark.routeIDs.add(widget.route.routeID);
-    landmark.routeNames.add(RouteInfo(
+    landmark.routeDetails.add(RouteInfo(
         name: widget.route.name,
-        rankSequenceNumber: sequence,
         routeID: widget.route.routeID));
     var m = await routeBuilderBloc.addLandmark(landmark);
     debugPrint(

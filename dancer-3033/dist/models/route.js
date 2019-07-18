@@ -31,8 +31,8 @@ class Route extends typegoose_1.Typegoose {
         return this.findOne({ associationName });
     }
     //
-    static findByAssociationID(associationID) {
-        return this.findOne({ associationID });
+    static findByassociationID(associationID) {
+        return this.find({ associationIDs: associationID });
     }
     //
     static findByRouteID(routeID) {
@@ -46,7 +46,7 @@ class Route extends typegoose_1.Typegoose {
     //
     addAssociation(associationID) {
         return __awaiter(this, void 0, void 0, function* () {
-            const route = yield this.getModelForClass(Route).findByAssociationID(associationID);
+            const route = yield this.getModelForClass(Route).findByassociationID(associationID);
             if (!this.associationIDs) {
                 this.associationIDs = [];
             }
@@ -79,11 +79,11 @@ __decorate([
     __metadata("design:type", String)
 ], Route.prototype, "routeID", void 0);
 __decorate([
-    typegoose_1.prop({ required: true, default: [] }),
+    typegoose_1.prop({ default: [] }),
     __metadata("design:type", Array)
 ], Route.prototype, "associationDetails", void 0);
 __decorate([
-    typegoose_1.prop({ required: true, default: [] }),
+    typegoose_1.arrayProp({ items: String, default: [] }),
     __metadata("design:type", Array)
 ], Route.prototype, "associationIDs", void 0);
 __decorate([
@@ -91,15 +91,15 @@ __decorate([
     __metadata("design:type", String)
 ], Route.prototype, "color", void 0);
 __decorate([
-    typegoose_1.prop({ required: true, default: [] }),
+    typegoose_1.prop({ default: [] }),
     __metadata("design:type", Array)
 ], Route.prototype, "rawRoutePoints", void 0);
 __decorate([
-    typegoose_1.prop({ required: true, default: [] }),
+    typegoose_1.prop({ default: [] }),
     __metadata("design:type", Array)
 ], Route.prototype, "routePoints", void 0);
 __decorate([
-    typegoose_1.prop({ required: true, default: [] }),
+    typegoose_1.prop({ default: [] }),
     __metadata("design:type", Array)
 ], Route.prototype, "calculatedDistances", void 0);
 __decorate([
@@ -135,7 +135,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], Route, "findByAssociationID", null);
+], Route, "findByassociationID", null);
 __decorate([
     typegoose_1.staticMethod,
     __metadata("design:type", Function),

@@ -54,6 +54,15 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     }
   }
 
+//  void _checkUser() async {
+//    bool isSignedIn = await isUserSignedIn();
+//    if (!isSignedIn) {
+//      Navigator.push(context, SlideRightRoute(
+//        widget:
+//      ));
+//    }
+//
+//  }
   void _refresh() async {
     print(
         '🧩🧩 RouteViewerPage refresh routes and landmarks .................');
@@ -108,7 +117,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       stream: routeBuilderBloc.appModelStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          mPrint(
+          print(
               '🔵 RouteViewerPage 🧩🧩🧩 ConnectionState.active  🔴 set appModel from stream');
           appModel = snapshot.data;
           _sortRoutes();
@@ -168,7 +177,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     if (association == null) {
       return;
     }
-    mPrint('🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage');
+    print('🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage');
     Navigator.push(context, SlideRightRoute(widget: NewRoutePage(association)));
   }
 
@@ -380,7 +389,7 @@ class _RouteCardState extends State<RouteCard>
   }
 
   void _addNewRoute() async {
-    mPrint('🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage');
+    print('🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage');
     Navigator.pop(context);
 
     var association = await Prefs.getAssociation();

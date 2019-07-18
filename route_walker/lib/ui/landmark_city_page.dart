@@ -156,7 +156,7 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
           textColor: Colors.lightGreenAccent,
           backgroundColor: Colors.black);
     } catch (e) {
-      mPrint(e.toString());
+      print(e.toString());
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key,
           message: '${e.toString()}',

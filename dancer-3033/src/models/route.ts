@@ -36,11 +36,11 @@ class Route extends Typegoose {
   }
   //
   @staticMethod
-  public static findByAssociationID(
+  public static findByassociationID(
     this: ModelType<Route> & typeof Route,
     associationID: string,
   ) {
-    return this.findOne({ associationID });
+    return this.find({ associationIDs: associationID });
   }
   //
   @staticMethod
@@ -57,22 +57,22 @@ class Route extends Typegoose {
   @prop({ required: true, index: true, trim: true })
   public routeID!: string;
   //
-  @prop({ required: true, default: [] })
-  public associationDetails?: any[];
+  @prop( {default: []})
+  public associationDetails?: AssociationDetail[];
 
-  @prop({ required: true, default: [] })
+  @arrayProp({items: String, default: [] })
   public associationIDs!: string[];
   //
   @prop({ required: true, default: "black" })
   public color!: string;
   //
-  @prop({ required: true, default: [] })
+  @prop({default: [] })
   public rawRoutePoints!: RoutePoint[];
   //
-  @prop({ required: true, default: [] })
+  @prop({ default: [] })
   public routePoints!: RoutePoint[];
   //
-  @prop({ required: true, default: [] })
+  @prop({ default: [] })
   public calculatedDistances!: any[];
   //
   @prop({ required: true, default: new Date().toISOString() })
@@ -90,7 +90,7 @@ class Route extends Typegoose {
     this: InstanceType<Route>,
     associationID: string,
   ) {
-    const route = await this.getModelForClass(Route).findByAssociationID(
+    const route: any = await this.getModelForClass(Route).findByassociationID(
       associationID,
     );
     if (!this.associationIDs) {
@@ -99,7 +99,7 @@ class Route extends Typegoose {
     let isFound = false;
     if (route) {
       if (route.associationIDs) {
-        route.associationIDs.forEach((id) => {
+        route.associationIDs.forEach((id: string) => {
           if (id === associationID) {
             isFound = true;
           }

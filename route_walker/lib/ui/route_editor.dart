@@ -71,7 +71,7 @@ class _NewRoutePageState extends State<NewRoutePage>
       name: name,
       activationDate: DateTime.now().toUtc().toIso8601String(),
       associationIDs: [widget.association.associationID],
-      associationNames: [widget.association.associationName],
+      associationDetails: [widget.association.associationName],
       countryID: widget.association.countryID,
       countryName: widget.association.countryName,
       color:  color,

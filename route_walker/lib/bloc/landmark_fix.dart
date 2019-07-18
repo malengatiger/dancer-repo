@@ -69,9 +69,9 @@ class LandmarkFix {
         if (r['associationName'] == a.associationName) {
           if (r['routeID'] != null) {
             newRoute.associationIDs = List();
-            newRoute.associationNames = List();
+            newRoute.associationDetails = List();
             newRoute.associationIDs.add(a.associationID);
-            newRoute.associationNames.add(a.associationName);
+            newRoute.associationDetails.add(a.associationName);
             newRoute.countryID = countryID;
             newRoute.countryName = countryName;
             newRoute.routeNumber = 'TBD';
@@ -139,12 +139,11 @@ class LandmarkFix {
               'coordinates': [mark.longitude, mark.latitude],
             };
             mark.routeIDs = List();
-            mark.routeNames = List();
+            mark.routeDetails = List();
             mark.routeIDs.add(route.routeID);
-            mark.routeNames.add(RouteInfo(
+            mark.routeDetails.add(RouteInfo(
               routeID: route.routeID,
               name: route.name,
-              rankSequenceNumber: 0,
             ));
 
             await fs

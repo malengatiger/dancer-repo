@@ -10,7 +10,7 @@ import { MongoClient, ChangeStream, MongoCallback } from 'mongodb';
 import { UserHelper } from './helpers/user_helper';
 
 class MongoListeners {
-  public static listen(client: any) {
+  public static listen(client:any) {
 
     console.log(
       `\n🔆🔆🔆  MongoListeners: 🧡🧡🧡  listening to changes in collections ... 👽 👽 👽\n`,

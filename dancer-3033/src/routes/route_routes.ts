@@ -132,5 +132,21 @@ export class RouteExpressRoutes {
           Util.sendError(res, err, "findRoutePointsByLocation failed");
         }
       });
+      //
+      app.route("/getRoutesByAssociation")
+      .post(async (req: Request, res: Response) => {
+        console.log(
+          `\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        );
+        console.log(req.body);
+        try {
+          const result = RouteHelper.getRoutesByAssociation(
+            req.body.associationID,
+          );
+          res.send(200).send(result);
+        } catch (err) {
+          Util.sendError(res, err, "getRoutesByAssociation failed");
+        }
+      });
   }
 }

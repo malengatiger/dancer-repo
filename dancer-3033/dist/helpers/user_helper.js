@@ -79,11 +79,11 @@ class UserHelper {
             return list;
         });
     }
-    static getUserById(userId) {
+    static getUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(` 🌀 getUsers find user ....   c  🌀  🌀 `);
+            console.log(` 🌀 getUserByEmail find user ....   c  🌀  🌀 `);
             const userModel = new user_1.default().getModelForClass(user_1.default);
-            const user = yield userModel.findByUserID(userId);
+            const user = yield userModel.find({ email: email });
             return user;
         });
     }

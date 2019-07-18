@@ -58,12 +58,12 @@ export class UserExpressRoutes {
           Util.sendError(res, err, "getUsersByAssociation failed");
         }
       });
-    app.route("/getUserById").post(async (req: Request, res: Response) => {
+    app.route("/getUserByEmail").post(async (req: Request, res: Response) => {
       console.log(
-        `\n\n💦  POST: /getUserById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        `\n\n💦  POST: /getUserByEmail requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
       );
       try {
-        const result = await UserHelper.getUserById(req.body.userId);
+        const result = await UserHelper.getUserByEmail(req.body.email);
         res.status(200).json(result);
       } catch (err) {
         Util.sendError(res, err, "getUserById failed");

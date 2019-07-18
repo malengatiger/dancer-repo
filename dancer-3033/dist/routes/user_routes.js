@@ -50,10 +50,10 @@ class UserExpressRoutes {
                 util_1.default.sendError(res, err, "getUsersByAssociation failed");
             }
         }));
-        app.route("/getUserById").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n\n💦  POST: /getUserById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+        app.route("/getUserByEmail").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`\n\n💦  POST: /getUserByEmail requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             try {
-                const result = yield user_helper_1.UserHelper.getUserById(req.body.userId);
+                const result = yield user_helper_1.UserHelper.getUserByEmail(req.body.email);
                 res.status(200).json(result);
             }
             catch (err) {

@@ -33,23 +33,23 @@ class _EstimatorTesterState extends State<EstimatorTester>
     super.initState();
     _getData();
   }
-
-  _fix() async {
-    var qs = await fs.collection(Constants.LANDMARKS).getDocuments();
-    var finder = LocationFinderBloc(null);
-    for (var doc in qs.documents) {
-      var mark = LandmarkDTO.fromJson(doc.data);
-      var position = await finder.getPosition(
-          latitude: mark.latitude, longitude: mark.longitude);
-      mark.position = position;
-      await doc.reference.setData(mark.toJson());
-      debugPrint('🤞🤞 Landmark updated:  🍎 ${mark.landmarkName}  🍎 ');
-//      if (mark.cities.isNotEmpty) {
-//        debugPrint('🤞🤞 We have cities here! 🍎  ${mark.cities.length}  🍎 at ${mark.landmarkName}');
-//      }
-      //prettyPrint(mark.toJson(), 'checking  data accuracy');
-    }
-  }
+//
+//  _fix() async {
+//    var qs = await fs.collection(Constants.LANDMARKS).getDocuments();
+//    var finder = LocationFinderBloc(null);
+//    for (var doc in qs.documents) {
+//      var mark = LandmarkDTO.fromJson(doc.data);
+//      var position = await finder.getPosition(
+//          latitude: mark.latitude, longitude: mark.longitude);
+//      mark.position = position;
+//      await doc.reference.setData(mark.toJson());
+//      debugPrint('🤞🤞 Landmark updated:  🍎 ${mark.landmarkName}  🍎 ');
+////      if (mark.cities.isNotEmpty) {
+////        debugPrint('🤞🤞 We have cities here! 🍎  ${mark.cities.length}  🍎 at ${mark.landmarkName}');
+////      }
+//      //prettyPrint(mark.toJson(), 'checking  data accuracy');
+//    }
+//  }
 
   _getData() async {
     _vehicles = await ListAPI.getVehicles();

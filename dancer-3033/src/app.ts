@@ -15,7 +15,7 @@ const port = process.env.PORT || "8083";
 const password = process.env.MONGODB_PASSWORD || "aubrey3";
 const user = process.env.MONGODB_USER || "aubs";
 const appName = "AR MongoDB API";
-const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
+const mongoConnectionString = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
 import MongoListeners from "./listeners";
 import AssociationExpressRoutes from "./routes/assoc_routes";
 import { CommuterRequestExpressRoutes } from "./routes/commuter_request_routes";
@@ -25,8 +25,17 @@ import { RouteExpressRoutes } from "./routes/route_routes";
 console.log(
   `\n🧡 💛   AftaRobot MongoDB API ... ☘️  starting  ☘️  ${new Date().toISOString()}   🧡 💛\n`,
 );
+// export const client: MongoClient = new MongoClient(mongoConnectionString, { useNewUrlParser: true });
+// client.connect(async err => {
+//   const collection = client.db("monitordb").collection("routes");
+//   const count = await collection.count();
+//   console.log(`☘️☘️☘️☘️☘️ Count of collection is: ${count}`);
+//   // perform actions on the collection object
+//   //client.close();
+// });
+mongoose.Promise = global.Promise;
 mongoose
-  .connect(mongoConnection, {
+  .connect(mongoConnectionString, {
     useNewUrlParser: true,
   })
   .then((client) => {
@@ -51,10 +60,10 @@ mongoose
   .catch((err) => {
     console.error(err);
   });
-//
+
+
 import { app } from "./server/server";
 import UserExpressRoutes from './routes/user_routes';
-import { MongoClient } from 'mongodb';
 
 class AftaRobotApp {
   public app: express.Application;
