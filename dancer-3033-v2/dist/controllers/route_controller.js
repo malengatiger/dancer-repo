@@ -77,6 +77,29 @@ class RouteController {
                 });
             }
         }));
+        app.route("/addRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const route = yield route_1.default.findOne({ routeID: req.body.routeID });
+                if (req.body.clear == true) {
+                    route.routePoints = [];
+                }
+                req.body.routePoints.forEach((p) => {
+                    route.routePoints.push(p);
+                });
+                const result = yield route.save();
+                log_1.default(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
+                log_1.default(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addRoutePoints failed'
+                });
+            }
+        }));
         app.route("/updateRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.default(`\n\n💦  POST: /updateRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
@@ -84,6 +107,9 @@ class RouteController {
                 const routeID = req.body.routeID;
                 const points = req.body.routePoints;
                 const route = yield route_1.default.findOne({ routeID: routeID });
+                if (!route) {
+                    throw new Error('Route not found');
+                }
                 let cnt = 0;
                 let cnt2 = 0;
                 route.routePoints.forEach((p) => {
@@ -92,7 +118,7 @@ class RouteController {
                         if (p.latitude === landmarkPoint.latitude && p.longitude === landmarkPoint.longitude) {
                             p = landmarkPoint;
                             cnt++;
-                            log_1.default(`☘️ Updated this landmark point: 🧡 #${cnt} 🧡 normal point 🍎 #${cnt2} for ${p.landmarkName} 💙💙 ${p.position.coordinates}`);
+                            log_1.default(`☘️ Updated this landmark point: 🧡 #${cnt} 🧡 normal point 🍎 #${cnt2} for ${route.name} 💙💙 `);
                         }
                     });
                 });
@@ -101,6 +127,7 @@ class RouteController {
                 res.status(200).json(route);
             }
             catch (err) {
+                console.error(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 updateRoutePoints failed'

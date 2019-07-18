@@ -77,6 +77,33 @@ export class RouteController {
                 )
             }
         });
+        app.route("/addRoutePoints").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const route: any = await Route.findOne({ routeID: req.body.routeID });
+                if (req.body.clear == true) {
+                    route.routePoints = [];
+                }
+                req.body.routePoints.forEach((p: any) => {
+                    route.routePoints.push(p);
+                });
+                
+                const result = await route.save();
+                log(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
+                log(result);
+                res.status(200).json(result);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 addRoutePoints failed'
+                    }
+                )
+            }
+        });
         app.route("/updateRoutePoints").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /updateRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
@@ -86,6 +113,9 @@ export class RouteController {
                 const routeID = req.body.routeID;
                 const points = req.body.routePoints;
                 const route: any = await Route.findOne({ routeID: routeID });
+                if (!route) {
+                    throw new Error('Route not found');
+                }
                 let cnt = 0;
                 let cnt2 = 0;
                 route.routePoints.forEach((p: any) => {
@@ -94,7 +124,7 @@ export class RouteController {
                         if (p.latitude === landmarkPoint.latitude && p.longitude === landmarkPoint.longitude) {
                             p = landmarkPoint;
                             cnt++;
-                            log(`☘️ Updated this landmark point: 🧡 #${cnt} 🧡 normal point 🍎 #${cnt2} for ${p.landmarkName} 💙💙 ${p.position.coordinates}`);
+                            log(`☘️ Updated this landmark point: 🧡 #${cnt} 🧡 normal point 🍎 #${cnt2} for ${route.name} 💙💙 `);
                         }
                     });
 
@@ -106,6 +136,7 @@ export class RouteController {
                 log(`💙💙 Points updated. ${cnt} ☘️☘️ for route: ${route.name} 🧡💛`);
                 res.status(200).json(route);
             } catch (err) {
+                console.error(err);
                 res.status(400).json(
                     {
                         error: err,

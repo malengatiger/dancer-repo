@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import http from "http";
 import mlog from './log';
 import AftaRobotApp from './ar';
+import { log } from "util";
 
 export const app: Application = express();
 const server = http.createServer(app);
@@ -23,6 +24,8 @@ app.use((req: Request, res: Response, next) => {
 });
 
 const port = process.env.PORT || 3000;
+const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
+log(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer}`);
 server.listen(port, () => {
   console.info(
     `\n🔵🔵🔵  Dancer Web API started and listening on; 🧡💛 port: ${port} 🧡💛`,

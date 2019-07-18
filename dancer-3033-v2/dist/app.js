@@ -11,6 +11,7 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const http_1 = __importDefault(require("http"));
 const log_1 = __importDefault(require("./log"));
 const ar_1 = __importDefault(require("./ar"));
+const util_1 = require("util");
 exports.app = express_1.default();
 const server = http_1.default.createServer(exports.app);
 exports.app.use(body_parser_1.default.json());
@@ -21,6 +22,8 @@ exports.app.use((req, res, next) => {
     next();
 });
 const port = process.env.PORT || 3000;
+const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
+util_1.log(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer}`);
 server.listen(port, () => {
     console.info(`\n🔵🔵🔵  Dancer Web API started and listening on; 🧡💛 port: ${port} 🧡💛`);
 });
