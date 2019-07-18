@@ -1,0 +1,15 @@
+{
+    "git.ignoreLimitWarning": true,
+    "debug.console.fontFamily": "Monaco",
+    "terminal.integrated.enableBell": true,
+    "terminal.integrated.letterSpacing": 1,
+    "terminal.integrated.macOptionClickForcesSelection": true,
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "markdown.preview.fontSize": 13,
+    "terminal.integrated.cursorBlinking": true
+}
