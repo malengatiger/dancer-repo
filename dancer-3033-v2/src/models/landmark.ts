@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+// Base definition
 const LandmarkSchema = new mongoose.Schema(
     {
         landmarkName: {type: String, required: true},

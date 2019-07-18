@@ -3,6 +3,7 @@ interface RoutePoint {
     type: String,
     coordinates: any
 }
+// Base definition
 const RouteSchema = new mongoose.Schema(
     {
         name: {type: String, required: true},

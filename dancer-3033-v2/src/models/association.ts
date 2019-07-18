@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
-
+// Base definition
 const AssociationSchema = new mongoose.Schema(
     {
         name: {type: String, required: true},
