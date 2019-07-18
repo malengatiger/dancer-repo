@@ -49,7 +49,7 @@ class LandmarkController {
                 const result = yield landmark.save();
                 log_1.default(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`);
                 res.status(200).json(result);
             }
             catch (err) {

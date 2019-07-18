@@ -43,7 +43,7 @@ export class LandmarkController {
                 const result = await landmark.save();
                 log(result);
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`)
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(

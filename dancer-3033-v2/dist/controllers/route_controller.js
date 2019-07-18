@@ -14,7 +14,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const route_1 = __importDefault(require("../models/route"));
 const database_1 = __importDefault(require("../database"));
 const log_1 = __importDefault(require("../log"));
-const association_1 = __importDefault(require("../models/association"));
 class RouteController {
     routes(app) {
         log_1.default(`🏓🏓🏓🏓🏓    RouteController: 💙  setting up default Route routes ... ${database_1.default}`);
@@ -24,19 +23,24 @@ class RouteController {
             console.log(req.body);
             try {
                 const now = new Date().getTime();
-                const asses = yield association_1.default.find();
-                log_1.default(asses);
-                log_1.default(`💦 💦 💦 💦 💦 💦 associationID: ☘️☘️ ${req.body.associationID} ☘️☘️`);
+                // const asses = await Association.find();
+                // log(asses);
+                const assID = req.body.associationID;
+                log_1.default(`💦 💦 💦 💦 💦 💦 associationID: ☘️☘️ ${assID} ☘️☘️`);
                 // const result = await Route.find({
-                //     'associationDetails.associationID': req.body.associationID
+                //     'associationDetails.associationID': assID,
                 // });
                 const result = yield route_1.default.find();
+                //const result = await Landmark.find({
+                //     'routeDetails.routeID': req.body.id
+                // });
                 log_1.default(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query`);
                 res.status(200).json(result);
             }
             catch (err) {
+                console.error(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getRoutes failed'
@@ -82,6 +86,7 @@ class RouteController {
             console.log(req.body);
             try {
                 const route = yield route_1.default.findOne({ routeID: req.body.routeID });
+                // check clear flag
                 if (req.body.clear == true) {
                     route.routePoints = [];
                 }
