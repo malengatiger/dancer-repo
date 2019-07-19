@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import {Position} from '../models/interfaces'
 
 const CommuterStartingLandmarkSchema = new mongoose.Schema(
     {
@@ -8,7 +7,7 @@ const CommuterStartingLandmarkSchema = new mongoose.Schema(
         toLandmarkId: {type: String, required: true},
         toLandmarkName: {type: String, required: true},
         
-        position: {type: Position, required: true},
+        position: {type: Map, required: true},
         userId: {type: String, required: true, trim: true},
         
         created: {type: String, required: true, default: new Date().toISOString()},

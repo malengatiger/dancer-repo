@@ -12,7 +12,7 @@ const CommuterArrivalLandmarkSchema = new mongoose.Schema(
         vehicleReg: {type: String, required: true},
         commuterRequestId: {type: String, required: true},
         departureId: {type: String, required: true},
-        position: {type: {}, required: true},
+        position: {type: Map, required: true},
         userId: {type: String, required: true, trim: true},
         commuterArrivalLandmarkId: {type: String, required: true,},
 

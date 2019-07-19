@@ -13,7 +13,7 @@ const CommuterRequestSchema = new mongoose.Schema(
         vehicleReg: {type: String, required: true},
         commuterRequestId: {type: String, required: true},
         passengers: {type: Number, required: true, default: 1},
-        position: {type: Position, required: true},
+        position: {type: Map, required: true},
         userId: {type: String, required: true, trim: true},
         stringTime: {type: String, required: true, default: new Date().toISOString()},
         time: {type: Number, required: true, default: new Date().getTime()},

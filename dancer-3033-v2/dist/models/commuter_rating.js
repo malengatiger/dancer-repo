@@ -1,0 +1,16 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
+const CommuterRatingSchema = new mongoose_1.default.Schema({
+    commuterRequestId: { type: String, required: true, trim: true },
+    rating: { type: Map, required: true },
+    userId: { type: String, required: true },
+    position: { type: Map, required: true },
+    created: { type: String, required: true, default: new Date().toISOString() },
+});
+const CommuterRating = mongoose_1.default.model('CommuterRating', CommuterRatingSchema);
+exports.default = CommuterRating;
+//# sourceMappingURL=commuter_rating.js.map

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import {Position} from '../models/interfaces'
 
 const DispatchRecordSchema = new mongoose.Schema(
     {
@@ -9,7 +8,7 @@ const DispatchRecordSchema = new mongoose.Schema(
         marshalName: {type: String, required: true},
         latitude: {type: Number, required: true},
         longitude: {type: Number, required: true},
-        position: {type: Position, required: true},
+        position: {type: Map, required: true},
         landmarkName: {type: String, required: true, trim: true},
         routeName: {type: String, required: true},
         routeId: {type: String, required: true},

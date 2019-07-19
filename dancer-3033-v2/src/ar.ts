@@ -8,6 +8,9 @@ import AssociationController from './controllers/route_controller';
 import { AppController } from "./controllers/app_controller";
 import LandmarkController from "./controllers/landmark_controller";
 import UserController from "./controllers/user_controller";
+import { CommuterController } from "./controllers/commuter_controller";
+import { VehicleController } from "./controllers/vehicle_controller";
+import { DispatchController } from "./controllers/dispatch_controller";
 const port = process.env.PORT || "8083";
 
 class AftaRobotApp {
@@ -18,6 +21,9 @@ class AftaRobotApp {
     public appController: AppController = new AppController();
     public landmarkController: LandmarkController = new LandmarkController();
     public userController: UserController = new UserController();
+    public commuterController: CommuterController = new CommuterController();
+    public vehicleController: VehicleController = new VehicleController();
+    public dispatchController: DispatchController = new DispatchController();
 
     constructor() {
         l(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
@@ -29,13 +35,17 @@ class AftaRobotApp {
         this.appController.routes(this.app);
         this.landmarkController.routes(this.app);
         this.userController.routes(this.app);
+        this.commuterController.routes(this.app);
+        this.vehicleController.routes(this.app);
+        this.dispatchController.routes(this.app);
     }
     private initializeMiddleware() {
         console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors());
-        l(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized OK .... 🧡💛🧡💛`);
+        l(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized OK .... 🧡💛🧡💛. Routes below:`);
+        l(app.routes);
     }
 }
 export default AftaRobotApp;

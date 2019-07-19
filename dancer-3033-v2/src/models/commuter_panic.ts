@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
-import {Position} from '../models/interfaces'
 
 const CommuterPanicSchema = new mongoose.Schema(
     {
         active: {type: Boolean, required: true, default: true},
         type: {type: String, required: true},
-        locations: {type: Position, required: true},
+        locations: {type: Array, required: true},
         commuterPanicId: {type: String, required: true},
         vehicleId: {type: String, required: true},
         vehicleReg: {type: String, required: true},
