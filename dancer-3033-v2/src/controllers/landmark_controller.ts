@@ -132,6 +132,8 @@ export class LandmarkController {
             console.log(req.body);
             try {
                 const landmark: any = new Landmark(req.body);
+                const result0 = await landmark.save();
+                landmark.landmarkID = result0._id;
                 const result = await landmark.save();
                 log(result);
                 res.status(200).json(result);

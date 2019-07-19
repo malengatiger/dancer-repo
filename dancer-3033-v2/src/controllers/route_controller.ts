@@ -6,7 +6,7 @@ import Association from "../models/association";
 export class RouteController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓🏓🏓    RouteController: 💙  setting up default Route routes ... ${db}`,
+            `🏓🏓🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `,
         );
         /////////
         app.route("/getRoutesByAssociation").post(async (req: Request, res: Response) => {
@@ -49,6 +49,8 @@ export class RouteController {
             console.log(req.body);
             try {
                 const route: any = new Route(req.body);
+                const result0: any = await route.save();
+                route.routeID = result0._id;
                 const result = await route.save();
                 log(result);
                 res.status(200).json(result);
@@ -106,6 +108,34 @@ export class RouteController {
                     {
                         error: err,
                         message: ' 🍎🍎🍎🍎 addRoutePoints failed'
+                    }
+                )
+            }
+        });
+        app.route("/addRawRoutePoints").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const route: any = await Route.findOne({ routeID: req.body.routeID });
+                // check clear flag
+                if (req.body.clear == true) {
+                    route.rawRoutePoints = [];
+                }
+                req.body.rawRoutePoints.forEach((p: any) => {
+                    route.rawRoutePoints.push(p);
+                });
+                
+                const result = await route.save();
+                log(`💙💙 Points added to route. ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
+                log(result);
+                res.status(200).json(result);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 addRawRoutePoints failed'
                     }
                 )
             }

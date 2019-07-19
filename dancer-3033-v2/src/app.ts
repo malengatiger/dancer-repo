@@ -8,6 +8,7 @@ import http from "http";
 import mlog from './log';
 import AftaRobotApp from './ar';
 import { log } from "util";
+const listEndpoints = require('express-list-endpoints')
 
 export const app: Application = express();
 const server = http.createServer(app);
@@ -34,6 +35,19 @@ server.listen(port, () => {
 });
 const ar = new AftaRobotApp();
 mlog(`🔆 🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
+mlog(`\n🔆 🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+const list: any[] = listEndpoints(app);
+const stringList: string[] = [];
+list.forEach((m) => {
+  stringList.push(m.path);
+});
+stringList.sort();
+let cnt = 0;
+stringList.forEach((m) => {
+  cnt++;
+  mlog(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
+});
 
+mlog(`🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of endpoints available; total endpoints: 💛 ${cnt}  💛 \n\n`);
 
 module.exports = server;

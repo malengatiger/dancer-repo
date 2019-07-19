@@ -16,9 +16,10 @@ const DispatchRecordSchema = new mongoose_1.default.Schema({
     routeName: { type: String, required: true },
     routeId: { type: String, required: true },
     countryName: { type: String, required: true },
-    vehicleReg: { type: Number, required: true },
-    vehicleId: { type: Number, required: true },
+    vehicleReg: { type: String, required: true },
+    vehicleId: { type: String, required: true },
     vehicleType: { type: {}, required: true },
+    ownerId: { type: String, required: false },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 const DispatchRecord = mongoose_1.default.model('DispatchRecord', DispatchRecordSchema);

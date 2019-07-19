@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import db from '../database';
 import log from '../log';
-import User from "../models/user";
+import User, { IUser } from "../models/user";
 export class UserController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓🏓🏓    UserController: 💙  setting up default User routes ... ${db}`,
+            `🏓🏓🏓🏓🏓    UserController: 💙  setting up default User routes ... `,
         );
         /////////
         app.route("/getUsers").post(async (req: Request, res: Response) => {
@@ -14,7 +14,7 @@ export class UserController {
             );
             console.log(req.body);
             try {
-                const users = await User.find();
+                const users: IUser[] = await User.find();
                 res.status(200).json(users);
             } catch (err) {
                 res.status(400).json(
@@ -31,7 +31,7 @@ export class UserController {
             );
             console.log(req.body);
             try {
-                const user = await User.findOne({
+                const user: any = await User.findOne({
                     email: req.body.email,
                 });
                 log(user);
@@ -71,7 +71,9 @@ export class UserController {
             );
             console.log(req.body);
             try {
-                const user: any = new User(req.body);
+                const user: IUser = new User(req.body);
+                const result0: IUser = await user.save();
+                user.userId = result0.userId;
                 const result = await user.save();
                 log(result);
                 res.status(200).json(result);

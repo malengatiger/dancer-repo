@@ -5,7 +5,7 @@ import Association from "../models/association";
 export class AssociationController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓🏓🏓    AssociationController: 💙  setting up default Association routes ... ${db}`,
+            `🏓🏓🏓🏓🏓    AssociationController: 💙  setting up default Association routes ... `,
         );
         /////////
         app.route("/getAssociations").post(async (req: Request, res: Response) => {
@@ -33,6 +33,8 @@ export class AssociationController {
             console.log(req.body);
             try {
                 const association: any = new Association(req.body);
+                const result0 = await association.save();
+                association.associationID = result0._id;
                 const result = await association.save();
                 log(result);
                 res.status(200).json(result);

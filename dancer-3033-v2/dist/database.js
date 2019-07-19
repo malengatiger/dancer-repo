@@ -17,10 +17,10 @@ mongoose_1.default
 })
     .then((client) => {
     log_1.default(`\n🔆🔆🔆🔆🔆🔆  Mongo connected ... 🔆🔆🔆  💛  ${new Date()}  💛 💛`);
-    log_1.default(`\n🍎🍎  ${appName} :: database:  ☘️  client version: ${JSON.stringify(client.modelNames())}  ☘️  is OK   🍎🍎 `);
+    log_1.default(`\n🍎🍎  ${appName} :: database:  ☘️  Mongo Client version: 💙${client.version} 💙 model names: ${JSON.stringify(client.modelNames())}  ☘️  is OK   🍎🍎 `);
     log_1.default(`🍎🍎🍎  MongoDB config ...${JSON.stringify(mongoose_1.default.connection.config)}`);
     // MongoListeners.listen(client);
-    // console.log(`🍎🍎🍎  MongoDB collections listened to ...`);
+    console.log(`🍎🍎🍎  MongoDB collections available ...`);
     console.log(mongoose_1.default.connection.collections);
 })
     .catch((err) => {

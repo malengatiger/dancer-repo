@@ -11,6 +11,8 @@ import UserController from "./controllers/user_controller";
 import { CommuterController } from "./controllers/commuter_controller";
 import { VehicleController } from "./controllers/vehicle_controller";
 import { DispatchController } from "./controllers/dispatch_controller";
+import { CityController } from "./controllers/city_controller";
+
 const port = process.env.PORT || "8083";
 
 class AftaRobotApp {
@@ -24,6 +26,7 @@ class AftaRobotApp {
     public commuterController: CommuterController = new CommuterController();
     public vehicleController: VehicleController = new VehicleController();
     public dispatchController: DispatchController = new DispatchController();
+    public cityController: CityController = new CityController();
 
     constructor() {
         l(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
@@ -38,14 +41,15 @@ class AftaRobotApp {
         this.commuterController.routes(this.app);
         this.vehicleController.routes(this.app);
         this.dispatchController.routes(this.app);
+        this.cityController.routes(this.app);
     }
     private initializeMiddleware() {
         console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors());
-        l(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized OK .... 🧡💛🧡💛. Routes below:`);
-        l(app.routes);
+        l(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛`);
+        
     }
 }
 export default AftaRobotApp;

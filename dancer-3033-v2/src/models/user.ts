@@ -1,9 +1,16 @@
-import mongoose from 'mongoose';
-interface UserPoint {
-    type: String,
-    coordinates: any
-}
+import mongoose, { Schema, Document } from 'mongoose';
 
+export interface IUser extends Document {
+    userId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    fcmToken: string;
+    associationID: string;
+    associationName: string;
+    userType: string;
+    created: string;
+  }
 const UserSchema = new mongoose.Schema(
     {
         firstName: {type: String, required: true},
@@ -11,13 +18,14 @@ const UserSchema = new mongoose.Schema(
         email: {type: String, required: true},
         fcmToken: {type: String, required: false},
         cellphone: {type: String, required: true},
+        userId: {type: String, required: false},
         associationID: {type: String, required: false},
         associationName: {type: String, required: false},
-        userType: {type: String, required: true, default: 'white'},
+        userType: {type: String, required: true,},
         created: {type: String, required: true, default: new Date().toISOString()},
     }
 );
 
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model<IUser>('User', UserSchema);
 export default User;

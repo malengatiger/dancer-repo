@@ -11,12 +11,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const database_1 = __importDefault(require("../database"));
 const log_1 = __importDefault(require("../log"));
 const user_1 = __importDefault(require("../models/user"));
 class UserController {
     routes(app) {
-        log_1.default(`🏓🏓🏓🏓🏓    UserController: 💙  setting up default User routes ... ${database_1.default}`);
+        log_1.default(`🏓🏓🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
         /////////
         app.route("/getUsers").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.default(`\n\n💦  POST: /getUsers requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
@@ -70,6 +69,8 @@ class UserController {
             console.log(req.body);
             try {
                 const user = new user_1.default(req.body);
+                const result0 = yield user.save();
+                user.userId = result0.userId;
                 const result = yield user.save();
                 log_1.default(result);
                 res.status(200).json(result);

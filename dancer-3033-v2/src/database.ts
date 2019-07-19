@@ -16,7 +16,7 @@ mongoose
       `\n🔆🔆🔆🔆🔆🔆  Mongo connected ... 🔆🔆🔆  💛  ${new Date()}  💛 💛`,
     );
     log(
-      `\n🍎🍎  ${appName} :: database:  ☘️  client version: ${
+      `\n🍎🍎  ${appName} :: database:  ☘️  Mongo Client version: 💙${client.version} 💙 model names: ${
         JSON.stringify(client.modelNames())
       }  ☘️  is OK   🍎🍎 `,
     );
@@ -27,7 +27,7 @@ mongoose
     );
     
     // MongoListeners.listen(client);
-    // console.log(`🍎🍎🍎  MongoDB collections listened to ...`);
+    console.log(`🍎🍎🍎  MongoDB collections available ...`);
     console.log(mongoose.connection.collections);
   })
   .catch((err) => {

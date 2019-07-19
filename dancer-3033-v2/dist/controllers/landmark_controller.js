@@ -121,6 +121,8 @@ class LandmarkController {
             console.log(req.body);
             try {
                 const landmark = new landmark_1.default(req.body);
+                const result0 = yield landmark.save();
+                landmark.landmarkID = result0._id;
                 const result = yield landmark.save();
                 log_1.default(result);
                 res.status(200).json(result);

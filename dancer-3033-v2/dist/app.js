@@ -12,6 +12,7 @@ const http_1 = __importDefault(require("http"));
 const log_1 = __importDefault(require("./log"));
 const ar_1 = __importDefault(require("./ar"));
 const util_1 = require("util");
+const listEndpoints = require('express-list-endpoints');
 exports.app = express_1.default();
 const server = http_1.default.createServer(exports.app);
 exports.app.use(body_parser_1.default.json());
@@ -29,5 +30,18 @@ server.listen(port, () => {
 });
 const ar = new ar_1.default();
 log_1.default(`🔆 🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
+log_1.default(`\n🔆 🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+const list = listEndpoints(exports.app);
+const stringList = [];
+list.forEach((m) => {
+    stringList.push(m.path);
+});
+stringList.sort();
+let cnt = 0;
+stringList.forEach((m) => {
+    cnt++;
+    log_1.default(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
+});
+log_1.default(`🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of endpoints available; total endpoints: 💛 ${cnt}  💛 \n\n`);
 module.exports = server;
 //# sourceMappingURL=app.js.map
