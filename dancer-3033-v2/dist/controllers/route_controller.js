@@ -25,10 +25,10 @@ class RouteController {
                 const now = new Date().getTime();
                 // const asses = await Association.find();
                 // log(asses);
-                const assID = req.body.associationID;
+                const assID = req.body.associationID.trim();
                 log_1.default(`💦 💦 💦 💦 💦 💦 associationID: ☘️☘️ ${assID} ☘️☘️`);
                 // const result = await Route.find({
-                //     'associationDetails.associationID': assID,
+                //     "associationDetails.associationID": assID,
                 // });
                 const result = yield route_1.default.find();
                 //const result = await Landmark.find({

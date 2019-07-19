@@ -18,6 +18,7 @@ const assoc_controller_1 = __importDefault(require("./controllers/assoc_controll
 const route_controller_1 = __importDefault(require("./controllers/route_controller"));
 const app_controller_1 = require("./controllers/app_controller");
 const landmark_controller_1 = __importDefault(require("./controllers/landmark_controller"));
+const user_controller_1 = __importDefault(require("./controllers/user_controller"));
 const port = process.env.PORT || "8083";
 class AftaRobotApp {
     constructor() {
@@ -25,6 +26,7 @@ class AftaRobotApp {
         this.assocController = new route_controller_1.default();
         this.appController = new app_controller_1.AppController();
         this.landmarkController = new landmark_controller_1.default();
+        this.userController = new user_controller_1.default();
         log_1.default(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
         this.app = app_1.app;
         this.port = port;
@@ -33,6 +35,7 @@ class AftaRobotApp {
         this.assocController.routes(this.app);
         this.appController.routes(this.app);
         this.landmarkController.routes(this.app);
+        this.userController.routes(this.app);
     }
     initializeMiddleware() {
         console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);

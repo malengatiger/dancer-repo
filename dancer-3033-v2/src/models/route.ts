@@ -1,8 +1,4 @@
 import mongoose from 'mongoose';
-interface RoutePoint {
-    type: String,
-    coordinates: any
-}
 
 const RouteSchema = new mongoose.Schema(
     {

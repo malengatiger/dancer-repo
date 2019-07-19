@@ -18,10 +18,10 @@ export class RouteController {
                 const now = new Date().getTime();
                 // const asses = await Association.find();
                 // log(asses);
-                const assID = req.body.associationID;
+                const assID = req.body.associationID.trim();
                 log(`💦 💦 💦 💦 💦 💦 associationID: ☘️☘️ ${assID} ☘️☘️`)
                 // const result = await Route.find({
-                //     'associationDetails.associationID': assID,
+                //     "associationDetails.associationID": assID,
                 // });
                 const result = await Route.find();
                 //const result = await Landmark.find({

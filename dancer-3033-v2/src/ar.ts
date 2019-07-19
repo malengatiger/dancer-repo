@@ -7,6 +7,7 @@ import RouteController from './controllers/assoc_controller';
 import AssociationController from './controllers/route_controller';
 import { AppController } from "./controllers/app_controller";
 import LandmarkController from "./controllers/landmark_controller";
+import UserController from "./controllers/user_controller";
 const port = process.env.PORT || "8083";
 
 class AftaRobotApp {
@@ -16,6 +17,7 @@ class AftaRobotApp {
     public assocController: AssociationController = new AssociationController();
     public appController: AppController = new AppController();
     public landmarkController: LandmarkController = new LandmarkController();
+    public userController: UserController = new UserController();
 
     constructor() {
         l(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
@@ -26,6 +28,7 @@ class AftaRobotApp {
         this.assocController.routes(this.app);
         this.appController.routes(this.app);
         this.landmarkController.routes(this.app);
+        this.userController.routes(this.app);
     }
     private initializeMiddleware() {
         console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
