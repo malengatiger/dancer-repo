@@ -287,6 +287,7 @@ export class VehicleController {
       try {
         
         const c: any = new VehicleLocation(req.body);
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -295,32 +296,6 @@ export class VehicleController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addVehicleLocation failed'
-          }
-        )
-      }
-    });
-    app.route("/addVehicleLog").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addVehicleLog requested `;
-      console.log(msg);
-
-      try {
-        const vehicle: any = await Vehicle.findOne({ vehicleID: req.body.vehicleID });
-        const latitude: any = parseFloat(req.body.latitude);
-        const longitude: any = parseFloat(req.body.latitude);
-        const mlog = {
-          latitude,
-          longitude,
-          created: new Date().toISOString()
-        }
-        vehicle.vehicleLogs.push(mlog);
-        const result = await vehicle.save();
-        log(result);
-        res.status(200).json(result);
-      } catch (err) {
-        res.status(400).json(
-          {
-            error: err,
-            message: ' 🍎🍎🍎🍎 addVehicleLog failed'
           }
         )
       }
@@ -391,5 +366,20 @@ export class VehicleController {
         )
       }
     });
+
+    
   }
+  // /**
+  //    * static name
+  //    */
+  //   public static async fix() {
+  //     const list: any[] = await Vehicle.find();
+  //     let cnt = 0;
+  //     for (const v of list) {
+  //       v.vehicleID = uuid();
+  //       await v.save();
+  //       cnt++;
+  //       log(`💦💦 Vehicle ID set for #${cnt} 🍎 ${v.vehicleReg}`);
+  //     }
+  //   }
 }

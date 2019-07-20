@@ -15,7 +15,6 @@ const VehicleSchema = new mongoose_1.default.Schema({
     vehicleType: { type: Map, required: true },
     photos: { type: Array, required: true, default: [] },
     videos: { type: Array, required: true, default: [] },
-    vehicleLogs: { type: Array, required: true, default: [] },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 VehicleSchema.plugin(mongoose_unique_validator_1.default);

@@ -12,7 +12,6 @@ const VehicleSchema = new mongoose.Schema(
         vehicleType: {type: Map, required: true},
         photos: {type: Array, required: true, default: []},
         videos: {type: Array, required: true, default: []},
-        vehicleLogs: {type: Array, required: true, default: []},
        
         created: {type: String, required: true, default: new Date().toISOString()},
 

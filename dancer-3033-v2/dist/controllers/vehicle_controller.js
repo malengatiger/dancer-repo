@@ -265,6 +265,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const c = new vehicle_location_1.default(req.body);
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -273,30 +274,6 @@ class VehicleController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addVehicleLocation failed'
-                });
-            }
-        }));
-        app.route("/addVehicleLog").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addVehicleLog requested `;
-            console.log(msg);
-            try {
-                const vehicle = yield vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
-                const latitude = parseFloat(req.body.latitude);
-                const longitude = parseFloat(req.body.latitude);
-                const mlog = {
-                    latitude,
-                    longitude,
-                    created: new Date().toISOString()
-                };
-                vehicle.vehicleLogs.push(mlog);
-                const result = yield vehicle.save();
-                log_1.default(result);
-                res.status(200).json(result);
-            }
-            catch (err) {
-                res.status(400).json({
-                    error: err,
-                    message: ' 🍎🍎🍎🍎 addVehicleLog failed'
                 });
             }
         }));
