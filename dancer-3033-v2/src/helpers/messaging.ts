@@ -2,6 +2,7 @@
 import * as admin from "firebase-admin";
 import Landmark from "../models/landmark";
 import log from '../log';
+import Constants from "./constants";
 
 console.log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
@@ -32,6 +33,138 @@ class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
     }
+    public static async sendVehicleArrival(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Vehicle Arrival",
+                body: data.fromLandmarkName,
+            },
+            data: data,
+        };
+        const topic = Constants.VEHICLE_ARRIVALS + '_' + data.fromLandmarkID;
+        await appTo.messaging().sendToTopic(topic, payload, options);
+        console.log(
+            `😍 sendVehicleArrival: message sent: 😍 ${
+            data.fromLandmarkName
+            } topic: ${topic}`,
+        );
+    }
+    public static async sendRoute(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Route Added",
+                body: data.name,
+            },
+            data: data,
+        };
+        const topic = Constants.ROUTES;
+        await appTo.messaging().sendToTopic(topic, payload, options);
+        console.log(
+            `😍 sendRoute: message sent: 😍 ${
+            data.fromLandmarkName
+            } topic: ${topic}`,
+        );
+    }
+    public static async sendLandmark(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Landmark Added",
+                body: data.landmarkName,
+            },
+            data: data,
+        };
+        const topic = Constants.LANDMARKS;
+        await appTo.messaging().sendToTopic(topic, payload, options);
+        console.log(
+            `😍 sendLandmark: message sent: 😍 ${
+            data.fromLandmarkName
+            } topic: ${topic}`,
+        );
+    }
+    public static async sendVehicleDeparture(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Vehicle Departure",
+                body: data.fromLandmarkName,
+            },
+            data: data,
+        };
+        const topic = Constants.VEHICLE_DEPARTURES + '_' + data.fromLandmarkID;
+        await appTo.messaging().sendToTopic(topic, payload, options);
+        console.log(
+            `😍 sendVehicleDeparture: message sent: 😍 ${
+            data.fromLandmarkName
+            } topic: ${topic}`,
+        );
+    }
+    public static async sendCommuterPickupLandmark(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Commuter Pickup",
+                body: data.fromLandmarkName,
+            },
+            data: data,
+        };
+        const topic = Constants.COMMUTER_PICKUP_LANDMARKS + '_' + data.fromLandmarkID;
+        await appTo.messaging().sendToTopic(topic, payload, options);
+        console.log(
+            `😍 sendCommuterPickupLandmark: message sent: 😍 ${
+            data.fromLandmarkName
+            } topic: ${topic}`,
+        );
+    }
+    public static async sendCommuterRequest(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Commuter Request",
+                body: data.fromLandmarkName,
+            },
+            data: data,
+        };
+        const topic = Constants.COMMUTER_REQUESTS + '_' + data.fromLandmarkID;
+        await appTo.messaging().sendToTopic(topic, payload, options);
+        console.log(
+            `😍 sendCommuterRequest: message sent: 😍 ${
+            data.fromLandmarkName
+            } topic: ${topic}`,
+        );
+    }
     public static async sendCommuterArrivalLandmark(
         data: any,
     ): Promise<any> {
@@ -44,20 +177,14 @@ class Messaging {
                 title: "Commuter Arrival",
                 body: data.created,
             },
-            data: {
-                created: data.created,
-                userID: data.userID,
-                routeID: data.routeID,
-                fromLandmarkID: data.fromLandmarkID,
-                toLandmarkID: data.toLandmarkID,
-            },
+            data: data,
         };
-        const topic = "commuterArrivalLandmark_" + data.fromLandmarkID;
+        const topic = Constants.COMMUTER_ARRIVAL_LANDMARKS + '_'  + data.fromLandmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         console.log(
             `😍 sendCommuterArrivalLandmark: message sent: 😍 ${
             data.fromLandmarkName
-            } ${data.fromLandmarkID}`,
+            } topic: ${topic}`,
         );
     }
     public static async sendDispatchRecord(data: any): Promise<any> {
@@ -68,18 +195,11 @@ class Messaging {
         const payload: any = {
             notification: {
                 title: "Dispatch Record",
-                body: data.dispatchedAt,
+                body: data.created,
             },
-            data: {
-                dispatchedAt: data.dispatchedAt,
-                userID: data.userID,
-                routeID: data.routeID,
-                landmarkID: data.landmarkID,
-                vehicleID: data.vehicleID,
-                vehicleReg: data.vehicleReg,
-            },
+            data: data,
         };
-        const topic = "sendDispatchRecord_" + data.landmarkID;
+        const topic = Constants.DISPATCH_RECORDS + '_' + data.landmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         console.log(
             `😍 sendDispatchRecord: message sent: 😍 ${data.landmarkID} ${
@@ -105,7 +225,7 @@ class Messaging {
             },
         };
         const topic1 = "users";
-        const topic2 = "users_" + data.associationID;
+        const topic2 = Constants.USERS + '_' + data.associationID;
         const con = `${topic1} in topics || ${topic2} in topics`;
         await appTo.messaging().sendToCondition(con, payload, options);
         console.log(
@@ -114,8 +234,7 @@ class Messaging {
             } 👽👽👽`,
         );
     }
-
-    public static async sendPanic(data: any): Promise<any> {
+    public static async sendCommuterPanic(data: any): Promise<any> {
         const options: any = {
             priority: "high",
             timeToLive: 60 * 60,
@@ -125,15 +244,7 @@ class Messaging {
                 title: "Commuter Panic",
                 body: data.type + " " + data.created + " userID:" + data.userID,
             },
-            data: {
-                type: data.type,
-                created: data.created,
-                userID: data.userID,
-                vehicleID: data.vehicleID,
-                vehicleReg: data.vehicleReg,
-                active: data.active,
-                locations: data.locations,
-            },
+            data: data,
         };
         // todo - find nearest landmarks to find routes - send panic to routes found
         const list: any[] = await Landmark.find({
@@ -148,7 +259,7 @@ class Messaging {
             },
         });
         console.log(`landmarks found near panic: ${list.length}`);
-        const mTopic = "panic";
+        const mTopic = Constants.COMMUTER_PANICS;
         await appTo.messaging().sendToTopic(mTopic, payload, options);
         // send messages to routes and landmarks
 

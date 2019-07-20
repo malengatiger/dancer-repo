@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const VehicleSchema = new mongoose.Schema(
     {
-        vehicleReg: {type: String, required: true, trim: true},
+        vehicleReg: {type: String, required: true, trim: true, unique: true},
         vehicleID: {type: String, required: true, trim: true},
         associationID: {type: String, required: true, trim: true},
         associationName: {type: String, required: true},
@@ -17,7 +18,7 @@ const VehicleSchema = new mongoose.Schema(
 
     }
 );
-
+VehicleSchema.plugin(uniqueValidator);
 
 const Vehicle = mongoose.model('Vehicle', VehicleSchema);
 export default Vehicle

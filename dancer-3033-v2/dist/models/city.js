@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const CitySchema = new mongoose_1.default.Schema({
-    name: { type: String, required: true, trim: true },
-    provinceName: { type: String, required: true },
+    name: { type: String, required: true, trim: true, index: true },
+    provinceName: { type: String, required: true, index: true },
     countryID: { type: String, required: true },
     countryName: { type: String, required: true },
     latitude: { type: Number, required: true },

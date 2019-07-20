@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const log_1 = __importDefault(require("../log"));
 const user_1 = __importDefault(require("../models/user"));
 const uuid = require("uuid");
+const userTypes = ['Staff', 'Owner', 'Administrator', 'Driver', 'Marshal', 'Patroller'];
 class UserController {
     routes(app) {
         log_1.default(`🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
@@ -79,6 +80,26 @@ class UserController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addUser failed'
+                });
+            }
+        }));
+        app.route("/updateUser").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /updateUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const userType = req.body.userType;
+                const user = yield user_1.default.find({ userID: req.body.userID });
+                user.email = req.body.email;
+                user.userType = userType;
+                user.cellphone = req.body.cellphone;
+                const result = yield user.save();
+                log_1.default(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 updateUser failed'
                 });
             }
         }));

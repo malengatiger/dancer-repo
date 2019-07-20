@@ -3,6 +3,7 @@ import db from '../database';
 import log from '../log';
 import User, { IUser } from "../models/user";
 import uuid = require("uuid");
+const userTypes = ['Staff', 'Owner', 'Administrator', 'Driver', 'Marshal', 'Patroller'];
 export class UserController {
     public routes(app: any): void {
         log(
@@ -82,6 +83,29 @@ export class UserController {
                     {
                         error: err,
                         message: ' 🍎🍎🍎🍎 addUser failed'
+                    }
+                )
+            }
+        });
+        app.route("/updateUser").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /updateUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const userType = req.body.userType;
+                const user: any = await User.find({userID: req.body.userID})
+                user.email = req.body.email;
+                user.userType = userType;
+                user.cellphone = req.body.cellphone;
+                const result = await user.save();
+                log(result);
+                res.status(200).json(result);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 updateUser failed'
                     }
                 )
             }

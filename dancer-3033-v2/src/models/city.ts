@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 
 const CitySchema = new mongoose.Schema(
     {
-        name: {type: String, required: true, trim: true},
-        provinceName: {type: String, required: true},
+        name: {type: String, required: true, trim: true, index: true},
+        provinceName: {type: String, required: true, index: true},
         countryID: {type: String, required: true},
         countryName: {type: String, required: true},
         latitude: {type: Number, required: true},

@@ -17,5 +17,6 @@ Constants.COMMUTER_REQUESTS = 'commuterrequests';
 Constants.DISPATCH_RECORDS = 'dispatchrecords';
 Constants.COMMUTER_PANICS = 'commuterpanics';
 Constants.USERS = 'users';
+Constants.COMMUTER_PICKUP_LANDMARKS = 'commuterpickuplandmarks';
 exports.default = Constants;
 //# sourceMappingURL=constants.js.map

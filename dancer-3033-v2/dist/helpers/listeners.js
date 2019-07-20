@@ -1,20 +1,14 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = __importDefault(require("../helpers/constants"));
+const messaging_1 = __importDefault(require("./messaging"));
+const log_1 = __importDefault(require("../log"));
 class MongoListeners {
     static listen(client) {
-        console.log(`\n🔆🔆🔆  MongoListeners: 🧡🧡🧡  listening to changes in collections ... 👽 👽 👽\n`);
+        log_1.default(`\n🔆🔆🔆  MongoListeners: 🧡🧡🧡  listening to changes in collections ... 👽👽👽\n`);
         const users = client.connection.collection(constants_1.default.USERS);
         const associations = client.connection.collection(constants_1.default.ASSOCIATIONS);
         const routes = client.connection.collection(constants_1.default.ROUTES);
@@ -23,64 +17,81 @@ class MongoListeners {
         const commuterRequests = client.connection.collection(constants_1.default.COMMUTER_REQUESTS);
         const dispatchRecords = client.connection.collection(constants_1.default.DISPATCH_RECORDS);
         const panics = client.connection.collection(constants_1.default.COMMUTER_PANICS);
+        const vehicleArrivals = client.connection.collection(constants_1.default.VEHICLE_ARRIVALS);
+        const vehicleDepartures = client.connection.collection(constants_1.default.VEHICLE_DEPARTURES);
+        const commuterPickups = client.connection.collection(constants_1.default.COMMUTER_PICKUP_LANDMARKS);
         //
         const assocStream = associations.watch();
         const routeStream = routes.watch();
         const landmarkStream = landmarks.watch();
-        const commuterArrivalStream = commuterArrivalLandmarks.watch();
-        const commuterRequestsStream = commuterRequests.watch();
-        const dispatchRecordsStream = dispatchRecords.watch();
+        const commuterArrivalStream = commuterArrivalLandmarks.watch({ fullDocument: 'updateLookup' });
+        const commuterRequestsStream = commuterRequests.watch({ fullDocument: 'updateLookup' });
+        const dispatchRecordsStream = dispatchRecords.watch({ fullDocument: 'updateLookup' });
         const usersStream = users.watch({ fullDocument: 'updateLookup' });
         const panicStream = panics.watch({ fullDocument: 'updateLookup' });
+        const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
+        const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
+        const commuterPickupsStream = commuterPickups.watch({ fullDocument: 'updateLookup' });
+        //62770328964 FNB
+        vehicleArrivalsStream.on("change", (event) => {
+            log_1.default(`\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(event);
+            messaging_1.default.sendVehicleArrival(event.fullDocument);
+        });
+        //
+        vehicleDeparturesStream.on("change", (event) => {
+            log_1.default(`\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(event);
+            messaging_1.default.sendVehicleDeparture(event.fullDocument);
+        });
+        //
+        commuterPickupsStream.on("change", (event) => {
+            log_1.default(`\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(event);
+            messaging_1.default.sendCommuterPickupLandmark(event.fullDocument);
+        });
+        //
         panicStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
-            console.log(event);
-            //CommuterPanicHelper.onCommuterPanicChanged(event);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(event);
+            messaging_1.default.sendCommuterPanic(event.fullDocument);
         });
         //
         usersStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
-            console.log(event);
-            // UserHelper.onUserAdded(event);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(event);
+            messaging_1.default.sendUser(event.fullDocument);
         });
         //
         assocStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
-            console.log(event);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(event);
             // AssociationHelper.onAssociationAdded(event);
         });
         //
         routeStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  routeStream onChange fired!  🍎  🔆🔆🔆🔆 `);
-            // RouteHelper.onRouteAdded(event);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  routeStream onChange fired!  🍎  🔆🔆🔆🔆 `);
+            messaging_1.default.sendRoute(event.fullDocument);
         });
         //
         landmarkStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  landmarkStream onChange fired!  🍎  🔆🔆🔆🔆 `);
-            // LandmarkHelper.onLandmarkAdded(event);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  landmarkStream onChange fired!  🍎  🔆🔆🔆🔆 `);
+            messaging_1.default.sendLandmark(event.fullDocument);
         });
         //
         commuterArrivalStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  commuterArrivalStream onChange fired!  🍎  🔆🔆🔆🔆 `);
-            // CommuterArrivalLandmarkHelper.onCommuterArrivalLandmarkAdded(event);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  commuterArrivalStream onChange fired!  🍎  🔆🔆🔆🔆 `);
+            messaging_1.default.sendCommuterArrivalLandmark(event.fullDocument);
         });
         //
         commuterRequestsStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 `);
-            // CommuterRequestHelper.onCommuterRequestAdded(event);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 `);
+            messaging_1.default.sendCommuterRequest(event.fullDocument);
         });
         //
         dispatchRecordsStream.on("change", (event) => {
-            console.log(`\n🔆🔆🔆🔆   🍎  dispatchRecordsStream onChange fired!  🍎  🔆🔆🔆🔆 `);
-            // DispatchRecordHelper.onDispatchRecordAdded(event);
-        });
-    }
-    static onUserAdded(event) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log(`\n👽 👽 👽 onUserChangeEvent: operationType: 👽 👽 👽  ${event.operationType},  user in stream:  🍀  🍀  🍎 `);
-            if (event.operationType === 'insert') {
-                const data = event.fullDocument;
-            }
+            log_1.default(`\n🔆🔆🔆🔆   🍎  dispatchRecordsStream onChange fired!  🍎  🔆🔆🔆🔆 `);
+            messaging_1.default.sendDispatchRecord(event.fullDocument);
         });
     }
 }
