@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const route_1 = __importDefault(require("../models/route"));
 const log_1 = __importDefault(require("../log"));
+const uuid = require("uuid");
 class RouteController {
     routes(app) {
         log_1.default(`🏓🏓🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
@@ -51,8 +52,7 @@ class RouteController {
             console.log(req.body);
             try {
                 const route = new route_1.default(req.body);
-                const result0 = yield route.save();
-                route.routeID = result0._id;
+                route.routeID = uuid();
                 const result = yield route.save();
                 log_1.default(result);
                 res.status(200).json(result);

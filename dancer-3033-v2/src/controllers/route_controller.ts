@@ -3,6 +3,7 @@ import Route from "../models/route";
 import db from '../database';
 import log from '../log';
 import Association from "../models/association";
+import uuid = require("uuid");
 export class RouteController {
     public routes(app: any): void {
         log(
@@ -49,8 +50,7 @@ export class RouteController {
             console.log(req.body);
             try {
                 const route: any = new Route(req.body);
-                const result0: any = await route.save();
-                route.routeID = result0._id;
+                route.routeID = uuid();
                 const result = await route.save();
                 log(result);
                 res.status(200).json(result);

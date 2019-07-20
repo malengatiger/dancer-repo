@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const log_1 = __importDefault(require("../log"));
 const user_1 = __importDefault(require("../models/user"));
+const uuid = require("uuid");
 class UserController {
     routes(app) {
         log_1.default(`🏓🏓🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
@@ -69,8 +70,7 @@ class UserController {
             console.log(req.body);
             try {
                 const user = new user_1.default(req.body);
-                const result0 = yield user.save();
-                user.userId = result0.userId;
+                user.userID = uuid();
                 const result = yield user.save();
                 log_1.default(result);
                 res.status(200).json(result);

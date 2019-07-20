@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const RouteSchema = new mongoose.Schema(
     {
         name: {type: String, required: true},
+        routeID: {type: String, required: true},
         associationDetails: {type: Array, required: true, default: []},
         color: {type: String, required: true, default: 'white'},
         created: {type: String, required: true, default: new Date().toISOString()},

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const VehicleSchema = new mongoose.Schema(
     {
         vehicleReg: {type: String, required: true, trim: true},
-        vehicleId: {type: String, required: true, trim: true},
+        vehicleID: {type: String, required: true, trim: true},
         associationID: {type: String, required: true, trim: true},
         associationName: {type: String, required: true},
         ownerID: {type: String, required: false, trim: true},

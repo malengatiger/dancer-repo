@@ -6,20 +6,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const DispatchRecordSchema = new mongoose_1.default.Schema({
     dispatched: { type: Boolean, required: true, default: false },
-    landmarkId: { type: String, required: true },
-    marshalId: { type: String, required: true },
+    landmarkID: { type: String, required: true },
+    marshalID: { type: String, required: true },
     marshalName: { type: String, required: true },
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     position: { type: Map, required: true },
     landmarkName: { type: String, required: true, trim: true },
     routeName: { type: String, required: true },
-    routeId: { type: String, required: true },
+    routeID: { type: String, required: true },
     countryName: { type: String, required: true },
     vehicleReg: { type: String, required: true },
-    vehicleId: { type: String, required: true },
+    vehicleID: { type: String, required: true },
     vehicleType: { type: {}, required: true },
-    ownerId: { type: String, required: false },
+    ownerID: { type: String, required: false },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 const DispatchRecord = mongoose_1.default.model('DispatchRecord', DispatchRecordSchema);

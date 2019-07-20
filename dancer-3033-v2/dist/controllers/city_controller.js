@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const city_1 = __importDefault(require("../models/city"));
 const country_1 = __importDefault(require("../models/country"));
 const log_1 = __importDefault(require("../log"));
+const v1_1 = __importDefault(require("uuid/v1"));
 class CityController {
     routes(app) {
         console.log(`🏓🏓🏓🏓🏓    CityController:  💙  setting up default City routes ...`);
@@ -22,8 +23,7 @@ class CityController {
             console.log(msg);
             try {
                 const c = new city_1.default(req.body);
-                const result0 = yield c.save();
-                c.cityID = result0._id;
+                c.cityID = v1_1.default();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -39,7 +39,9 @@ class CityController {
             const msg = `🌽🌽🌽 addCountry requested `;
             console.log(msg);
             try {
-                const result = new country_1.default(req.body);
+                const c = new country_1.default(req.body);
+                c.countryID = v1_1.default();
+                const result = c.save();
                 log_1.default(result);
                 res.status(200).json(result);
             }

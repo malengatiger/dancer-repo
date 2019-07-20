@@ -8,6 +8,7 @@ const AssociationSchema = new mongoose.Schema(
         cellphone: {type: String, required: true,},
         countryID: {type: String, required: true},
         countryName: {type: String, required: true},
+        associationID: {type: String, required: true},
 
         created: {type: String, required: true, default: new Date().toISOString()},
 

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
-    userId: string;
+    userID: string;
     email: string;
     firstName: string;
     lastName: string;
@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema(
         email: {type: String, required: true},
         fcmToken: {type: String, required: false},
         cellphone: {type: String, required: true},
-        userId: {type: String, required: false},
+        userID: {type: String, required: false},
         associationID: {type: String, required: false},
         associationName: {type: String, required: false},
         userType: {type: String, required: true,},

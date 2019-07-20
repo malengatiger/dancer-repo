@@ -10,12 +10,13 @@ const CommuterRatingsAggregateSchema = new mongoose_1.default.Schema({
     overall: { type: Number, required: true },
     vehicle: { type: Number, required: true },
     ratingsCount: { type: Number, required: true },
-    ownerId: { type: String, required: true, trim: true },
+    ownerID: { type: String, required: true, trim: true },
     ownerName: { type: String, required: true, trim: true },
     fromDate: { type: String, required: true },
     toDate: { type: String, required: true },
     vehicleReg: { type: String, required: true, },
-    vehicleId: { type: String, required: true, },
+    vehicleID: { type: String, required: true, },
+    commuterRatingsAggregateID: { type: String, required: true, },
     createdAt: { type: String, required: true, default: new Date().toISOString() },
 });
 const CommuterRatingsAggregate = mongoose_1.default.model('CommuterRatingsAggregate', CommuterRatingsAggregateSchema);

@@ -8,6 +8,7 @@ const VehicleTypeSchema = new mongoose_1.default.Schema({
     make: { type: String, required: true, trim: true },
     modelType: { type: String, required: true },
     capacity: { type: Number, required: true },
+    vehicleTypeID: { type: String, required: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 const VehicleType = mongoose_1.default.model('VehicleType', VehicleTypeSchema);

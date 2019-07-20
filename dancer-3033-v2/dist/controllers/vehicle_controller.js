@@ -18,6 +18,7 @@ const vehicle_arrival_1 = __importDefault(require("../models/vehicle_arrival"));
 const vehicle_departure_1 = __importDefault(require("../models/vehicle_departure"));
 const moment_1 = __importDefault(require("moment"));
 const vehicle_type_1 = __importDefault(require("../models/vehicle_type"));
+const uuid = require("uuid");
 class VehicleController {
     routes(app) {
         console.log(`🏓🏓🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`);
@@ -124,11 +125,13 @@ class VehicleController {
                 });
             }
         }));
-        app.route("/addVehicle").post((req, res) => {
+        app.route("/addVehicle").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addVehicle requested `;
             console.log(msg);
             try {
-                const result = new vehicle_1.default(req.body);
+                const c = new vehicle_1.default(req.body);
+                c.vehicleID = uuid();
+                const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -138,12 +141,14 @@ class VehicleController {
                     message: ' 🍎🍎🍎🍎 addVehicle failed'
                 });
             }
-        });
-        app.route("/addVehicleArrival").post((req, res) => {
+        }));
+        app.route("/addVehicleArrival").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addVehicleArrival requested `;
             console.log(msg);
             try {
-                const result = new vehicle_arrival_1.default(req.body);
+                const c = new vehicle_arrival_1.default(req.body);
+                c.vehicleArrivalID = uuid();
+                const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -153,12 +158,14 @@ class VehicleController {
                     message: ' 🍎🍎🍎🍎 addVehicleArrival failed'
                 });
             }
-        });
-        app.route("/addVehicleDeparture").post((req, res) => {
+        }));
+        app.route("/addVehicleDeparture").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addVehicleDeparture requested `;
             console.log(msg);
             try {
-                const result = new vehicle_departure_1.default(req.body);
+                const c = new vehicle_departure_1.default(req.body);
+                c.vehicleDepartureID = uuid();
+                const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -168,12 +175,13 @@ class VehicleController {
                     message: ' 🍎🍎🍎🍎 addVehicleDeparture failed'
                 });
             }
-        });
-        app.route("/addVehicleLocation").post((req, res) => {
+        }));
+        app.route("/addVehicleLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addVehicleLocation requested `;
             console.log(msg);
             try {
-                const result = new vehicle_location_1.default(req.body);
+                const c = new vehicle_location_1.default(req.body);
+                const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -183,12 +191,12 @@ class VehicleController {
                     message: ' 🍎🍎🍎🍎 addVehicleLocation failed'
                 });
             }
-        });
+        }));
         app.route("/addVehicleLog").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addVehicleLog requested `;
             console.log(msg);
             try {
-                const vehicle = yield vehicle_1.default.findOne({ vehicleId: req.body.vehicleId });
+                const vehicle = yield vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
                 vehicle.vehicleLogs.push(req.body.vehicleLog);
                 const result = yield vehicle.save();
                 log_1.default(result);
@@ -206,6 +214,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const vehicleType = new vehicle_type_1.default(req.body);
+                vehicleType.vehicleTypeID = uuid();
                 const result = yield vehicleType.save();
                 log_1.default(result);
                 res.status(200).json(result);

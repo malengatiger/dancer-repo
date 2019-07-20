@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import db from '../database';
 import log from '../log';
 import User, { IUser } from "../models/user";
+import uuid = require("uuid");
 export class UserController {
     public routes(app: any): void {
         log(
@@ -72,8 +73,7 @@ export class UserController {
             console.log(req.body);
             try {
                 const user: IUser = new User(req.body);
-                const result0: IUser = await user.save();
-                user.userId = result0.userId;
+                user.userID = uuid();
                 const result = await user.save();
                 log(result);
                 res.status(200).json(result);

@@ -14,8 +14,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const landmark_1 = __importDefault(require("../models/landmark"));
 const database_1 = __importDefault(require("../database"));
 const log_1 = __importDefault(require("../log"));
-const geolib_1 = require("geolib");
 const route_1 = __importDefault(require("../models/route"));
+const uuid = require("uuid");
 class LandmarkController {
     routes(app) {
         log_1.default(`🏓🏓🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
@@ -78,13 +78,9 @@ class LandmarkController {
                         },
                     },
                 });
-                //const result = await Landmark.find();
                 log_1.default(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
-                console.log(`\n\n🌺  Calculated distances between landmarks   🌺 🌸 \n`);
-                LandmarkController.calculateDistances(result, latitude, longitude);
-                console.log(`\n💙 💙 💙 landmarks found:  🌸  ${result.length}   💙 💚 💛\n`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -121,8 +117,7 @@ class LandmarkController {
             console.log(req.body);
             try {
                 const landmark = new landmark_1.default(req.body);
-                const result0 = yield landmark.save();
-                landmark.landmarkID = result0._id;
+                landmark.landmarkID = uuid();
                 const result = yield landmark.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -134,25 +129,6 @@ class LandmarkController {
                 });
             }
         }));
-    }
-    static calculateDistances(landmarks, latitude, longitude) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // use route points to calculate distance between landmarks ....
-            const from = {
-                latitude,
-                longitude,
-            };
-            for (const m of landmarks) {
-                const to = {
-                    latitude: m.position.coordinates[1],
-                    longitude: m.position.coordinates[0],
-                };
-                const dist = geolib_1.getDistance(from, to);
-                const f = new Intl.NumberFormat("en-us", { maximumSignificantDigits: 3 }).format(dist / 1000);
-                m.distance = f + " km (as the crow flies)";
-                console.log(`🌸  ${f}  🍎  ${m.landmarkName}  🍀  ${m.routeDetails[0].name}`);
-            }
-        });
     }
 }
 exports.LandmarkController = LandmarkController;

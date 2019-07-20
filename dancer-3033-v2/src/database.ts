@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Db } from "mongodb";
 import log from './log';
+import MongoListeners from './helpers/listeners';
 const port = process.env.PORT || "8083";
 const password = process.env.MONGODB_PASSWORD || "aubrey3";
 const user = process.env.MONGODB_USER || "aubs";
@@ -26,7 +27,7 @@ mongoose
       )}`,
     );
     
-    // MongoListeners.listen(client);
+    MongoListeners.listen(client);
     console.log(`🍎🍎🍎  MongoDB collections available ...`);
     console.log(mongoose.connection.collections);
   })

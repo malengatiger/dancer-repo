@@ -6,6 +6,7 @@ import VehicleArrival from "../models/vehicle_arrival";
 import VehicleDeparture from "../models/vehicle_departure";
 import moment from "moment";
 import VehicleType from "../models/vehicle_type";
+import uuid = require("uuid");
 
 export class VehicleController {
 
@@ -126,12 +127,14 @@ export class VehicleController {
         )
       }
     });
-    app.route("/addVehicle").post((req: Request, res: Response) => {
+    app.route("/addVehicle").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addVehicle requested `;
       console.log(msg);
 
       try {
-        const result = new Vehicle(req.body);
+        const c: any = new Vehicle(req.body);
+        c.vehicleID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -143,12 +146,14 @@ export class VehicleController {
         )
       }
     });
-    app.route("/addVehicleArrival").post((req: Request, res: Response) => {
+    app.route("/addVehicleArrival").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addVehicleArrival requested `;
       console.log(msg);
 
       try {
-        const result = new VehicleArrival(req.body);
+        const c: any = new VehicleArrival(req.body);
+        c.vehicleArrivalID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -160,12 +165,14 @@ export class VehicleController {
         )
       }
     });
-    app.route("/addVehicleDeparture").post((req: Request, res: Response) => {
+    app.route("/addVehicleDeparture").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addVehicleDeparture requested `;
       console.log(msg);
 
       try {
-        const result = new VehicleDeparture(req.body);
+        const c: any = new VehicleDeparture(req.body);
+        c.vehicleDepartureID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -177,12 +184,13 @@ export class VehicleController {
         )
       }
     });
-    app.route("/addVehicleLocation").post((req: Request, res: Response) => {
+    app.route("/addVehicleLocation").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addVehicleLocation requested `;
       console.log(msg);
 
       try {
-        const result = new VehicleLocation(req.body);
+        const c: any = new VehicleLocation(req.body);
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -199,7 +207,7 @@ export class VehicleController {
       console.log(msg);
 
       try {
-        const vehicle: any = await Vehicle.findOne({ vehicleId: req.body.vehicleId });
+        const vehicle: any = await Vehicle.findOne({ vehicleID: req.body.vehicleID });
         vehicle.vehicleLogs.push(req.body.vehicleLog);
         const result = await vehicle.save();
         log(result);
@@ -218,6 +226,7 @@ export class VehicleController {
       console.log(msg);
       try {
         const vehicleType: any = new VehicleType(req.body);
+        vehicleType.vehicleTypeID = uuid();
         const result = await vehicleType.save();
         log(result);
         res.status(200).json(result);

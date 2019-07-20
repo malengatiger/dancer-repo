@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const VehicleLocationSchema = new mongoose_1.default.Schema({
     vehicleReg: { type: String, required: true, trim: true },
-    vehicleId: { type: String, required: true, trim: true },
+    vehicleID: { type: String, required: true, trim: true },
     position: { type: Map, required: true },
     vehicleType: { type: {}, required: true },
     created: { type: String, required: true, default: new Date().toISOString() },

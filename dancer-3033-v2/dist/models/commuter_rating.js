@@ -5,9 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const CommuterRatingSchema = new mongoose_1.default.Schema({
-    commuterRequestId: { type: String, required: true, trim: true },
+    commuterRequestID: { type: String, required: true, trim: true },
     rating: { type: Map, required: true },
-    userId: { type: String, required: true },
+    userID: { type: String, required: true },
+    commuterRatingID: { type: String, required: true },
     position: { type: Map, required: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });

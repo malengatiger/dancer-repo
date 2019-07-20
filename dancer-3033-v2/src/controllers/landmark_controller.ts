@@ -2,9 +2,8 @@ import { Request, Response } from "express";
 import Landmark from "../models/landmark";
 import db from '../database';
 import log from '../log';
-import { getDistance } from "geolib";
 import Route from "../models/route";
-import { ObjectId } from "bson";
+import uuid = require("uuid");
 export class LandmarkController {
     public routes(app: any): void {
         log(
@@ -75,19 +74,9 @@ export class LandmarkController {
                         },
                     },
                 });
-                //const result = await Landmark.find();
                 log(result);
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
-                console.log(
-                    `\n\n🌺  Calculated distances between landmarks   🌺 🌸 \n`,
-                );
-                LandmarkController.calculateDistances(result, latitude, longitude);
-                console.log(
-                    `\n💙 💙 💙 landmarks found:  🌸  ${
-                    result.length
-                    }   💙 💚 💛\n`,
-                );
+                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -132,8 +121,7 @@ export class LandmarkController {
             console.log(req.body);
             try {
                 const landmark: any = new Landmark(req.body);
-                const result0 = await landmark.save();
-                landmark.landmarkID = result0._id;
+                landmark.landmarkID = uuid();
                 const result = await landmark.save();
                 log(result);
                 res.status(200).json(result);
@@ -147,32 +135,6 @@ export class LandmarkController {
             }
         });
 
-    }
-    public static async calculateDistances(
-        landmarks: any[],
-        latitude: number,
-        longitude: number,
-    ) {
-        // use route points to calculate distance between landmarks ....
-        const from = {
-            latitude,
-            longitude,
-        };
-
-        for (const m of landmarks) {
-            const to = {
-                latitude: m.position.coordinates[1],
-                longitude: m.position.coordinates[0],
-            };
-            const dist = getDistance(from, to);
-            const f = new Intl.NumberFormat("en-us", { maximumSignificantDigits: 3 }).format(dist / 1000);
-            m.distance = f + " km (as the crow flies)";
-            console.log(
-                `🌸  ${f}  🍎  ${m.landmarkName}  🍀  ${
-                m.routeDetails[0].name
-                }`,
-            );
-        }
     }
 }
 

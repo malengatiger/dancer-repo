@@ -14,14 +14,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dispatch_record_1 = __importDefault(require("../models/dispatch_record"));
 const log_1 = __importDefault(require("../log"));
 const moment_1 = __importDefault(require("moment"));
+const uuid = require("uuid");
 class DispatchController {
     routes(app) {
         console.log(`🏓🏓🏓🏓🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
-        app.route("/addDispatchRecord").post((req, res) => {
+        app.route("/addDispatchRecord").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addDispatchRecord requested `;
             console.log(msg);
             try {
-                const result = new dispatch_record_1.default(req.body);
+                const c = new dispatch_record_1.default(req.body);
+                c.dispatchRecordID = uuid();
+                const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -31,7 +34,7 @@ class DispatchController {
                     message: ' 🍎🍎🍎🍎 addDispatchRecord failed'
                 });
             }
-        });
+        }));
         app.route("/findDispatchRecordsByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 findDispatchRecordsByLocation requested `;
             log_1.default(msg);
@@ -74,7 +77,7 @@ class DispatchController {
             try {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
-                const result = dispatch_record_1.default.find({ vehicleId: req.body.vehicleId, created: { $gt: cutOff }, });
+                const result = dispatch_record_1.default.find({ vehicleID: req.body.vehicleID, created: { $gt: cutOff }, });
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -91,7 +94,7 @@ class DispatchController {
             try {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
-                const result = dispatch_record_1.default.find({ landmarkId: req.body.landmarkId, created: { $gt: cutOff }, });
+                const result = dispatch_record_1.default.find({ landmarkID: req.body.landmarkID, created: { $gt: cutOff }, });
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -108,7 +111,7 @@ class DispatchController {
             try {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
-                const result = dispatch_record_1.default.find({ routeId: req.body.routeId, created: { $gt: cutOff }, });
+                const result = dispatch_record_1.default.find({ routeID: req.body.routeID, created: { $gt: cutOff }, });
                 log_1.default(result);
                 res.status(200).json(result);
             }
@@ -125,7 +128,7 @@ class DispatchController {
             try {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
-                const result = dispatch_record_1.default.find({ ownerId: req.body.ownerId, created: { $gt: cutOff }, });
+                const result = dispatch_record_1.default.find({ ownerID: req.body.ownerID, created: { $gt: cutOff }, });
                 log_1.default(result);
                 res.status(200).json(result);
             }

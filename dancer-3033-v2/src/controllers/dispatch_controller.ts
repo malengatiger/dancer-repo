@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import DispatchRecord from "../models/dispatch_record";
 import log from '../log';
 import moment from "moment";
+import uuid = require("uuid");
 
 export class DispatchController {
 
@@ -9,12 +10,14 @@ export class DispatchController {
     console.log(
       `🏓🏓🏓🏓🏓    DispatchController:  💙  setting up default Dispatch routes ...`,
     );
-    app.route("/addDispatchRecord").post((req: Request, res: Response) => {
+    app.route("/addDispatchRecord").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addDispatchRecord requested `;
       console.log(msg);
 
       try {
-        const result = new DispatchRecord(req.body);
+        const c: any = new DispatchRecord(req.body);
+        c.dispatchRecordID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -71,7 +74,7 @@ export class DispatchController {
       try {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
-        const result = DispatchRecord.find({ vehicleId: req.body.vehicleId, created: { $gt: cutOff }, });
+        const result = DispatchRecord.find({ vehicleID: req.body.vehicleID, created: { $gt: cutOff }, });
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -90,7 +93,7 @@ export class DispatchController {
       try {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
-        const result = DispatchRecord.find({ landmarkId: req.body.landmarkId, created: { $gt: cutOff }, });
+        const result = DispatchRecord.find({ landmarkID: req.body.landmarkID, created: { $gt: cutOff }, });
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -109,7 +112,7 @@ export class DispatchController {
       try {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
-        const result = DispatchRecord.find({ routeId: req.body.routeId, created: { $gt: cutOff }, });
+        const result = DispatchRecord.find({ routeID: req.body.routeID, created: { $gt: cutOff }, });
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -128,7 +131,7 @@ export class DispatchController {
       try {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
-        const result = DispatchRecord.find({ ownerId: req.body.ownerId, created: { $gt: cutOff }, });
+        const result = DispatchRecord.find({ ownerID: req.body.ownerID, created: { $gt: cutOff }, });
         log(result);
         res.status(200).json(result);
       } catch (err) {

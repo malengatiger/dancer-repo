@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import db from '../database';
+import uuid from 'uuid/v1';
 import log from '../log';
 import Association from "../models/association";
 export class AssociationController {
@@ -33,8 +33,7 @@ export class AssociationController {
             console.log(req.body);
             try {
                 const association: any = new Association(req.body);
-                const result0 = await association.save();
-                association.associationID = result0._id;
+                association.associationID = uuid();
                 const result = await association.save();
                 log(result);
                 res.status(200).json(result);

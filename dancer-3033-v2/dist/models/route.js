@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const RouteSchema = new mongoose_1.default.Schema({
     name: { type: String, required: true },
+    routeID: { type: String, required: true },
     associationDetails: { type: Array, required: true, default: [] },
     color: { type: String, required: true, default: 'white' },
     created: { type: String, required: true, default: new Date().toISOString() },

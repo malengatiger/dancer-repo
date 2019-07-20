@@ -5,6 +5,7 @@ const VehicleTypeSchema = new mongoose.Schema(
         make: {type: String, required: true, trim: true},
         modelType: {type: String, required: true},
         capacity: {type: Number, required: true},
+        vehicleTypeID: {type: String, required: true},
        
         created: {type: String, required: true, default: new Date().toISOString()},
 

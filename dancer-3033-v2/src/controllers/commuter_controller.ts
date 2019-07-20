@@ -9,6 +9,7 @@ import CommuterRating from "../models/commuter_rating";
 import CommuterPanic from "../models/commuter_panic";
 import CommuterRatingsAggregate from "../models/commuter_ratings_aggregate";
 import bodyParser = require("body-parser");
+import uuid from 'uuid/v1';
 
 export class CommuterController {
 
@@ -23,11 +24,10 @@ export class CommuterController {
 
       try {
         const comm : any= new CommuterRequest(req.body);
-        const result0 = await comm.save();
-        comm.commuterRequestId = result0._id;
+        comm.commuterRequestID = uuid();
         const result = await comm.save();
         log(result);
-        res.status(200).json(result0);
+        res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
           {
@@ -42,8 +42,8 @@ export class CommuterController {
       console.log(msg);
 
       try {
-        const commuterRequestId = req.body.commuterRequestId;
-        const commReq: any = await CommuterRequest.findOne({commuterRequestId: commuterRequestId});
+        const commuterRequestID = req.body.commuterRequestID;
+        const commReq: any = await CommuterRequest.findOne({commuterRequestID: commuterRequestID});
         if (!commReq) {
           throw new Error('CommuterRequest not found');
         }
@@ -65,8 +65,8 @@ export class CommuterController {
       console.log(msg);
 
       try {
-        const commuterRequestId = req.body.commuterRequestId;
-        const commReq: any = await CommuterRequest.findOne({commuterRequestId: commuterRequestId});
+        const commuterRequestID = req.body.commuterRequestID;
+        const commReq: any = await CommuterRequest.findOne({commuterRequestID: commuterRequestID});
         if (!commReq) {
           throw new Error('CommuterRequest not found');
         }
@@ -84,12 +84,14 @@ export class CommuterController {
         )
       }
     });
-    app.route("/addCommuterRatingsAggregate").post((req: Request, res: Response) => {
+    app.route("/addCommuterRatingsAggregate").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addCommuterRatingsAggregate requested `;
       console.log(msg);
 
       try {
-        const result = new CommuterRatingsAggregate(req.body);
+        const c: any = new CommuterRatingsAggregate(req.body);
+        c.commuterRatingsAggregateID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -101,12 +103,14 @@ export class CommuterController {
         )
       }
     });
-    app.route("/addCommuterArrivalLandmark").post((req: Request, res: Response) => {
+    app.route("/addCommuterArrivalLandmark").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addCommuterArrivalLandmark requested `;
       console.log(msg);
 
       try {
-        const result = new CommuterArrivalLandmark(req.body);
+        const c: any = new CommuterArrivalLandmark(req.body);
+        c.commuterArrivalLandmarkID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -118,12 +122,14 @@ export class CommuterController {
         )
       }
     });
-    app.route("/addCommuterPickupLandmark").post((req: Request, res: Response) => {
+    app.route("/addCommuterPickupLandmark").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addCommuterPickupLandmark requested `;
       console.log(msg);
 
       try {
-        const result = new CommuterPickupLandmark(req.body);
+        const c: any = new CommuterPickupLandmark(req.body);
+        c.commuterPickupLandmarkID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -141,10 +147,10 @@ export class CommuterController {
 
       try {
         const minutes = parseInt(req.body.minutes);
-        const landmarkId = req.body.landmarkId;
+        const landmarkID = req.body.landmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = CommuterPickupLandmark.find({
-          fromLandmarkId: landmarkId,
+          fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
         log(result);
@@ -164,10 +170,10 @@ export class CommuterController {
 
       try {
         const minutes = parseInt(req.body.minutes);
-        const landmarkId = req.body.landmarkId;
+        const landmarkID = req.body.landmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = CommuterArrivalLandmark.find({
-          fromLandmarkId: landmarkId,
+          fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
         log(result);
@@ -187,10 +193,10 @@ export class CommuterController {
 
       try {
         const minutes = parseInt(req.body.minutes);
-        const landmarkId = parseInt(req.body.landmarkId);
+        const landmarkID = parseInt(req.body.landmarkID);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = CommuterStartingLandmark.find({
-          landmarkId: landmarkId,
+          landmarkID: landmarkID,
           created: {$gt: cutOff}
         });
         log(result);
@@ -204,12 +210,14 @@ export class CommuterController {
         )
       }
     });
-    app.route("/addCommuterStartingLandmark").post((req: Request, res: Response) => {
+    app.route("/addCommuterStartingLandmark").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addCommuterStartingLandmark requested `;
       console.log(msg);
 
       try {
-        const result = new CommuterStartingLandmark(req.body);
+        const c: any = new CommuterStartingLandmark(req.body);
+        c.commuterStartingLandmarkID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -221,12 +229,14 @@ export class CommuterController {
         )
       }
     });
-    app.route("/addCommuterRating").post((req: Request, res: Response) => {
+    app.route("/addCommuterRating").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addCommuterRating requested `;
       console.log(msg);
 
       try {
-        const result = new CommuterRating(req.body);
+        const c: any = new CommuterRating(req.body);
+        c.commuterRatingID = uuid();
+        const result = await c.save();
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -244,8 +254,7 @@ export class CommuterController {
 
       try {
         const panic: any = new CommuterPanic(req.body);
-        const result0 = await panic.save();
-        panic.commuterPanicId = result0._id;
+        panic.commuterPanicID = uuid();
         const result = await panic.save();
         log(result);
         res.status(200).json(result);
@@ -264,9 +273,9 @@ export class CommuterController {
 
       try {
         const minutes = parseInt(req.body.minutes);
-        const fromLandmarkId = parseInt(req.body.fromLandmarkId);
+        const fromLandmarkID = parseInt(req.body.fromLandmarkID);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = await  CommuterRequest.find({fromLandmarkId: fromLandmarkId, created: { $gt: cutOff },});
+        const result = await  CommuterRequest.find({fromLandmarkID: fromLandmarkID, created: { $gt: cutOff },});
         log(result);
         res.status(200).json(result);
       } catch (err) {
@@ -284,9 +293,9 @@ export class CommuterController {
 
       try {
         const minutes = parseInt(req.body.minutes);
-        const toLandmarkId = req.body.toLandmarkId;
+        const toLandmarkID = req.body.toLandmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = await  CommuterRequest.find({toLandmarkId: toLandmarkId, created: { $gt: cutOff },});
+        const result = await  CommuterRequest.find({toLandmarkID: toLandmarkID, created: { $gt: cutOff },});
         log(result);
         res.status(200).json(result);
       } catch (err) {

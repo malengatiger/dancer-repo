@@ -2,9 +2,10 @@ import mongoose from 'mongoose';
 
 const CommuterRatingSchema = new mongoose.Schema(
     {
-        commuterRequestId: {type: String, required: true, trim: true},
+        commuterRequestID: {type: String, required: true, trim: true},
         rating: {type: Map, required: true},
-        userId: {type: String, required: true},
+        userID: {type: String, required: true},
+        commuterRatingID: {type: String, required: true},
         position: {type: Map, required: true},
         
         created: {type: String, required: true, default: new Date().toISOString()},

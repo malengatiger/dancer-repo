@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import City from "../models/city";
 import Country from "../models/country";
 import log from '../log';
+import uuid from 'uuid/v1';
 
 export class CityController {
 
@@ -15,8 +16,7 @@ export class CityController {
 
             try {
                 const c: any = new City(req.body);
-                const result0 = await c.save();
-                c.cityID = result0._id;
+                c.cityID = uuid();
                 const result = await c.save();
                 log(result);
                 res.status(200).json(result);
@@ -34,7 +34,9 @@ export class CityController {
             console.log(msg);
 
             try {
-                const result = new Country(req.body);
+                const c: any = new Country(req.body);
+                c.countryID = uuid();
+                const result = c.save();
                 log(result);
                 res.status(200).json(result);
             } catch (err) {
