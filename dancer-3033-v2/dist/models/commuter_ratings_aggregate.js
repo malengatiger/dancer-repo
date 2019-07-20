@@ -17,7 +17,7 @@ const CommuterRatingsAggregateSchema = new mongoose_1.default.Schema({
     vehicleReg: { type: String, required: true, },
     vehicleID: { type: String, required: true, },
     commuterRatingsAggregateID: { type: String, required: true, },
-    createdAt: { type: String, required: true, default: new Date().toISOString() },
+    created: { type: String, required: true, default: new Date().toISOString() },
 });
 const CommuterRatingsAggregate = mongoose_1.default.model('CommuterRatingsAggregate', CommuterRatingsAggregateSchema);
 exports.default = CommuterRatingsAggregate;

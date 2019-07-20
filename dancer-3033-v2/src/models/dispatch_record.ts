@@ -6,8 +6,6 @@ const DispatchRecordSchema = new mongoose.Schema(
         landmarkID: {type: String, required: true},
         marshalID: {type: String, required: true},
         marshalName: {type: String, required: true},
-        latitude: {type: Number, required: true},
-        longitude: {type: Number, required: true},
         position: {type: Map, required: true},
         landmarkName: {type: String, required: true, trim: true},
         routeName: {type: String, required: true},
@@ -16,6 +14,7 @@ const DispatchRecordSchema = new mongoose.Schema(
         vehicleID: {type: String, required: true},
         vehicleType: {type: {}, required: true},
         ownerID: {type: String, required: false},
+        passengers: {type: Number, required: true},
         dispatchRecordID: {type: String, required: true},
         
         created: {type: String, required: true, default: new Date().toISOString()},

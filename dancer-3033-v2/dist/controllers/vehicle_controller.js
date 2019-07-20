@@ -281,7 +281,14 @@ class VehicleController {
             console.log(msg);
             try {
                 const vehicle = yield vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
-                vehicle.vehicleLogs.push(req.body.vehicleLog);
+                const latitude = parseFloat(req.body.latitude);
+                const longitude = parseFloat(req.body.latitude);
+                const mlog = {
+                    latitude,
+                    longitude,
+                    created: new Date().toISOString()
+                };
+                vehicle.vehicleLogs.push(mlog);
                 const result = yield vehicle.save();
                 log_1.default(result);
                 res.status(200).json(result);

@@ -42,7 +42,7 @@ class Messaging {
         const payload: any = {
             notification: {
                 title: "Vehicle Arrival",
-                body: data.fromLandmarkName,
+                body: data.vehicleReg + ' at ' + data.landmarkName,
             },
             data: {
                 vehicleArrivalID: data.vehicleArrivalID,
@@ -53,7 +53,7 @@ class Messaging {
                 created: data.created
             },
         };
-        const topic = Constants.VEHICLE_ARRIVALS + '_' + data.fromLandmarkID;
+        const topic = Constants.VEHICLE_ARRIVALS + '_' + data.landmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
             `😍 sendVehicleArrival: message sent: 😍 ${
@@ -123,7 +123,7 @@ class Messaging {
         const payload: any = {
             notification: {
                 title: "Vehicle Departure",
-                body: data.fromLandmarkName,
+                body: data.vehicleReg + ' at ' + data.landmarkName,
             },
             data: {
                 vehicleDepartureID: data.vehicleDepartureID,
@@ -134,11 +134,11 @@ class Messaging {
                 created: data.created
             },
         };
-        const topic = Constants.VEHICLE_DEPARTURES + '_' + data.fromLandmarkID;
+        const topic = Constants.VEHICLE_DEPARTURES + '_' + data.landmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
             `😍 sendVehicleDeparture: message sent: 😍 ${
-            data.fromLandmarkName
+            data.landmarkName
             } topic: ${topic}`,
         );
     }
@@ -196,11 +196,10 @@ class Messaging {
                 toLandmarkName: data.toLandmarkName,
                 routeName: data.routeName,
                 routeID: data.routeID,
-                vehicleID: data.vehicleID,
-                vehicleReg: data.vehicleReg,
-                scanned: data.scanned,
-                autoDetected: data.autoDetected,
-                passengers: data.passengers,
+                scanned: data.scanned? 'true':'false',
+                autoDetected: data.autoDetected? 'true':'false',
+                passengers: `${data.passengers}`,
+                stringTime: data.stringTime,
                 created: data.created
             },
         };
@@ -259,7 +258,7 @@ class Messaging {
                 body: data.created,
             },
             data: {
-                dispatched: data.dispatched,
+                dispatched: data.dispatched? 'true': 'false',
                 landmarkID: data.landmarkID,
                 marshalID: data.marshalID,
                 marshalName: data.marshalID,
@@ -270,6 +269,7 @@ class Messaging {
                 vehicleID: data.vehicleID,
                 vehicleType: data.vehicleType,
                 ownerID: data.ownerID,
+                passengers: `${data.passengers}`,
                 dispatchRecordID: data.dispatchRecordID,
                 created: data.created
             },
@@ -278,7 +278,7 @@ class Messaging {
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
             `😍 sendDispatchRecord: message sent: 😍 ${data.landmarkID} ${
-            data.dispatchedAt
+            data.created
             }`,
         );
     }

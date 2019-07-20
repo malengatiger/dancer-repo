@@ -60,6 +60,30 @@ export class CommuterController {
         )
       }
     });
+    app.route("/updateCommuterRequestVehicle").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 updateCommuterRequestVehicle requested `;
+      console.log(msg);
+
+      try {
+        const commuterRequestID = req.body.commuterRequestID;
+        const commReq: any = await CommuterRequest.findOne({commuterRequestID: commuterRequestID});
+        if (!commReq) {
+          throw new Error('CommuterRequest not found');
+        }
+        commReq.vehicleID = req.body.vehicleID;
+        commReq.vehicleReg = req.body.vehicleReg;
+        const result = await commReq.save();
+        log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 updateCommuterRequestVehicle failed'
+          }
+        )
+      }
+    });
     app.route("/updateCommuterRequestAutoDetected").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 updateCommuterRequestAutoDetected requested `;
       console.log(msg);

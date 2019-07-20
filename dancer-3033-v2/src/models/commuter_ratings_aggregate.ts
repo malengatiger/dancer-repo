@@ -16,7 +16,7 @@ const CommuterRatingsAggregateSchema = new mongoose.Schema(
         vehicleID: {type: String, required: true,},
         commuterRatingsAggregateID: {type: String, required: true,},
         
-        createdAt: {type: String, required: true, default: new Date().toISOString()},
+        created: {type: String, required: true, default: new Date().toISOString()},
 
     }
 );

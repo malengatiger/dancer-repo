@@ -55,7 +55,7 @@ class Messaging {
             const payload = {
                 notification: {
                     title: "Vehicle Arrival",
-                    body: data.fromLandmarkName,
+                    body: data.vehicleReg + ' at ' + data.landmarkName,
                 },
                 data: {
                     vehicleArrivalID: data.vehicleArrivalID,
@@ -66,7 +66,7 @@ class Messaging {
                     created: data.created
                 },
             };
-            const topic = constants_1.default.VEHICLE_ARRIVALS + '_' + data.fromLandmarkID;
+            const topic = constants_1.default.VEHICLE_ARRIVALS + '_' + data.landmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
             log_1.default(`😍 sendVehicleArrival: message sent: 😍 ${data.landmarkName} topic: ${topic}`);
         });
@@ -124,7 +124,7 @@ class Messaging {
             const payload = {
                 notification: {
                     title: "Vehicle Departure",
-                    body: data.fromLandmarkName,
+                    body: data.vehicleReg + ' at ' + data.landmarkName,
                 },
                 data: {
                     vehicleDepartureID: data.vehicleDepartureID,
@@ -135,9 +135,9 @@ class Messaging {
                     created: data.created
                 },
             };
-            const topic = constants_1.default.VEHICLE_DEPARTURES + '_' + data.fromLandmarkID;
+            const topic = constants_1.default.VEHICLE_DEPARTURES + '_' + data.landmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendVehicleDeparture: message sent: 😍 ${data.fromLandmarkName} topic: ${topic}`);
+            log_1.default(`😍 sendVehicleDeparture: message sent: 😍 ${data.landmarkName} topic: ${topic}`);
         });
     }
     static sendCommuterPickupLandmark(data) {
@@ -189,11 +189,10 @@ class Messaging {
                     toLandmarkName: data.toLandmarkName,
                     routeName: data.routeName,
                     routeID: data.routeID,
-                    vehicleID: data.vehicleID,
-                    vehicleReg: data.vehicleReg,
-                    scanned: data.scanned,
-                    autoDetected: data.autoDetected,
-                    passengers: data.passengers,
+                    scanned: data.scanned ? 'true' : 'false',
+                    autoDetected: data.autoDetected ? 'true' : 'false',
+                    passengers: `${data.passengers}`,
+                    stringTime: data.stringTime,
                     created: data.created
                 },
             };
@@ -246,7 +245,7 @@ class Messaging {
                     body: data.created,
                 },
                 data: {
-                    dispatched: data.dispatched,
+                    dispatched: data.dispatched ? 'true' : 'false',
                     landmarkID: data.landmarkID,
                     marshalID: data.marshalID,
                     marshalName: data.marshalID,
@@ -257,13 +256,14 @@ class Messaging {
                     vehicleID: data.vehicleID,
                     vehicleType: data.vehicleType,
                     ownerID: data.ownerID,
+                    passengers: `${data.passengers}`,
                     dispatchRecordID: data.dispatchRecordID,
                     created: data.created
                 },
             };
             const topic = constants_1.default.DISPATCH_RECORDS + '_' + data.landmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendDispatchRecord: message sent: 😍 ${data.landmarkID} ${data.dispatchedAt}`);
+            log_1.default(`😍 sendDispatchRecord: message sent: 😍 ${data.landmarkID} ${data.created}`);
         });
     }
     static sendUser(data) {

@@ -285,6 +285,7 @@ export class VehicleController {
       console.log(msg);
 
       try {
+        
         const c: any = new VehicleLocation(req.body);
         const result = await c.save();
         log(result);
@@ -304,7 +305,14 @@ export class VehicleController {
 
       try {
         const vehicle: any = await Vehicle.findOne({ vehicleID: req.body.vehicleID });
-        vehicle.vehicleLogs.push(req.body.vehicleLog);
+        const latitude: any = parseFloat(req.body.latitude);
+        const longitude: any = parseFloat(req.body.latitude);
+        const mlog = {
+          latitude,
+          longitude,
+          created: new Date().toISOString()
+        }
+        vehicle.vehicleLogs.push(mlog);
         const result = await vehicle.save();
         log(result);
         res.status(200).json(result);

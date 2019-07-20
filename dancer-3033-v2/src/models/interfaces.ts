@@ -22,7 +22,7 @@ export class Video {
 }
 export class VehicleLog {
     created: String | undefined
-    location: Position | undefined
+    position: Position | undefined
 }
 export class Rating {
     public driver: Number | undefined;

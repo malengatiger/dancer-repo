@@ -63,6 +63,28 @@ class CommuterController {
                 });
             }
         }));
+        app.route("/updateCommuterRequestVehicle").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 updateCommuterRequestVehicle requested `;
+            console.log(msg);
+            try {
+                const commuterRequestID = req.body.commuterRequestID;
+                const commReq = yield commuter_request_1.default.findOne({ commuterRequestID: commuterRequestID });
+                if (!commReq) {
+                    throw new Error('CommuterRequest not found');
+                }
+                commReq.vehicleID = req.body.vehicleID;
+                commReq.vehicleReg = req.body.vehicleReg;
+                const result = yield commReq.save();
+                log_1.default(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 updateCommuterRequestVehicle failed'
+                });
+            }
+        }));
         app.route("/updateCommuterRequestAutoDetected").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 updateCommuterRequestAutoDetected requested `;
             console.log(msg);

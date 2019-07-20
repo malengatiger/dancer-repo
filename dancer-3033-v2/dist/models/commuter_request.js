@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const CommuterRequestSchema = new mongoose_1.default.Schema({
-    fromLandmarkID: { type: String, required: true },
-    fromLandmarkName: { type: String, required: true },
-    toLandmarkID: { type: String, required: true },
-    toLandmarkName: { type: String, required: true },
-    routeID: { type: String, required: true },
-    routeName: { type: String, required: true },
-    vehicleID: { type: String, required: true },
-    vehicleReg: { type: String, required: true },
+    fromLandmarkID: { type: String, required: true, trim: true },
+    fromLandmarkName: { type: String, required: true, trim: true },
+    toLandmarkID: { type: String, required: true, trim: true },
+    toLandmarkName: { type: String, required: true, trim: true },
+    routeID: { type: String, required: true, trim: true },
+    routeName: { type: String, required: true, trim: true },
+    vehicleID: { type: String, required: false, trim: true },
+    vehicleReg: { type: String, required: false, trim: true },
     commuterRequestID: { type: String, required: true },
     passengers: { type: Number, required: true, default: 1 },
     position: { type: Map, required: true },
