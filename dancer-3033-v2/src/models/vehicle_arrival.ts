@@ -8,7 +8,6 @@ const VehicleArrivalSchema = new mongoose.Schema(
         vehicleArrivalID: {type: String, required: true, trim: true},
         landmarkName: {type: String, required: true},
         position: {type: Map, required: true},
-        dateArrived: {type: String, required: true, default: new Date().toISOString()},
         vehicleType: {type: {}, required: true},
         
         created: {type: String, required: true, default: new Date().toISOString()},

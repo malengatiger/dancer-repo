@@ -12,11 +12,11 @@ const DispatchRecordSchema = new mongoose.Schema(
         landmarkName: {type: String, required: true, trim: true},
         routeName: {type: String, required: true},
         routeID: {type: String, required: true},
-        countryName: {type: String, required: true},
         vehicleReg: {type: String, required: true},
         vehicleID: {type: String, required: true},
         vehicleType: {type: {}, required: true},
         ownerID: {type: String, required: false},
+        dispatchRecordID: {type: String, required: true},
         
         created: {type: String, required: true, default: new Date().toISOString()},
 
