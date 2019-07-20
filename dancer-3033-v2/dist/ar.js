@@ -54,7 +54,7 @@ class AftaRobotApp {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors_1.default());
-        log_1.default(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛`);
+        log_1.default(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛\n\n`);
     }
 }
 exports.default = AftaRobotApp;

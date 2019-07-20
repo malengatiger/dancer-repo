@@ -17,7 +17,7 @@ const log_1 = __importDefault(require("../log"));
 const v1_1 = __importDefault(require("uuid/v1"));
 class CityController {
     routes(app) {
-        console.log(`🏓🏓🏓🏓🏓    CityController:  💙  setting up default City routes ...`);
+        console.log(`🏓🏓🏓    CityController:  💙  setting up default City routes ...`);
         app.route("/addCity").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addCity requested `;
             console.log(msg);

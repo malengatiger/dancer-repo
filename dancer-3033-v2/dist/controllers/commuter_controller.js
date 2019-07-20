@@ -24,7 +24,7 @@ const v1_1 = __importDefault(require("uuid/v1"));
 class CommuterController {
     //CommuterRatingsAggregate
     routes(app) {
-        console.log(`🏓🏓🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
+        console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
         app.route("/addCommuterRequest").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addCommuterRequest requested `;
             console.log(msg);
@@ -285,8 +285,8 @@ class CommuterController {
                 });
             }
         }));
-        app.route("/getCommuterRequestsByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 getCommuterRequestsByLocation requested `;
+        app.route("/findCommuterRequestsByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 findCommuterRequestsByLocation requested `;
             console.log(msg);
             try {
                 const minutes = parseInt(req.body.minutes);
@@ -312,7 +312,7 @@ class CommuterController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 getCommuterRequestsByLocation failed'
+                    message: ' 🍎🍎🍎🍎 findCommuterRequestsByLocation failed'
                 });
             }
         }));

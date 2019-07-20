@@ -12,7 +12,7 @@ export class VehicleController {
 
   public routes(app: any): void {
     console.log(
-      `🏓🏓🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`,
+      `🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`,
     );
     app.route("/findVehiclesByLocation").post(async (req: Request, res: Response) => {
       log(
@@ -86,6 +86,102 @@ export class VehicleController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 findVehicleArrivalsByLocation failed'
+          }
+        )
+      }
+    });
+    app.route("/getVehicleArrivalsByLandmark").post(async (req: Request, res: Response) => {
+      log(
+        `\n\n💦  POST: /getVehicleArrivalsByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+      );
+      console.log(req.body);
+      try {
+        const now = new Date().getTime();
+        const minutes = parseInt(req.body.minutes);
+        const landmarkID = req.body.landmarkID;
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await VehicleArrival.find({landmarkID: landmarkID, created: {$gt: cutOff}});
+        log(result);
+        const end = new Date().getTime();
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getVehicleArrivalsByLandmark failed'
+          }
+        )
+      }
+    });
+    app.route("/getVehicleArrivalsByVehicle").post(async (req: Request, res: Response) => {
+      log(
+        `\n\n💦  POST: /getVehicleArrivalsByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+      );
+      console.log(req.body);
+      try {
+        const now = new Date().getTime();
+        const minutes = parseInt(req.body.minutes);
+        const vehicleID = req.body.vehicleID;
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await VehicleArrival.find({vehicleID: vehicleID, created: {$gt: cutOff}});
+        log(result);
+        const end = new Date().getTime();
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getVehicleArrivalsByVehicle failed'
+          }
+        )
+      }
+    });
+    app.route("/getVehicleDeparturesByVehicle").post(async (req: Request, res: Response) => {
+      log(
+        `\n\n💦  POST: /getVehicleDeparturesByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+      );
+      console.log(req.body);
+      try {
+        const now = new Date().getTime();
+        const minutes = parseInt(req.body.minutes);
+        const vehicleID = req.body.vehicleID;
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await VehicleDeparture.find({vehicleID: vehicleID, created: {$gt: cutOff}});
+        log(result);
+        const end = new Date().getTime();
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getVehicleDeparturesByVehicle failed'
+          }
+        )
+      }
+    });
+    app.route("/getVehicleDeparturesByLandmark").post(async (req: Request, res: Response) => {
+      log(
+        `\n\n💦  POST: /getVehicleDeparturesByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+      );
+      console.log(req.body);
+      try {
+        const now = new Date().getTime();
+        const minutes = parseInt(req.body.minutes);
+        const landmarkID = req.body.landmarkID;
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await VehicleDeparture.find({landmarkID: landmarkID, created: {$gt: cutOff}});
+        log(result);
+        const end = new Date().getTime();
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getVehicleArrivalsByLandmark failed'
           }
         )
       }

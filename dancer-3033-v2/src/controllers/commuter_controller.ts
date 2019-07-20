@@ -16,7 +16,7 @@ export class CommuterController {
   //CommuterRatingsAggregate
   public routes(app: any): void {
     console.log(
-      `🏓🏓🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`,
+      `🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`,
     );
     app.route("/addCommuterRequest").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addCommuterRequest requested `;
@@ -307,8 +307,8 @@ export class CommuterController {
         )
       }
     });
-    app.route("/getCommuterRequestsByLocation").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getCommuterRequestsByLocation requested `;
+    app.route("/findCommuterRequestsByLocation").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 findCommuterRequestsByLocation requested `;
       console.log(msg);
 
       try {
@@ -335,7 +335,7 @@ export class CommuterController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 getCommuterRequestsByLocation failed'
+            message: ' 🍎🍎🍎🍎 findCommuterRequestsByLocation failed'
           }
         )
       }

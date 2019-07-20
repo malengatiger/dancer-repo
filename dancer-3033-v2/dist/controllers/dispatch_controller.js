@@ -17,7 +17,7 @@ const moment_1 = __importDefault(require("moment"));
 const uuid = require("uuid");
 class DispatchController {
     routes(app) {
-        console.log(`🏓🏓🏓🏓🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
+        console.log(`🏓🏓🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
         app.route("/addDispatchRecord").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addDispatchRecord requested `;
             console.log(msg);

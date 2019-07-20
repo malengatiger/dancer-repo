@@ -4,7 +4,7 @@ export class AppController{
 
   public routes(app: any): void {
     console.log(
-      `🏓🏓🏓🏓🏓    AppRoutes:  💙  setting up default home routes ...`,
+      `🏓🏓🏓    AppController:  💙  setting up / and /ping routes: ☘️ use to check if API is up ...`,
     );
     app.route("/").get((req: Request, res: Response) => {
       const msg = `🏓🏓🏓  Hello World from Dancer, independence is coming!!! 💙 IBM Cloud is UP! 💙 GCP is UP!  💙 Azure is UP!   🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;

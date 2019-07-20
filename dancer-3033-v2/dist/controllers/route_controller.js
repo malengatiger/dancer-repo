@@ -16,7 +16,7 @@ const log_1 = __importDefault(require("../log"));
 const uuid = require("uuid");
 class RouteController {
     routes(app) {
-        log_1.default(`🏓🏓🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
+        log_1.default(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
         /////////
         app.route("/getRoutesByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.default(`\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);

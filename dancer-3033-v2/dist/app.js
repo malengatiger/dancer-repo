@@ -11,7 +11,6 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const http_1 = __importDefault(require("http"));
 const log_1 = __importDefault(require("./log"));
 const ar_1 = __importDefault(require("./ar"));
-const util_1 = require("util");
 const listEndpoints = require('express-list-endpoints');
 exports.app = express_1.default();
 const server = http_1.default.createServer(exports.app);
@@ -22,15 +21,15 @@ exports.app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With-Content-Type, Accept");
     next();
 });
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3003;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
-util_1.log(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer}`);
+log_1.default(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
 server.listen(port, () => {
-    console.info(`\n🔵🔵🔵  Dancer Web API started and listening on; 🧡💛 port: ${port} 🧡💛`);
+    console.info(`\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛`);
 });
 const ar = new ar_1.default();
-log_1.default(`🔆 🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
-log_1.default(`\n🔆 🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+log_1.default(`\n🔆🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
+log_1.default(`🔆🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
 const list = listEndpoints(exports.app);
 const stringList = [];
 list.forEach((m) => {

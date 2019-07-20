@@ -7,7 +7,6 @@ import bodyParser from "body-parser";
 import http from "http";
 import mlog from './log';
 import AftaRobotApp from './ar';
-import { log } from "util";
 const listEndpoints = require('express-list-endpoints')
 
 export const app: Application = express();
@@ -24,18 +23,18 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3003;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
-log(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer}`);
+mlog(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
 server.listen(port, () => {
   console.info(
-    `\n🔵🔵🔵  Dancer Web API started and listening on; 🧡💛 port: ${port} 🧡💛`,
+    `\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛`,
   );
 
 });
 const ar = new AftaRobotApp();
-mlog(`🔆 🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
-mlog(`\n🔆 🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+mlog(`\n🔆🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
+mlog(`🔆🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
 const list: any[] = listEndpoints(app);
 const stringList: string[] = [];
 list.forEach((m) => {

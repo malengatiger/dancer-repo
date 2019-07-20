@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class AppController {
     routes(app) {
-        console.log(`🏓🏓🏓🏓🏓    AppRoutes:  💙  setting up default home routes ...`);
+        console.log(`🏓🏓🏓    AppController:  💙  setting up / and /ping routes: ☘️ use to check if API is up ...`);
         app.route("/").get((req, res) => {
             const msg = `🏓🏓🏓  Hello World from Dancer, independence is coming!!! 💙 IBM Cloud is UP! 💙 GCP is UP!  💙 Azure is UP!   🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
             console.log(msg);

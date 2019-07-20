@@ -18,7 +18,7 @@ const route_1 = __importDefault(require("../models/route"));
 const uuid = require("uuid");
 class LandmarkController {
     routes(app) {
-        log_1.default(`🏓🏓🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
+        log_1.default(`🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
         /////////
         app.route("/addRouteToLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.default(`\n\n💦  POST: /addRouteToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);

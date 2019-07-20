@@ -21,16 +21,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //https://firebasestorage.googleapis.com/v0/b/dancer26983.appspot.com/o/config%2Fdancer.json?alt=media&token=070c055b-2097-480f-8430-a849c96c5b60
 const admin = __importStar(require("firebase-admin"));
 const landmark_1 = __importDefault(require("../models/landmark"));
-console.log(`\n\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...\n\n`);
-const sa1 = process.env.DANCER_CONFIG || "config 1 not found";
-const ssa1 = JSON.parse(sa1);
-console.log(`\n☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...\n\n`);
-const appTo = admin.initializeApp({
-    credential: admin.credential.cert(ssa1),
-    databaseURL: "https://dancer-3303.firebaseio.com",
-}, "appTo");
-console.log(`🔑🔑🔑 appTo = admin.initializeApp done: 😍 😍 😍 ... ${appTo.name}`);
+const log_1 = __importDefault(require("../log"));
+console.log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
+const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
+let appTo;
+if (sa1 === 'NOTFOUND') {
+    log_1.default('Dancer config not found');
+    getDancerConfigFile();
+}
+else {
+    const ssa1 = JSON.parse(sa1);
+    log_1.default(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
+    appTo = admin.initializeApp({
+        credential: admin.credential.cert(ssa1),
+        databaseURL: "https://dancer-3303.firebaseio.com",
+    }, "appTo");
+    log_1.default(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
+}
+function getDancerConfigFile() {
+    log_1.default('🍎🍎 Try to get Dancer 🍎 config file ...');
+}
 class Messaging {
+    static init() {
+        log_1.default(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
+    }
     static sendCommuterArrivalLandmark(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {
@@ -40,19 +54,19 @@ class Messaging {
             const payload = {
                 notification: {
                     title: "Commuter Arrival",
-                    body: data.createdAt,
+                    body: data.created,
                 },
                 data: {
-                    createdAt: data.createdAt,
-                    userId: data.userId,
-                    routeId: data.routeId,
-                    fromLandmarkId: data.fromLandmarkId,
-                    toLandmarkId: data.toLandmarkId,
+                    created: data.created,
+                    userID: data.userID,
+                    routeID: data.routeID,
+                    fromLandmarkID: data.fromLandmarkID,
+                    toLandmarkID: data.toLandmarkID,
                 },
             };
-            const topic = "commuterArrivalLandmark_" + data.fromLandmarkId;
+            const topic = "commuterArrivalLandmark_" + data.fromLandmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            console.log(`😍 sendCommuterArrivalLandmark: message sent: 😍 ${data.fromLandmarkName} ${data.fromLandmarkId}`);
+            console.log(`😍 sendCommuterArrivalLandmark: message sent: 😍 ${data.fromLandmarkName} ${data.fromLandmarkID}`);
         });
     }
     static sendDispatchRecord(data) {
@@ -68,16 +82,16 @@ class Messaging {
                 },
                 data: {
                     dispatchedAt: data.dispatchedAt,
-                    userId: data.userId,
-                    routeId: data.routeId,
-                    landmarkId: data.landmarkId,
-                    vehicleId: data.vehicleId,
+                    userID: data.userID,
+                    routeID: data.routeID,
+                    landmarkID: data.landmarkID,
+                    vehicleID: data.vehicleID,
                     vehicleReg: data.vehicleReg,
                 },
             };
-            const topic = "sendDispatchRecord_" + data.landmarkId;
+            const topic = "sendDispatchRecord_" + data.landmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            console.log(`😍 sendDispatchRecord: message sent: 😍 ${data.landmarkId} ${data.dispatchedAt}`);
+            console.log(`😍 sendDispatchRecord: message sent: 😍 ${data.landmarkID} ${data.dispatchedAt}`);
         });
     }
     static sendUser(data) {
@@ -114,13 +128,13 @@ class Messaging {
             const payload = {
                 notification: {
                     title: "Commuter Panic",
-                    body: data.type + " " + data.createdAt + " userId:" + data.userId,
+                    body: data.type + " " + data.created + " userID:" + data.userID,
                 },
                 data: {
                     type: data.type,
-                    createdAt: data.createdAt,
-                    userId: data.userId,
-                    vehicleId: data.vehicleId,
+                    created: data.created,
+                    userID: data.userID,
+                    vehicleID: data.vehicleID,
                     vehicleReg: data.vehicleReg,
                     active: data.active,
                     locations: data.locations,
@@ -145,11 +159,11 @@ class Messaging {
             for (const landmark of list) {
                 const topic1 = "panic_" + landmark.landmarkID;
                 yield appTo.messaging().sendToTopic(topic1, payload, options);
-                console.log(`😍😍 sendPanic: message sent: 😍😍 ${data.type} ${data.createdAt} 👽👽 landmark topic: ${topic1}👽`);
-                for (const routeId of landmark.routeIDs) {
-                    const routeTopic = "panic_" + routeId;
+                console.log(`😍😍 sendPanic: message sent: 😍😍 ${data.type} ${data.created} 👽👽 landmark topic: ${topic1}👽`);
+                for (const routeID of landmark.routeIDs) {
+                    const routeTopic = "panic_" + routeID;
                     yield appTo.messaging().sendToTopic(routeTopic, payload, options);
-                    console.log(`😍😍 sendPanic: message sent: 😍😍 ${data.type} ${data.createdAt} 👽👽 route topic: ${routeTopic}👽`);
+                    console.log(`😍😍 sendPanic: message sent: 😍😍 ${data.type} ${data.created} 👽👽 route topic: ${routeTopic}👽`);
                 }
             }
         });

@@ -5,7 +5,7 @@ import Association from "../models/association";
 export class AssociationController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓🏓🏓    AssociationController: 💙  setting up default Association routes ... `,
+            `🏓🏓🏓    AssociationController: 💙  setting up default Association routes ... `,
         );
         /////////
         app.route("/getAssociations").post(async (req: Request, res: Response) => {

@@ -16,7 +16,7 @@ const user_1 = __importDefault(require("../models/user"));
 const uuid = require("uuid");
 class UserController {
     routes(app) {
-        log_1.default(`🏓🏓🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
+        log_1.default(`🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
         /////////
         app.route("/getUsers").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.default(`\n\n💦  POST: /getUsers requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
