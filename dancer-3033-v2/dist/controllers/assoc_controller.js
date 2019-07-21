@@ -38,6 +38,7 @@ class AssociationController {
             try {
                 const association = new association_1.default(req.body);
                 association.associationID = v1_1.default();
+                association.created = new Date().toISOString();
                 const result = yield association.save();
                 log_1.default(result);
                 res.status(200).json(result);

@@ -230,6 +230,7 @@ export class VehicleController {
       try {
         const c: any = new Vehicle(req.body);
         c.vehicleID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -249,6 +250,7 @@ export class VehicleController {
       try {
         const c: any = new VehicleArrival(req.body);
         c.vehicleArrivalID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -268,6 +270,7 @@ export class VehicleController {
       try {
         const c: any = new VehicleDeparture(req.body);
         c.vehicleDepartureID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);

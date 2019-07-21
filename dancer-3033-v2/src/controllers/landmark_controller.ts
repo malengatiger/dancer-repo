@@ -122,6 +122,7 @@ export class LandmarkController {
             try {
                 const landmark: any = new Landmark(req.body);
                 landmark.landmarkID = uuid();
+                landmark.created = new Date().toISOString();
                 const result = await landmark.save();
                 log(result);
                 res.status(200).json(result);

@@ -24,6 +24,7 @@ class DispatchController {
             try {
                 const c = new dispatch_record_1.default(req.body);
                 c.dispatchRecordID = uuid();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);

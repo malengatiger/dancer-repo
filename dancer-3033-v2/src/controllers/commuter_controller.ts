@@ -25,6 +25,7 @@ export class CommuterController {
       try {
         const comm : any= new CommuterRequest(req.body);
         comm.commuterRequestID = uuid();
+        comm.created = new Date().toISOString();
         const result = await comm.save();
         log(result);
         res.status(200).json(result);
@@ -115,6 +116,7 @@ export class CommuterController {
       try {
         const c: any = new CommuterRatingsAggregate(req.body);
         c.commuterRatingsAggregateID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -134,6 +136,7 @@ export class CommuterController {
       try {
         const c: any = new CommuterArrivalLandmark(req.body);
         c.commuterArrivalLandmarkID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -153,6 +156,7 @@ export class CommuterController {
       try {
         const c: any = new CommuterPickupLandmark(req.body);
         c.commuterPickupLandmarkID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -241,6 +245,7 @@ export class CommuterController {
       try {
         const c: any = new CommuterStartingLandmark(req.body);
         c.commuterStartingLandmarkID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -260,6 +265,7 @@ export class CommuterController {
       try {
         const c: any = new CommuterRating(req.body);
         c.commuterRatingID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);
@@ -279,6 +285,7 @@ export class CommuterController {
       try {
         const panic: any = new CommuterPanic(req.body);
         panic.commuterPanicID = uuid();
+        panic.created = new Date().toISOString();
         const result = await panic.save();
         log(result);
         res.status(200).json(result);

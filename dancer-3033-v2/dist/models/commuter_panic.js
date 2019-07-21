@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const CommuterPanicSchema = new mongoose_1.default.Schema({
     active: { type: Boolean, required: true, default: true },
-    type: { type: String, required: true },
-    locations: { type: Array, required: true },
+    type: { type: String, required: true, enum: ['FollowMe', 'Accident', 'Breakdown', 'Traffic', 'Robbery', 'Rape', 'Construction'], trim: true },
+    position: { type: Map, required: true },
     commuterPanicID: { type: String, required: false },
-    vehicleID: { type: String, required: true },
-    vehicleReg: { type: String, required: true },
+    vehicleID: { type: String, required: false, trim: true },
+    vehicleReg: { type: String, required: false, trim: true },
     userID: { type: String, required: true, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });

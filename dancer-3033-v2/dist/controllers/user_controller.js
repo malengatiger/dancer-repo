@@ -72,6 +72,7 @@ class UserController {
             try {
                 const user = new user_1.default(req.body);
                 user.userID = uuid();
+                user.created = new Date().toISOString();
                 const result = yield user.save();
                 log_1.default(result);
                 res.status(200).json(result);

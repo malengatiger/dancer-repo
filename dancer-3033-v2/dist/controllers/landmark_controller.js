@@ -118,6 +118,7 @@ class LandmarkController {
             try {
                 const landmark = new landmark_1.default(req.body);
                 landmark.landmarkID = uuid();
+                landmark.created = new Date().toISOString();
                 const result = yield landmark.save();
                 log_1.default(result);
                 res.status(200).json(result);

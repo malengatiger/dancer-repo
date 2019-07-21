@@ -31,6 +31,7 @@ class CommuterController {
             try {
                 const comm = new commuter_request_1.default(req.body);
                 comm.commuterRequestID = v1_1.default();
+                comm.created = new Date().toISOString();
                 const result = yield comm.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -112,6 +113,7 @@ class CommuterController {
             try {
                 const c = new commuter_ratings_aggregate_1.default(req.body);
                 c.commuterRatingsAggregateID = v1_1.default();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -129,6 +131,7 @@ class CommuterController {
             try {
                 const c = new commuter_arrival_landmark_1.default(req.body);
                 c.commuterArrivalLandmarkID = v1_1.default();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -146,6 +149,7 @@ class CommuterController {
             try {
                 const c = new commuter_pickup_landmark_1.default(req.body);
                 c.commuterPickupLandmarkID = v1_1.default();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -226,6 +230,7 @@ class CommuterController {
             try {
                 const c = new commuter_starting_landmark_1.default(req.body);
                 c.commuterStartingLandmarkID = v1_1.default();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -243,6 +248,7 @@ class CommuterController {
             try {
                 const c = new commuter_rating_1.default(req.body);
                 c.commuterRatingID = v1_1.default();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -260,6 +266,7 @@ class CommuterController {
             try {
                 const panic = new commuter_panic_1.default(req.body);
                 panic.commuterPanicID = v1_1.default();
+                panic.created = new Date().toISOString();
                 const result = yield panic.save();
                 log_1.default(result);
                 res.status(200).json(result);

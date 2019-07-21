@@ -17,6 +17,7 @@ export class CityController {
             try {
                 const c: any = new City(req.body);
                 c.cityID = uuid();
+                c.created = new Date().toISOString();
                 const result = await c.save();
                 log(result);
                 res.status(200).json(result);
@@ -36,6 +37,7 @@ export class CityController {
             try {
                 const c: any = new Country(req.body);
                 c.countryID = uuid();
+                c.created = new Date().toISOString();
                 const result = c.save();
                 log(result);
                 res.status(200).json(result);

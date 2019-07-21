@@ -24,6 +24,7 @@ class CityController {
             try {
                 const c = new city_1.default(req.body);
                 c.cityID = v1_1.default();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -41,6 +42,7 @@ class CityController {
             try {
                 const c = new country_1.default(req.body);
                 c.countryID = v1_1.default();
+                c.created = new Date().toISOString();
                 const result = c.save();
                 log_1.default(result);
                 res.status(200).json(result);

@@ -75,6 +75,7 @@ export class UserController {
             try {
                 const user: IUser = new User(req.body);
                 user.userID = uuid();
+                user.created = new Date().toISOString();
                 const result = await user.save();
                 log(result);
                 res.status(200).json(result);

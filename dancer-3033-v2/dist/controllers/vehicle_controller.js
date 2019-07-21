@@ -215,6 +215,7 @@ class VehicleController {
             try {
                 const c = new vehicle_1.default(req.body);
                 c.vehicleID = uuid();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -232,6 +233,7 @@ class VehicleController {
             try {
                 const c = new vehicle_arrival_1.default(req.body);
                 c.vehicleArrivalID = uuid();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);
@@ -249,6 +251,7 @@ class VehicleController {
             try {
                 const c = new vehicle_departure_1.default(req.body);
                 c.vehicleDepartureID = uuid();
+                c.created = new Date().toISOString();
                 const result = yield c.save();
                 log_1.default(result);
                 res.status(200).json(result);

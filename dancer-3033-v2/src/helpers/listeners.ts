@@ -38,7 +38,7 @@ class MongoListeners {
     const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
     const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
     const commuterPickupsStream = commuterPickups.watch({ fullDocument: 'updateLookup' });
-    //62770328964 FNB
+    //
     vehicleArrivalsStream.on("change", (event: any) => {
       log(
         `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`,

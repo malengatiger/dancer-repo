@@ -17,6 +17,7 @@ export class DispatchController {
       try {
         const c: any = new DispatchRecord(req.body);
         c.dispatchRecordID = uuid();
+        c.created = new Date().toISOString();
         const result = await c.save();
         log(result);
         res.status(200).json(result);

@@ -53,6 +53,7 @@ class RouteController {
             try {
                 const route = new route_1.default(req.body);
                 route.routeID = uuid();
+                route.created = new Date().toISOString();
                 const result = yield route.save();
                 log_1.default(result);
                 res.status(200).json(result);
