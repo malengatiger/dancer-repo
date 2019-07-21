@@ -102,54 +102,15 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
     if (_rawRoutePoints.isNotEmpty) {
       showButton = true;
-      if (_routePoints.isNotEmpty) {
-        showButton = false;
-      }
     } else {
       showButton = false;
     }
     debugPrint(
         '\n\n🍏 🍎 🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩  snapped: ${_routePoints.length} 🧩\n\n');
-    setState(() {});
-//    _printPoints(_rawRoutePoints, false);
     _setRawRouteMarkers();
-    return null;
+    setState(() {});
   }
 
-  _printPoints(List<RoutePointDTO> list, bool sortByIndex) {
-    var dd = LandmarkDistance();
-    if (sortByIndex) {
-      list.sort((a, b) => a.index.compareTo(b.index));
-    } else {
-      list.sort((a, b) => a.created.compareTo(b.created));
-    }
-    RoutePointDTO prevPoint;
-    var tot = 0.0;
-    list.forEach((p) {
-      if (prevPoint == null) {
-        prevPoint = p;
-        prevPoint.distance = 0;
-      } else {
-        dd.calculateDistance(
-          fromLatitude: prevPoint.latitude,
-          fromLongitude: prevPoint.longitude,
-          toLatitude: p.latitude,
-          toLongitude: p.longitude,
-        );
-        p.distance = dd.distanceMetre;
-        prevPoint = p;
-      }
-    });
-    debugPrint(
-        '\n\n🔵🔵🔵🔵🔵🔵 ROUTE POINTS, sortByIndex: $sortByIndex  🥬 🥬 🥬  ${_route.routeID} 🍎 ${_route.name}');
-    list.forEach((p) {
-      tot += p.distance;
-      debugPrint(
-          '🔵 ${p.index} 🧡 ${p.distance} 🧡 ${p.created} 🔆 ${p.latitude} ${p.longitude}');
-    });
-    debugPrint(
-        '\n🔵🔵🔵🔵🔵🔵 ROUTE POINTS, sortByIndex: $sortByIndex  🥬 🥬 🥬  ${_route.routeID} 🍎 ${_route.name} 🍎 🍎 total distance : $tot');
-  }
 
   Set<Marker> _markers = Set();
   void _setRawRouteMarkers() async {
@@ -178,6 +139,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             infoWindow: InfoWindow(title: m.created, snippet: m.created)));
       });
       print('🍏 🍎 markers added: ${_markers.length}');
+      if (_route.routePoints.isNotEmpty) {
+        _setRoutePolyline();
+      }
       _mapController.animateCamera(
           CameraUpdate.newLatLngZoom(_markers.elementAt(0).position, 15));
     } catch (e) {
@@ -207,7 +171,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       var polyLine = Polyline(
           polylineId: PolylineId('${DateTime.now().toIso8601String()}'),
           color: Colors.white,
-          width: 20,
+          width: 12,
           consumeTapEvents: true,
           onTap: () {
             print('🥩 🥩 polyline tapped, 🥩 now what??? - .....');
@@ -226,12 +190,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   bool showLandmarkEditor = false, showButton = false;
-  RoutePointDTO _selectedMarker;
   List<DropdownMenuItem<LandmarkDTO>> _items = List();
 
   _onMarkerTapped(RoutePointDTO marker) {
     print('Marker tapped: route: ${marker.created}');
-    _selectedMarker = marker;
     _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(marker.latitude, marker.longitude), zoom: 16.0)));
 
@@ -543,11 +505,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       landmarkName: name,
       latitude: pressedLatLng.latitude,
       longitude: pressedLatLng.longitude,
-      geo: {
+      position: {
         'type': 'Point',
         'coordinates': [pressedLatLng.longitude, pressedLatLng.latitude]
       },
-      position: {},
       routeIDs: [_route.routeID],
       routeDetails: [
         RouteInfo(

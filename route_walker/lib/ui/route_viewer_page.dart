@@ -4,6 +4,7 @@ import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/landmarkdto.dart';
 import 'package:aftarobotlibrary4/data/routedto.dart';
 import 'package:aftarobotlibrary4/data/routepointdto.dart';
+import 'package:aftarobotlibrary4/data/userdto.dart';
 import 'package:aftarobotlibrary4/maps/estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -16,7 +17,7 @@ import 'package:route_walker/bloc/route_builder_bloc.dart';
 import 'package:route_walker/ui/route_editor.dart';
 import 'package:route_walker/ui/route_point_collector.dart';
 import 'package:route_walker/ui/routepoints_manager.dart';
-
+import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'landmark_routes_page.dart';
 import 'landmarks.dart';
 
@@ -37,11 +38,46 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   int routeCount = 0, landmarkCount = 0;
   List<AssociationDTO> asses = List();
   AssociationDTO association;
+  UserDTO user;
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    _checkUser();
+  }
+
+  void _checkUser() async {
+    bool isSignedIn = await isUserSignedIn();
+    print(
+        '🍎 🍎 🍎 _RouteViewerPageState: checkUser: ...................... 🔆🔆 isSignedIn: $isSignedIn  🔆🔆');
+    if (!isSignedIn) {
+      try {
+        user = await Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return SignIn();
+        }));
+        if (user == null) {
+          AppSnackbar.showSnackbar(
+              scaffoldKey: _key,
+              message: 'You have not signed in',
+              textColor: Colors.amber,
+              backgroundColor: Colors.pink[600]);
+          return;
+        }
+        setState(() {});
+      } catch (e) {
+        AppSnackbar.showSnackbar(
+            scaffoldKey: _key,
+            message: 'Problem signing in',
+            textColor: Colors.amber,
+            backgroundColor: Colors.pink[600]);
+      }
+    }
+    print(
+        '🍎 🍎 🍎 _RouteViewerPageState: checkUser: set local MongoDB appID and get saved association');
+    user = await Prefs.getUser();
+    asses = await routeBuilderBloc.getAssociations();
     MongoAPI.setAppID();
     _getAssociation();
   }
@@ -52,17 +88,9 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       mTitle = association.associationName;
       _refresh();
     }
+    setState(() {});
   }
 
-//  void _checkUser() async {
-//    bool isSignedIn = await isUserSignedIn();
-//    if (!isSignedIn) {
-//      Navigator.push(context, SlideRightRoute(
-//        widget:
-//      ));
-//    }
-//
-//  }
   void _refresh() async {
     print(
         '🧩🧩 RouteViewerPage refresh routes and landmarks .................');
@@ -78,8 +106,17 @@ class _RouteViewerPageState extends State<RouteViewerPage>
         textColor: Colors.yellow,
         backgroundColor: Colors.black);
 
-    await routeBuilderBloc.getRoutesByAssociation(association.associationID);
-    _key.currentState.removeCurrentSnackBar();
+    try {
+      await routeBuilderBloc.getRoutesByAssociation(association.associationID);
+      _key.currentState.removeCurrentSnackBar();
+    } catch (e) {
+      print(e);
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key,
+          message: 'Some shit happened, Boss!',
+          actionLabel: 'Err',
+          listener: this);
+    }
   }
 
   DateTime start, end;
@@ -117,9 +154,10 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       stream: routeBuilderBloc.appModelStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          print(
-              '🔵 RouteViewerPage 🧩🧩🧩 ConnectionState.active  🔴 set appModel from stream');
           appModel = snapshot.data;
+          asses = appModel.associations;
+          print(
+              '🔵 RouteViewerPage 🧩🧩🧩 ConnectionState.active  🔴 set appModel from stream: associations ${appModel.associations.length}');
           _sortRoutes();
           _buildDropDownItems();
         }
@@ -214,7 +252,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     return PreferredSize(
       preferredSize: Size.fromHeight(132),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: Center(
           child: Column(
             children: <Widget>[
@@ -256,28 +294,51 @@ class _RouteViewerPageState extends State<RouteViewerPage>
 //                    },
 //                  ),
                   SizedBox(
-                    width: 20,
+                    width: 0,
                   ),
                   GestureDetector(
                     onTap: () {
                       _refresh();
                     },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Row(
                       children: <Widget>[
-                        Text(
-                          appModel == null ? '0' : '${appModel.routes.length}',
-                          style: Styles.blackBoldLarge,
+                        user == null
+                            ? Container()
+                            : Column(
+                                children: <Widget>[
+                                  Text(
+                                    '${user.firstName} ${user.lastName}',
+                                    style: Styles.whiteBoldMedium,
+                                  ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text(
+                                    '${user.userType}',
+                                    style: Styles.blackSmall,
+                                  ),
+                                ],
+                              ),
+                        SizedBox(
+                          width: 28,
                         ),
-                        Text(
-                          'Routes',
-                          style: Styles.whiteSmall,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              appModel == null
+                                  ? '0'
+                                  : '${appModel.routes.length}',
+                              style: Styles.blackBoldLarge,
+                            ),
+                            Text(
+                              'Routes',
+                              style: Styles.whiteSmall,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    width: 40,
                   ),
                   SizedBox(
                     width: 20,
@@ -285,7 +346,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                 ],
               ),
               SizedBox(
-                height: 10,
+                height: 16,
               ),
             ],
           ),
@@ -461,7 +522,7 @@ class _RouteCardState extends State<RouteCard>
     menuItems.add(PopupMenuItem<String>(
       value: 'Route Landmarks',
       child: GestureDetector(
-        onTap: () async{
+        onTap: () async {
           Navigator.pop(context);
           await Prefs.saveRoute(widget.route);
           Navigator.push(
@@ -485,7 +546,7 @@ class _RouteCardState extends State<RouteCard>
     menuItems.add(PopupMenuItem<String>(
       value: 'Route Estimation',
       child: GestureDetector(
-        onTap: () async{
+        onTap: () async {
           Navigator.pop(context);
           await Prefs.saveRoute(widget.route);
           Navigator.push(
@@ -513,11 +574,10 @@ class _RouteCardState extends State<RouteCard>
     await Prefs.saveRoute(widget.route);
     Navigator.pop(context);
 
-    Navigator.push(context,
-        SlideRightRoute(widget: RoutePointCollector()));
+    Navigator.push(context, SlideRightRoute(widget: RoutePointCollector()));
   }
 
-  _startRouteMapPage() async  {
+  _startRouteMapPage() async {
     print('_startRouteLandmarks ........ route: ${widget.route.name}');
     Navigator.pop(context);
     await Prefs.saveRoute(widget.route);
@@ -615,11 +675,10 @@ class _RouteCardState extends State<RouteCard>
         )));
   }
 
-  _startCreateRoutePointsPage() async{
+  _startCreateRoutePointsPage() async {
     Navigator.pop(context);
     await Prefs.saveRoute(widget.route);
-    Navigator.push(context,
-        SlideRightRoute(widget: CreateRoutePointsPage()));
+    Navigator.push(context, SlideRightRoute(widget: CreateRoutePointsPage()));
   }
 
   @override

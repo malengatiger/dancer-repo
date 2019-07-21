@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:aftarobotlibrary4/api/data_api.dart';
+import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/api/file_util.dart';
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/location_bloc.dart';
@@ -16,7 +16,6 @@ import 'package:aftarobotlibrary4/data/routepointdto.dart';
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
-import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -82,8 +81,6 @@ class RouteBuilderBloc implements LocationBlocListener {
   List<LandmarkDTO> _routeLandmarks = List();
 
   final RouteBuilderModel _appModel = RouteBuilderModel();
-  final Firestore fs = Firestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   bg.Location _currentLocation;
   bg.Location get currentLocation => _currentLocation;
   RouteBuilderModel get model => _appModel;
@@ -116,36 +113,52 @@ class RouteBuilderBloc implements LocationBlocListener {
   static const GEOFENCE_PROXIMITY_RADIUS = 5000, DISTANCE_FILTER = 10.0;
   _initialize() async {
     print(
-        '\n\n\n 🔵  🔵  🔵  🔵  🔵 RouteBuilderBloc ️ ✳️ initializing ... 🔵  🔵  🔵  🔵  🔵 \n\n');
-
-    await _signIn();
-    await getAssociations();
+        '\n🔵 🔵 🔵 🔵 🔵 RouteBuilderBloc: ️ ✳️ initializing ... 🍀️🍀️🍀️ doing nothing so far 🔵 🔵 🔵 🔵 🔵 \n');
   }
 
-  Future _signIn() async {
-    //todo - to be replaced by proper authentication
-    debugPrint(
-        '\n### ℹ️ sign in anonymously ...(to be replaced by real auth code)');
-    var user = await _auth.currentUser();
-    if (user == null) {
-      await _auth.signInAnonymously();
-    } else {
-      debugPrint(' ✅ User already authenticated');
+//  Future _signIn() async {
+//    //todo - to be replaced by proper authentication
+//    debugPrint(
+//        '\n### ℹ️ sign in anonymously ...(to be replaced by real auth code)');
+//    var user = await _auth.currentUser();
+//    if (user == null) {
+//      await _auth.signInAnonymously();
+//    } else {
+//      debugPrint(' ✅ User already authenticated');
+//    }
+//    checkPermission();
+//  }
+
+  Future<bool> checkUserSignedIn() async {
+    print('\n🔵 🔵 🔵 ######################### 🔴 isUserSignedIn ??');
+    try {
+      var user = await isUserSignedIn();
+      if (user == null) {
+        print(
+            '\n🔵 🔵 🔵 ######################### 🔴 isUserSignedIn ?? 🍎 🍎 🍎 NO 🍎 🍎 🍎 ');
+        return false;
+      } else {
+        print(
+            '\n🔵 🔵 🔵 ######################### 🔴 isUserSignedIn ??  🍀️🍀️🍀️  YES  🍀️🍀️🍀️ ');
+        return true;
+      }
+    } catch (e) {
+      print(e);
+      return false;
     }
-    return null;
   }
-
   Future<bool> requestPermission() async {
-    print('\n\n######################### requestPermission');
+    print('\n🔵 🔵 🔵 ######################### requestPermission ..');
     try {
       Map<PermissionGroup, PermissionStatus> permissions =
           await PermissionHandler()
               .requestPermissions([PermissionGroup.location]);
       print(permissions);
       permissions.values.forEach((perm) {
-        debugPrint('check for perm:: Permission status: $perm');
+        debugPrint('🔵 🔵 🔵 check for perm:: Permission status: $perm');
       });
-      print("\n########### permission request for location is:  ✅ ");
+      print("\n🔵 🔵 🔵  ########### permission request for location is:  ✅ . getting associations");
+      getAssociations();
       return true;
     } catch (e) {
       print(e);
@@ -154,15 +167,17 @@ class RouteBuilderBloc implements LocationBlocListener {
   }
 
   Future<bool> checkPermission() async {
+    print('\n🔵 🔵 🔵 ######################### 🔴 checkPermission ..');
     try {
       PermissionStatus locationPermission = await PermissionHandler()
           .checkPermissionStatus(PermissionGroup.location);
 
       if (locationPermission == PermissionStatus.denied) {
-        return false;
+        return requestPermission();
       } else {
         print(
             "\n ✅  ✅  location permission status is:  ✅  ✅ $locationPermission");
+        getAssociations();
         return true;
       }
     } catch (e) {
@@ -171,9 +186,9 @@ class RouteBuilderBloc implements LocationBlocListener {
     }
   }
 
-  Future getAssociations() async {
+  Future<List<AssociationDTO>> getAssociations() async {
     debugPrint(
-        '### ℹ️  getAssociations: getting ALL Associations in Firestore ..........\n');
+        '### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
     var asses = await DancerListAPI.getAssociations();
 
     debugPrint(
@@ -240,7 +255,6 @@ class RouteBuilderBloc implements LocationBlocListener {
           landmarkName: landmark.landmarkName,
           latitude: landmark.latitude,
           longitude: landmark.longitude,
-          routeIDs: [],
           routeDetails: []);
       debugPrint(
           '❤️ 🧡 💛  adding landmark to _routeLandmarksController sink ...');
@@ -533,7 +547,7 @@ class RouteBuilderBloc implements LocationBlocListener {
   Future _writeRawPoint({double latitude, double longitude}) async {
     var route = await Prefs.getRoute();
     debugPrint(
-        '🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint for 🔆  route:  👌 ${route.name}.............');
+        '🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint to LOCAL DB for 🔆  route:  👌 ${route.name}.............');
     assert(route != null);
     assert(latitude != null);
     assert(longitude != null);
@@ -549,14 +563,9 @@ class RouteBuilderBloc implements LocationBlocListener {
     index++;
     try {
       await LocalDBAPI.addRoutePoint(route: route, routePoint: point);
-      var ref = await fs
-          .collection(Constants.ROUTES)
-          .document(route.routeID)
-          .collection(Constants.RAW_ROUTE_POINTS)
-          .add(point.toJson());
 
       debugPrint(
-          '🔴🔴 🔴🔴 🔴🔴  _writeRawPoint collected point written:  🔆 ${ref.path} 🧩🧩  point #$index  🧩🧩');
+          '🔴🔴 🔴🔴 🔴🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
       _rawRoutePoints.add(point);
       _rawRoutePointController.sink.add(_rawRoutePoints);
     } catch (e) {
