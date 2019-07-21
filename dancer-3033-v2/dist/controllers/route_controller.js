@@ -34,7 +34,7 @@ class RouteController {
                 //const result = await Landmark.find({
                 //     'routeDetails.routeID': req.body.id
                 // });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query`);
                 res.status(200).json(result);
@@ -55,7 +55,7 @@ class RouteController {
                 route.routeID = uuid();
                 route.created = new Date().toISOString();
                 const result = yield route.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -73,7 +73,7 @@ class RouteController {
                 route.calculatedDistances = req.body.calculatedDistances;
                 const result = yield route.save();
                 log_1.default(`💙💙 Distances added to route. ${route.calculatedDistances.length} - 🧡💛 ${route.name}`);
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -97,7 +97,7 @@ class RouteController {
                 });
                 const result = yield route.save();
                 log_1.default(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -121,7 +121,7 @@ class RouteController {
                 });
                 const result = yield route.save();
                 log_1.default(`💙💙 Points added to route. ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {

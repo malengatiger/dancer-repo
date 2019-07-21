@@ -40,7 +40,7 @@ class AssociationController {
                 association.associationID = v1_1.default();
                 association.created = new Date().toISOString();
                 const result = yield association.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {

@@ -26,7 +26,7 @@ class CityController {
                 c.cityID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -44,7 +44,7 @@ class CityController {
                 c.countryID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -73,7 +73,7 @@ class CityController {
                         },
                     },
                 });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -91,7 +91,7 @@ class CityController {
             try {
                 const now = new Date().getTime();
                 const result = yield city_1.default.find({ countryID: req.body.countryID });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -109,7 +109,7 @@ class CityController {
             try {
                 const now = new Date().getTime();
                 const result = yield city_1.default.find({ provinceName: req.body.provinceName });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -127,7 +127,7 @@ class CityController {
             try {
                 const now = new Date().getTime();
                 const result = yield country_1.default.find();
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);

@@ -36,7 +36,7 @@ export class AssociationController {
                 association.associationID = uuid();
                 association.created = new Date().toISOString();
                 const result = await association.save();
-                log(result);
+                // log(result);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(

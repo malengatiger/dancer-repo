@@ -26,7 +26,7 @@ class DispatchController {
                 c.dispatchRecordID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -58,11 +58,11 @@ class DispatchController {
                         created: { $gt: cutOff },
                     },
                 });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -79,7 +79,7 @@ class DispatchController {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
                 const result = dispatch_record_1.default.find({ vehicleID: req.body.vehicleID, created: { $gt: cutOff }, });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -96,7 +96,7 @@ class DispatchController {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
                 const result = dispatch_record_1.default.find({ landmarkID: req.body.landmarkID, created: { $gt: cutOff }, });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -113,7 +113,7 @@ class DispatchController {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
                 const result = dispatch_record_1.default.find({ routeID: req.body.routeID, created: { $gt: cutOff }, });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -130,7 +130,7 @@ class DispatchController {
                 const days = req.body.days;
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
                 const result = dispatch_record_1.default.find({ ownerID: req.body.ownerID, created: { $gt: cutOff }, });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {

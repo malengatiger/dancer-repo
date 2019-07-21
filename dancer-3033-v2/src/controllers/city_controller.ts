@@ -19,7 +19,7 @@ export class CityController {
                 c.cityID = uuid();
                 c.created = new Date().toISOString();
                 const result = await c.save();
-                log(result);
+                // log(result);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -39,7 +39,7 @@ export class CityController {
                 c.countryID = uuid();
                 c.created = new Date().toISOString();
                 const result = c.save();
-                log(result);
+                // log(result);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -70,7 +70,7 @@ export class CityController {
                         },
                     },
                 });
-                log(result);
+                // log(result);
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
                 res.status(200).json(result);
@@ -90,7 +90,7 @@ export class CityController {
             try {
                 const now = new Date().getTime();
                 const result = await City.find({countryID: req.body.countryID });
-                log(result);
+                // log(result);
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
                 res.status(200).json(result);
@@ -110,7 +110,7 @@ export class CityController {
             try {
                 const now = new Date().getTime();
                 const result = await City.find({provinceName: req.body.provinceName });
-                log(result);
+                // log(result);
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
                 res.status(200).json(result);
@@ -130,7 +130,7 @@ export class CityController {
             try {
                 const now = new Date().getTime();
                 const result = await Country.find();
-                log(result);
+                // log(result);
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
                 res.status(200).json(result);

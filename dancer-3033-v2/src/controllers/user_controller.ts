@@ -77,7 +77,7 @@ export class UserController {
                 user.userID = uuid();
                 user.created = new Date().toISOString();
                 const result = await user.save();
-                log(result);
+                // log(result);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -100,7 +100,7 @@ export class UserController {
                 user.userType = userType;
                 user.cellphone = req.body.cellphone;
                 const result = await user.save();
-                log(result);
+                // log(result);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(

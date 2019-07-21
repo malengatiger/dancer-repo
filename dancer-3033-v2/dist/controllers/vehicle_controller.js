@@ -45,7 +45,7 @@ class VehicleController {
                     },
                 });
                 //const result = await Landmark.find();
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -79,7 +79,7 @@ class VehicleController {
                         created: { $gt: cutOff },
                     },
                 });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -100,7 +100,7 @@ class VehicleController {
                 const landmarkID = req.body.landmarkID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield vehicle_arrival_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -121,7 +121,7 @@ class VehicleController {
                 const vehicleID = req.body.vehicleID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield vehicle_arrival_1.default.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -142,7 +142,7 @@ class VehicleController {
                 const vehicleID = req.body.vehicleID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield vehicle_departure_1.default.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -163,7 +163,7 @@ class VehicleController {
                 const landmarkID = req.body.landmarkID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield vehicle_departure_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -197,7 +197,7 @@ class VehicleController {
                         created: { $gt: cutOff },
                     },
                 });
-                log_1.default(result);
+                // log(result);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
@@ -217,7 +217,7 @@ class VehicleController {
                 c.vehicleID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -235,7 +235,7 @@ class VehicleController {
                 c.vehicleArrivalID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -253,7 +253,7 @@ class VehicleController {
                 c.vehicleDepartureID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -270,7 +270,7 @@ class VehicleController {
                 const c = new vehicle_location_1.default(req.body);
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -287,7 +287,7 @@ class VehicleController {
                 const vehicleType = new vehicle_type_1.default(req.body);
                 vehicleType.vehicleTypeID = uuid();
                 const result = yield vehicleType.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -302,7 +302,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_type_1.default.find();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -317,7 +317,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_1.default.find({ ownerID: req.body.ownerID });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -332,7 +332,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_1.default.find({ associationID: req.body.associationID });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {

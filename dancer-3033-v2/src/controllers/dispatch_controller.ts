@@ -19,7 +19,7 @@ export class DispatchController {
         c.dispatchRecordID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -53,11 +53,11 @@ export class DispatchController {
             created: { $gt: cutOff },
           },
         });
-        log(result);
+        // log(result);
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
         res.status(200).json(result);
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -76,7 +76,7 @@ export class DispatchController {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
         const result = DispatchRecord.find({ vehicleID: req.body.vehicleID, created: { $gt: cutOff }, });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -95,7 +95,7 @@ export class DispatchController {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
         const result = DispatchRecord.find({ landmarkID: req.body.landmarkID, created: { $gt: cutOff }, });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -114,7 +114,7 @@ export class DispatchController {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
         const result = DispatchRecord.find({ routeID: req.body.routeID, created: { $gt: cutOff }, });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -133,7 +133,7 @@ export class DispatchController {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
         const result = DispatchRecord.find({ ownerID: req.body.ownerID, created: { $gt: cutOff }, });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(

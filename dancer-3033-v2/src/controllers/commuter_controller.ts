@@ -27,7 +27,7 @@ export class CommuterController {
         comm.commuterRequestID = uuid();
         comm.created = new Date().toISOString();
         const result = await comm.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -50,7 +50,7 @@ export class CommuterController {
         }
         commReq.scanned = req.body.scanned;
         const result = await commReq.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -74,7 +74,7 @@ export class CommuterController {
         commReq.vehicleID = req.body.vehicleID;
         commReq.vehicleReg = req.body.vehicleReg;
         const result = await commReq.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -97,7 +97,7 @@ export class CommuterController {
         }
         commReq.autoDetected = req.body.autoDetected;
         const result = await commReq.save();
-        log(result);
+        // log(result);
 
         res.status(200).json(result);
       } catch (err) {
@@ -118,7 +118,7 @@ export class CommuterController {
         c.commuterRatingsAggregateID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -138,7 +138,7 @@ export class CommuterController {
         c.commuterArrivalLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -158,7 +158,7 @@ export class CommuterController {
         c.commuterPickupLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -181,7 +181,7 @@ export class CommuterController {
           fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -204,7 +204,7 @@ export class CommuterController {
           fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -227,7 +227,7 @@ export class CommuterController {
           landmarkID: landmarkID,
           created: {$gt: cutOff}
         });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -247,7 +247,7 @@ export class CommuterController {
         c.commuterStartingLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -267,7 +267,7 @@ export class CommuterController {
         c.commuterRatingID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -287,7 +287,7 @@ export class CommuterController {
         panic.commuterPanicID = uuid();
         panic.created = new Date().toISOString();
         const result = await panic.save();
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -307,7 +307,7 @@ export class CommuterController {
         const fromLandmarkID = parseInt(req.body.fromLandmarkID);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await  CommuterRequest.find({fromLandmarkID: fromLandmarkID, created: { $gt: cutOff },});
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -327,7 +327,7 @@ export class CommuterController {
         const toLandmarkID = req.body.toLandmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await  CommuterRequest.find({toLandmarkID: toLandmarkID, created: { $gt: cutOff },});
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -360,7 +360,7 @@ export class CommuterController {
             created: { $gt: cutOff },
           },
         });
-        log(result);
+        // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(

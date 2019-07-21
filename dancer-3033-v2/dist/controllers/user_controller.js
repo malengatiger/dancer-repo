@@ -74,7 +74,7 @@ class UserController {
                 user.userID = uuid();
                 user.created = new Date().toISOString();
                 const result = yield user.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -94,7 +94,7 @@ class UserController {
                 user.userType = userType;
                 user.cellphone = req.body.cellphone;
                 const result = yield user.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {

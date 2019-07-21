@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const commuter_request_1 = __importDefault(require("../models/commuter_request"));
-const log_1 = __importDefault(require("../log"));
 const moment_1 = __importDefault(require("moment"));
 const commuter_arrival_landmark_1 = __importDefault(require("../models/commuter_arrival_landmark"));
 const commuter_pickup_landmark_1 = __importDefault(require("../models/commuter_pickup_landmark"));
@@ -33,7 +32,7 @@ class CommuterController {
                 comm.commuterRequestID = v1_1.default();
                 comm.created = new Date().toISOString();
                 const result = yield comm.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -54,7 +53,7 @@ class CommuterController {
                 }
                 commReq.scanned = req.body.scanned;
                 const result = yield commReq.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -76,7 +75,7 @@ class CommuterController {
                 commReq.vehicleID = req.body.vehicleID;
                 commReq.vehicleReg = req.body.vehicleReg;
                 const result = yield commReq.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -97,7 +96,7 @@ class CommuterController {
                 }
                 commReq.autoDetected = req.body.autoDetected;
                 const result = yield commReq.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -115,7 +114,7 @@ class CommuterController {
                 c.commuterRatingsAggregateID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -133,7 +132,7 @@ class CommuterController {
                 c.commuterArrivalLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -151,7 +150,7 @@ class CommuterController {
                 c.commuterPickupLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -172,7 +171,7 @@ class CommuterController {
                     fromLandmarkID: landmarkID,
                     created: { $gt: cutOff }
                 });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -193,7 +192,7 @@ class CommuterController {
                     fromLandmarkID: landmarkID,
                     created: { $gt: cutOff }
                 });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -214,7 +213,7 @@ class CommuterController {
                     landmarkID: landmarkID,
                     created: { $gt: cutOff }
                 });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -232,7 +231,7 @@ class CommuterController {
                 c.commuterStartingLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -250,7 +249,7 @@ class CommuterController {
                 c.commuterRatingID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -268,7 +267,7 @@ class CommuterController {
                 panic.commuterPanicID = v1_1.default();
                 panic.created = new Date().toISOString();
                 const result = yield panic.save();
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -286,7 +285,7 @@ class CommuterController {
                 const fromLandmarkID = parseInt(req.body.fromLandmarkID);
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield commuter_request_1.default.find({ fromLandmarkID: fromLandmarkID, created: { $gt: cutOff }, });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -304,7 +303,7 @@ class CommuterController {
                 const toLandmarkID = req.body.toLandmarkID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield commuter_request_1.default.find({ toLandmarkID: toLandmarkID, created: { $gt: cutOff }, });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -335,7 +334,7 @@ class CommuterController {
                         created: { $gt: cutOff },
                     },
                 });
-                log_1.default(result);
+                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {

@@ -40,7 +40,7 @@ export class LandmarkController {
                     name: route.name,
                 })
                 const result = await landmark.save();
-                log(result);
+                // log(result);
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`)
                 res.status(200).json(result);
@@ -74,9 +74,9 @@ export class LandmarkController {
                         },
                     },
                 });
-                log(result);
+                //// log(result);
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -100,7 +100,7 @@ export class LandmarkController {
                     'routeDetails.routeID': req.body.id
                 });
                 //const result = await Landmark.find();
-                log(result);
+                // // log(result);
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
 
@@ -124,7 +124,7 @@ export class LandmarkController {
                 landmark.landmarkID = uuid();
                 landmark.created = new Date().toISOString();
                 const result = await landmark.save();
-                log(result);
+                // log(result);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
