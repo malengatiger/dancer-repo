@@ -227,6 +227,89 @@ class VehicleController {
                 });
             }
         }));
+        app.route("/updateVehicleOwner").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 updateVehicleOwner requested `;
+            console.log(msg);
+            try {
+                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
+                if (!c) {
+                    res.status(400).json({
+                        message: '🍎🍎🍎🍎 updateVehicleOwner failed. Vehicle not found'
+                    });
+                }
+                c.ownerID = req.body.ownerID;
+                c.ownerName = req.body.ownerName;
+                const result = yield c.save();
+                // log(result);
+                res.status(200).json({
+                    message: 'vehicle owner updated'
+                });
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: '🍎🍎🍎🍎 updateVehicleOwner failed'
+                });
+            }
+        }));
+        app.route("/addVehiclePhoto").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 addVehiclePhoto requested `;
+            console.log(msg);
+            try {
+                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
+                if (!c) {
+                    res.status(400).json({
+                        message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
+                    });
+                }
+                const photo = {
+                    url: req.body.url,
+                    comment: req.body.comment,
+                    created: new Date().toISOString()
+                };
+                c.photos.push(photo);
+                const result = yield c.save();
+                // log(result);
+                res.status(200).json({
+                    message: `vehicle photo added. photos: 🍎 ${c.photos.length}`
+                });
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: '🍎🍎🍎🍎 addVehiclePhoto failed'
+                });
+            }
+        }));
+        app.route("/addVehicleVideo").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 addVehicleVideo requested `;
+            console.log(msg);
+            try {
+                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
+                if (!c) {
+                    res.status(400).json({
+                        message: '🍎🍎🍎🍎 addVehicleVideo failed. Vehicle not found'
+                    });
+                }
+                const video = {
+                    url: req.body.url,
+                    comment: req.body.comment,
+                    created: new Date().toISOString()
+                };
+                c.videos.push(video);
+                const result = yield c.save();
+                // log(result);
+                res.status(200).json({
+                    message: `vehicle video added. videos: 🍎 ${c.photos.length}`
+                });
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: '🍎🍎🍎🍎 addVehicleVideo failed'
+                });
+            }
+        }));
         app.route("/addVehicleArrival").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addVehicleArrival requested `;
             console.log(msg);
@@ -241,7 +324,7 @@ class VehicleController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 addVehicleArrival failed'
+                    message: '🍎🍎🍎🍎 addVehicleArrival failed'
                 });
             }
         }));
@@ -259,7 +342,7 @@ class VehicleController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 addVehicleDeparture failed'
+                    message: '🍎🍎🍎🍎 addVehicleDeparture failed'
                 });
             }
         }));
@@ -276,7 +359,7 @@ class VehicleController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 addVehicleLocation failed'
+                    message: '🍎🍎🍎🍎 addVehicleLocation failed'
                 });
             }
         }));
@@ -293,7 +376,7 @@ class VehicleController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 addVehicleType failed'
+                    message: '🍎🍎🍎🍎 addVehicleType failed'
                 });
             }
         }));
@@ -308,7 +391,7 @@ class VehicleController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 getVehicleTypes failed'
+                    message: '🍎🍎🍎🍎 getVehicleTypes failed'
                 });
             }
         }));
@@ -323,7 +406,7 @@ class VehicleController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 getVehiclesByOwner failed'
+                    message: '🍎🍎🍎🍎 getVehiclesByOwner failed'
                 });
             }
         }));
@@ -338,7 +421,7 @@ class VehicleController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 getVehiclesByAssociation failed'
+                    message: '🍎🍎🍎🍎 getVehiclesByAssociation failed'
                 });
             }
         }));

@@ -21,7 +21,7 @@ export class VehicleController {
       console.log(req.body);
       try {
         const now = new Date().getTime();
-        
+
         const latitude = parseFloat(req.body.latitude);
         const longitude = parseFloat(req.body.longitude);
         const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
@@ -100,7 +100,7 @@ export class VehicleController {
         const minutes = parseInt(req.body.minutes);
         const landmarkID = req.body.landmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = await VehicleArrival.find({landmarkID: landmarkID, created: {$gt: cutOff}});
+        const result = await VehicleArrival.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
         // log(result);
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
@@ -124,7 +124,7 @@ export class VehicleController {
         const minutes = parseInt(req.body.minutes);
         const vehicleID = req.body.vehicleID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = await VehicleArrival.find({vehicleID: vehicleID, created: {$gt: cutOff}});
+        const result = await VehicleArrival.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
         // log(result);
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
@@ -148,7 +148,7 @@ export class VehicleController {
         const minutes = parseInt(req.body.minutes);
         const vehicleID = req.body.vehicleID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = await VehicleDeparture.find({vehicleID: vehicleID, created: {$gt: cutOff}});
+        const result = await VehicleDeparture.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
         // log(result);
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
@@ -172,7 +172,7 @@ export class VehicleController {
         const minutes = parseInt(req.body.minutes);
         const landmarkID = req.body.landmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = await VehicleDeparture.find({landmarkID: landmarkID, created: {$gt: cutOff}});
+        const result = await VehicleDeparture.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
         // log(result);
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
@@ -243,6 +243,101 @@ export class VehicleController {
         )
       }
     });
+    app.route("/updateVehicleOwner").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 updateVehicleOwner requested `;
+      console.log(msg);
+
+      try {
+        const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
+        if (!c) {
+          res.status(400).json(
+            {
+              message: '🍎🍎🍎🍎 updateVehicleOwner failed. Vehicle not found'
+            }
+          )
+        }
+        c.ownerID = req.body.ownerID;
+        c.ownerName = req.body.ownerName;
+        const result = await c.save();
+        // log(result);
+        res.status(200).json({
+          message: 'vehicle owner updated'
+        });
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 updateVehicleOwner failed'
+          }
+        )
+      }
+    });
+    app.route("/addVehiclePhoto").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 addVehiclePhoto requested `;
+      console.log(msg);
+
+      try {
+        const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
+        if (!c) {
+          res.status(400).json(
+            {
+              message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
+            }
+          )
+        }
+        const photo = {
+          url: req.body.url,
+          comment: req.body.comment,
+          created: new Date().toISOString()
+        };
+        c.photos.push(photo);
+        const result = await c.save();
+        // log(result);
+        res.status(200).json({
+          message: `vehicle photo added. photos: 🍎 ${c.photos.length}`
+        });
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 addVehiclePhoto failed'
+          }
+        )
+      }
+    });
+    app.route("/addVehicleVideo").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 addVehicleVideo requested `;
+      console.log(msg);
+
+      try {
+        const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
+        if (!c) {
+          res.status(400).json(
+            {
+              message: '🍎🍎🍎🍎 addVehicleVideo failed. Vehicle not found'
+            }
+          )
+        }
+        const video = {
+          url: req.body.url,
+          comment: req.body.comment,
+          created: new Date().toISOString()
+        };
+        c.videos.push(video);
+        const result = await c.save();
+        // log(result);
+        res.status(200).json({
+          message: `vehicle video added. videos: 🍎 ${c.photos.length}`
+        });
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 addVehicleVideo failed'
+          }
+        )
+      }
+    });
     app.route("/addVehicleArrival").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addVehicleArrival requested `;
       console.log(msg);
@@ -258,7 +353,7 @@ export class VehicleController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 addVehicleArrival failed'
+            message: '🍎🍎🍎🍎 addVehicleArrival failed'
           }
         )
       }
@@ -278,7 +373,7 @@ export class VehicleController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 addVehicleDeparture failed'
+            message: '🍎🍎🍎🍎 addVehicleDeparture failed'
           }
         )
       }
@@ -288,7 +383,7 @@ export class VehicleController {
       console.log(msg);
 
       try {
-        
+
         const c: any = new VehicleLocation(req.body);
         c.created = new Date().toISOString();
         const result = await c.save();
@@ -298,7 +393,7 @@ export class VehicleController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 addVehicleLocation failed'
+            message: '🍎🍎🍎🍎 addVehicleLocation failed'
           }
         )
       }
@@ -316,7 +411,7 @@ export class VehicleController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 addVehicleType failed'
+            message: '🍎🍎🍎🍎 addVehicleType failed'
           }
         )
       }
@@ -332,7 +427,7 @@ export class VehicleController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 getVehicleTypes failed'
+            message: '🍎🍎🍎🍎 getVehicleTypes failed'
           }
         )
       }
@@ -348,7 +443,7 @@ export class VehicleController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 getVehiclesByOwner failed'
+            message: '🍎🍎🍎🍎 getVehiclesByOwner failed'
           }
         )
       }
@@ -364,25 +459,13 @@ export class VehicleController {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 getVehiclesByAssociation failed'
+            message: '🍎🍎🍎🍎 getVehiclesByAssociation failed'
           }
         )
       }
     });
 
-    
+
   }
-  // /**
-  //    * static name
-  //    */
-  //   public static async fix() {
-  //     const list: any[] = await Vehicle.find();
-  //     let cnt = 0;
-  //     for (const v of list) {
-  //       v.vehicleID = uuid();
-  //       await v.save();
-  //       cnt++;
-  //       log(`💦💦 Vehicle ID set for #${cnt} 🍎 ${v.vehicleReg}`);
-  //     }
-  //   }
+
 }
