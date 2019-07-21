@@ -67,7 +67,7 @@ class Messaging {
             };
             const topic = constants_1.default.VEHICLE_ARRIVALS + '_' + data.landmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendVehicleArrival: message sent: 😍 ${data.landmarkName} topic: ${topic}`);
+            log_1.default(`😍 sendVehicleArrival: FCM message sent: 😍 ${data.landmarkName} topic: ${topic}`);
         });
     }
     static sendRoute(data) {
@@ -89,7 +89,7 @@ class Messaging {
             };
             const topic = constants_1.default.ROUTES;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendRoute: message sent: 😍 ${data.name} topic: ${topic}`);
+            log_1.default(`😍 sendRoute: FCM message sent: 😍 ${data.name} topic: ${topic}`);
         });
     }
     static sendLandmark(data) {
@@ -111,7 +111,7 @@ class Messaging {
             };
             const topic = constants_1.default.LANDMARKS;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendLandmark: message sent: 😍 ${data.landmarkName} topic: ${topic}`);
+            log_1.default(`😍 sendLandmark: FCM message sent: 😍 ${data.landmarkName} topic: ${topic}`);
         });
     }
     static sendVehicleDeparture(data) {
@@ -136,7 +136,7 @@ class Messaging {
             };
             const topic = constants_1.default.VEHICLE_DEPARTURES + '_' + data.landmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendVehicleDeparture: message sent: 😍 ${data.landmarkName} topic: ${topic}`);
+            log_1.default(`😍 sendVehicleDeparture: FCM message sent: 😍 ${data.landmarkName} topic: ${topic}`);
         });
     }
     static sendCommuterPickupLandmark(data) {
@@ -166,7 +166,7 @@ class Messaging {
             };
             const topic = constants_1.default.COMMUTER_PICKUP_LANDMARKS + '_' + data.fromLandmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterPickupLandmark: message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic}`);
+            log_1.default(`😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic}`);
         });
     }
     static sendCommuterRequest(data) {
@@ -197,7 +197,7 @@ class Messaging {
             };
             const topic = constants_1.default.COMMUTER_REQUESTS + '_' + data.fromLandmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterRequest: message sent: 😍 ${data.fromLandmarkName} topic: ${topic}`);
+            log_1.default(`😍 sendCommuterRequest: FCM message sent: 😍 ${data.fromLandmarkName} topic: ${topic}`);
         });
     }
     static sendCommuterArrivalLandmark(data) {
@@ -229,7 +229,7 @@ class Messaging {
             log_1.default(data);
             const topic = constants_1.default.COMMUTER_ARRIVAL_LANDMARKS + '_' + data.fromLandmarkID;
             yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterArrivalLandmark: message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic}`);
+            log_1.default(`😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic}`);
         });
     }
     static sendDispatchRecord(data) {
@@ -260,9 +260,17 @@ class Messaging {
                     created: data.created
                 },
             };
-            const topic = constants_1.default.DISPATCH_RECORDS + '_' + data.landmarkID;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendDispatchRecord: message sent: 😍 ${data.landmarkID} ${data.created}`);
+            const result = yield landmark_1.default.find({
+                'routeDetails.routeID': data.routeID
+            });
+            log_1.default(`☘️☘️☘️send dispatch record to all ${result.length} landmarks in route: 🍎${data.routeID} 🍎 ${data.routeName}`);
+            let cnt = 0;
+            for (const m of result) {
+                const topic = constants_1.default.DISPATCH_RECORDS + '_' + m.landmarkID;
+                yield appTo.messaging().sendToTopic(topic, payload, options);
+                cnt++;
+                log_1.default(`😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${data.landmarkID} ${data.created} topic: 🍎 ${topic} 🍎`);
+            }
         });
     }
     static sendUser(data) {
@@ -288,7 +296,7 @@ class Messaging {
             const topic2 = constants_1.default.USERS + '_' + data.associationID;
             const con = `${topic1} in topics || ${topic2} in topics`;
             yield appTo.messaging().sendToCondition(con, payload, options);
-            log_1.default(`😍😍 sendUser: message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽`);
+            log_1.default(`😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽`);
         });
     }
     static sendCommuterPanic(data) {
@@ -303,21 +311,18 @@ class Messaging {
                     body: data.type + " " + data.created + " userID:" + data.userID,
                 },
                 data: {
-                    active: data.active,
+                    active: data.active ? 'true' : 'false',
                     type: data.type,
-                    locations: data.locations,
                     userID: data.userID,
-                    vehicleReg: data.vehicleReg,
-                    vehicleID: data.vehicleID,
+                    vehicleReg: data.vehicleReg ? data.vehicleReg : '',
+                    vehicleID: data.vehicleID ? data.vehicleID : '',
                     commuterPanicID: data.commuterPanicID,
                     created: data.created
                 },
             };
             // todo - find nearest landmarks to find routes - send panic to landmarks found
-            const locs = data.locations;
-            const lastLoc = locs[locs.length - 1];
-            const longitude = lastLoc[0];
-            const latitude = lastLoc[1];
+            const longitude = data.position.coordinates[0];
+            const latitude = data.position.coordinates[1];
             const list = yield landmark_1.default.find({
                 position: {
                     $near: {
@@ -329,15 +334,19 @@ class Messaging {
                     },
                 },
             });
-            log_1.default(`landmarks found near panic: ${list.length}`);
+            log_1.default(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
             const mTopic = constants_1.default.COMMUTER_PANICS;
             yield appTo.messaging().sendToTopic(mTopic, payload, options);
-            log_1.default(`😍😍 sendPanic: message sent: 😍😍 ${data.type} ${data.created} 👽👽 landmark topic: ${mTopic}👽`);
-            // send messages to routes and landmarks
+            log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 topic: 🍎 ${mTopic} 👽`);
+            // send messages to nearbylandmarks
+            let cnt = 0;
             for (const landmark of list) {
-                const topic1 = constants_1.default.COMMUTER_PANICS + '_' + landmark.landmarkID;
-                yield appTo.messaging().sendToTopic(topic1, payload, options);
-                log_1.default(`😍😍 sendPanic: message sent: 😍😍 ${data.type} ${data.created} 👽👽 landmark topic: ${topic1}👽`);
+                if (landmark.landmarkID) {
+                    const topic1 = constants_1.default.COMMUTER_PANICS + '_' + landmark.landmarkID;
+                    yield appTo.messaging().sendToTopic(topic1, payload, options);
+                    cnt++;
+                    log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 nearby #${cnt} landmark topic: 🍎 ${topic1} 🍎 👽👽`);
+                }
             }
         });
     }

@@ -56,7 +56,7 @@ class Messaging {
         const topic = Constants.VEHICLE_ARRIVALS + '_' + data.landmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
-            `😍 sendVehicleArrival: message sent: 😍 ${
+            `😍 sendVehicleArrival: FCM message sent: 😍 ${
             data.landmarkName
             } topic: ${topic}`,
         );
@@ -82,7 +82,7 @@ class Messaging {
         const topic = Constants.ROUTES;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
-            `😍 sendRoute: message sent: 😍 ${
+            `😍 sendRoute: FCM message sent: 😍 ${
             data.name
             } topic: ${topic}`,
         );
@@ -108,7 +108,7 @@ class Messaging {
         const topic = Constants.LANDMARKS;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
-            `😍 sendLandmark: message sent: 😍 ${
+            `😍 sendLandmark: FCM message sent: 😍 ${
             data.landmarkName
             } topic: ${topic}`,
         );
@@ -137,7 +137,7 @@ class Messaging {
         const topic = Constants.VEHICLE_DEPARTURES + '_' + data.landmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
-            `😍 sendVehicleDeparture: message sent: 😍 ${
+            `😍 sendVehicleDeparture: FCM message sent: 😍 ${
             data.landmarkName
             } topic: ${topic}`,
         );
@@ -171,7 +171,7 @@ class Messaging {
         const topic = Constants.COMMUTER_PICKUP_LANDMARKS + '_' + data.fromLandmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
-            `😍 sendCommuterPickupLandmark: message sent: 😍 ☘️☘️☘️ ${
+            `😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${
             data.fromLandmarkName
             } topic: ${topic}`,
         );
@@ -196,8 +196,8 @@ class Messaging {
                 toLandmarkName: data.toLandmarkName,
                 routeName: data.routeName,
                 routeID: data.routeID,
-                scanned: data.scanned? 'true':'false',
-                autoDetected: data.autoDetected? 'true':'false',
+                scanned: data.scanned ? 'true' : 'false',
+                autoDetected: data.autoDetected ? 'true' : 'false',
                 passengers: `${data.passengers}`,
                 stringTime: data.stringTime,
                 created: data.created
@@ -206,7 +206,7 @@ class Messaging {
         const topic = Constants.COMMUTER_REQUESTS + '_' + data.fromLandmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
-            `😍 sendCommuterRequest: message sent: 😍 ${
+            `😍 sendCommuterRequest: FCM message sent: 😍 ${
             data.fromLandmarkName
             } topic: ${topic}`,
         );
@@ -242,7 +242,7 @@ class Messaging {
         const topic = Constants.COMMUTER_ARRIVAL_LANDMARKS + '_' + data.fromLandmarkID;
         await appTo.messaging().sendToTopic(topic, payload, options);
         log(
-            `😍 sendCommuterArrivalLandmark: message sent: 😍 ☘️☘️☘️ ${
+            `😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${
             data.fromLandmarkName
             } topic: ${topic}`,
         );
@@ -258,7 +258,7 @@ class Messaging {
                 body: data.created,
             },
             data: {
-                dispatched: data.dispatched? 'true': 'false',
+                dispatched: data.dispatched ? 'true' : 'false',
                 landmarkID: data.landmarkID,
                 marshalID: data.marshalID,
                 marshalName: data.marshalID,
@@ -274,13 +274,22 @@ class Messaging {
                 created: data.created
             },
         };
-        const topic = Constants.DISPATCH_RECORDS + '_' + data.landmarkID;
-        await appTo.messaging().sendToTopic(topic, payload, options);
-        log(
-            `😍 sendDispatchRecord: message sent: 😍 ${data.landmarkID} ${
-            data.created
-            }`,
-        );
+        const result: any[] = await Landmark.find({
+            'routeDetails.routeID': data.routeID
+        });
+        log(`☘️☘️☘️send dispatch record to all ${result.length} landmarks in route: 🍎${data.routeID} 🍎 ${data.routeName}`);
+        let cnt = 0;
+        for (const m of result) {
+            const topic = Constants.DISPATCH_RECORDS + '_' + m.landmarkID;
+            await appTo.messaging().sendToTopic(topic, payload, options);
+            cnt++;
+            log(
+                `😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${data.landmarkID} ${
+                data.created
+                } topic: 🍎 ${topic} 🍎`,
+            );
+        }
+        
     }
     public static async sendUser(data: any): Promise<any> {
         const options: any = {
@@ -305,7 +314,7 @@ class Messaging {
         const con = `${topic1} in topics || ${topic2} in topics`;
         await appTo.messaging().sendToCondition(con, payload, options);
         log(
-            `😍😍 sendUser: message sent: 😍😍 ${data.firstName} ${
+            `😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${
             data.lastName
             } 👽👽👽`,
         );
@@ -321,21 +330,19 @@ class Messaging {
                 body: data.type + " " + data.created + " userID:" + data.userID,
             },
             data: {
-                active: data.active,
+                active: data.active ? 'true' : 'false',
                 type: data.type,
-                locations: data.locations,
                 userID: data.userID,
-                vehicleReg: data.vehicleReg,
-                vehicleID: data.vehicleID,   
-                commuterPanicID: data.commuterPanicID,            
+                vehicleReg: data.vehicleReg ? data.vehicleReg : '',
+                vehicleID: data.vehicleID ? data.vehicleID : '',
+                commuterPanicID: data.commuterPanicID,
                 created: data.created
             },
         };
         // todo - find nearest landmarks to find routes - send panic to landmarks found
-        const locs: any[] = data.locations;
-        const lastLoc: any = locs[locs.length - 1];
-        const longitude = lastLoc[0];
-        const latitude = lastLoc[1]; 
+
+        const longitude = data.position.coordinates[0];
+        const latitude = data.position.coordinates[1];
         const list: any[] = await Landmark.find({
             position: {
                 $near: {
@@ -347,24 +354,28 @@ class Messaging {
                 },
             },
         });
-        log(`landmarks found near panic: ${list.length}`);
+        log(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
         const mTopic = Constants.COMMUTER_PANICS;
         await appTo.messaging().sendToTopic(mTopic, payload, options);
         log(
-            `😍😍 sendPanic: message sent: 😍😍 ${data.type} ${
+            `😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${
             data.created
-            } 👽👽 landmark topic: ${mTopic}👽`,
+            } 👽👽 topic: 🍎 ${mTopic} 👽`,
         );
-        // send messages to routes and landmarks
+        // send messages to nearbylandmarks
 
+        let cnt = 0;
         for (const landmark of list) {
-            const topic1 = Constants.COMMUTER_PANICS + '_' + landmark.landmarkID;
-            await appTo.messaging().sendToTopic(topic1, payload, options);
-            log(
-                `😍😍 sendPanic: message sent: 😍😍 ${data.type} ${
-                data.created
-                } 👽👽 landmark topic: ${topic1}👽`,
-            );
+            if (landmark.landmarkID) {
+                const topic1 = Constants.COMMUTER_PANICS + '_' + landmark.landmarkID;
+                await appTo.messaging().sendToTopic(topic1, payload, options);
+                cnt++;
+                log(
+                    `😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${
+                    data.created
+                    } 👽👽 nearby #${cnt} landmark topic: 🍎 ${topic1} 🍎 👽👽`,
+                );
+            }
         }
     }
 }
