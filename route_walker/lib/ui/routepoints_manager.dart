@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
-import 'package:aftarobotlibrary4/data/landmarkdto.dart';
-import 'package:aftarobotlibrary4/data/routedto.dart';
-import 'package:aftarobotlibrary4/data/routepointdto.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -30,7 +30,7 @@ class CreateRoutePointsPage extends StatefulWidget {
 class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     implements SnackBarListener, RouteMapListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-  List<RoutePointDTO> _rawRoutePoints = List();
+  List<RoutePoint> _rawRoutePoints = List();
   List<LandmarkDTO> _landmarks = List();
   Completer<GoogleMapController> _completer = Completer();
   GoogleMapController _mapController;
@@ -92,8 +92,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     }
   }
 
-  List<RoutePointDTO> _routePoints = List();
-  StreamSubscription<List<RoutePointDTO>> _subscription;
+  List<RoutePoint> _routePoints = List();
+  StreamSubscription<List<RoutePoint>> _subscription;
   Future _getRoutePoints() async {
     assert(_route != null);
 
@@ -152,22 +152,19 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   Set<Polyline> polylines = Set();
 
   void _setRoutePolyline() async {
-    print(
-        '\n\n📌 📌 📌 create polyline ... 🔵 ...🔵 ...🔵 ... 🔵 ... points collected: ${_rawRoutePoints.length} 🍀️🍀️🍀️');
     polylines.clear();
     try {
-      List<LatLng> polylineLatLngs = List();
+      List<LatLng> latLngs = List();
       try {
-        //_routePoints.sort((a, b) => a.index.compareTo(b.index));
         _routePoints.forEach((m) {
-          polylineLatLngs.add(LatLng(m.latitude, m.longitude));
+          latLngs.add(LatLng(m.latitude, m.longitude));
         });
       } catch (e) {
         print(
             '👿 👿 👿 👿 👿 👿  Houston, we have a fucking problem! setting up LatLng in list 👿 👿 👿 👿 👿 👿 👿 👿');
       }
       print(
-          '📌 📌 📌 create polyline ... 🔵 ...🔵 ...🔵 ... 🔵 ... latLngs to add to polyline:🍀️🍀️ ${polylineLatLngs.length} 🍀️🍀️\n');
+          '📌 📌 📌 create polyline 🔵 🔵 🔵 🔵 latLngs:🍀️🍀️ ${latLngs.length} 🍀️🍀️\n');
       var polyLine = Polyline(
           polylineId: PolylineId('${DateTime.now().toIso8601String()}'),
           color: Colors.white,
@@ -177,7 +174,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             print('🥩 🥩 polyline tapped, 🥩 now what??? - .....');
           },
           geodesic: true,
-          points: polylineLatLngs);
+          points: latLngs);
 
       polylines.add(polyLine);
       _mapController.animateCamera(CameraUpdate.newLatLngZoom(
@@ -192,7 +189,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   bool showLandmarkEditor = false, showButton = false;
   List<DropdownMenuItem<LandmarkDTO>> _items = List();
 
-  _onMarkerTapped(RoutePointDTO marker) {
+  _onMarkerTapped(RoutePoint marker) {
     print('Marker tapped: route: ${marker.created}');
     _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(marker.latitude, marker.longitude), zoom: 16.0)));
@@ -200,7 +197,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     _startLandmarksPage(marker);
   }
 
-  _startLandmarksPage(RoutePointDTO marker) {
+  _startLandmarksPage(RoutePoint marker) {
     Navigator.push(
       context,
       SlideRightRoute(
@@ -214,7 +211,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<RoutePointDTO>>(
+    return StreamBuilder<List<RoutePoint>>(
       initialData: routeBuilderBloc.rawRoutePoints,
       stream: routeBuilderBloc.rawRoutePointsStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -547,14 +544,14 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   @override
-  onPointInfoWindowTapped(RoutePointDTO point) {
+  onPointInfoWindowTapped(RoutePoint point) {
     debugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointInfoWindowTapped: 🧩🧩 created: ${point.created}  🧡 index: ${point.index}');
     // todo - show NEW landmark editor
   }
 
   @override
-  onPointTapped(RoutePointDTO point) {
+  onPointTapped(RoutePoint point) {
     debugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointTapped: 🧩🧩  created: ${point.created}  ❤️ index: ${point.index}');
     // todo - show NEW landmark editor
@@ -594,7 +591,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                 SizedBox(
                   width: 8,
                 ),
-                StreamBuilder<List<RoutePointDTO>>(
+                StreamBuilder<List<RoutePoint>>(
                     stream: routeBuilderBloc.rawRoutePointsStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -638,20 +635,20 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${_route.name} ...');
         await DancerDataAPI.addRoutePoints(
             routeId: _route.routeID, routePoints: _routePoints, clear: true);
-        await _connectPoints();
+        await _connectPointsAndCalculateDistances();
       } else {
         //batches of 30
         var rem = _routePoints.length % 300;
         var pages = _routePoints.length ~/ 300;
 
-        var map = Map<int, List<RoutePointDTO>>();
+        var map = Map<int, List<RoutePoint>>();
         if (rem > 0) {
           pages++;
         }
         int startIndex = 0;
 
         for (var i = 0; i < pages; i++) {
-          map[i] = List<RoutePointDTO>();
+          map[i] = List<RoutePoint>();
           for (var j = startIndex; j < (startIndex + 300); j++) {
             try {
               map[i].add(_routePoints.elementAt(j));
@@ -661,11 +658,17 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
           print(
               '🍎🍎🍎🍎 adding ${map[i].length} route points to 🍎 ${_route.name} ...');
           _route.routePoints = map[i];
+          bool clear;
+          if (i == 0) {
+            clear = true;
+          } else {
+            clear = false;
+          }
           await DancerDataAPI.addRoutePoints(
-              routeId: _route.routeID, routePoints: map[i], clear: false);
+              routeId: _route.routeID, routePoints: map[i], clear: clear);
           print(
               '🧩🧩🧩🧩🧩 calculating distances for route  🍎 ${_route.name} ...');
-          await _connectPoints();
+          _connectPointsAndCalculateDistances();
           setState(() {
 
           });
@@ -689,17 +692,18 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     });
     _setRoutePolyline();
   }
-  _connectPoints() async {
+  _connectPointsAndCalculateDistances() async {
     debugPrint('🔆🔆🔆🔆🔆🔆🔆🔆🔆🔆 _connectPoints ... calculate distances 🔆🔆');
     try {
-      List<RoutePointDTO> landmarkPoints = List();
+      List<RoutePoint> landmarkPoints = List();
       var landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
       if (landmarks.isEmpty) {
         print('💜💜💜 no landmarks in this route yet, so no calculations');
         return;
       }
+      debugPrint('🍀️🍀️🍀️ Connect 🔴 ${landmarks.length} landmarks to route points');
       for (var mark in landmarks) {
-        RoutePointDTO point = await routeBuilderBloc.findRoutePointNearestLandmark(
+        RoutePoint point = await routeBuilderBloc.findRoutePointNearestLandmark(
             route: _route,
             landmark: mark);
         landmarkPoints.add(point);
@@ -716,9 +720,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       _route.routePoints.forEach((p) {
         if (p.landmarkID != null) {
           cnt++;
-          prettyPrint(p.toJson(), '🔴 🔴 🔴 🔴 #$cnt -  💛 Route point that is a LANDMARK  💛');
+          prettyPrint(p.toJson(), '🔴 🔴 🔴 🔴 #$cnt -  💛 Route point that is a LANDMARK: ${p.landmarkName} 💛');
         }
       });
+      debugPrint('🍀️🍀️🍀️ sending ${landmarkPoints.length} landmarked points ... calculate distances between landmarks');
       await routeBuilderBloc.updateRoutePoints(routeID: _route.routeID, points: landmarkPoints);
       await RouteDistanceCalculator.calculate(route: _route);
       if (_key.currentState != null) _key.currentState.removeCurrentSnackBar();

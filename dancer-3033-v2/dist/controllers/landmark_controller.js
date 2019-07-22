@@ -95,14 +95,12 @@ class LandmarkController {
             console.log(req.body);
             try {
                 const now = new Date().getTime();
-                log_1.default(`💦 💦 💦 💦 💦 💦 routeID: ☘️☘️ ${req.body.id} ☘️☘️`);
+                log_1.default(`💦 💦 💦 💦 💦 💦 routeID: ☘️☘️ ${req.body.routeID} ☘️☘️`);
                 const result = yield landmark_1.default.find({
-                    'routeDetails.routeID': req.body.id
+                    'routeDetails.routeID': req.body.routeID
                 });
-                //const result = await Landmark.find();
-                // // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.default(`🔆🔆🔆 getLandmarksByRoute: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`);
                 res.status(200).json(result);
             }
             catch (err) {

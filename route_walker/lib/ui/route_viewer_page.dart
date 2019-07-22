@@ -1,10 +1,10 @@
 import 'package:aftarobotlibrary4/api/mongo_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
-import 'package:aftarobotlibrary4/data/landmarkdto.dart';
-import 'package:aftarobotlibrary4/data/routedto.dart';
-import 'package:aftarobotlibrary4/data/routepointdto.dart';
-import 'package:aftarobotlibrary4/data/userdto.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route_point.dart';
+import 'package:aftarobotlibrary4/data/user.dart';
 import 'package:aftarobotlibrary4/maps/estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -782,13 +782,13 @@ class _RouteCardState extends State<RouteCard>
   }
 
   @override
-  onPointInfoWindowTapped(RoutePointDTO point) {
+  onPointInfoWindowTapped(RoutePoint point) {
     print(
         '️🔴  RouteViewerPage: Caller has received onPointInfoWindowTapped ️🌼 🌼 🌼 🌼  ${point.created}');
   }
 
   @override
-  onPointTapped(RoutePointDTO point) {
+  onPointTapped(RoutePoint point) {
     print(
         '️🔴  RouteViewerPage: Caller has received onPointTapped ️🔴 ️🔴  ️🔴  ${point.created} ');
   }

@@ -38,9 +38,10 @@ mongoose
   });
 
 export class Database {
-    public get() {
+    public static async get() : Promise<Db>{
         const db: Db = mongoose.connection.db;
         log(`Database returned: ${db.databaseName}`);
+        return db;
     }
 }
 export default Database;

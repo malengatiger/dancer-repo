@@ -1,5 +1,5 @@
 import 'package:aftarobotlibrary4/data/associationdto.dart';
-import 'package:aftarobotlibrary4/data/routedto.dart';
+import 'package:aftarobotlibrary4/data/route.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -70,8 +70,8 @@ class _NewRoutePageState extends State<NewRoutePage>
       routeNumber: 'TBD',
       name: name,
       activationDate: DateTime.now().toUtc().toIso8601String(),
-      associationIDs: [widget.association.associationID],
-      associationDetails: [widget.association.associationName],
+      associationID: widget.association.associationID,
+      associationName: widget.association.associationName,
       countryID: widget.association.countryID,
       countryName: widget.association.countryName,
       color:  color,

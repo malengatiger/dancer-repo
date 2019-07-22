@@ -1,8 +1,8 @@
 import 'package:aftarobotlibrary4/api/location_bloc.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
-import 'package:aftarobotlibrary4/data/landmarkdto.dart';
-import 'package:aftarobotlibrary4/data/routedto.dart';
-import 'package:aftarobotlibrary4/data/routepointdto.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/maps/calculated_distance_page.dart';
 import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
@@ -21,7 +21,7 @@ import 'landmark_routes_page.dart';
 
 class LandmarksPage extends StatefulWidget {
   final RouteDTO route;
-  final RoutePointDTO routePoint;
+  final RoutePoint routePoint;
 
   const LandmarksPage({Key key, @required this.route, this.routePoint})
       : super(key: key);
@@ -582,9 +582,9 @@ class LandmarksPageState extends State<LandmarksPage>
         textColor: Colors.white,
         backgroundColor: Colors.black);
     try {
-      List<RoutePointDTO> landmarkPoints = List();
+      List<RoutePoint> landmarkPoints = List();
       for (var mark in landmarks) {
-        RoutePointDTO point = await routeBuilderBloc.findRoutePointNearestLandmark(
+        RoutePoint point = await routeBuilderBloc.findRoutePointNearestLandmark(
           route: widget.route,
             landmark: mark);
           landmarkPoints.add(point);
@@ -634,12 +634,12 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   @override
-  onPointInfoWindowTapped(RoutePointDTO point) {
+  onPointInfoWindowTapped(RoutePoint point) {
     debugPrint('onPointInfoWindowTapped: 🍀️🍀️🍀️ $point');
   }
 
   @override
-  onPointTapped(RoutePointDTO point) {
+  onPointTapped(RoutePoint point) {
     debugPrint('onPointTapped: 🍀️🍀️🍀️ $point');
   }
 
@@ -709,14 +709,14 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   @override
-  void onRoutePointsFound(String routeID, List<RoutePointDTO> routePoints) {
+  void onRoutePointsFound(String routeID, List<RoutePoint> routePoints) {
     debugPrint('♻️♻️♻️♻️♻️♻️ onRoutePointsFound $routeID -  💛 points ${routePoints.length}');
     //todo - this route point must be updated to contain landmark data
   }
 }
 
 class LandmarkEditor extends StatefulWidget {
-  final RoutePointDTO routePoint;
+  final RoutePoint routePoint;
   final RouteDTO route;
   final LandmarkEditorListener listener;
   LandmarkEditor(

@@ -95,14 +95,12 @@ export class LandmarkController {
             try {
                 const now = new Date().getTime();
 
-                log(`💦 💦 💦 💦 💦 💦 routeID: ☘️☘️ ${req.body.id} ☘️☘️`)
+                log(`💦 💦 💦 💦 💦 💦 routeID: ☘️☘️ ${req.body.routeID} ☘️☘️`)
                 const result = await Landmark.find({
-                    'routeDetails.routeID': req.body.id
+                    'routeDetails.routeID': req.body.routeID
                 });
-                //const result = await Landmark.find();
-                // // log(result);
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+                log(`🔆🔆🔆 getLandmarksByRoute: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`)
 
                 res.status(200).json(result);
             } catch (err) {

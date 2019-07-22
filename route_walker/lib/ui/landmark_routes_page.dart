@@ -1,4 +1,4 @@
-import 'package:aftarobotlibrary4/data/landmarkdto.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';

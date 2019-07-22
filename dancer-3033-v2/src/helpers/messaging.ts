@@ -304,13 +304,12 @@ class Messaging {
             data: {
                 firstName: data.firstName,
                 lastName: data.lastName,
-                associationID: data.associationID,
                 email: data.email,
                 created: data.created
             },
         };
         const topic1 = "users";
-        const topic2 = Constants.USERS + '_' + data.associationID;
+        const topic2 = Constants.USERS;
         const con = `${topic1} in topics || ${topic2} in topics`;
         await appTo.messaging().sendToCondition(con, payload, options);
         log(

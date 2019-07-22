@@ -4,16 +4,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+mongoose_1.default.set('debug', true);
 const RouteSchema = new mongoose_1.default.Schema({
     name: { type: String, required: true },
     routeID: { type: String, required: true },
-    associationDetails: { type: Array, required: true, default: [] },
+    associationID: { type: String, required: true, trim: true },
+    associationName: { type: String, required: true, trim: true },
     color: { type: String, required: true, default: 'white' },
-    created: { type: String, required: true, default: new Date().toISOString() },
     rawRoutePoints: { type: Array, required: true, default: [] },
     routePoints: { type: Array, required: true, default: [] },
     calculatedDistances: { type: Array, required: true, default: [] },
+    created: { type: String, required: true, default: new Date().toISOString() },
 });
 const Route = mongoose_1.default.model('Route', RouteSchema);
 exports.default = Route;
+/*
+mongoose.model('category', CategorySchema, 'categories');
+mongoose.model('topics', TopicSchema, 'categories');
+mongoose.model('articles', ArticlesSchema, 'categories');
+*/ 
 //# sourceMappingURL=route.js.map

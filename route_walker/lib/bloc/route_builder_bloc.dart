@@ -10,9 +10,9 @@ import 'package:aftarobotlibrary4/data/association_bag.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/geofence_event.dart';
-import 'package:aftarobotlibrary4/data/landmarkdto.dart';
-import 'package:aftarobotlibrary4/data/routedto.dart';
-import 'package:aftarobotlibrary4/data/routepointdto.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
@@ -37,7 +37,7 @@ class RouteBuilderModel {
   List<LandmarkDTO> _landmarks = List();
   List<LandmarkDTO> _routeLandmarks = List();
 
-  List<RoutePointDTO> _routePoints = List();
+  List<RoutePoint> _routePoints = List();
   List<VehicleGeofenceEvent> _geofenceEvents = List();
   List<AssociationDTO> _associations = List();
   List<AssociationBag> _associationBags = List();
@@ -47,7 +47,7 @@ class RouteBuilderModel {
   List<RouteDTO> get routes => _routes;
   List<LandmarkDTO> get landmarks => _landmarks;
   List<LandmarkDTO> get routeLandmarks => _routeLandmarks;
-  List<RoutePointDTO> get routePoints => _routePoints;
+  List<RoutePoint> get routePoints => _routePoints;
   List<AssociationDTO> get associations => _associations;
   List<AssociationBag> get associationBags => _associationBags;
   List<VehicleGeofenceEvent> get geofenceEvents => _geofenceEvents;
@@ -68,15 +68,15 @@ class RouteBuilderBloc implements LocationBlocListener {
   final StreamController<List<LandmarkDTO>> _marksNearPointController =
       StreamController.broadcast();
 
-  final StreamController<List<RoutePointDTO>> _routePointController =
+  final StreamController<List<RoutePoint>> _routePointController =
       StreamController.broadcast();
-  final StreamController<List<RoutePointDTO>> _rawRoutePointController =
+  final StreamController<List<RoutePoint>> _rawRoutePointController =
       StreamController.broadcast();
   final StreamController<List<LandmarkDTO>> _routeLandmarksController =
       StreamController.broadcast();
 
-  List<RoutePointDTO> _routePoints = List();
-  List<RoutePointDTO> _rawRoutePoints = List();
+  List<RoutePoint> _routePoints = List();
+  List<RoutePoint> _rawRoutePoints = List();
   List<GeofenceEvent> _geofenceEvents = List();
   List<LandmarkDTO> _routeLandmarks = List();
 
@@ -103,8 +103,8 @@ class RouteBuilderBloc implements LocationBlocListener {
   Stream get rawRoutePointsStream => _rawRoutePointController.stream;
   Stream get routeLandmarksStream => _routeLandmarksController.stream;
 
-  List<RoutePointDTO> get routePoints => _routePoints;
-  List<RoutePointDTO> get rawRoutePoints => _rawRoutePoints;
+  List<RoutePoint> get routePoints => _routePoints;
+  List<RoutePoint> get rawRoutePoints => _rawRoutePoints;
   List<LandmarkDTO> get routeLandmarks => _routeLandmarks;
 
   RouteBuilderBloc() {
@@ -229,7 +229,6 @@ class RouteBuilderBloc implements LocationBlocListener {
 
   Future addRoute(RouteDTO route) async {
     debugPrint('### ℹ️  ℹ️  ℹ️  add new route to database ..........☘\n');
-    assert(route.associationIDs.length > 0);
     assert(route.name != null);
     if (route.color == null) {
       route.color = 'white';
@@ -237,7 +236,7 @@ class RouteBuilderBloc implements LocationBlocListener {
     var result = await DancerDataAPI.addRoute(
       color: route.color,
       name: route.name,
-      associationId: route.associationIDs[0],
+      associationId: route.associationID,
     );
 
     debugPrint(
@@ -298,7 +297,7 @@ class RouteBuilderBloc implements LocationBlocListener {
     return null;
   }
 
-  Future updateRoutePoints({String routeID, List<RoutePointDTO> points}) async {
+  Future updateRoutePoints({String routeID, List<RoutePoint> points}) async {
 
     var res = await DancerDataAPI.updateRoutePoints(routeId: routeID, routePoints: points);
     return res;
@@ -326,7 +325,7 @@ class RouteBuilderBloc implements LocationBlocListener {
   LocationFinderBloc locationFinderBloc;
 
   Future<List<LandmarkDTO>> findLandmarksNearRoutePoint(
-      RoutePointDTO routePoint) async {
+      RoutePoint routePoint) async {
     debugPrint(
         '\n\n♻️♻️♻️♻️♻️♻️♻️♻️ calling  LocationFinderBloc to find nearest landmarks ... result goes to _marksNearPointController.stream ... ♻️♻️');
     assert(routePoint != null);
@@ -375,12 +374,12 @@ class RouteBuilderBloc implements LocationBlocListener {
   }
   Distance _distanceUtil = Distance();
 
-  Future<RoutePointDTO> findRoutePointNearestLandmark(
+  Future<RoutePoint> findRoutePointNearestLandmark(
       {RouteDTO route, LandmarkDTO landmark}) async {
     assert(landmark != null);
     assert(route != null);
 
-    Map<double, RoutePointDTO> distances = Map();
+    Map<double, RoutePoint> distances = Map();
     route.routePoints.forEach((p) {
       double distance = _distanceUtil.distance(
           LatLng(landmark.latitude, landmark.longitude), LatLng(p.latitude, p.longitude ));
@@ -433,7 +432,7 @@ class RouteBuilderBloc implements LocationBlocListener {
   }
 
 
-  Future<List<RoutePointDTO>> getRawRoutePoints({RouteDTO route}) async {
+  Future<List<RoutePoint>> getRawRoutePoints({RouteDTO route}) async {
     debugPrint(
         '\n🔵 🔵 🔵 🔵 🔵 ️ getRawRoutePoints: getting RAW route points : 🧩🧩  ${route.name}\n');
 
@@ -450,7 +449,7 @@ class RouteBuilderBloc implements LocationBlocListener {
     return _rawRoutePoints;
   }
 
-  Future<List<RoutePointDTO>> getRoutePoints({RouteDTO route}) async {
+  Future<List<RoutePoint>> getRoutePoints({RouteDTO route}) async {
     debugPrint('ℹ️  getRoutePoints getting route points ..........');
 //    var mRoute = await DancerListAPI.getRoute(routeId: route.routeID);
 //    _rawRoutePoints = mRoute.routePoints;
@@ -552,7 +551,7 @@ class RouteBuilderBloc implements LocationBlocListener {
     assert(latitude != null);
     assert(longitude != null);
 
-    var point = RoutePointDTO(
+    var point = RoutePoint(
       latitude: latitude,
       longitude: longitude,
       created: DateTime.now().toUtc().toIso8601String(),
@@ -615,7 +614,7 @@ class RouteBuilderBloc implements LocationBlocListener {
 
   @override
   onRoutePointsFound(
-      String routeID, List<RoutePointDTO> list, LandmarkDTO landmark) async {
+      String routeID, List<RoutePoint> list, LandmarkDTO landmark) async {
     debugPrint(
         '\n\n🔆 🔆 🔆 RouteBuilderBloc onRoutePointsFound: $routeID points: ${routePoints.length} ${landmark.landmarkName}  🔆');
 //    if (list.isNotEmpty) {
@@ -633,5 +632,5 @@ class RouteBuilderBloc implements LocationBlocListener {
 }
 
 abstract class LocationListener {
-  void onRoutePointsFound(String routeID, List<RoutePointDTO> routePoints);
+  void onRoutePointsFound(String routeID, List<RoutePoint> routePoints);
 }

@@ -1,6 +1,6 @@
 import 'package:aftarobotlibrary4/api/location_bloc.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
-import 'package:aftarobotlibrary4/data/landmarkdto.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
 
 import 'package:aftarobotlibrary4/util/functions.dart';

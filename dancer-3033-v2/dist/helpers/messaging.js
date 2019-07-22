@@ -287,13 +287,12 @@ class Messaging {
                 data: {
                     firstName: data.firstName,
                     lastName: data.lastName,
-                    associationID: data.associationID,
                     email: data.email,
                     created: data.created
                 },
             };
             const topic1 = "users";
-            const topic2 = constants_1.default.USERS + '_' + data.associationID;
+            const topic2 = constants_1.default.USERS;
             const con = `${topic1} in topics || ${topic2} in topics`;
             yield appTo.messaging().sendToCondition(con, payload, options);
             log_1.default(`😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽`);

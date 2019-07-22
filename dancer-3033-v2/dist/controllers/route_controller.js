@@ -22,21 +22,18 @@ class RouteController {
             log_1.default(`\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
+                const assID = req.body.associationID;
                 const now = new Date().getTime();
-                // const asses = await Association.find();
-                // log(asses);
-                const assID = req.body.associationID.trim();
-                log_1.default(`💦 💦 💦 💦 💦 💦 associationID: ☘️☘️ ${assID} ☘️☘️`);
-                // const result = await Route.find({
-                //     "associationDetails.associationID": assID,
-                // });
-                const result = yield route_1.default.find();
-                //const result = await Landmark.find({
-                //     'routeDetails.routeID': req.body.id
-                // });
-                // log(result);
+                log_1.default(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
+                const result = yield route_1.default.find({ associationID: assID });
+                log_1.default(result);
+                result.forEach((m) => {
+                    if (m.associationID === assID) {
+                        log_1.default(`😍 ${m.name} - 😍 - association is OK: ${m.associationID}`);
+                    }
+                });
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query`);
+                log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍 ${result.length} routes`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -165,6 +162,23 @@ class RouteController {
                 });
             }
         }));
+    }
+    static fixRoutes() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const list = yield route_1.default.find();
+            let cnt = 0;
+            for (const m of list) {
+                if (m.associationDetails)
+                    m.associationID = m.associationDetails[0].associationID;
+                m.associationName = m.associationDetails[0].associationName;
+                yield m.save();
+                cnt++;
+                log_1.default(`❇️❇️❇️ Route #${cnt} updated 🍎 ${m.associationName} 🍎 ${m.name}`);
+            }
+            return {
+                message: `${cnt} routes have been updated`,
+            };
+        });
     }
 }
 exports.RouteController = RouteController;

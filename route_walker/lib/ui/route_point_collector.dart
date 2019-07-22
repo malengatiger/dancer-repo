@@ -1,6 +1,6 @@
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
-import 'package:aftarobotlibrary4/data/routedto.dart';
-import 'package:aftarobotlibrary4/data/routepointdto.dart';
+import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -28,7 +28,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     implements SnackBarListener, ModesListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
 
-  List<RoutePointDTO> _routePointsCollected = List();
+  List<RoutePoint> _routePointsCollected = List();
   bool isCancelTimer = false;
   RouteDTO _route;
 
@@ -145,7 +145,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         curve: Curves.easeOut,
       );
     });
-    return StreamBuilder<List<RoutePointDTO>>(
+    return StreamBuilder<List<RoutePoint>>(
         stream: routeBuilderBloc.rawRoutePointsStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {

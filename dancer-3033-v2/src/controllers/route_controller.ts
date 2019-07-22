@@ -4,6 +4,8 @@ import db from '../database';
 import log from '../log';
 import Association from "../models/association";
 import uuid = require("uuid");
+import Database from '../database';
+import { Db, Cursor } from "mongodb";
 export class RouteController {
     public routes(app: any): void {
         log(
@@ -16,21 +18,19 @@ export class RouteController {
             );
             console.log(req.body);
             try {
+                const assID: any = req.body.associationID;
                 const now = new Date().getTime();
-                // const asses = await Association.find();
-                // log(asses);
-                const assID = req.body.associationID.trim();
-                log(`💦 💦 💦 💦 💦 💦 associationID: ☘️☘️ ${assID} ☘️☘️`)
-                // const result = await Route.find({
-                //     "associationDetails.associationID": assID,
-                // });
-                const result = await Route.find();
-                //const result = await Landmark.find({
-                //     'routeDetails.routeID': req.body.id
-                // });
-                // log(result);
+                log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`)
+                const result = await Route.find({associationID: assID});
+                log(result);
+                result.forEach((m: any) => {
+                
+                    if (m.associationID === assID) {
+                        log(`😍 ${m.name} - 😍 - association is OK: ${m.associationID}`);
+                    }
+                });
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query`)
+                log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍 ${result.length} routes`);
 
                 res.status(200).json(result);
             } catch (err) {
@@ -182,6 +182,23 @@ export class RouteController {
                 )
             }
         });
+        
+    }
+
+    public static async fixRoutes() {
+        const list: any[] = await Route.find();
+        let cnt = 0;
+        for (const m of list) {
+            if (m.associationDetails) 
+            m.associationID = m.associationDetails[0].associationID;
+            m.associationName = m.associationDetails[0].associationName;
+            await m.save();
+            cnt++;
+            log(`❇️❇️❇️ Route #${cnt} updated 🍎 ${m.associationName} 🍎 ${m.name}`);
+        }
+        return {
+            message: `${cnt} routes have been updated`,
+        }
     }
 }
 

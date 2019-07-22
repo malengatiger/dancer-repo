@@ -1,8 +1,8 @@
 import 'package:aftarobotlibrary4/api/list_api.dart';
 import 'package:aftarobotlibrary4/api/location_bloc.dart';
-import 'package:aftarobotlibrary4/data/landmarkdto.dart';
-import 'package:aftarobotlibrary4/data/routedto.dart';
-import 'package:aftarobotlibrary4/data/routepointdto.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps//estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/estimation.dart';
@@ -251,13 +251,13 @@ class _EstimatorTesterState extends State<EstimatorTester>
   }
 
   @override
-  onPointInfoWindowTapped(RoutePointDTO point) {
+  onPointInfoWindowTapped(RoutePoint point) {
     // TODO: implement onPointInfoWindowTapped
     return null;
   }
 
   @override
-  onPointTapped(RoutePointDTO point) {
+  onPointTapped(RoutePoint point) {
     // TODO: implement onPointTapped
     return null;
   }
