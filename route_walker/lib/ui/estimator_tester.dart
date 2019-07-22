@@ -1,14 +1,13 @@
-import 'package:aftarobotlibrary4/api/list_api.dart';
-import 'package:aftarobotlibrary4/api/location_bloc.dart';
-import 'package:aftarobotlibrary4/data/landmark.dart';
-import 'package:aftarobotlibrary4/data/route.dart';
+
+import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/route_point.dart';
+import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps//estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/estimation.dart';
 import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
-import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -25,38 +24,21 @@ class _EstimatorTesterState extends State<EstimatorTester>
   GlobalKey<ScaffoldState> _key = GlobalKey();
   var vehicle;
 
-  List<VehicleDTO> _vehicles = List();
-  List<RouteDTO> _routes = List();
+  List<Vehicle> _vehicles = List();
+  List<ar.Route> _routes = List();
   EstimatorBloc _bloc = EstimatorBloc();
   @override
   initState() {
     super.initState();
     _getData();
   }
-//
-//  _fix() async {
-//    var qs = await fs.collection(Constants.LANDMARKS).getDocuments();
-//    var finder = LocationFinderBloc(null);
-//    for (var doc in qs.documents) {
-//      var mark = LandmarkDTO.fromJson(doc.data);
-//      var position = await finder.getPosition(
-//          latitude: mark.latitude, longitude: mark.longitude);
-//      mark.position = position;
-//      await doc.reference.setData(mark.toJson());
-//      debugPrint('🤞🤞 Landmark updated:  🍎 ${mark.landmarkName}  🍎 ');
-////      if (mark.cities.isNotEmpty) {
-////        debugPrint('🤞🤞 We have cities here! 🍎  ${mark.cities.length}  🍎 at ${mark.landmarkName}');
-////      }
-//      //prettyPrint(mark.toJson(), 'checking  data accuracy');
-//    }
-//  }
 
   _getData() async {
-    _vehicles = await ListAPI.getVehicles();
-    _routes = await ListAPI.getRoutesByAssociation('-KTzcm79kpPSSJlNQuFQ');
+    _vehicles = await DancerListAPI.getVehiclesByAssociation(associationID: "");
+    _routes = await DancerListAPI.getRoutesByAssociation(associationID: '-KTzcm79kpPSSJlNQuFQ');
     assert(_routes != null);
     assert(_vehicles != null);
-    List<RouteDTO> mRoutes = List();
+    List<ar.Route> mRoutes = List();
     _routes.forEach((r) {
       if (r.calculatedDistances.isNotEmpty) {
         mRoutes.add(r);
@@ -89,7 +71,7 @@ class _EstimatorTesterState extends State<EstimatorTester>
     }
   }
 
-  _startEstimation(RouteDTO route) async {
+  _startEstimation(ar.Route route) async {
     await _bloc.startEstimation(
         vehicle: _vehicles.elementAt(0),
         route: route,
@@ -97,7 +79,7 @@ class _EstimatorTesterState extends State<EstimatorTester>
         listener: this);
   }
 
-  RouteDTO route;
+  ar.Route route;
 
   _callMap() {
     Navigator.push(
@@ -229,13 +211,13 @@ class _EstimatorTesterState extends State<EstimatorTester>
   }
 
   @override
-  onLandmarkInfoWindowTapped(LandmarkDTO landmark) {
+  onLandmarkInfoWindowTapped(Landmark landmark) {
     // TODO: implement onLandmarkInfoWindowTapped
     return null;
   }
 
   @override
-  onLandmarkTapped(LandmarkDTO landmark) {
+  onLandmarkTapped(Landmark landmark) {
     // TODO: implement onLandmarkTapped
     return null;
   }

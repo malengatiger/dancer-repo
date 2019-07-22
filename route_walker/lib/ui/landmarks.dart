@@ -1,9 +1,8 @@
 import 'package:aftarobotlibrary4/api/location_bloc.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
-import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
-import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/maps/calculated_distance_page.dart';
 import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
@@ -12,7 +11,6 @@ import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 
@@ -20,7 +18,7 @@ import 'landmark_city_page.dart';
 import 'landmark_routes_page.dart';
 
 class LandmarksPage extends StatefulWidget {
-  final RouteDTO route;
+  final ar.Route route;
   final RoutePoint routePoint;
 
   const LandmarksPage({Key key, @required this.route, this.routePoint})
@@ -110,7 +108,7 @@ class LandmarksPageState extends State<LandmarksPage>
     setState(() {});
   }
 
-  List<LandmarkDTO> landmarks, landmarksNearRoutePoint = List();
+  List<Landmark> landmarks, landmarksNearRoutePoint = List();
 
   bool _isInRouteLandmarks() {
     if (nearest != null) {
@@ -127,7 +125,7 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   _startRouteMap() {
-    List<RouteDTO> list = List();
+    List<ar.Route> list = List();
     list.add(widget.route);
     Navigator.push(
       context,
@@ -144,8 +142,8 @@ class LandmarksPageState extends State<LandmarksPage>
     );
   }
 
-  _startLandmarkCity(LandmarkDTO landmark) {
-    LandmarkDTO mark;
+  _startLandmarkCity(Landmark landmark) {
+    Landmark mark;
     landmarks.forEach((m) {
       if (landmark.landmarkID == m.landmarkID) {
         mark = m;
@@ -159,7 +157,7 @@ class LandmarksPageState extends State<LandmarksPage>
                 )));
   }
 
-  List<LandmarkDTO> nearestLandmarks = List(), marks = List();
+  List<Landmark> nearestLandmarks = List(), marks = List();
   List<BottomNavigationBarItem> barItems = List();
   _buildNavItems() {
     barItems.add(BottomNavigationBarItem(
@@ -181,7 +179,7 @@ class LandmarksPageState extends State<LandmarksPage>
     assert(routeBuilderBloc != null);
     routeBuilderBloc.model.routeLandmarks
         .sort((a, b) => a.landmarkName.compareTo(b.landmarkName));
-    return StreamBuilder<List<LandmarkDTO>>(
+    return StreamBuilder<List<Landmark>>(
       initialData: routeBuilderBloc.routeLandmarks,
       stream: routeBuilderBloc.routeLandmarksStream,
       builder: (context, snapshot) {
@@ -204,7 +202,7 @@ class LandmarksPageState extends State<LandmarksPage>
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: <Widget>[
-                    StreamBuilder<List<LandmarkDTO>>(
+                    StreamBuilder<List<Landmark>>(
                         stream: routeBuilderBloc.routeLandmarksStream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -313,7 +311,7 @@ class LandmarksPageState extends State<LandmarksPage>
                   ? Positioned(
                       left: 10,
                       top: 10,
-                      child: StreamBuilder<List<LandmarkDTO>>(
+                      child: StreamBuilder<List<Landmark>>(
                           initialData: landmarksNearRoutePoint,
                           stream: routeBuilderBloc.landmarksNearPointStream,
                           builder: (context, snapshot) {
@@ -354,13 +352,13 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   void _sortLandmarksByDistance() {
-    marks = List<LandmarkDTO>();
+    marks = List<Landmark>();
     if (widget.route.calculatedDistances.isEmpty) {
       marks = landmarks;
       return;
     }
     widget.route.calculatedDistances.forEach((dist) {
-      var m = LandmarkDTO(
+      var m = Landmark(
         landmarkName: dist.fromLandmark,
         landmarkID: dist.fromLandmarkID,
       );
@@ -376,7 +374,7 @@ class LandmarksPageState extends State<LandmarksPage>
       marks.add(m);
     });
 
-    var mz = LandmarkDTO(
+    var mz = Landmark(
       landmarkName: widget.route.calculatedDistances.last.toLandmark,
       landmarkID: widget.route.calculatedDistances.last.fromLandmarkID,
     );
@@ -393,7 +391,7 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   bool hidePopup = false;
-  LandmarkDTO nearest;
+  Landmark nearest;
 
   Widget _buildLandmarkChooser() {
     if (_isBackFromEditor) {
@@ -491,12 +489,12 @@ class LandmarksPageState extends State<LandmarksPage>
 
 
   @override
-  onLandmarkNameTapped(LandmarkDTO landmark) {
+  onLandmarkNameTapped(Landmark landmark) {
     _startLandmarkCity(landmark);
   }
 
   @override
-  onSequenceNumberTapped(LandmarkDTO landmark) {
+  onSequenceNumberTapped(Landmark landmark) {
     print('change sequence number here ....');
   }
 
@@ -512,7 +510,7 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   @override
-  onNearbyLandmarkTapped(LandmarkDTO landmark) {
+  onNearbyLandmarkTapped(Landmark landmark) {
     debugPrint('${landmark.landmarkName} received from tap');
     return null;
   }
@@ -560,7 +558,7 @@ class LandmarksPageState extends State<LandmarksPage>
 
   bool _isBackFromEditor = false;
   @override
-  onSuccess(LandmarkDTO landmark) {
+  onSuccess(Landmark landmark) {
     debugPrint(
         '\n\nLandmarksPage: ️🍀️ landmark addition successful. ❤️ 🧡 💛 Did the magic happen? ${landmark.landmarkName}');
     setState(() {
@@ -614,7 +612,7 @@ class LandmarksPageState extends State<LandmarksPage>
 
 
   @override
-  onLandmarkInfoWindowTapped(LandmarkDTO landmark) {
+  onLandmarkInfoWindowTapped(Landmark landmark) {
     if (landmark.routeDetails.isNotEmpty && landmark.routeIDs.isNotEmpty) {
       Navigator.push(
           context, SlideRightRoute(widget: LandmarkRoutesPage(landmark)));
@@ -624,7 +622,7 @@ class LandmarksPageState extends State<LandmarksPage>
   }
 
   @override
-  onLandmarkTapped(LandmarkDTO landmark) {
+  onLandmarkTapped(Landmark landmark) {
     debugPrint('onLandmarkTapped: 🍀️🍀️🍀️  ${landmark.landmarkName} ');
   }
 
@@ -679,45 +677,51 @@ class LandmarksPageState extends State<LandmarksPage>
     return null;
   }
 
-  @override
-  onCitiesNearLandmark(LandmarkDTO landmark, List<CityDTO> cities) async {
-    debugPrint(
-        '\n\n🔵🔵🔵 LandmarksPage: ️♻️♻️♻️ onCitiesFound: 🍎 ${cities.length} 🍎  near ${landmark.landmarkName}. ️♻️♻️♻️');
-    Map<String, CityDTO> map = Map();
-    landmark.cities.forEach((bc) {
-      map['${bc.cityID}'] = CityDTO.fromJson(bc.toJson());
-    });
-    cities.forEach((c) {
-      map['${c.cityID}'] = c;
-    });
-
-    landmark.cities.clear();
-    map.forEach((k, c) {
-      landmark.cities.add(BasicCity(
-        cityID: c.cityID,
-        name: c.name,
-        provinceName: c.provinceName,
-      ));
-    });
-    await routeBuilderBloc.addCityToLandmark(landmark, null);
-    debugPrint(
-        '\n\n❤️ 🧡 💛  LandmarksPage: ️♻️♻️♻️ landmark updated: ${landmark.landmarkName} and has  💛 ${landmark.cities.length} cities️ 💛 \n\n');
-    if (_key.currentState != null) {
-      _key.currentState.removeCurrentSnackBar();
-    }
-    setState(() {});
-  }
+//  @override
+//  onCitiesNearLandmark(Landmark landmark, List<CityDTO> cities) async {
+//    debugPrint(
+//        '\n\n🔵🔵🔵 LandmarksPage: ️♻️♻️♻️ onCitiesFound: 🍎 ${cities.length} 🍎  near ${landmark.landmarkName}. ️♻️♻️♻️');
+//    Map<String, CityDTO> map = Map();
+//    landmark.cities.forEach((bc) {
+//      map['${bc.cityID}'] = City.fromJson(bc.toJson());
+//    });
+//    cities.forEach((c) {
+//      map['${c.cityID}'] = c;
+//    });
+//
+//    landmark.cities.clear();
+//    map.forEach((k, c) {
+//      landmark.cities.add(BasicCity(
+//        cityID: c.cityID,
+//        name: c.name,
+//        provinceName: c.provinceName,
+//      ));
+//    });
+//    await routeBuilderBloc.addCityToLandmark(landmark, null);
+//    debugPrint(
+//        '\n\n❤️ 🧡 💛  LandmarksPage: ️♻️♻️♻️ landmark updated: ${landmark.landmarkName} and has  💛 ${landmark.cities.length} cities️ 💛 \n\n');
+//    if (_key.currentState != null) {
+//      _key.currentState.removeCurrentSnackBar();
+//    }
+//    setState(() {});
+//  }
 
   @override
   void onRoutePointsFound(String routeID, List<RoutePoint> routePoints) {
     debugPrint('♻️♻️♻️♻️♻️♻️ onRoutePointsFound $routeID -  💛 points ${routePoints.length}');
     //todo - this route point must be updated to contain landmark data
   }
+
+  @override
+  onCitiesNearLandmark(landmark, List<CityDTO> cities) {
+    // TODO: implement onCitiesNearLandmark
+    return null;
+  }
 }
 
 class LandmarkEditor extends StatefulWidget {
   final RoutePoint routePoint;
-  final RouteDTO route;
+  final ar.Route route;
   final LandmarkEditorListener listener;
   LandmarkEditor(
       {@required this.routePoint,
@@ -807,7 +811,7 @@ class _LandmarkEditorState extends State<LandmarkEditor> {
     if (sequence == null) {
       sequence = 0;
     }
-    var landmark = LandmarkDTO(
+    var landmark = Landmark(
       landmarkName: landmarkName,
       latitude: widget.routePoint.latitude,
       longitude: widget.routePoint.longitude,
@@ -827,18 +831,18 @@ class _LandmarkEditorState extends State<LandmarkEditor> {
 
 abstract class LandmarkEditorListener {
   onCancel();
-  onSuccess(LandmarkDTO landmark);
+  onSuccess(Landmark landmark);
   onError(String message);
 }
 
 abstract class LandmarkCardListener {
-  onLandmarkNameTapped(LandmarkDTO landmark);
-  onSequenceNumberTapped(LandmarkDTO landmark);
+  onLandmarkNameTapped(Landmark landmark);
+  onSequenceNumberTapped(Landmark landmark);
 }
 
 class LandmarkCard extends StatelessWidget {
-  final LandmarkDTO landmark;
-  final RouteDTO route;
+  final Landmark landmark;
+  final ar.Route route;
   final Color cardColor;
   final TextStyle titleStyle, captionStyle;
   final double elevation;
@@ -924,12 +928,12 @@ class LandmarkCard extends StatelessWidget {
 }
 
 abstract class NearbyLandmarkListener {
-  onNearbyLandmarkTapped(LandmarkDTO landmark);
+  onNearbyLandmarkTapped(Landmark landmark);
 }
 
 class NearbyLandmark extends StatelessWidget {
   final NearbyLandmarkListener listener;
-  final LandmarkDTO landmark;
+  final Landmark landmark;
 
   NearbyLandmark({@required this.listener, @required this.landmark});
 

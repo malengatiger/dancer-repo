@@ -2,10 +2,8 @@ import mongoose from 'mongoose';
 
 const CommuterRatingsAggregateSchema = new mongoose.Schema(
     {
-        driver: {type: Number, required: true},
-        rank: {type: Number, required: true},
-        overall: {type: Number, required: true},
-        vehicle: {type: Number, required: true},
+        
+        rating: {type: Map, required: true},
         ratingsCount: {type: Number, required: true},
 
         ownerID: {type: String, required: true, trim: true},
@@ -15,7 +13,8 @@ const CommuterRatingsAggregateSchema = new mongoose.Schema(
         vehicleReg: {type: String, required: true,},
         vehicleID: {type: String, required: true,},
         commuterRatingsAggregateID: {type: String, required: true,},
-        
+        associationD: {type: String, required: false,trim: true, index: true},
+        associationName: {type: String, required: false,trim: true},
         created: {type: String, required: true, default: new Date().toISOString()},
 
     }

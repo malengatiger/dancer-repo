@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 
 class LandmarkRoutesPage extends StatelessWidget {
-  final LandmarkDTO landmark;
+  final Landmark landmark;
 
   LandmarkRoutesPage(this.landmark);
 

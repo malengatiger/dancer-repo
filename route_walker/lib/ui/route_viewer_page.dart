@@ -2,9 +2,9 @@ import 'package:aftarobotlibrary4/api/mongo_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
-import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
+import 'package:aftarobotlibrary4/data/user.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
-import 'package:aftarobotlibrary4/data/user.dart';
 import 'package:aftarobotlibrary4/maps/estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -36,9 +36,9 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   ScrollController scrollController = ScrollController();
   String status = 'AftaRobot Routes';
   int routeCount = 0, landmarkCount = 0;
-  List<AssociationDTO> asses = List();
-  AssociationDTO association;
-  UserDTO user;
+  List<Association> asses = List();
+  Association association;
+  ar.User user;
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
 
   @override
@@ -219,7 +219,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     Navigator.push(context, SlideRightRoute(widget: NewRoutePage(association)));
   }
 
-  void _onAssociationTapped(AssociationDTO ass) async {
+  void _onAssociationTapped(Association ass) async {
     print(
         '⚜️⚜️⚜️ onAssociationTapped ⚜️ ${ass.associationID} ⚜ ${ass.associationName} ... ♻️♻️♻️ set Association and refresh');
     association = ass;
@@ -228,7 +228,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   }
 
   String mTitle;
-  List<DropdownMenuItem<AssociationDTO>> _dropdownMenuItems = List();
+  List<DropdownMenuItem<Association>> _dropdownMenuItems = List();
   void _buildDropDownItems() {
     print(
         '_buildDropDownItems ...... ♻️♻️ : ${appModel.associations.length} associations');
@@ -256,7 +256,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
         child: Center(
           child: Column(
             children: <Widget>[
-              DropdownButton<AssociationDTO>(
+              DropdownButton<Association>(
                 items: _dropdownMenuItems,
                 hint: Padding(
                   padding: const EdgeInsets.only(left: 4.0),
@@ -265,7 +265,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                     style: Styles.whiteMedium,
                   ),
                 ),
-                onChanged: (AssociationDTO ass) {
+                onChanged: (Association ass) {
                   print(
                       '☘️ ☘️ ☘️ _onDropDownChanged ⚜️ ${ass.associationName} ... ♻️♻️♻️ set Association and refresh');
                   mTitle = ass.associationName;
@@ -362,7 +362,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
 }
 
 class RouteCard extends StatefulWidget {
-  final RouteDTO route;
+  final aftarobot.Route route;
   final Color color;
   final int number;
   final bool hideLandmarks;
@@ -581,7 +581,7 @@ class _RouteCardState extends State<RouteCard>
     print('_startRouteLandmarks ........ route: ${widget.route.name}');
     Navigator.pop(context);
     await Prefs.saveRoute(widget.route);
-    List<RouteDTO> list = List();
+    List<aftarobot.Route> list = List();
     list.add(widget.route);
 
     Navigator.push(
@@ -604,7 +604,7 @@ class _RouteCardState extends State<RouteCard>
   }
 
   _testLibraryMap() async {
-    List<RouteDTO> list = List();
+    List<aftarobot.Route> list = List();
     list.add(widget.route);
 
     var card = Card(
@@ -767,14 +767,14 @@ class _RouteCardState extends State<RouteCard>
   }
 
   @override
-  onLandmarkTapped(LandmarkDTO landmark) {
+  onLandmarkTapped(Landmark landmark) {
     print(
         '️🔴  RouteViewerPage: Caller has received onLandmarkTapped ️🔴 ️🔴  ️🔴  ${landmark.landmarkName}');
     return null;
   }
 
   @override
-  onLandmarkInfoWindowTapped(LandmarkDTO landmark) {
+  onLandmarkInfoWindowTapped(Landmark landmark) {
     print(
         '️🔴  RouteViewerPage: Caller has received onLandmarkInfoWindowTapped ☘ ☘ ☘ ☘  ${landmark.landmarkName}');
     Navigator.push(

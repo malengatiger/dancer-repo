@@ -15,6 +15,8 @@ const CommuterArrivalLandmarkSchema = new mongoose.Schema(
         position: {type: Map, required: true},
         userID: {type: String, required: true, trim: true},
         commuterArrivalLandmarkID: {type: String, required: true,},
+        associationD: {type: String, required: false,trim: true, index: true},
+        associationName: {type: String, required: false,trim: true},
 
         created: {type: String, required: true, default: new Date().toISOString()},
 

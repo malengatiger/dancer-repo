@@ -1,5 +1,5 @@
 import 'package:aftarobotlibrary4/data/associationdto.dart';
-import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 
 class NewRoutePage extends StatefulWidget {
-  final AssociationDTO association;
+  final Association association;
   NewRoutePage(this.association);
 
   @override
@@ -28,7 +28,7 @@ class _NewRoutePageState extends State<NewRoutePage>
     _getRoutes();
   }
 
-  List<RouteDTO> assocRoutes = List();
+  List<ar.Route> assocRoutes = List();
   void _getRoutes() async {
     assocRoutes = await routeBuilderBloc.getRoutesByAssociation(widget.association.associationID);
     debugPrint('🧩🧩🧩🧩 ${widget.association.associationName} 🍏 🍎 Association routes: 🧩🧩 ${assocRoutes.length} 🧩🧩');
@@ -66,7 +66,7 @@ class _NewRoutePageState extends State<NewRoutePage>
         backgroundColor: Colors.black);
 
     prettyPrint(widget.association.toJson(), ' 🔴  🔴 ASSOCIATION   🔴  🔴');
-    var route = RouteDTO(
+    var route = ar.Route(
       routeNumber: 'TBD',
       name: name,
       activationDate: DateTime.now().toUtc().toIso8601String(),

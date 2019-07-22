@@ -21,9 +21,9 @@ class MongoListeners {
         const vehicleDepartures = client.connection.collection(constants_1.default.VEHICLE_DEPARTURES);
         const commuterPickups = client.connection.collection(constants_1.default.COMMUTER_PICKUP_LANDMARKS);
         //
-        const assocStream = associations.watch();
-        const routeStream = routes.watch();
-        const landmarkStream = landmarks.watch();
+        const assocStream = associations.watch({ fullDocument: 'updateLookup' });
+        const routeStream = routes.watch({ fullDocument: 'updateLookup' });
+        const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
         const commuterArrivalStream = commuterArrivalLandmarks.watch({ fullDocument: 'updateLookup' });
         const commuterRequestsStream = commuterRequests.watch({ fullDocument: 'updateLookup' });
         const dispatchRecordsStream = dispatchRecords.watch({ fullDocument: 'updateLookup' });

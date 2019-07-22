@@ -21,6 +21,8 @@ const CommuterRequestSchema = new mongoose_1.default.Schema({
     time: { type: Number, required: true, default: new Date().getTime() },
     scanned: { type: Boolean, required: true, default: false },
     autoDetected: { type: Boolean, required: true, default: false },
+    associationD: { type: String, required: false, trim: true, index: true },
+    associationName: { type: String, required: false, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 const CommuterRequest = mongoose_1.default.model('CommuterRequest', CommuterRequestSchema);

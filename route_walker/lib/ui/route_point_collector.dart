@@ -1,5 +1,5 @@
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
-import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
@@ -30,7 +30,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
 
   List<RoutePoint> _routePointsCollected = List();
   bool isCancelTimer = false;
-  RouteDTO _route;
+  ar.Route _route;
 
   @override
   void initState() {
@@ -403,7 +403,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                   ),
                   onPressed: () {
                     Navigator.pop(context);
-                    routeBuilderBloc.setIndex(_routePointsCollected.length);
+                    //routeBuilderBloc.setIndex(_routePointsCollected.length);
                     _startTimer();
                   },
                 ),

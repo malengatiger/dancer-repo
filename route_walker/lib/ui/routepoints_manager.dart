@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
-import 'package:aftarobotlibrary4/data/route.dart';
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
@@ -13,10 +12,10 @@ import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
+
 
 import 'cards.dart';
 import 'landmark_city_page.dart';
@@ -31,7 +30,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     implements SnackBarListener, RouteMapListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   List<RoutePoint> _rawRoutePoints = List();
-  List<LandmarkDTO> _landmarks = List();
+  List<Landmark> _landmarks = List();
   Completer<GoogleMapController> _completer = Completer();
   GoogleMapController _mapController;
   CameraPosition _cameraPosition = CameraPosition(
@@ -39,7 +38,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     zoom: 14.0,
   );
   BitmapDescriptor _markerIcon;
-  RouteDTO _route;
+  aftarobot.Route _route;
 
   @override
   void initState() {
@@ -78,7 +77,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   void _buildItems() {
     for (var m in _landmarks) {
-      var item = DropdownMenuItem<LandmarkDTO>(
+      var item = DropdownMenuItem<Landmark>(
         value: m,
         child: ListTile(
           leading: Icon(
@@ -187,7 +186,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   bool showLandmarkEditor = false, showButton = false;
-  List<DropdownMenuItem<LandmarkDTO>> _items = List();
+  List<DropdownMenuItem<Landmark>> _items = List();
 
   _onMarkerTapped(RoutePoint marker) {
     print('Marker tapped: route: ${marker.created}');
@@ -350,12 +349,12 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   int sequenceNumber;
-  LandmarkDTO landmark;
+  Landmark landmark;
   String landmarkName;
 
   @override
   onActionPressed(int action) {
-    List<RouteDTO> list = List();
+    List<aftarobot.Route> list = List();
     list.add(_route);
     Navigator.pop(context);
     switch (action) {
@@ -377,7 +376,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   void _startRouteMap(bool showConfirm) {
-    List<RouteDTO> list = List();
+    List<aftarobot.Route> list = List();
     list.add(_route);
     Navigator.push(
         context,
@@ -498,7 +497,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     if (name.isEmpty) {
       return;
     }
-    var m = LandmarkDTO(
+    var m = Landmark(
       landmarkName: name,
       latitude: pressedLatLng.latitude,
       longitude: pressedLatLng.longitude,
@@ -520,7 +519,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   @override
-  onLandmarkInfoWindowTapped(LandmarkDTO landmark) {
+  onLandmarkInfoWindowTapped(Landmark landmark) {
     debugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkInfoWindowTapped: 🧩🧩 ${landmark.landmarkName}  🍎 ');
     landmark.routeDetails.forEach((m) {
@@ -530,7 +529,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   @override
-  onLandmarkTapped(LandmarkDTO landmark) {
+  onLandmarkTapped(Landmark landmark) {
     debugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkTapped: 🧩🧩 ${landmark.landmarkName}  🥬 ');
     // todo - show UPDATE landmark editor

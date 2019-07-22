@@ -1,4 +1,4 @@
-import 'package:aftarobotlibrary4/data/route.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:flutter/material.dart';
 
@@ -80,7 +80,7 @@ class CounterCard extends StatelessWidget {
 }
 
 class RouteCard extends StatefulWidget {
-  final RouteDTO route;
+  final ar.Route route;
   final Color color;
   final int number;
 

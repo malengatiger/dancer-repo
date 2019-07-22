@@ -12,6 +12,8 @@ const VehicleDepartureSchema = new mongoose_1.default.Schema({
     landmarkName: { type: String, required: true },
     position: { type: Map, required: true },
     vehicleType: { type: {}, required: true },
+    associationD: { type: String, required: false, trim: true, index: true },
+    associationName: { type: String, required: false, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 const VehicleDeparture = mongoose_1.default.model('VehicleDeparture', VehicleDepartureSchema);

@@ -52,6 +52,10 @@ class CommuterController {
                     throw new Error('CommuterRequest not found');
                 }
                 commReq.scanned = req.body.scanned;
+                commReq.associationID = req.body.associationID;
+                commReq.associationName = req.body.associationName;
+                commReq.vehicleID = req.body.vehicleID;
+                commReq.vehicleReg = req.body.vehicleReg;
                 const result = yield commReq.save();
                 // log(result);
                 res.status(200).json(result);
@@ -72,6 +76,8 @@ class CommuterController {
                 if (!commReq) {
                     throw new Error('CommuterRequest not found');
                 }
+                commReq.associationID = req.body.associationID;
+                commReq.associationName = req.body.associationName;
                 commReq.vehicleID = req.body.vehicleID;
                 commReq.vehicleReg = req.body.vehicleReg;
                 const result = yield commReq.save();
@@ -95,6 +101,10 @@ class CommuterController {
                     throw new Error('CommuterRequest not found');
                 }
                 commReq.autoDetected = req.body.autoDetected;
+                commReq.associationID = req.body.associationID;
+                commReq.associationName = req.body.associationName;
+                commReq.vehicleID = req.body.vehicleID;
+                commReq.vehicleReg = req.body.vehicleReg;
                 const result = yield commReq.save();
                 // log(result);
                 res.status(200).json(result);

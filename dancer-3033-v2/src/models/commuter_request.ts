@@ -19,7 +19,8 @@ const CommuterRequestSchema = new mongoose.Schema(
         time: {type: Number, required: true, default: new Date().getTime()},
         scanned: {type: Boolean, required: true, default: false},
         autoDetected: {type: Boolean, required: true, default: false},
-
+        associationD: {type: String, required: false,trim: true, index: true},
+        associationName: {type: String, required: false,trim: true},
         created: {type: String, required: true, default: new Date().toISOString()},
 
     }

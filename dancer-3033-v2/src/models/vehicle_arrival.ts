@@ -9,6 +9,10 @@ const VehicleArrivalSchema = new mongoose.Schema(
         landmarkName: {type: String, required: true},
         position: {type: Map, required: true},
         vehicleType: {type: {}, required: true},
+        associationD: {type: String, required: false,trim: true, index: true},
+        associationName: {type: String, required: false,trim: true},
+        routeID: {type: String, required: false,trim: true, index: true},
+        routeName: {type: String, required: false,trim: true},
         
         created: {type: String, required: true, default: new Date().toISOString()},
 

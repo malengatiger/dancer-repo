@@ -10,6 +10,8 @@ const CommuterRatingSchema = new mongoose_1.default.Schema({
     userID: { type: String, required: true },
     commuterRatingID: { type: String, required: true },
     position: { type: Map, required: true },
+    associationD: { type: String, required: false, trim: true },
+    associationName: { type: String, required: false, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 const CommuterRating = mongoose_1.default.model('CommuterRating', CommuterRatingSchema);

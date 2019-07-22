@@ -10,7 +10,7 @@ import 'package:route_walker/bloc/route_builder_bloc.dart';
 
 
 class LandmarkCityPage extends StatefulWidget {
-  final LandmarkDTO landmark;
+  final Landmark landmark;
 
   LandmarkCityPage({this.landmark});
 
@@ -259,10 +259,6 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
     );
   }
 
-  String _format(double m) {
-    return m.toStringAsFixed(7);
-  }
-
   @override
   onActionPressed(int action) {
     Navigator.pop(context);
@@ -296,9 +292,10 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
   }
 
   @override
-  onCitiesNearLandmark(LandmarkDTO landmark, List<CityDTO> cities) {
-    debugPrint(' 🍎 🍎 🍎 onCitiesNearLandmark: ${cities.length}   🍎 🍎 🍎 near ${landmark.landmarkName}');
-
+  onCitiesNearLandmark(landmark, List<CityDTO> cities) {
+    // TODO: implement onCitiesNearLandmark
     return null;
   }
+
+
 }
