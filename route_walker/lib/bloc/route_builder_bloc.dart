@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/api/file_util.dart';
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/location_bloc.dart';
 import 'package:aftarobotlibrary4/api/mongo_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/association_bag.dart';
@@ -319,7 +318,6 @@ class RouteBuilderBloc  {
     return _appModel.cities;
   }
 
-  LocationFinderBloc locationFinderBloc;
 
   Future<List<Landmark>> findLandmarksNearRoutePoint(
       RoutePoint routePoint) async {
@@ -342,32 +340,28 @@ class RouteBuilderBloc  {
     return list;
   }
 
-  Future findCitiesByLocation(
+  Future<List<CityDTO>> findCitiesByLocation(
       {@required double latitude,
       @required double longitude,
-      @required double radiusInKM,
-      LocationBlocListener listener,
-      CityLocationListener cityListener}) async {
+      @required double radiusInKM}) async {
     var list = await DancerListAPI.findCitiesByLocation(
       latitude: latitude,
       longitude: longitude,
       radiusInKM: radiusInKM,
     );
-    cityListener.onCitiesFound(list);
+
     return list;
   }
 
-  Future findCitiesNearLandmark(
+  Future<List<CityDTO>>  findCitiesNearLandmark(
       {@required Landmark landmark,
-      @required double radiusInKM,
-      LocationBlocListener listener,
-      CityLocationListener cityListener}) async {
+      @required double radiusInKM,}) async {
     var list = await DancerListAPI.findCitiesByLocation(
       latitude: landmark.latitude,
       longitude: landmark.longitude,
       radiusInKM: radiusInKM,
     );
-    cityListener.onCitiesNearLandmark(landmark, list);
+    return list;
   }
   Distance _distanceUtil = Distance();
 

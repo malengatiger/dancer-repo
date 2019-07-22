@@ -1,4 +1,3 @@
-import 'package:aftarobotlibrary4/api/location_bloc.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
@@ -35,8 +34,7 @@ class LandmarksPageState extends State<LandmarksPage>
         SnackBarListener,
         NearbyLandmarkListener,
         RouteMapListener,
-        LandmarkEditorListener,
-        CityLocationListener, LocationListener {
+        LandmarkEditorListener, LocationListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   List<BottomNavigationBarItem> _navItems = [
     BottomNavigationBarItem(
@@ -665,7 +663,7 @@ class LandmarksPageState extends State<LandmarksPage>
 
     for (var landmark in marks) {
       var res = await routeBuilderBloc.findCitiesNearLandmark(
-          cityListener: this, landmark: landmark, radiusInKM: 3.0);
+          landmark: landmark, radiusInKM: 3.0);
       print(res);
     }
   }

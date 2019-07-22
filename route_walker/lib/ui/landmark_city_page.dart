@@ -1,4 +1,3 @@
-import 'package:aftarobotlibrary4/api/location_bloc.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
@@ -19,7 +18,7 @@ class LandmarkCityPage extends StatefulWidget {
 }
 
 class _LandmarkCityPageState extends State<LandmarkCityPage>
-    implements SnackBarListener, CityLocationListener {
+    implements SnackBarListener {
   List<CityDTO>  _filteredCities = List();
   GlobalKey<ScaffoldState> _key = GlobalKey();
   String name;
@@ -49,7 +48,6 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
     debugPrint('🧩🧩🧩 Finding cities within 5 km of 🍏 ${widget.landmark.landmarkName} 🍏 ');
     AppSnackbar.showSnackbarWithProgressIndicator(scaffoldKey: _key, message: 'Finding nearby  places ...', textColor: Colors.white, backgroundColor: Colors.black);
     await routeBuilderBloc.findCitiesByLocation(
-      cityListener: this,
       latitude: widget.landmark.latitude,
       longitude: widget.landmark.longitude,
       radiusInKM: 3.0,
