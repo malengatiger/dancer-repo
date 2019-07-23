@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
+import express = require("express");
 
 export class AppController{
 
-  public routes(app: any): void {
+  public routes(app: express.Application): void {
     console.log(
-      `🏓🏓🏓    AppController:  💙  setting up / and /ping routes: ☘️ use to check if API is up ...`,
+      `🏓🏓🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`,
     );
     app.route("/").get((req: Request, res: Response) => {
       const msg = `🏓🏓  Hello World from Dancer 💙 💙 Azure is UP!   🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;

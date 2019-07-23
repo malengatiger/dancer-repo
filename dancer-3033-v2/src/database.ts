@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Connection } from "mongoose";
 import { Db } from "mongodb";
 import log from './log';
 import MongoListeners from './helpers/listeners';
@@ -36,6 +36,7 @@ mongoose
   .catch((err) => {
     console.error(err);
   });
+  
 
 export class Database {
     public static async get() : Promise<Db>{

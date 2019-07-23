@@ -13,7 +13,6 @@ import uuid from 'uuid/v1';
 
 export class CommuterController {
 
-  //CommuterRatingsAggregate
   public routes(app: any): void {
     console.log(
       `🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`,

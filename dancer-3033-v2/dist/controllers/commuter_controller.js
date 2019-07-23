@@ -21,7 +21,6 @@ const commuter_panic_1 = __importDefault(require("../models/commuter_panic"));
 const commuter_ratings_aggregate_1 = __importDefault(require("../models/commuter_ratings_aggregate"));
 const v1_1 = __importDefault(require("uuid/v1"));
 class CommuterController {
-    //CommuterRatingsAggregate
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
         app.route("/addCommuterRequest").post((req, res) => __awaiter(this, void 0, void 0, function* () {

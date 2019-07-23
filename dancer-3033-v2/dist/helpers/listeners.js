@@ -34,37 +34,37 @@ class MongoListeners {
         const commuterPickupsStream = commuterPickups.watch({ fullDocument: 'updateLookup' });
         //
         vehicleArrivalsStream.on("change", (event) => {
-            log_1.default(`\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
             messaging_1.default.sendVehicleArrival(event.fullDocument);
         });
         //
         vehicleDeparturesStream.on("change", (event) => {
-            log_1.default(`\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
             messaging_1.default.sendVehicleDeparture(event.fullDocument);
         });
         //
         commuterPickupsStream.on("change", (event) => {
-            log_1.default(`\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
             messaging_1.default.sendCommuterPickupLandmark(event.fullDocument);
         });
         //
         panicStream.on("change", (event) => {
-            log_1.default(`\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
             messaging_1.default.sendCommuterPanic(event.fullDocument);
         });
         //
         usersStream.on("change", (event) => {
-            log_1.default(`\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
             messaging_1.default.sendUser(event.fullDocument);
         });
         //
         assocStream.on("change", (event) => {
-            log_1.default(`\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`);
+            log_1.default(`\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
             // AssociationHelper.onAssociationAdded(event);
         });

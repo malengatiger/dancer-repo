@@ -24,23 +24,15 @@ const log_1 = __importDefault(require("../log"));
 const constants_1 = __importDefault(require("./constants"));
 log_1.default(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
-let appTo;
-if (sa1 === 'NOTFOUND') {
-    log_1.default('Dancer config not found');
-    getDancerConfigFile();
-}
-else {
-    const ssa1 = JSON.parse(sa1);
-    log_1.default(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
-    appTo = admin.initializeApp({
-        credential: admin.credential.cert(ssa1),
-        databaseURL: "https://dancer-3303.firebaseio.com",
-    }, "appTo");
-    log_1.default(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
-}
-function getDancerConfigFile() {
-    log_1.default('🍎🍎 Try to get Dancer 🍎 config file ...');
-}
+const ssa1 = JSON.parse(sa1);
+log_1.default(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
+const appTo = admin.initializeApp({
+    credential: admin.credential.cert(ssa1),
+    databaseURL: "https://dancer-3303.firebaseio.com",
+}, "appTo");
+log_1.default(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
+const fba = appTo.messaging();
+log_1.default(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
 class Messaging {
     static init() {
         log_1.default(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
@@ -66,8 +58,8 @@ class Messaging {
                 },
             };
             const topic = constants_1.default.VEHICLE_ARRIVALS + '_' + data.landmarkID;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendVehicleArrival: FCM message sent: 😍 ${data.landmarkName} topic: ${topic}`);
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendVehicleArrival: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendRoute(data) {
@@ -88,8 +80,9 @@ class Messaging {
                 },
             };
             const topic = constants_1.default.ROUTES;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendRoute: FCM message sent: 😍 ${data.name} topic: ${topic}`);
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendRoute: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            fba;
         });
     }
     static sendLandmark(data) {
@@ -110,8 +103,8 @@ class Messaging {
                 },
             };
             const topic = constants_1.default.LANDMARKS;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendLandmark: FCM message sent: 😍 ${data.landmarkName} topic: ${topic}`);
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendLandmark: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendVehicleDeparture(data) {
@@ -135,8 +128,8 @@ class Messaging {
                 },
             };
             const topic = constants_1.default.VEHICLE_DEPARTURES + '_' + data.landmarkID;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendVehicleDeparture: FCM message sent: 😍 ${data.landmarkName} topic: ${topic}`);
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendVehicleDeparture: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendCommuterPickupLandmark(data) {
@@ -165,8 +158,8 @@ class Messaging {
                 },
             };
             const topic = constants_1.default.COMMUTER_PICKUP_LANDMARKS + '_' + data.fromLandmarkID;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic}`);
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendCommuterRequest(data) {
@@ -196,8 +189,8 @@ class Messaging {
                 },
             };
             const topic = constants_1.default.COMMUTER_REQUESTS + '_' + data.fromLandmarkID;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterRequest: FCM message sent: 😍 ${data.fromLandmarkName} topic: ${topic}`);
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendCommuterRequest: FCM message sent: 😍 ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendCommuterArrivalLandmark(data) {
@@ -228,8 +221,8 @@ class Messaging {
             const body = data.fullDocument;
             log_1.default(data);
             const topic = constants_1.default.COMMUTER_ARRIVAL_LANDMARKS + '_' + data.fromLandmarkID;
-            yield appTo.messaging().sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic}`);
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendDispatchRecord(data) {
@@ -267,9 +260,9 @@ class Messaging {
             let cnt = 0;
             for (const m of result) {
                 const topic = constants_1.default.DISPATCH_RECORDS + '_' + m.landmarkID;
-                yield appTo.messaging().sendToTopic(topic, payload, options);
+                const result = yield fba.sendToTopic(topic, payload, options);
                 cnt++;
-                log_1.default(`😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${data.landmarkID} ${data.created} topic: 🍎 ${topic} 🍎`);
+                log_1.default(`😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${data.landmarkID} ${data.created} topic: 🍎 ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 🍎`);
             }
         });
     }
@@ -294,8 +287,8 @@ class Messaging {
             const topic1 = "users";
             const topic2 = constants_1.default.USERS;
             const con = `${topic1} in topics || ${topic2} in topics`;
-            yield appTo.messaging().sendToCondition(con, payload, options);
-            log_1.default(`😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽`);
+            const result = yield fba.sendToCondition(con, payload, options);
+            log_1.default(`😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendCommuterPanic(data) {
@@ -335,16 +328,16 @@ class Messaging {
             });
             log_1.default(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
             const mTopic = constants_1.default.COMMUTER_PANICS;
-            yield appTo.messaging().sendToTopic(mTopic, payload, options);
-            log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 topic: 🍎 ${mTopic} 👽`);
+            const result = yield fba.sendToTopic(mTopic, payload, options);
+            log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 topic: 🍎 ${mTopic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 👽`);
             // send messages to nearbylandmarks
             let cnt = 0;
             for (const landmark of list) {
                 if (landmark.landmarkID) {
                     const topic1 = constants_1.default.COMMUTER_PANICS + '_' + landmark.landmarkID;
-                    yield appTo.messaging().sendToTopic(topic1, payload, options);
+                    const result = yield fba.sendToTopic(topic1, payload, options);
                     cnt++;
-                    log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 nearby #${cnt} landmark topic: 🍎 ${topic1} 🍎 👽👽`);
+                    log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 nearby #${cnt} landmark topic: 🍎 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 🍎 👽👽`);
                 }
             }
         });

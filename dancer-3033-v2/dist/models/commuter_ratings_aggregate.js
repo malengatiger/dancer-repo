@@ -5,10 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const CommuterRatingsAggregateSchema = new mongoose_1.default.Schema({
-    driver: { type: Number, required: true },
-    rank: { type: Number, required: true },
-    overall: { type: Number, required: true },
-    vehicle: { type: Number, required: true },
+    rating: { type: Map, required: true },
     ratingsCount: { type: Number, required: true },
     ownerID: { type: String, required: true, trim: true },
     ownerName: { type: String, required: true, trim: true },

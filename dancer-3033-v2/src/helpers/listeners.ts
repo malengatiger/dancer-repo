@@ -41,7 +41,7 @@ class MongoListeners {
     //
     vehicleArrivalsStream.on("change", (event: any) => {
       log(
-        `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`,
+        `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
       );
       log(event);
       Messaging.sendVehicleArrival(event.fullDocument);
@@ -49,7 +49,7 @@ class MongoListeners {
     //
     vehicleDeparturesStream.on("change", (event: any) => {
       log(
-        `\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`,
+        `\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
       );
       log(event);
       Messaging.sendVehicleDeparture(event.fullDocument);
@@ -57,7 +57,7 @@ class MongoListeners {
     //
     commuterPickupsStream.on("change", (event: any) => {
       log(
-        `\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`,
+        `\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
       );
       log(event);
       Messaging.sendCommuterPickupLandmark(event.fullDocument);
@@ -65,7 +65,7 @@ class MongoListeners {
     //
     panicStream.on("change", (event: any) => {
       log(
-        `\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`,
+        `\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
       );
       log(event);
       Messaging.sendCommuterPanic(event.fullDocument);
@@ -73,7 +73,7 @@ class MongoListeners {
     //
     usersStream.on("change", (event: any) => {
       log(
-        `\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`,
+        `\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
       );
       log(event);
       Messaging.sendUser(event.fullDocument);
@@ -81,7 +81,7 @@ class MongoListeners {
     //
     assocStream.on("change", (event: any) => {
       log(
-        `\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 ${event}`,
+        `\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
       );
       log(event);
       // AssociationHelper.onAssociationAdded(event);

@@ -5,29 +5,21 @@ import log from '../log';
 import Constants from "./constants";
 log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
-let appTo: any;
-if (sa1 === 'NOTFOUND') {
-    log('Dancer config not found');
-    getDancerConfigFile();
-} else {
-    const ssa1 = JSON.parse(sa1);
-    log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
-    appTo = admin.initializeApp(
-        {
-            credential: admin.credential.cert(ssa1),
-            databaseURL: "https://dancer-3303.firebaseio.com",
-        },
-        "appTo",
-    );
-    log(
-        `🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`,
-    );
-}
+const ssa1 = JSON.parse(sa1);
+log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
+const appTo: admin.app.App = admin.initializeApp(
+    {
+        credential: admin.credential.cert(ssa1),
+        databaseURL: "https://dancer-3303.firebaseio.com",
+    },
+    "appTo",
+);
+log(
+    `🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`,
+);
 
-function getDancerConfigFile() {
-    log('🍎🍎 Try to get Dancer 🍎 config file ...');
-}
-
+const fba: admin.messaging.Messaging = appTo.messaging();
+log(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
 class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
@@ -54,11 +46,11 @@ class Messaging {
             },
         };
         const topic = Constants.VEHICLE_ARRIVALS + '_' + data.landmarkID;
-        await appTo.messaging().sendToTopic(topic, payload, options);
+        const result = await fba.sendToTopic(topic, payload, options);
         log(
             `😍 sendVehicleArrival: FCM message sent: 😍 ${
             data.landmarkName
-            } topic: ${topic}`,
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
     public static async sendRoute(
@@ -80,12 +72,13 @@ class Messaging {
             },
         };
         const topic = Constants.ROUTES;
-        await appTo.messaging().sendToTopic(topic, payload, options);
+        const result = await fba.sendToTopic(topic, payload, options);
         log(
             `😍 sendRoute: FCM message sent: 😍 ${
             data.name
-            } topic: ${topic}`,
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
+        fba
     }
     public static async sendLandmark(
         data: any,
@@ -106,11 +99,11 @@ class Messaging {
             },
         };
         const topic = Constants.LANDMARKS;
-        await appTo.messaging().sendToTopic(topic, payload, options);
+        const result = await fba.sendToTopic(topic, payload, options);
         log(
             `😍 sendLandmark: FCM message sent: 😍 ${
             data.landmarkName
-            } topic: ${topic}`,
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
     public static async sendVehicleDeparture(
@@ -135,11 +128,11 @@ class Messaging {
             },
         };
         const topic = Constants.VEHICLE_DEPARTURES + '_' + data.landmarkID;
-        await appTo.messaging().sendToTopic(topic, payload, options);
+        const result = await fba.sendToTopic(topic, payload, options);
         log(
             `😍 sendVehicleDeparture: FCM message sent: 😍 ${
             data.landmarkName
-            } topic: ${topic}`,
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
     public static async sendCommuterPickupLandmark(
@@ -169,11 +162,11 @@ class Messaging {
             },
         };
         const topic = Constants.COMMUTER_PICKUP_LANDMARKS + '_' + data.fromLandmarkID;
-        await appTo.messaging().sendToTopic(topic, payload, options);
+        const result = await fba.sendToTopic(topic, payload, options);
         log(
             `😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${
             data.fromLandmarkName
-            } topic: ${topic}`,
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
     public static async sendCommuterRequest(
@@ -204,11 +197,11 @@ class Messaging {
             },
         };
         const topic = Constants.COMMUTER_REQUESTS + '_' + data.fromLandmarkID;
-        await appTo.messaging().sendToTopic(topic, payload, options);
+        const result = await fba.sendToTopic(topic, payload, options);
         log(
             `😍 sendCommuterRequest: FCM message sent: 😍 ${
             data.fromLandmarkName
-            } topic: ${topic}`,
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
     public static async sendCommuterArrivalLandmark(
@@ -240,11 +233,11 @@ class Messaging {
         const body = data.fullDocument;
         log(data);
         const topic = Constants.COMMUTER_ARRIVAL_LANDMARKS + '_' + data.fromLandmarkID;
-        await appTo.messaging().sendToTopic(topic, payload, options);
+        const result = await fba.sendToTopic(topic, payload, options);
         log(
             `😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${
             data.fromLandmarkName
-            } topic: ${topic}`,
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
     public static async sendDispatchRecord(data: any): Promise<any> {
@@ -281,15 +274,15 @@ class Messaging {
         let cnt = 0;
         for (const m of result) {
             const topic = Constants.DISPATCH_RECORDS + '_' + m.landmarkID;
-            await appTo.messaging().sendToTopic(topic, payload, options);
+            const result = await fba.sendToTopic(topic, payload, options);
             cnt++;
             log(
                 `😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${data.landmarkID} ${
                 data.created
-                } topic: 🍎 ${topic} 🍎`,
+                } topic: 🍎 ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 🍎`,
             );
         }
-        
+
     }
     public static async sendUser(data: any): Promise<any> {
         const options: any = {
@@ -311,11 +304,11 @@ class Messaging {
         const topic1 = "users";
         const topic2 = Constants.USERS;
         const con = `${topic1} in topics || ${topic2} in topics`;
-        await appTo.messaging().sendToCondition(con, payload, options);
+        const result = await fba.sendToCondition(con, payload, options);
         log(
             `😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${
             data.lastName
-            } 👽👽👽`,
+            } 👽👽👽 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
     public static async sendCommuterPanic(data: any): Promise<any> {
@@ -355,11 +348,11 @@ class Messaging {
         });
         log(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
         const mTopic = Constants.COMMUTER_PANICS;
-        await appTo.messaging().sendToTopic(mTopic, payload, options);
+        const result = await fba.sendToTopic(mTopic, payload, options);
         log(
             `😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${
             data.created
-            } 👽👽 topic: 🍎 ${mTopic} 👽`,
+            } 👽👽 topic: 🍎 ${mTopic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 👽`,
         );
         // send messages to nearbylandmarks
 
@@ -367,12 +360,12 @@ class Messaging {
         for (const landmark of list) {
             if (landmark.landmarkID) {
                 const topic1 = Constants.COMMUTER_PANICS + '_' + landmark.landmarkID;
-                await appTo.messaging().sendToTopic(topic1, payload, options);
+                const result = await fba.sendToTopic(topic1, payload, options);
                 cnt++;
                 log(
                     `😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${
                     data.created
-                    } 👽👽 nearby #${cnt} landmark topic: 🍎 ${topic1} 🍎 👽👽`,
+                    } 👽👽 nearby #${cnt} landmark topic: 🍎 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 🍎 👽👽`,
                 );
             }
         }
