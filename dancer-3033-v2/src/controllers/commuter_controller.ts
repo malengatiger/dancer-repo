@@ -18,7 +18,7 @@ export class CommuterController {
       `🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`,
     );
     app.route("/addCommuterRequest").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addCommuterRequest requested `;
+      const msg = `🌽 POST 🌽🌽 addCommuterRequest requested `;
       console.log(msg);
 
       try {
@@ -38,7 +38,7 @@ export class CommuterController {
       }
     });
     app.route("/updateCommuterRequestScanned").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 updateCommuterRequestScanned requested `;
+      const msg = `🌽 POST 🌽🌽 updateCommuterRequestScanned requested `;
       console.log(msg);
 
       try {
@@ -65,7 +65,7 @@ export class CommuterController {
       }
     });
     app.route("/updateCommuterRequestVehicle").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 updateCommuterRequestVehicle requested `;
+      const msg = `🌽 POST 🌽🌽 updateCommuterRequestVehicle requested `;
       console.log(msg);
 
       try {
@@ -91,7 +91,7 @@ export class CommuterController {
       }
     });
     app.route("/updateCommuterRequestAutoDetected").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 updateCommuterRequestAutoDetected requested `;
+      const msg = `🌽 POST 🌽🌽 updateCommuterRequestAutoDetected requested `;
       console.log(msg);
 
       try {
@@ -119,7 +119,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterRatingsAggregate").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addCommuterRatingsAggregate requested `;
+      const msg = `🌽 POST 🌽🌽 addCommuterRatingsAggregate requested `;
       console.log(msg);
 
       try {
@@ -139,7 +139,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterArrivalLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addCommuterArrivalLandmark requested `;
+      const msg = `🌽 POST 🌽🌽 addCommuterArrivalLandmark requested `;
       console.log(msg);
 
       try {
@@ -150,16 +150,17 @@ export class CommuterController {
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        log(err);
         res.status(400).json(
           {
-            error: err,
+            error: JSON.stringify(err),
             message: ' 🍎🍎🍎🍎 addCommuterArrivalLandmark failed'
           }
         )
       }
     });
     app.route("/addCommuterPickupLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addCommuterPickupLandmark requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPickupLandmark requested `;
       console.log(msg);
 
       try {
@@ -179,14 +180,14 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterPickupLandmarks").post(async(req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getCommuterPickupLandmarks requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPickupLandmarks requested `;
       console.log(msg);
 
       try {
         const minutes = parseInt(req.body.minutes);
         const landmarkID = req.body.landmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = CommuterPickupLandmark.find({
+        const result = await CommuterPickupLandmark.find({
           fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
@@ -202,20 +203,22 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterArrivalLandmarks").post(async(req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getCommuterArrivalLandmarks requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalLandmarks requested `;
       console.log(msg);
+      log(req.body);
 
       try {
         const minutes = parseInt(req.body.minutes);
         const landmarkID = req.body.landmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = CommuterArrivalLandmark.find({
+        const result = await CommuterArrivalLandmark.find({
           fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        log(err);
         res.status(400).json(
           {
             error: err,
@@ -225,14 +228,14 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterStartingLandmarks").post(async(req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getCommuterStartingLandmarks requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterStartingLandmarks requested `;
       console.log(msg);
 
       try {
         const minutes = parseInt(req.body.minutes);
         const landmarkID = parseInt(req.body.landmarkID);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = CommuterStartingLandmark.find({
+        const result = await CommuterStartingLandmark.find({
           landmarkID: landmarkID,
           created: {$gt: cutOff}
         });
@@ -248,7 +251,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterStartingLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addCommuterStartingLandmark requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
       console.log(msg);
 
       try {
@@ -268,7 +271,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterRating").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addCommuterRating requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterRating requested `;
       console.log(msg);
 
       try {
@@ -288,7 +291,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterPanic").post(async(req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addCommuterPanic requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanic requested `;
       console.log(msg);
 
       try {
@@ -308,7 +311,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByFromLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getCommuterRequestsByFromLandmark requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
       console.log(msg);
 
       try {
@@ -328,7 +331,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByToLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getCommuterRequestsByToLandmark requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByToLandmark requested `;
       console.log(msg);
 
       try {
@@ -348,7 +351,7 @@ export class CommuterController {
       }
     });
     app.route("/findCommuterRequestsByLocation").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 findCommuterRequestsByLocation requested `;
+      const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByLocation requested `;
       console.log(msg);
 
       try {

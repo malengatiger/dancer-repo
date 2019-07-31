@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const VehicleTypeSchema = new mongoose_1.default.Schema({
     make: { type: String, required: true, trim: true },
-    modelType: { type: String, required: true },
+    model: { type: String, required: true },
     capacity: { type: Number, required: true },
     vehicleTypeID: { type: String, required: true },
     created: { type: String, required: true, default: new Date().toISOString() },

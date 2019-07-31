@@ -32,6 +32,7 @@ mongoose
     MongoListeners.listen(client);
     console.log(`🍎🍎🍎  MongoDB collections available ...`);
     console.log(mongoose.connection.collections);
+    
   })
   .catch((err) => {
     console.error(err);

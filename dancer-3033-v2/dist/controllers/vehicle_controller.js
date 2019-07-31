@@ -100,9 +100,8 @@ class VehicleController {
                 const landmarkID = req.body.landmarkID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield vehicle_arrival_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
-                // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -123,7 +122,7 @@ class VehicleController {
                 const result = yield vehicle_arrival_1.default.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -144,7 +143,7 @@ class VehicleController {
                 const result = yield vehicle_departure_1.default.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. departures found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -165,7 +164,7 @@ class VehicleController {
                 const result = yield vehicle_departure_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -199,7 +198,7 @@ class VehicleController {
                 });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -385,7 +384,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_type_1.default.find();
-                // log(result);
+                log_1.default(`🌽🌽🌽 getVehicleTypes  found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -400,7 +399,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_1.default.find({ ownerID: req.body.ownerID });
-                // log(result);
+                log_1.default(`🌽🌽🌽 getVehiclesByOwner vehicles found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -415,7 +414,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_1.default.find({ associationID: req.body.associationID });
-                // log(result);
+                log_1.default(`🌽🌽🌽 getVehiclesByAssociation vehicles found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {

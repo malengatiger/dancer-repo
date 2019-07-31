@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const commuter_request_1 = __importDefault(require("../models/commuter_request"));
+const log_1 = __importDefault(require("../log"));
 const moment_1 = __importDefault(require("moment"));
 const commuter_arrival_landmark_1 = __importDefault(require("../models/commuter_arrival_landmark"));
 const commuter_pickup_landmark_1 = __importDefault(require("../models/commuter_pickup_landmark"));
@@ -24,7 +25,7 @@ class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
         app.route("/addCommuterRequest").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addCommuterRequest requested `;
+            const msg = `🌽 POST 🌽🌽 addCommuterRequest requested `;
             console.log(msg);
             try {
                 const comm = new commuter_request_1.default(req.body);
@@ -42,7 +43,7 @@ class CommuterController {
             }
         }));
         app.route("/updateCommuterRequestScanned").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 updateCommuterRequestScanned requested `;
+            const msg = `🌽 POST 🌽🌽 updateCommuterRequestScanned requested `;
             console.log(msg);
             try {
                 const commuterRequestID = req.body.commuterRequestID;
@@ -67,7 +68,7 @@ class CommuterController {
             }
         }));
         app.route("/updateCommuterRequestVehicle").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 updateCommuterRequestVehicle requested `;
+            const msg = `🌽 POST 🌽🌽 updateCommuterRequestVehicle requested `;
             console.log(msg);
             try {
                 const commuterRequestID = req.body.commuterRequestID;
@@ -91,7 +92,7 @@ class CommuterController {
             }
         }));
         app.route("/updateCommuterRequestAutoDetected").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 updateCommuterRequestAutoDetected requested `;
+            const msg = `🌽 POST 🌽🌽 updateCommuterRequestAutoDetected requested `;
             console.log(msg);
             try {
                 const commuterRequestID = req.body.commuterRequestID;
@@ -116,7 +117,7 @@ class CommuterController {
             }
         }));
         app.route("/addCommuterRatingsAggregate").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addCommuterRatingsAggregate requested `;
+            const msg = `🌽 POST 🌽🌽 addCommuterRatingsAggregate requested `;
             console.log(msg);
             try {
                 const c = new commuter_ratings_aggregate_1.default(req.body);
@@ -134,7 +135,7 @@ class CommuterController {
             }
         }));
         app.route("/addCommuterArrivalLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addCommuterArrivalLandmark requested `;
+            const msg = `🌽 POST 🌽🌽 addCommuterArrivalLandmark requested `;
             console.log(msg);
             try {
                 const c = new commuter_arrival_landmark_1.default(req.body);
@@ -145,14 +146,15 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
+                log_1.default(err);
                 res.status(400).json({
-                    error: err,
+                    error: JSON.stringify(err),
                     message: ' 🍎🍎🍎🍎 addCommuterArrivalLandmark failed'
                 });
             }
         }));
         app.route("/addCommuterPickupLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addCommuterPickupLandmark requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterPickupLandmark requested `;
             console.log(msg);
             try {
                 const c = new commuter_pickup_landmark_1.default(req.body);
@@ -170,13 +172,13 @@ class CommuterController {
             }
         }));
         app.route("/getCommuterPickupLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 getCommuterPickupLandmarks requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterPickupLandmarks requested `;
             console.log(msg);
             try {
                 const minutes = parseInt(req.body.minutes);
                 const landmarkID = req.body.landmarkID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
-                const result = commuter_pickup_landmark_1.default.find({
+                const result = yield commuter_pickup_landmark_1.default.find({
                     fromLandmarkID: landmarkID,
                     created: { $gt: cutOff }
                 });
@@ -191,13 +193,14 @@ class CommuterController {
             }
         }));
         app.route("/getCommuterArrivalLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 getCommuterArrivalLandmarks requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalLandmarks requested `;
             console.log(msg);
+            log_1.default(req.body);
             try {
                 const minutes = parseInt(req.body.minutes);
                 const landmarkID = req.body.landmarkID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
-                const result = commuter_arrival_landmark_1.default.find({
+                const result = yield commuter_arrival_landmark_1.default.find({
                     fromLandmarkID: landmarkID,
                     created: { $gt: cutOff }
                 });
@@ -205,6 +208,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
+                log_1.default(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterArrivalLandmarks failed'
@@ -212,13 +216,13 @@ class CommuterController {
             }
         }));
         app.route("/getCommuterStartingLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 getCommuterStartingLandmarks requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterStartingLandmarks requested `;
             console.log(msg);
             try {
                 const minutes = parseInt(req.body.minutes);
                 const landmarkID = parseInt(req.body.landmarkID);
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
-                const result = commuter_starting_landmark_1.default.find({
+                const result = yield commuter_starting_landmark_1.default.find({
                     landmarkID: landmarkID,
                     created: { $gt: cutOff }
                 });
@@ -233,7 +237,7 @@ class CommuterController {
             }
         }));
         app.route("/addCommuterStartingLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addCommuterStartingLandmark requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
             console.log(msg);
             try {
                 const c = new commuter_starting_landmark_1.default(req.body);
@@ -251,7 +255,7 @@ class CommuterController {
             }
         }));
         app.route("/addCommuterRating").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addCommuterRating requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterRating requested `;
             console.log(msg);
             try {
                 const c = new commuter_rating_1.default(req.body);
@@ -269,7 +273,7 @@ class CommuterController {
             }
         }));
         app.route("/addCommuterPanic").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addCommuterPanic requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanic requested `;
             console.log(msg);
             try {
                 const panic = new commuter_panic_1.default(req.body);
@@ -287,7 +291,7 @@ class CommuterController {
             }
         }));
         app.route("/getCommuterRequestsByFromLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 getCommuterRequestsByFromLandmark requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
             console.log(msg);
             try {
                 const minutes = parseInt(req.body.minutes);
@@ -305,7 +309,7 @@ class CommuterController {
             }
         }));
         app.route("/getCommuterRequestsByToLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 getCommuterRequestsByToLandmark requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByToLandmark requested `;
             console.log(msg);
             try {
                 const minutes = parseInt(req.body.minutes);
@@ -323,7 +327,7 @@ class CommuterController {
             }
         }));
         app.route("/findCommuterRequestsByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 findCommuterRequestsByLocation requested `;
+            const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByLocation requested `;
             console.log(msg);
             try {
                 const minutes = parseInt(req.body.minutes);

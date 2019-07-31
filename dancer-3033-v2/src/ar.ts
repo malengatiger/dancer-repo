@@ -18,13 +18,16 @@ const port = process.env.PORT || "8083";
 class AftaRobotApp {
     public app: express.Application;
     public port: string;
+    public appController: AppController = new AppController();
+
     public routeController: RouteController = new RouteController();
     public assocController: AssociationController = new AssociationController();
-    public appController: AppController = new AppController();
-    public landmarkController: LandmarkController = new LandmarkController();
     public userController: UserController = new UserController();
+    
+    public landmarkController: LandmarkController = new LandmarkController();
     public commuterController: CommuterController = new CommuterController();
     public vehicleController: VehicleController = new VehicleController();
+    
     public dispatchController: DispatchController = new DispatchController();
     public cityController: CityController = new CityController();
 
@@ -33,15 +36,20 @@ class AftaRobotApp {
         this.app = app;
         this.port = port;
         this.initializeMiddleware();
+
+        this.appController.routes(this.app);
+        this.userController.routes(this.app);
+
         this.routeController.routes(this.app);
         this.assocController.routes(this.app);
-        this.appController.routes(this.app);
+        this.cityController.routes(this.app);
+        
         this.landmarkController.routes(this.app);
-        this.userController.routes(this.app);
         this.commuterController.routes(this.app);
+
         this.vehicleController.routes(this.app);
         this.dispatchController.routes(this.app);
-        this.cityController.routes(this.app);
+       
     }
     private initializeMiddleware() {
         console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);

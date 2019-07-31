@@ -101,9 +101,8 @@ export class VehicleController {
         const landmarkID = req.body.landmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await VehicleArrival.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
-        // log(result);
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`)
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -127,7 +126,7 @@ export class VehicleController {
         const result = await VehicleArrival.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
         // log(result);
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`)
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -151,7 +150,7 @@ export class VehicleController {
         const result = await VehicleDeparture.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
         // log(result);
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. departures found: 🍎 ${result.length} 🍎`)
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -175,7 +174,7 @@ export class VehicleController {
         const result = await VehicleDeparture.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
         // log(result);
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`)
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -212,7 +211,7 @@ export class VehicleController {
         });
         // log(result);
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`)
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -421,7 +420,7 @@ export class VehicleController {
       console.log(msg);
       try {
         const result = await VehicleType.find();
-        // log(result);
+        log(`🌽🌽🌽 getVehicleTypes  found: ${result.length}`);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -437,7 +436,7 @@ export class VehicleController {
       console.log(msg);
       try {
         const result = await Vehicle.find({ ownerID: req.body.ownerID });
-        // log(result);
+        log(`🌽🌽🌽 getVehiclesByOwner vehicles found: ${result.length}`);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -453,7 +452,7 @@ export class VehicleController {
       console.log(msg);
       try {
         const result = await Vehicle.find({ associationID: req.body.associationID });
-        // log(result);
+        log(`🌽🌽🌽 getVehiclesByAssociation vehicles found: ${result.length}`);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
