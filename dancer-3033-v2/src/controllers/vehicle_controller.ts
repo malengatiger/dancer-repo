@@ -276,25 +276,39 @@ export class VehicleController {
       console.log(msg);
 
       try {
-        const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
-        if (!c) {
-          res.status(400).json(
-            {
-              message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
+        Vehicle.findOne({ vehicleID: req.body.vehicleID }, (err, vehicle: any) => {
+          if (err) {
+            res.status(400).json(
+              {
+                error: err,
+                message: '🍎🍎🍎🍎 addVehiclePhoto failed'
+              }
+            )
+          } else {
+            if (!vehicle) {
+              res.status(400).json(
+                {
+                  message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
+                }
+              )
+            } else {
+              const photo = {
+                url: req.body.url,
+                comment: req.body.comment,
+                created: new Date().toISOString()
+              };
+              vehicle.photos.push(photo);
+              vehicle.save().then(() => {
+                res.status(200).json({
+                  message: `vehicle photo added. photos: 🍎 ${vehicle.photos.length}`
+                });
+              });
+              // log(result);
+              
             }
-          )
-        }
-        const photo = {
-          url: req.body.url,
-          comment: req.body.comment,
-          created: new Date().toISOString()
-        };
-        c.photos.push(photo);
-        const result = await c.save();
-        // log(result);
-        res.status(200).json({
-          message: `vehicle photo added. photos: 🍎 ${c.photos.length}`
+          }
         });
+        
       } catch (err) {
         res.status(400).json(
           {

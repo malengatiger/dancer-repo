@@ -255,25 +255,40 @@ class VehicleController {
             const msg = `🌽🌽🌽 addVehiclePhoto requested `;
             console.log(msg);
             try {
-                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
-                if (!c) {
-                    res.status(400).json({
-                        message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
-                    });
-                }
-                const photo = {
-                    url: req.body.url,
-                    comment: req.body.comment,
-                    created: new Date().toISOString()
-                };
-                c.photos.push(photo);
-                const result = yield c.save();
-                // log(result);
-                res.status(200).json({
-                    message: `vehicle photo added. photos: 🍎 ${c.photos.length}`
+                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID }, (err, vehicle) => {
+                    if (err) {
+                        res.status(400).json({
+                            error: err,
+                            message: '🍎🍎🍎🍎 addVehiclePhoto failed'
+                        });
+                    } else {
+                        if (!vehicle) {
+                            res.status(400).json({
+                                message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
+                            });
+                        }
+                        console.log(vehicle)
+                        const photo = {
+                            url: req.body.url,
+                            comment: req.body.comment,
+                            created: new Date().toISOString()
+                        };
+
+                        if (!vehicle.photos) {
+                            vehicle.photos = []
+                        }
+                        vehicle.photos.push(photo);
+                        const result = vehicle.save();
+                        // log(result);
+                        res.status(200).json({
+                            message: `vehicle photo added. photos: 🍎 ${vehicle.photos.length}`
+                        });
+                    }
                 });
+                
             }
             catch (err) {
+                console.log(err)
                 res.status(400).json({
                     error: err,
                     message: '🍎🍎🍎🍎 addVehiclePhoto failed'
@@ -284,23 +299,32 @@ class VehicleController {
             const msg = `🌽🌽🌽 addVehicleVideo requested `;
             console.log(msg);
             try {
-                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
-                if (!c) {
-                    res.status(400).json({
-                        message: '🍎🍎🍎🍎 addVehicleVideo failed. Vehicle not found'
-                    });
-                }
-                const video = {
-                    url: req.body.url,
-                    comment: req.body.comment,
-                    created: new Date().toISOString()
-                };
-                c.videos.push(video);
-                const result = yield c.save();
-                // log(result);
-                res.status(200).json({
-                    message: `vehicle video added. videos: 🍎 ${c.photos.length}`
+                vehicle_1.default.findOne({ vehicleID: req.body.vehicleID }, (err, vehicle) => {
+                    if (err) {
+                        res.status(400).json({
+                            error: err,
+                            message: '🍎🍎🍎🍎 addVehicleVideo failed'
+                        });
+                    } else {
+                        if (!vehicle) {
+                            res.status(400).json({
+                                message: '🍎🍎🍎🍎 addVehicleVideo failed. Vehicle not found'
+                            });
+                        }
+                        const video = {
+                            url: req.body.url,
+                            comment: req.body.comment,
+                            created: new Date().toISOString()
+                        };
+                        vehicle.videos.push(video);
+                        const result = vehicle.save();
+                        // log(result);
+                        res.status(200).json({
+                            message: `vehicle video added. videos: 🍎 ${vehicle.videos.length}`
+                        });
+                    } 
                 });
+                
             }
             catch (err) {
                 res.status(400).json({

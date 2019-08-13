@@ -230,14 +230,15 @@ export class CommuterController {
     app.route("/getCommuterStartingLandmarks").post(async(req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 getCommuterStartingLandmarks requested `;
       console.log(msg);
+      console.log("Melvin's version")
 
       try {
         const minutes = parseInt(req.body.minutes);
         const landmarkID = parseInt(req.body.landmarkID);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await CommuterStartingLandmark.find({
-          landmarkID: landmarkID,
-          created: {$gt: cutOff}
+          // landmarkID: landmarkID,
+          // created: {$gt: cutOff}
         });
         // log(result);
         res.status(200).json(result);
