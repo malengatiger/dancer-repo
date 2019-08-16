@@ -217,6 +217,7 @@ export class CommuterController {
         });
         // log(result);
         res.status(200).json(result);
+        log(`\n\n 🍎🍎🍎🍎 getCommuterArrivalLandmarks: found : 🍎🍎🍎🍎 ${result.length} 🍎🍎🍎🍎\n\n`)
       } catch (err) {
         log(err);
         res.status(400).json(
@@ -266,6 +267,26 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addCommuterStartingLandmark failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterArrivalLandmark").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterArrivalLandmark requested `;
+      console.log(msg);
+
+      try {
+        const c: any = new CommuterArrivalLandmark(req.body);
+        c.commuterArrivalLandmarkID = uuid();
+        c.created = new Date().toISOString();
+        const result = await c.save();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterArrivalLandmark failed'
           }
         )
       }

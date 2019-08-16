@@ -210,11 +210,11 @@ class Messaging {
                     fromLandmarkName: data.fromLandmarkName,
                     toLandmarkID: data.toLandmarkID,
                     toLandmarkName: data.toLandmarkName,
-                    routeName: data.routeName,
-                    routeID: data.routeID,
-                    vehicleID: data.vehicleID,
-                    vehicleReg: data.vehicleReg,
-                    departureID: data.departureID,
+                    // routeName: data.routeName,
+                    // routeID: data.routeID,
+                    // vehicleID: data.vehicleID,
+                    // vehicleReg: data.vehicleReg,
+                    // departureID: data.departureID,
                     created: data.created
                 },
             };
