@@ -25,6 +25,9 @@ export class CommuterController {
         const comm : any= new CommuterRequest(req.body);
         comm.commuterRequestID = uuid();
         comm.created = new Date().toISOString();
+        comm.stringTime = new Date().toISOString();
+        comm.time = new Date().getTime();
+        comm.scanned = false;
         const result = await comm.save();
         // log(result);
         res.status(200).json(result);

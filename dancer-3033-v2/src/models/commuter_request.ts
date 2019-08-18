@@ -15,7 +15,7 @@ const CommuterRequestSchema = new mongoose.Schema(
         passengers: {type: Number, required: true, default: 1},
         position: {type: Map, required: true},
         userID: {type: String, required: true, trim: true},
-        stringTime: {type: String, required: true, default: new Date().toISOString()},
+        stringTime: {type: String, required: false, default: new Date().toISOString()},
         time: {type: Number, required: true, default: new Date().getTime()},
         scanned: {type: Boolean, required: true, default: false},
         autoDetected: {type: Boolean, required: true, default: false},

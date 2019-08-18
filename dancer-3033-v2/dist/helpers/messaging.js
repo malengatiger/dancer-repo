@@ -246,7 +246,7 @@ class Messaging {
                     routeID: data.routeID,
                     vehicleReg: data.vehicleReg,
                     vehicleID: data.vehicleID,
-                    vehicleType: data.vehicleType,
+                    vehicleType: JSON.stringify(data.vehicleType),
                     ownerID: data.ownerID,
                     passengers: `${data.passengers}`,
                     dispatchRecordID: data.dispatchRecordID,

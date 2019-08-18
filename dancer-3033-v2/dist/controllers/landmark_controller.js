@@ -110,6 +110,23 @@ class LandmarkController {
                 });
             }
         }));
+        app.route("/getLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /getLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const now = new Date().getTime();
+                const result = yield landmark_1.default.find();
+                const end = new Date().getTime();
+                log_1.default(`🔆🔆🔆 getLandmarks: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getLandmarks failed'
+                });
+            }
+        }));
         app.route("/addLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.default(`\n\n💦  POST: /addLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);

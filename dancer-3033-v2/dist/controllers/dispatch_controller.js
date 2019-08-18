@@ -21,6 +21,7 @@ class DispatchController {
         app.route("/addDispatchRecord").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addDispatchRecord requested `;
             console.log(msg);
+            console.log(req.body);
             try {
                 const c = new dispatch_record_1.default(req.body);
                 c.dispatchRecordID = uuid();

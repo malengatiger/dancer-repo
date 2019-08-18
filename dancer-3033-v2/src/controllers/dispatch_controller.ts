@@ -13,7 +13,7 @@ export class DispatchController {
     app.route("/addDispatchRecord").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addDispatchRecord requested `;
       console.log(msg);
-
+      console.log(req.body);
       try {
         const c: any = new DispatchRecord(req.body);
         c.dispatchRecordID = uuid();

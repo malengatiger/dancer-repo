@@ -31,6 +31,9 @@ class CommuterController {
                 const comm = new commuter_request_1.default(req.body);
                 comm.commuterRequestID = v1_1.default();
                 comm.created = new Date().toISOString();
+                comm.stringTime = new Date().toISOString();
+                comm.time = new Date().getTime();
+                comm.scanned = false;
                 const result = yield comm.save();
                 // log(result);
                 res.status(200).json(result);

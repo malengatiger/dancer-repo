@@ -112,6 +112,27 @@ export class LandmarkController {
                 )
             }
         });
+        app.route("/getLandmarks").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /getLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const now = new Date().getTime();
+                const result = await Landmark.find();
+                const end = new Date().getTime();
+                log(`🔆🔆🔆 getLandmarks: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`)
+
+                res.status(200).json(result);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 getLandmarks failed'
+                    }
+                )
+            }
+        });
         app.route("/addLandmark").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /addLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
