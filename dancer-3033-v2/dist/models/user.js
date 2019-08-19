@@ -16,6 +16,8 @@ const UserSchema = new mongoose_1.default.Schema({
     associationName: { type: String, required: false },
     userType: { type: String, required: true, enum: ['Staff', 'Administrator', 'Owner', 'Driver', 'Marshal', 'Patroller', 'Commuter'], },
     created: { type: String, required: true, default: new Date().toISOString() },
+    hash: { type: String, required: true },
+    salt: { type: String, required: true }
 });
 UserSchema.plugin(mongoose_unique_validator_1.default);
 const User = mongoose_1.default.model('User', UserSchema);

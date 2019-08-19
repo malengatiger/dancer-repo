@@ -9,6 +9,8 @@ export interface IUser extends Document {
     fcmToken: string;
     associationID: string;
     associationName: string;
+    hash: string;
+    salt: string;
     userType: string;
     created: string;
   }
@@ -24,6 +26,8 @@ const UserSchema = new mongoose.Schema(
         associationName: {type: String, required: false},
         userType: {type: String, required: true, enum: ['Staff', 'Administrator', 'Owner', 'Driver', 'Marshal', 'Patroller', 'Commuter'],},
         created: {type: String, required: true, default: new Date().toISOString()},
+        hash: {type: String, required: true},
+        salt: {type: String, required: true}
     }
 );
 UserSchema.plugin(uniqueValidator);

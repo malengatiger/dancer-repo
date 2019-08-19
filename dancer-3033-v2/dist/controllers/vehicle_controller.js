@@ -255,40 +255,37 @@ class VehicleController {
             const msg = `🌽🌽🌽 addVehiclePhoto requested `;
             console.log(msg);
             try {
-                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID }, (err, vehicle) => {
+                vehicle_1.default.findOne({ vehicleID: req.body.vehicleID }, (err, vehicle) => {
                     if (err) {
                         res.status(400).json({
                             error: err,
                             message: '🍎🍎🍎🍎 addVehiclePhoto failed'
                         });
-                    } else {
+                    }
+                    else {
                         if (!vehicle) {
                             res.status(400).json({
                                 message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
                             });
                         }
-                        console.log(vehicle)
-                        const photo = {
-                            url: req.body.url,
-                            comment: req.body.comment,
-                            created: new Date().toISOString()
-                        };
-
-                        if (!vehicle.photos) {
-                            vehicle.photos = []
+                        else {
+                            const photo = {
+                                url: req.body.url,
+                                comment: req.body.comment,
+                                created: new Date().toISOString()
+                            };
+                            vehicle.photos.push(photo);
+                            vehicle.save().then(() => {
+                                res.status(200).json({
+                                    message: `vehicle photo added. photos: 🍎 ${vehicle.photos.length}`
+                                });
+                            });
+                            // log(result);
                         }
-                        vehicle.photos.push(photo);
-                        const result = vehicle.save();
-                        // log(result);
-                        res.status(200).json({
-                            message: `vehicle photo added. photos: 🍎 ${vehicle.photos.length}`
-                        });
                     }
                 });
-                
             }
             catch (err) {
-                console.log(err)
                 res.status(400).json({
                     error: err,
                     message: '🍎🍎🍎🍎 addVehiclePhoto failed'
@@ -299,32 +296,23 @@ class VehicleController {
             const msg = `🌽🌽🌽 addVehicleVideo requested `;
             console.log(msg);
             try {
-                vehicle_1.default.findOne({ vehicleID: req.body.vehicleID }, (err, vehicle) => {
-                    if (err) {
-                        res.status(400).json({
-                            error: err,
-                            message: '🍎🍎🍎🍎 addVehicleVideo failed'
-                        });
-                    } else {
-                        if (!vehicle) {
-                            res.status(400).json({
-                                message: '🍎🍎🍎🍎 addVehicleVideo failed. Vehicle not found'
-                            });
-                        }
-                        const video = {
-                            url: req.body.url,
-                            comment: req.body.comment,
-                            created: new Date().toISOString()
-                        };
-                        vehicle.videos.push(video);
-                        const result = vehicle.save();
-                        // log(result);
-                        res.status(200).json({
-                            message: `vehicle video added. videos: 🍎 ${vehicle.videos.length}`
-                        });
-                    } 
+                const c = vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
+                if (!c) {
+                    res.status(400).json({
+                        message: '🍎🍎🍎🍎 addVehicleVideo failed. Vehicle not found'
+                    });
+                }
+                const video = {
+                    url: req.body.url,
+                    comment: req.body.comment,
+                    created: new Date().toISOString()
+                };
+                c.videos.push(video);
+                const result = yield c.save();
+                // log(result);
+                res.status(200).json({
+                    message: `vehicle video added. videos: 🍎 ${c.photos.length}`
                 });
-                
             }
             catch (err) {
                 res.status(400).json({

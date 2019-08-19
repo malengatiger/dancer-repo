@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import crypto from 'crypto'
 import db from '../database';
 import log from '../log';
 import User, { IUser } from "../models/user";
@@ -67,6 +68,39 @@ export class UserController {
             }
         });
 
+        app.route("/userLogin").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /userLogin requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const {email, password} = req.body
+                const user = await User.findOne({email: email})
+
+                if (user) {
+                    var hash = crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
+
+                    if (user.hash === hash) {
+                        delete user.hash
+                        delete user.salt
+
+                        res.status(200).json(user)
+                    } else {
+                        throw 'Wrong password'
+                    }
+                } else {
+                    throw 'User not found'
+                }
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 User login failed'
+                    }
+                )
+            }
+        })
+
         app.route("/addUser").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /addUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
@@ -75,6 +109,8 @@ export class UserController {
             try {
                 const user: IUser = new User(req.body);
                 user.userID = uuid();
+                user.salt = crypto.randomBytes(16).toString('hex');
+                user.hash = crypto.pbkdf2Sync(req.body.password, user.salt, 10000, 512, 'sha512').toString('hex');
                 user.created = new Date().toISOString();
                 const result = await user.save();
                 // log(result);
