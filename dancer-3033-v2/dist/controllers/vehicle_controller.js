@@ -418,6 +418,21 @@ class VehicleController {
                 });
             }
         }));
+        app.route("/getVehicles").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 getVehicles requested `;
+            console.log(msg);
+            try {
+                const result = yield vehicle_1.default.find();
+                log_1.default(`🌽🌽🌽 getVehicles  found: ${result.length}`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: '🍎🍎🍎🍎 getVehicles failed'
+                });
+            }
+        }));
         app.route("/getVehiclesByOwner").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 getVehiclesByOwner requested `;
             console.log(msg);

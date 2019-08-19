@@ -31,6 +31,9 @@ class CommuterController {
                 const comm = new commuter_request_1.default(req.body);
                 comm.commuterRequestID = v1_1.default();
                 comm.created = new Date().toISOString();
+                comm.stringTime = new Date().toISOString();
+                comm.time = new Date().getTime();
+                comm.scanned = false;
                 const result = yield comm.save();
                 // log(result);
                 res.status(200).json(result);
@@ -206,6 +209,7 @@ class CommuterController {
                 });
                 // log(result);
                 res.status(200).json(result);
+                log_1.default(`\n\n 🍎🍎🍎🍎 getCommuterArrivalLandmarks: found : 🍎🍎🍎🍎 ${result.length} 🍎🍎🍎🍎\n\n`);
             }
             catch (err) {
                 log_1.default(err);
@@ -251,6 +255,24 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addCommuterStartingLandmark failed'
+                });
+            }
+        }));
+        app.route("/addCommuterArrivalLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterArrivalLandmark requested `;
+            console.log(msg);
+            try {
+                const c = new commuter_arrival_landmark_1.default(req.body);
+                c.commuterArrivalLandmarkID = v1_1.default();
+                c.created = new Date().toISOString();
+                const result = yield c.save();
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addCommuterArrivalLandmark failed'
                 });
             }
         }));

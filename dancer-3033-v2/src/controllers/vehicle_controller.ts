@@ -445,6 +445,22 @@ export class VehicleController {
         )
       }
     });
+    app.route("/getVehicles").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getVehicles requested `;
+      console.log(msg);
+      try {
+        const result = await Vehicle.find();
+        log(`🌽🌽🌽 getVehicles  found: ${result.length}`);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 getVehicles failed'
+          }
+        )
+      }
+    });
     app.route("/getVehiclesByOwner").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 getVehiclesByOwner requested `;
       console.log(msg);
