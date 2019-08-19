@@ -119,16 +119,24 @@ class UserController {
             log_1.default(`\n\n💦  POST: /updateUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const userType = req.body.userType;
-                const user = yield user_1.default.find({ userID: req.body.userID });
-                user.email = req.body.email;
-                user.userType = userType;
-                user.cellphone = req.body.cellphone;
-                const result = yield user.save();
-                // log(result);
-                res.status(200).json(result);
+                const userToUpdate = req.body;
+                const user = yield user_1.default.findOne({ userID: req.body.userID });
+                if (user) {
+                    Object.assign(user, userToUpdate);
+                    if (req.body.password != null) {
+                        user.salt = crypto_1.default.randomBytes(16).toString('hex');
+                        user.hash = crypto_1.default.pbkdf2Sync(req.body.password, user.salt, 10000, 512, 'sha512').toString('hex');
+                    }
+                    const result = yield user.save();
+                    // log(result);
+                    res.status(200).json(result);
+                }
+                else {
+                    throw 'User not found';
+                }
             }
             catch (err) {
+                console.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 updateUser failed'

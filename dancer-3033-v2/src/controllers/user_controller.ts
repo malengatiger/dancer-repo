@@ -130,15 +130,26 @@ export class UserController {
             );
             console.log(req.body);
             try {
-                const userType = req.body.userType;
-                const user: any = await User.find({userID: req.body.userID})
-                user.email = req.body.email;
-                user.userType = userType;
-                user.cellphone = req.body.cellphone;
-                const result = await user.save();
-                // log(result);
-                res.status(200).json(result);
+                const userToUpdate = req.body;
+                const user = await User.findOne({userID: req.body.userID})
+
+                if (user) {
+                    Object.assign(user, userToUpdate)
+
+                    if (req.body.password != null) {
+                        user.salt = crypto.randomBytes(16).toString('hex');
+                        user.hash = crypto.pbkdf2Sync(req.body.password, user.salt, 10000, 512, 'sha512').toString('hex');
+                    }
+
+                    const result = await user.save();
+                    // log(result);
+                    res.status(200).json(result);
+                } else {
+                    throw 'User not found'
+                }
+                
             } catch (err) {
+                console.log(err)
                 res.status(400).json(
                     {
                         error: err,
