@@ -108,8 +108,13 @@ export class UserController {
             console.log(req.body);
             try {
                 const user: IUser = new User(req.body);
-                user.userID = uuid();
-                user.firebaseUID = req.body.firebaseUID;
+                if (req.body.userID) {
+                    user.userID = req.body.userID;
+                } else {
+                    user.userID = uuid();
+                }
+                
+                // user.firebaseUID = req.body.firebaseUID;
                 user.created = new Date().toISOString();
                 const result = await user.save();
                 // log(result);
