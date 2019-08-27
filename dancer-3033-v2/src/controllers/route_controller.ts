@@ -43,6 +43,31 @@ export class RouteController {
                 )
             }
         });
+        app.route("/getRouteById").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const routeID: any = req.body.routeID;
+                const now = new Date().getTime();
+                log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${routeID} ☘️☘️`)
+                const result = await Route.findOne({routeID: routeID})
+                log(result);
+                const end = new Date().getTime();
+                log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍route`);
+
+                res.status(200).json(result);
+            } catch (err) {
+                console.error(err);
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 getRoutes failed'
+                    }
+                )
+            }
+        });
         app.route("/addRoute").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /addRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,

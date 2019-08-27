@@ -21,6 +21,7 @@ const commuter_rating_1 = __importDefault(require("../models/commuter_rating"));
 const commuter_panic_1 = __importDefault(require("../models/commuter_panic"));
 const commuter_ratings_aggregate_1 = __importDefault(require("../models/commuter_ratings_aggregate"));
 const v1_1 = __importDefault(require("uuid/v1"));
+const user_1 = __importDefault(require("../models/user"));
 class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -312,6 +313,50 @@ class CommuterController {
                 });
             }
         }));
+        app.route("/getCommuterRequestsByUserID").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
+            console.log(msg);
+            try {
+                const uid = req.body.firebaseUID;
+                const result = yield user_1.default.findOne({ firebaseUID: uid });
+                if (result == null) {
+                    res.status(400).json({
+                        error: 'User not found',
+                        message: 'User not found'
+                    });
+                }
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getCommuterRequestsByUserID failed'
+                });
+            }
+        }));
+        app.route("/getCommuterRequestsByID").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByID requested `;
+            console.log(msg);
+            try {
+                const id = req.body.commuterRequestID;
+                const result = yield commuter_request_1.default.findById(id);
+                if (result == null) {
+                    res.status(400).json({
+                        error: 'Commuter request not found',
+                        message: 'Commuter request not found'
+                    });
+                }
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getCommuterRequestsByID failed'
+                });
+            }
+        }));
         app.route("/getCommuterRequestsByFromLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
             console.log(msg);
@@ -345,6 +390,22 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterRequestsByToLandmark failed'
+                });
+            }
+        }));
+        app.route("/findCommuterRequestsByUserID").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByUserID requested `;
+            console.log(msg);
+            try {
+                const uid = req.body.UID;
+                const result = yield commuter_request_1.default.find({ user: uid });
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 findCommuterRequestsByUserID failed'
                 });
             }
         }));

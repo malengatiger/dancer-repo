@@ -109,8 +109,7 @@ export class UserController {
             try {
                 const user: IUser = new User(req.body);
                 user.userID = uuid();
-                user.salt = crypto.randomBytes(16).toString('hex');
-                user.hash = crypto.pbkdf2Sync(req.body.password, user.salt, 10000, 512, 'sha512').toString('hex');
+                user.firebaseUID = req.body.firebaseUID;
                 user.created = new Date().toISOString();
                 const result = await user.save();
                 // log(result);

@@ -10,6 +10,7 @@ import CommuterPanic from "../models/commuter_panic";
 import CommuterRatingsAggregate from "../models/commuter_ratings_aggregate";
 import bodyParser = require("body-parser");
 import uuid from 'uuid/v1';
+import User from "../models/user";
 
 export class CommuterController {
 
@@ -334,6 +335,56 @@ export class CommuterController {
         )
       }
     });
+    app.route("/getCommuterRequestsByUserID").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
+      console.log(msg);
+
+      try {
+        const uid = req.body.firebaseUID;
+        const result = await  User.findOne({firebaseUID: uid});
+
+        if (result == null) {
+          res.status(400).json({
+            error: 'User not found',
+            message: 'User not found'
+          })
+        }
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterRequestsByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/getCommuterRequestsByID").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByID requested `;
+      console.log(msg);
+
+      try {
+        const id = req.body.commuterRequestID;
+        const result = await  CommuterRequest.findById(id);
+
+        if (result == null) {
+          res.status(400).json({
+            error: 'Commuter request not found',
+            message: 'Commuter request not found'
+          })
+        }
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterRequestsByID failed'
+          }
+        )
+      }
+    });
     app.route("/getCommuterRequestsByFromLandmark").post(async (req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
       console.log(msg);
@@ -370,6 +421,24 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 getCommuterRequestsByToLandmark failed'
+          }
+        )
+      }
+    });
+    app.route("/findCommuterRequestsByUserID").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByUserID requested `;
+      console.log(msg);
+
+      try {
+        const uid = req.body.UID;
+        const result = await  CommuterRequest.find({user: uid});
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 findCommuterRequestsByUserID failed'
           }
         )
       }

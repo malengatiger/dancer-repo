@@ -44,6 +44,27 @@ class RouteController {
                 });
             }
         }));
+        app.route("/getRouteById").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const routeID = req.body.routeID;
+                const now = new Date().getTime();
+                log_1.default(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${routeID} ☘️☘️`);
+                const result = yield route_1.default.findOne({ routeID: routeID });
+                log_1.default(result);
+                const end = new Date().getTime();
+                log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍route`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                console.error(err);
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getRoutes failed'
+                });
+            }
+        }));
         app.route("/addRoute").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.default(`\n\n💦  POST: /addRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);

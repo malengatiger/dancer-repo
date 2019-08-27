@@ -101,8 +101,7 @@ class UserController {
             try {
                 const user = new user_1.default(req.body);
                 user.userID = uuid();
-                user.salt = crypto_1.default.randomBytes(16).toString('hex');
-                user.hash = crypto_1.default.pbkdf2Sync(req.body.password, user.salt, 10000, 512, 'sha512').toString('hex');
+                user.firebaseUID = req.body.firebaseUID;
                 user.created = new Date().toISOString();
                 const result = yield user.save();
                 // log(result);
