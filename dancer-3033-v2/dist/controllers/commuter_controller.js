@@ -318,7 +318,7 @@ class CommuterController {
             console.log(msg);
             try {
                 const uid = req.body.firebaseUID;
-                const result = yield user_1.default.findOne({ firebaseUID: uid });
+                const result = yield user_1.default.find({ userID: uid });
                 if (result == null) {
                     res.status(400).json({
                         error: 'User not found',
@@ -398,7 +398,7 @@ class CommuterController {
             console.log(msg);
             try {
                 const uid = req.body.UID;
-                const result = yield commuter_request_1.default.find({ user: uid });
+                const result = yield commuter_request_1.default.find({ userID: uid });
                 // log(result);
                 res.status(200).json(result);
             }

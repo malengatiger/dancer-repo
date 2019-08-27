@@ -341,7 +341,7 @@ export class CommuterController {
 
       try {
         const uid = req.body.firebaseUID;
-        const result = await  User.findOne({firebaseUID: uid});
+        const result = await  User.find({userID: uid});
 
         if (result == null) {
           res.status(400).json({
@@ -431,7 +431,7 @@ export class CommuterController {
 
       try {
         const uid = req.body.UID;
-        const result = await  CommuterRequest.find({user: uid});
+        const result = await  CommuterRequest.find({userID: uid});
         // log(result);
         res.status(200).json(result);
       } catch (err) {
