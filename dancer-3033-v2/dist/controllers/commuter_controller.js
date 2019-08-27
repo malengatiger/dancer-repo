@@ -366,13 +366,14 @@ class CommuterController {
                             },
                             $maxDistance: RADIUS,
                         },
-                        created: { $gt: cutOff },
                     },
+                    createdAt: { $gt: cutOff }
                 });
                 // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
+                console.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 findCommuterRequestsByLocation failed'
