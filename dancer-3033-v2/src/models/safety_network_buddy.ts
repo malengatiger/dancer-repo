@@ -14,5 +14,5 @@ const SafetyNetworkBuddySchema = new mongoose.Schema(
 );
 
 
-const SafetyNetworkBuddy = mongoose.model('Route', SafetyNetworkBuddySchema);
+const SafetyNetworkBuddy = mongoose.model('SafetyNetworkBuddy', SafetyNetworkBuddySchema);
 export default SafetyNetworkBuddy;
