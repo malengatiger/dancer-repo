@@ -27,24 +27,26 @@ export class VehicleController {
         const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
         const minutes = parseInt(req.body.minutes);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
-        const result = await VehicleLocation.find({
-          position: {
-            $near: {
-              $geometry: {
-                coordinates: [longitude, latitude],
-                type: "Point",
-              },
-              $maxDistance: RADIUS,
-            },
-            created: { $gt: cutOff },
-          },
-        });
+        const result: [] = [];
+        // const result =  await VehicleLocation.find({
+        //   position: {
+        //     $near: {
+        //       $geometry: {
+        //         coordinates: [longitude, latitude],
+        //         type: "Point",
+        //       },
+        //       $maxDistance: RADIUS,
+        //     }
+        //   },
+        //   createdAt: { $gt: cutOff },
+        // });
         //const result = await Landmark.find();
         // log(result);
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
