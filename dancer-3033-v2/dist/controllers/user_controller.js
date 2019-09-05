@@ -15,6 +15,7 @@ const crypto_1 = __importDefault(require("crypto"));
 const log_1 = __importDefault(require("../log"));
 const user_1 = __importDefault(require("../models/user"));
 const uuid = require("uuid");
+const notification_1 = __importDefault(require("../models/notification"));
 const userTypes = ['Staff', 'Owner', 'Administrator', 'Driver', 'Marshal', 'Patroller'];
 class UserController {
     routes(app) {
@@ -65,6 +66,25 @@ class UserController {
                     error: err,
                     message: ' 🍎🍎🍎🍎 getUsersByAssociation failed'
                 });
+            }
+        }));
+        app.route("/notifications").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const notifications = yield notification_1.default.find();
+                res.status(200).json(notifications);
+            }
+            catch (err) {
+                res.status(400).json(err);
+            }
+        }));
+        app.route("/addNotification").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const notification = new notification_1.default(req.body);
+                const result = yield notification.save();
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json(err);
             }
         }));
         app.route("/userLogin").post((req, res) => __awaiter(this, void 0, void 0, function* () {
