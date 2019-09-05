@@ -336,6 +336,24 @@ export class CommuterController {
         )
       }
     });
+    app.route("/findSafetyNetworkBuddiesByUserID").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 findSafetyNetworkBuddiesByUserID requested `;
+      console.log(msg);
+
+      try {
+        const buddies = await SafetyNetworkBuddy.find({userID: req.body.userID})
+          res.status(200).json(buddies);
+        }
+
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 findSafetyNetworkBuddiesByUserID failed'
+          }
+        )
+      }
+    });
     app.route("/addCommuterPanicLocation").post(async(req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
       console.log(msg);

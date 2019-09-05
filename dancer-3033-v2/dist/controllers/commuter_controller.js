@@ -312,6 +312,20 @@ class CommuterController {
                 });
             }
         }));
+        app.route("/findSafetyNetworkBuddiesByUserID").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 findSafetyNetworkBuddiesByUserID requested `;
+            console.log(msg);
+            try {
+                const buddies = yield safety_network_buddy_1.default.find({ userID: req.body.userID });
+                res.status(200).json(buddies);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 findSafetyNetworkBuddiesByUserID failed'
+                });
+            }
+        }));
         app.route("/addCommuterPanicLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
             console.log(msg);
