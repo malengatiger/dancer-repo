@@ -32,18 +32,19 @@ class VehicleController {
                 const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
                 const minutes = parseInt(req.body.minutes);
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
-                const result = yield vehicle_location_1.default.find({
-                    position: {
-                        $near: {
-                            $geometry: {
-                                coordinates: [longitude, latitude],
-                                type: "Point",
-                            },
-                            $maxDistance: RADIUS,
-                        },
-                        created: { $gt: cutOff },
-                    },
-                });
+                const result = [];
+                // const result =  await VehicleLocation.find({
+                //   position: {
+                //     $near: {
+                //       $geometry: {
+                //         coordinates: [longitude, latitude],
+                //         type: "Point",
+                //       },
+                //       $maxDistance: RADIUS,
+                //     }
+                //   },
+                //   createdAt: { $gt: cutOff },
+                // });
                 //const result = await Landmark.find();
                 // log(result);
                 const end = new Date().getTime();
@@ -51,6 +52,7 @@ class VehicleController {
                 res.status(200).json(result);
             }
             catch (err) {
+                console.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 findVehiclesByLocation failed'
