@@ -22,6 +22,8 @@ const commuter_panic_1 = __importDefault(require("../models/commuter_panic"));
 const commuter_ratings_aggregate_1 = __importDefault(require("../models/commuter_ratings_aggregate"));
 const v1_1 = __importDefault(require("uuid/v1"));
 const user_1 = __importDefault(require("../models/user"));
+const commuter_panic_location_1 = __importDefault(require("../models/commuter_panic_location"));
+const safety_network_buddy_1 = __importDefault(require("../models/safety_network_buddy"));
 class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -295,13 +297,61 @@ class CommuterController {
                 });
             }
         }));
+        app.route("/addSafetyNetworkBuddy").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addSafetyNetworkBuddy requested `;
+            console.log(msg);
+            try {
+                const buddy = new safety_network_buddy_1.default(req.body);
+                const result = yield buddy.save();
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addSafetyNetworkBuddy failed'
+                });
+            }
+        }));
+        app.route("/addCommuterPanicLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
+            console.log(msg);
+            try {
+                const commuterPanic = yield commuter_panic_1.default.findById(req.body.commuterPanicID);
+                if (commuterPanic) {
+                    const panicData = {
+                        position: {
+                            type: 'Points',
+                            coordinates: [
+                                req.body.longitude,
+                                req.body.latitude
+                            ]
+                        },
+                        commuterPanicID: req.body.commuterPanicID
+                    };
+                    const panic = new commuter_panic_location_1.default(panicData);
+                    panic.created = new Date().toISOString();
+                    const result = yield panic.save();
+                    res.status(200).json(result);
+                }
+                else {
+                    res.status(400).json({
+                        message: 'Commuter Panic not found'
+                    });
+                }
+                // log(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addCommuterPanicLocation failed'
+                });
+            }
+        }));
         app.route("/addCommuterPanic").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanic requested `;
             console.log(msg);
             try {
                 const panic = new commuter_panic_1.default(req.body);
-                panic.commuterPanicID = v1_1.default();
-                panic.created = new Date().toISOString();
                 const result = yield panic.save();
                 // log(result);
                 res.status(200).json(result);
@@ -310,6 +360,38 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addCommuterPanic failed'
+                });
+            }
+        }));
+        app.route("/getCommuterPanicsByUserID").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterPanicsByUserID requested `;
+            console.log(msg);
+            try {
+                const panics = yield commuter_panic_1.default.find({ userID: req.body.userID });
+                // log(result);
+                res.status(200).json(panics);
+            }
+            catch (err) {
+                console.log(err);
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getCommuterPanicsByUserID failed'
+                });
+            }
+        }));
+        app.route("/getPanicLocations").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getPanicLocations requested `;
+            console.log(msg);
+            try {
+                const panics = yield commuter_panic_location_1.default.find({ commuterPanicID: req.body.commuterPanicID });
+                // log(result);
+                res.status(200).json(panics);
+            }
+            catch (err) {
+                console.log(err);
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getPanicLocations failed'
                 });
             }
         }));

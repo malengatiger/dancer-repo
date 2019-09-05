@@ -11,6 +11,8 @@ import CommuterRatingsAggregate from "../models/commuter_ratings_aggregate";
 import bodyParser = require("body-parser");
 import uuid from 'uuid/v1';
 import User from "../models/user";
+import CommuterPanicLocation from "../models/commuter_panic_location";
+import SafetyNetworkBuddy from "../models/safety_network_buddy";
 
 export class CommuterController {
 
@@ -315,14 +317,70 @@ export class CommuterController {
         )
       }
     });
+    app.route("/addSafetyNetworkBuddy").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addSafetyNetworkBuddy requested `;
+      console.log(msg);
+
+      try {
+        const buddy = new SafetyNetworkBuddy(req.body)
+          const result = await buddy.save();
+          res.status(200).json(result);
+        }
+
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addSafetyNetworkBuddy failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterPanicLocation").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
+      console.log(msg);
+
+      try {
+        const commuterPanic = await CommuterPanic.findById(req.body.commuterPanicID)
+
+        if (commuterPanic) {
+          const panicData: any = {
+            position: {
+              type: 'Points',
+              coordinates: [
+                req.body.longitude,
+                req.body.latitude
+              ]
+            },
+            commuterPanicID: req.body.commuterPanicID
+          }
+          const panic: any = new CommuterPanicLocation(panicData);
+          panic.created = new Date().toISOString();
+          const result = await panic.save();
+          res.status(200).json(result);
+        } else {
+          res.status(400).json({
+            message: 'Commuter Panic not found'
+          })
+        }
+        
+        // log(result);
+        
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterPanicLocation failed'
+          }
+        )
+      }
+    });
     app.route("/addCommuterPanic").post(async(req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanic requested `;
       console.log(msg);
 
       try {
         const panic: any = new CommuterPanic(req.body);
-        panic.commuterPanicID = uuid();
-        panic.created = new Date().toISOString();
         const result = await panic.save();
         // log(result);
         res.status(200).json(result);
@@ -331,6 +389,44 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addCommuterPanic failed'
+          }
+        )
+      }
+    });
+    app.route("/getCommuterPanicsByUserID").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPanicsByUserID requested `;
+      console.log(msg);
+
+      try {
+        const panics: any = await CommuterPanic.find({userID: req.body.userID})
+        
+        // log(result);
+        res.status(200).json(panics);
+      } catch (err) {
+        console.log(err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterPanicsByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/getPanicLocations").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getPanicLocations requested `;
+      console.log(msg);
+
+      try {
+        const panics: any = await CommuterPanicLocation.find({commuterPanicID: req.body.commuterPanicID})
+        
+        // log(result);
+        res.status(200).json(panics);
+      } catch (err) {
+        console.log(err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getPanicLocations failed'
           }
         )
       }
