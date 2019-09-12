@@ -11,7 +11,7 @@ const VehicleLocationSchema = new mongoose_1.default.Schema({
     vehicleType: { type: {}, required: true },
     associationID: { type: String, required: false, trim: true, index: true },
     associationName: { type: String, required: false, trim: true },
-    created: { type: String, required: true, default: new Date().toISOString() },
+    created: { type: String, required: true, default: new Date().toISOString(), index: true },
 });
 const VehicleLocation = mongoose_1.default.model('VehicleLocation', VehicleLocationSchema);
 exports.default = VehicleLocation;

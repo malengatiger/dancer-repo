@@ -8,8 +8,7 @@ const VehicleLocationSchema = new mongoose.Schema(
         vehicleType: {type: {}, required: true},
         associationID: {type: String, required: false,trim: true, index: true},
         associationName: {type: String, required: false,trim: true},
-        
-        created: {type: String, required: true, default: new Date().toISOString()},
+        created: {type: String, required: true, default: new Date().toISOString(), index: true},
 
     }
 );
