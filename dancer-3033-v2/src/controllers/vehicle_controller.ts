@@ -27,6 +27,7 @@ export class VehicleController {
         const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
         const minutes = parseInt(req.body.minutes);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+<<<<<<< HEAD
         log(`🔆🔆🔆 cutoff time: 💙 ${cutOff} 💙`)
         const result = await VehicleLocation.find({
           created: { $gt: cutOff },
@@ -42,12 +43,28 @@ export class VehicleController {
           },
         });
         // created: { $gt: cutOff },
+=======
+        const result: [] = [];
+        // const result =  await VehicleLocation.find({
+        //   position: {
+        //     $near: {
+        //       $geometry: {
+        //         coordinates: [longitude, latitude],
+        //         type: "Point",
+        //       },
+        //       $maxDistance: RADIUS,
+        //     }
+        //   },
+        //   createdAt: { $gt: cutOff },
+        // });
+>>>>>>> bda4d3754fa05e55a3000f527966b9f0f5fa15c0
         //const result = await Landmark.find();
         // log(result);
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. found 💙 ${result.length}`)
         res.status(200).json(result);
       } catch (err) {
+<<<<<<< HEAD
         log(err);
         res.status(400).json(
           {

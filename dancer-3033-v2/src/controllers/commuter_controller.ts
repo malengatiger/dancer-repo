@@ -10,6 +10,10 @@ import CommuterPanic from "../models/commuter_panic";
 import CommuterRatingsAggregate from "../models/commuter_ratings_aggregate";
 import bodyParser = require("body-parser");
 import uuid from 'uuid/v1';
+import User from "../models/user";
+import CommuterPanicLocation from "../models/commuter_panic_location";
+import SafetyNetworkBuddy from "../models/safety_network_buddy";
+import CommuterPrize from "../models/commuter_prize";
 
 export class CommuterController {
 
@@ -299,17 +303,125 @@ export class CommuterController {
       console.log(msg);
 
       try {
-        const c: any = new CommuterRating(req.body);
-        c.commuterRatingID = uuid();
-        c.created = new Date().toISOString();
-        const result = await c.save();
-        // log(result);
-        res.status(200).json(result);
+        const commuterRequest = await CommuterRequest.findOne({
+          userID: req.body.userID
+        })
+
+        if (commuterRequest != null) {
+          const c: any = new CommuterRating({
+            ...req.body,
+            commuterRequestID: commuterRequest._id
+          });
+          c.commuterRatingID = uuid();
+          c.created = new Date().toISOString();
+          const result = await c.save();
+          // log(result);
+          res.status(200).json(result);
+        } else {
+          res.status(400).json({
+            err: 'Commuter request not found'
+          })
+        }
+        
       } catch (err) {
         res.status(400).json(
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addCommuterRating failed'
+          }
+        )
+      }
+    });
+    app.route("/addSafetyNetworkBuddy").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addSafetyNetworkBuddy requested `;
+      console.log(msg);
+
+      try {
+        const buddy = new SafetyNetworkBuddy(req.body)
+          const result = await buddy.save();
+          res.status(200).json(result);
+        }
+
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addSafetyNetworkBuddy failed'
+          }
+        )
+      }
+    });
+    app.route("/commuterClaimPrize").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 commuterClaimPrize requested `;
+      console.log(msg);
+
+      try {
+        const prize = new CommuterPrize(req.body)
+        const result = await prize.save();
+          res.status(200).json(result);
+      }
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 commuterClaimPrize failed'
+          }
+        )
+      }
+    });
+    app.route("/findSafetyNetworkBuddiesByUserID").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 findSafetyNetworkBuddiesByUserID requested `;
+      console.log(msg);
+
+      try {
+        const buddies = await SafetyNetworkBuddy.find({userID: req.body.userID})
+          res.status(200).json(buddies);
+        }
+
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 findSafetyNetworkBuddiesByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterPanicLocation").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
+      console.log(msg);
+
+      try {
+        const commuterPanic = await CommuterPanic.findById(req.body.commuterPanicID)
+
+        if (commuterPanic) {
+          const panicData: any = {
+            position: {
+              type: 'Points',
+              coordinates: [
+                req.body.longitude,
+                req.body.latitude
+              ]
+            },
+            commuterPanicID: req.body.commuterPanicID
+          }
+          const panic: any = new CommuterPanicLocation(panicData);
+          panic.created = new Date().toISOString();
+          const result = await panic.save();
+          res.status(200).json(result);
+        } else {
+          res.status(400).json({
+            message: 'Commuter Panic not found'
+          })
+        }
+        
+        // log(result);
+        
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterPanicLocation failed'
           }
         )
       }
@@ -320,8 +432,6 @@ export class CommuterController {
 
       try {
         const panic: any = new CommuterPanic(req.body);
-        panic.commuterPanicID = uuid();
-        panic.created = new Date().toISOString();
         const result = await panic.save();
         // log(result);
         res.status(200).json(result);
@@ -330,6 +440,94 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addCommuterPanic failed'
+          }
+        )
+      }
+    });
+    app.route("/getCommuterPanicsByUserID").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPanicsByUserID requested `;
+      console.log(msg);
+
+      try {
+        const panics: any = await CommuterPanic.find({userID: req.body.userID})
+        
+        // log(result);
+        res.status(200).json(panics);
+      } catch (err) {
+        console.log(err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterPanicsByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/getPanicLocations").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getPanicLocations requested `;
+      console.log(msg);
+
+      try {
+        const panics: any = await CommuterPanicLocation.find({commuterPanicID: req.body.commuterPanicID})
+        
+        // log(result);
+        res.status(200).json(panics);
+      } catch (err) {
+        console.log(err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getPanicLocations failed'
+          }
+        )
+      }
+    });
+    app.route("/getCommuterRequestsByUserID").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
+      console.log(msg);
+
+      try {
+        const uid = req.body.firebaseUID;
+        const result = (await  User.find({userID: uid})).reverse();
+
+        if (result == null) {
+          res.status(400).json({
+            error: 'User not found',
+            message: 'User not found'
+          })
+        }
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterRequestsByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/getCommuterRequestsByID").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByID requested `;
+      console.log(msg);
+
+      try {
+        const id = req.body.commuterRequestID;
+        const result = await  CommuterRequest.findById(id);
+
+        if (result == null) {
+          res.status(400).json({
+            error: 'Commuter request not found',
+            message: 'Commuter request not found'
+          })
+        }
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterRequestsByID failed'
           }
         )
       }
@@ -374,6 +572,24 @@ export class CommuterController {
         )
       }
     });
+    app.route("/findCommuterRequestsByUserID").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByUserID requested `;
+      console.log(msg);
+
+      try {
+        const uid = req.body.UID;
+        const result = (await  CommuterRequest.find({userID: uid})).reverse();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 findCommuterRequestsByUserID failed'
+          }
+        )
+      }
+    });
     app.route("/findCommuterRequestsByLocation").post(async (req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByLocation requested `;
       console.log(msg);
@@ -393,12 +609,13 @@ export class CommuterController {
               },
               $maxDistance: RADIUS,
             },
-            created: { $gt: cutOff },
           },
+          createdAt: { $gt: cutOff }
         });
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
