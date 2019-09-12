@@ -13,6 +13,7 @@ import uuid from 'uuid/v1';
 import User from "../models/user";
 import CommuterPanicLocation from "../models/commuter_panic_location";
 import SafetyNetworkBuddy from "../models/safety_network_buddy";
+import CommuterPrize from "../models/commuter_prize";
 
 export class CommuterController {
 
@@ -302,12 +303,26 @@ export class CommuterController {
       console.log(msg);
 
       try {
-        const c: any = new CommuterRating(req.body);
-        c.commuterRatingID = uuid();
-        c.created = new Date().toISOString();
-        const result = await c.save();
-        // log(result);
-        res.status(200).json(result);
+        const commuterRequest = await CommuterRequest.findOne({
+          userID: req.body.userID
+        })
+
+        if (commuterRequest != null) {
+          const c: any = new CommuterRating({
+            ...req.body,
+            commuterRequestID: commuterRequest._id
+          });
+          c.commuterRatingID = uuid();
+          c.created = new Date().toISOString();
+          const result = await c.save();
+          // log(result);
+          res.status(200).json(result);
+        } else {
+          res.status(400).json({
+            err: 'Commuter request not found'
+          })
+        }
+        
       } catch (err) {
         res.status(400).json(
           {
@@ -332,6 +347,24 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addSafetyNetworkBuddy failed'
+          }
+        )
+      }
+    });
+    app.route("/commuterClaimPrize").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 commuterClaimPrize requested `;
+      console.log(msg);
+
+      try {
+        const prize = new CommuterPrize(req.body)
+        const result = await prize.save();
+          res.status(200).json(result);
+      }
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 commuterClaimPrize failed'
           }
         )
       }
@@ -455,7 +488,7 @@ export class CommuterController {
 
       try {
         const uid = req.body.firebaseUID;
-        const result = await  User.find({userID: uid});
+        const result = (await  User.find({userID: uid})).reverse();
 
         if (result == null) {
           res.status(400).json({
@@ -545,7 +578,7 @@ export class CommuterController {
 
       try {
         const uid = req.body.UID;
-        const result = await  CommuterRequest.find({userID: uid});
+        const result = (await  CommuterRequest.find({userID: uid})).reverse();
         // log(result);
         res.status(200).json(result);
       } catch (err) {

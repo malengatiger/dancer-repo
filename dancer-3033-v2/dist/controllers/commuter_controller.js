@@ -24,6 +24,7 @@ const v1_1 = __importDefault(require("uuid/v1"));
 const user_1 = __importDefault(require("../models/user"));
 const commuter_panic_location_1 = __importDefault(require("../models/commuter_panic_location"));
 const safety_network_buddy_1 = __importDefault(require("../models/safety_network_buddy"));
+const commuter_prize_1 = __importDefault(require("../models/commuter_prize"));
 class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -283,12 +284,22 @@ class CommuterController {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterRating requested `;
             console.log(msg);
             try {
-                const c = new commuter_rating_1.default(req.body);
-                c.commuterRatingID = v1_1.default();
-                c.created = new Date().toISOString();
-                const result = yield c.save();
-                // log(result);
-                res.status(200).json(result);
+                const commuterRequest = yield commuter_request_1.default.findOne({
+                    userID: req.body.userID
+                });
+                if (commuterRequest != null) {
+                    const c = new commuter_rating_1.default(Object.assign({}, req.body, { commuterRequestID: commuterRequest._id }));
+                    c.commuterRatingID = v1_1.default();
+                    c.created = new Date().toISOString();
+                    const result = yield c.save();
+                    // log(result);
+                    res.status(200).json(result);
+                }
+                else {
+                    res.status(400).json({
+                        err: 'Commuter request not found'
+                    });
+                }
             }
             catch (err) {
                 res.status(400).json({
@@ -309,6 +320,21 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addSafetyNetworkBuddy failed'
+                });
+            }
+        }));
+        app.route("/commuterClaimPrize").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 commuterClaimPrize requested `;
+            console.log(msg);
+            try {
+                const prize = new commuter_prize_1.default(req.body);
+                const result = yield prize.save();
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 commuterClaimPrize failed'
                 });
             }
         }));
@@ -414,7 +440,7 @@ class CommuterController {
             console.log(msg);
             try {
                 const uid = req.body.firebaseUID;
-                const result = yield user_1.default.find({ userID: uid });
+                const result = (yield user_1.default.find({ userID: uid })).reverse();
                 if (result == null) {
                     res.status(400).json({
                         error: 'User not found',
@@ -494,7 +520,7 @@ class CommuterController {
             console.log(msg);
             try {
                 const uid = req.body.UID;
-                const result = yield commuter_request_1.default.find({ userID: uid });
+                const result = (yield commuter_request_1.default.find({ userID: uid })).reverse();
                 // log(result);
                 res.status(200).json(result);
             }
