@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const CommuterIncentiveTypeSchema = new mongoose.Schema(
+const CommuterIncentiveSchema = new mongoose.Schema(
     {
         incentiveTypeID: {type: String, required: true, trim: true},
         userID: {type: String, required: true,trim: true},
@@ -11,5 +11,5 @@ const CommuterIncentiveTypeSchema = new mongoose.Schema(
 );
 
 
-const CommuterIncentiveType = mongoose.model('CommuterIncentiveType', CommuterIncentiveTypeSchema);
-export default CommuterIncentiveType
+const CommuterIncentive = mongoose.model('CommuterIncentive', CommuterIncentiveSchema);
+export default CommuterIncentive

@@ -14,6 +14,8 @@ import User from "../models/user";
 import CommuterPanicLocation from "../models/commuter_panic_location";
 import SafetyNetworkBuddy from "../models/safety_network_buddy";
 import CommuterPrize from "../models/commuter_prize";
+import CommuterIncentiveType from "../models/commuter_incentive_type";
+import CommuterIncentive from "../models/commuter_incentive";
 
 export class CommuterController {
 
@@ -365,6 +367,42 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 commuterClaimPrize failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterIncentiveType").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentiveType requested `;
+      console.log(msg);
+
+      try {
+        const incentiveType: any = new CommuterIncentiveType(req.body);
+        const result = await incentiveType.save();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterIncentiveType failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterIncentive").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentive requested `;
+      console.log(msg);
+
+      try {
+        const incentive: any = new CommuterIncentive(req.body);
+        const result = await incentive.save();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterIncentive failed'
           }
         )
       }
