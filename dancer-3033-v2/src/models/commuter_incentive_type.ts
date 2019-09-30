@@ -8,7 +8,6 @@ const CommuterIncentiveTypeSchema = new mongoose.Schema(
         expiryPeriodInDays: {type: String, required: true, trim: true},
         numberOfRatings: {type: String, required: true, trim: true},
         prizeValue: {type: String, required: true, trim: true},
-        stringDate: {type: String, required: true, trim: true},
         created: {type: String, required: true, default: new Date().toISOString()},
     }
 );
