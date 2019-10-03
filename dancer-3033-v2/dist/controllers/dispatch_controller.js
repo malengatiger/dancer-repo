@@ -67,6 +67,7 @@ class DispatchController {
                 res.status(200).json(result);
             }
             catch (err) {
+                console.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 findDispatchRecordsByLocation failed'

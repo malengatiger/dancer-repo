@@ -4,6 +4,7 @@ import db from '../database';
 import log from '../log';
 import User, { IUser } from "../models/user";
 import uuid = require("uuid");
+import Notification from "../models/notification";
 const userTypes = ['Staff', 'Owner', 'Administrator', 'Driver', 'Marshal', 'Patroller'];
 export class UserController {
     public routes(app: any): void {
@@ -67,7 +68,23 @@ export class UserController {
                 )
             }
         });
-
+        app.route("/notifications").post(async (req: Request, res: Response) => {
+            try {
+                const notifications = await Notification.find()
+                res.status(200).json(notifications)
+            } catch (err) {
+                res.status(400).json(err)
+            }
+        })
+        app.route("/addNotification").post(async (req: Request, res: Response) => {
+            try {
+                const notification = new Notification(req.body)
+                const result = await notification.save()
+                res.status(200).json(result)
+            } catch (err) {
+                res.status(400).json(err)
+            }
+        })
         app.route("/userLogin").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /userLogin requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,

@@ -45,15 +45,21 @@ export class RouteController {
         });
         app.route("/getRouteById").post(async (req: Request, res: Response) => {
             log(
-                `\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+                `\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
             );
             console.log(req.body);
             try {
-                const routeID: any = req.body.routeID;
+                const rID: any = req.body.routeID;
                 const now = new Date().getTime();
-                log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${routeID} ☘️☘️`)
-                const result = await Route.findOne({routeID: routeID})
+                log(`💦 💦 💦 💦 💦 💦 routeID for routes: ☘️☘️ ${rID} ☘️☘️`)
+                const result = await Route.find({routeID: rID});
                 log(result);
+                result.forEach((m: any) => {
+                
+                    if (m.routeID === rID) {
+                        log(`😍 ${m.name} - 😍 - routeID is OK: ${m.routeID}`);
+                    }
+                });
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍route`);
 

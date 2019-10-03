@@ -27,7 +27,9 @@ export class VehicleController {
         const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
         const minutes = parseInt(req.body.minutes);
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        log(`🔆🔆🔆 cutoff time: 💙 ${cutOff} 💙`)
         const result = await VehicleLocation.find({
+          created: { $gt: cutOff },
           position: {
             $near: {
               $geometry: {
@@ -36,18 +38,17 @@ export class VehicleController {
               },
               $maxDistance: RADIUS,
             },
-            created: { $gt: cutOff },
+            
           },
         });
-        //const result = await Landmark.find();
-        // log(result);
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. found 💙 ${result.length}`)
         res.status(200).json(result);
       } catch (err) {
+        log(err);
         res.status(400).json(
           {
-            error: err,
+            error: err.message,
             message: ' 🍎🍎🍎🍎 findVehiclesByLocation failed'
           }
         )
@@ -276,39 +277,25 @@ export class VehicleController {
       console.log(msg);
 
       try {
-        Vehicle.findOne({ vehicleID: req.body.vehicleID }, (err, vehicle: any) => {
-          if (err) {
-            res.status(400).json(
-              {
-                error: err,
-                message: '🍎🍎🍎🍎 addVehiclePhoto failed'
-              }
-            )
-          } else {
-            if (!vehicle) {
-              res.status(400).json(
-                {
-                  message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
-                }
-              )
-            } else {
-              const photo = {
-                url: req.body.url,
-                comment: req.body.comment,
-                created: new Date().toISOString()
-              };
-              vehicle.photos.push(photo);
-              vehicle.save().then(() => {
-                res.status(200).json({
-                  message: `vehicle photo added. photos: 🍎 ${vehicle.photos.length}`
-                });
-              });
-              // log(result);
-              
+        const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
+        if (!c) {
+          res.status(400).json(
+            {
+              message: '🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found'
             }
-          }
+          )
+        }
+        const photo = {
+          url: req.body.url,
+          comment: req.body.comment,
+          created: new Date().toISOString()
+        };
+        c.photos.push(photo);
+        const result = await c.save();
+        // log(result);
+        res.status(200).json({
+          message: `vehicle photo added. photos: 🍎 ${c.photos.length}`
         });
-        
       } catch (err) {
         res.status(400).json(
           {

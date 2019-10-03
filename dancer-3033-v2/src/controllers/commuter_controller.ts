@@ -11,6 +11,11 @@ import CommuterRatingsAggregate from "../models/commuter_ratings_aggregate";
 import bodyParser = require("body-parser");
 import uuid from 'uuid/v1';
 import User from "../models/user";
+import CommuterPanicLocation from "../models/commuter_panic_location";
+import SafetyNetworkBuddy from "../models/safety_network_buddy";
+import CommuterPrize from "../models/commuter_prize";
+import CommuterIncentiveType from "../models/commuter_incentive_type";
+import CommuterIncentive from "../models/commuter_incentive";
 
 export class CommuterController {
 
@@ -26,8 +31,6 @@ export class CommuterController {
         const comm : any= new CommuterRequest(req.body);
         comm.commuterRequestID = uuid();
         comm.created = new Date().toISOString();
-        comm.stringTime = new Date().toISOString();
-        comm.time = new Date().getTime();
         comm.scanned = false;
         const result = await comm.save();
         // log(result);
@@ -60,6 +63,7 @@ export class CommuterController {
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        log(err);
         res.status(400).json(
           {
             error: err,
@@ -260,12 +264,17 @@ export class CommuterController {
       console.log(msg);
 
       try {
-        const c: any = new CommuterStartingLandmark(req.body);
+        const c: any = new CommuterStartingLandmark({
+          ...req.body,
+          position: JSON.parse(req.body.position)
+        });
         c.commuterStartingLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
         // log(result);
-        res.status(200).json(result);
+        res.status(200).json({
+          result
+        });
       } catch (err) {
         res.status(400).json(
           {
@@ -300,17 +309,197 @@ export class CommuterController {
       console.log(msg);
 
       try {
-        const c: any = new CommuterRating(req.body);
-        c.commuterRatingID = uuid();
-        c.created = new Date().toISOString();
-        const result = await c.save();
+        const commuterRequest = await CommuterRequest.findOne({
+          userID: req.body.userID
+        })
+
+        if (commuterRequest != null) {
+          const c: any = new CommuterRating({
+            ...req.body,
+            commuterRequestID: commuterRequest._id
+          });
+          c.commuterRatingID = uuid();
+          c.created = new Date().toISOString();
+          const result = await c.save();
+          // log(result);
+          res.status(200).json(result);
+        } else {
+          res.status(400).json({
+            err: 'Commuter request not found'
+          })
+        }
+        
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterRating failed'
+          }
+        )
+      }
+    });
+    app.route("/addSafetyNetworkBuddy").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addSafetyNetworkBuddy requested `;
+      console.log(msg);
+
+      try {
+        const buddy = new SafetyNetworkBuddy(req.body)
+          const result = await buddy.save();
+          res.status(200).json(result);
+        }
+
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addSafetyNetworkBuddy failed'
+          }
+        )
+      }
+    });
+    app.route("/commuterClaimPrize").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 commuterClaimPrize requested `;
+      console.log(msg);
+
+      try {
+        const prize = new CommuterPrize(req.body)
+        const result = await prize.save();
+          res.status(200).json(result);
+      }
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 commuterClaimPrize failed'
+          }
+        )
+      }
+    });
+    app.route("/getIncentiveTypeByAssociation").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getIncentiveTypeByAssociation requested `;
+      console.log(msg);
+
+      try {
+        const incentiveType: any = await CommuterIncentiveType.findOne({
+          associationID: req.body.associationID
+        })
+        // log(result);
+        res.status(200).json(incentiveType);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getIncentiveTypeByAssociation failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterIncentiveType").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentiveType requested `;
+      console.log(msg);
+
+      try {
+        const incentiveType: any = new CommuterIncentiveType(req.body);
+        const result = await incentiveType.save();
         // log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 addCommuterRating failed'
+            message: ' 🍎🍎🍎🍎 addCommuterIncentiveType failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterIncentive").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentive requested `;
+      console.log(msg);
+
+      try {
+        const incentiveType = await CommuterIncentiveType.findById(req.body.incentiveTypeID)
+        if (incentiveType === null) {
+          throw {
+            message: 'Incentive type not found'
+          }
+        }
+        
+        const user = await User.findOne({userID: req.body.userID})
+        if (user === null) {
+          throw {
+            message: 'User type not found'
+          }
+        }
+        const incentive: any = new CommuterIncentive({
+          ...req.body,
+          incentive: incentiveType,
+          user: user
+        });
+        const result = await incentive.save();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterIncentive failed'
+          }
+        )
+      }
+    });
+    app.route("/findSafetyNetworkBuddiesByUserID").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 findSafetyNetworkBuddiesByUserID requested `;
+      console.log(msg);
+
+      try {
+        const buddies = await SafetyNetworkBuddy.find({userID: req.body.userID})
+          res.status(200).json(buddies);
+        }
+
+       catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 findSafetyNetworkBuddiesByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterPanicLocation").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
+      console.log(msg);
+
+      try {
+        const commuterPanic = await CommuterPanic.findById(req.body.commuterPanicID)
+
+        if (commuterPanic) {
+          const panicData: any = {
+            position: {
+              type: 'Points',
+              coordinates: [
+                req.body.longitude,
+                req.body.latitude
+              ]
+            },
+            commuterPanicID: req.body.commuterPanicID
+          }
+          const panic: any = new CommuterPanicLocation(panicData);
+          panic.created = new Date().toISOString();
+          const result = await panic.save();
+          res.status(200).json(result);
+        } else {
+          res.status(400).json({
+            message: 'Commuter Panic not found'
+          })
+        }
+        
+        // log(result);
+        
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterPanicLocation failed'
           }
         )
       }
@@ -321,8 +510,6 @@ export class CommuterController {
 
       try {
         const panic: any = new CommuterPanic(req.body);
-        panic.commuterPanicID = uuid();
-        panic.created = new Date().toISOString();
         const result = await panic.save();
         // log(result);
         res.status(200).json(result);
@@ -335,13 +522,51 @@ export class CommuterController {
         )
       }
     });
+    app.route("/getCommuterPanicsByUserID").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPanicsByUserID requested `;
+      console.log(msg);
+
+      try {
+        const panics: any = await CommuterPanic.find({userID: req.body.userID})
+        
+        // log(result);
+        res.status(200).json(panics);
+      } catch (err) {
+        console.log(err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterPanicsByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/getPanicLocations").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getPanicLocations requested `;
+      console.log(msg);
+
+      try {
+        const panics: any = await CommuterPanicLocation.find({commuterPanicID: req.body.commuterPanicID})
+        
+        // log(result);
+        res.status(200).json(panics);
+      } catch (err) {
+        console.log(err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getPanicLocations failed'
+          }
+        )
+      }
+    });
     app.route("/getCommuterRequestsByUserID").post(async (req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
       console.log(msg);
 
       try {
         const uid = req.body.firebaseUID;
-        const result = await  User.find({userID: uid});
+        const result = (await  User.find({userID: uid})).reverse();
 
         if (result == null) {
           res.status(400).json({
@@ -391,12 +616,13 @@ export class CommuterController {
 
       try {
         const minutes = parseInt(req.body.minutes);
-        const fromLandmarkID = parseInt(req.body.fromLandmarkID);
+        const fromLandmarkID = req.body.fromLandmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await  CommuterRequest.find({fromLandmarkID: fromLandmarkID, created: { $gt: cutOff },});
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        log(err)
         res.status(400).json(
           {
             error: err,
@@ -431,7 +657,7 @@ export class CommuterController {
 
       try {
         const uid = req.body.UID;
-        const result = await  CommuterRequest.find({userID: uid});
+        const result = (await  CommuterRequest.find({userID: uid})).reverse();
         // log(result);
         res.status(200).json(result);
       } catch (err) {
