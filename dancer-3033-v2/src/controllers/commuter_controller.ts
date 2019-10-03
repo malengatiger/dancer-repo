@@ -50,7 +50,7 @@ export class CommuterController {
 
       try {
         const commuterRequestID = req.body.commuterRequestID;
-        const commReq: any = await CommuterRequest.findOne({commuterRequestID: commuterRequestID});
+        const commReq: any = await CommuterRequest.findById(commuterRequestID);
         if (!commReq) {
           throw new Error('CommuterRequest not found');
         }

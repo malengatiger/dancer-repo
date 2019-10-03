@@ -54,7 +54,7 @@ class CommuterController {
             console.log(msg);
             try {
                 const commuterRequestID = req.body.commuterRequestID;
-                const commReq = yield commuter_request_1.default.findOne({ commuterRequestID: commuterRequestID });
+                const commReq = yield commuter_request_1.default.findById(commuterRequestID);
                 if (!commReq) {
                     throw new Error('CommuterRequest not found');
                 }
@@ -68,6 +68,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
+                log_1.default(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 updateCommuterRequestScanned failed'
@@ -554,6 +555,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
+                log_1.default(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterRequestsByFromLandmark failed'
