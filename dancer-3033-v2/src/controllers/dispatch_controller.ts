@@ -57,9 +57,11 @@ export class DispatchController {
         const end = new Date().getTime();
         log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
         res.status(200).json(result);
-        // log(result);
+        log(result);
         res.status(200).json(result);
       } catch (err) {
+        log(err);
+        console.log(err);
         res.status(400).json(
           {
             error: err,

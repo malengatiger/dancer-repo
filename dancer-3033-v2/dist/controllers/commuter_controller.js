@@ -25,6 +25,8 @@ const user_1 = __importDefault(require("../models/user"));
 const commuter_panic_location_1 = __importDefault(require("../models/commuter_panic_location"));
 const safety_network_buddy_1 = __importDefault(require("../models/safety_network_buddy"));
 const commuter_prize_1 = __importDefault(require("../models/commuter_prize"));
+const commuter_incentive_type_1 = __importDefault(require("../models/commuter_incentive_type"));
+const commuter_incentive_1 = __importDefault(require("../models/commuter_incentive"));
 class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -35,8 +37,6 @@ class CommuterController {
                 const comm = new commuter_request_1.default(req.body);
                 comm.commuterRequestID = v1_1.default();
                 comm.created = new Date().toISOString();
-                comm.stringTime = new Date().toISOString();
-                comm.time = new Date().getTime();
                 comm.scanned = false;
                 const result = yield comm.save();
                 // log(result);
@@ -54,7 +54,7 @@ class CommuterController {
             console.log(msg);
             try {
                 const commuterRequestID = req.body.commuterRequestID;
-                const commReq = yield commuter_request_1.default.findOne({ commuterRequestID: commuterRequestID });
+                const commReq = yield commuter_request_1.default.findById(commuterRequestID);
                 if (!commReq) {
                     throw new Error('CommuterRequest not found');
                 }
@@ -68,6 +68,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
+                log_1.default(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 updateCommuterRequestScanned failed'
@@ -248,12 +249,14 @@ class CommuterController {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
             console.log(msg);
             try {
-                const c = new commuter_starting_landmark_1.default(req.body);
+                const c = new commuter_starting_landmark_1.default(Object.assign({}, req.body, { position: JSON.parse(req.body.position) }));
                 c.commuterStartingLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
                 // log(result);
-                res.status(200).json(result);
+                res.status(200).json({
+                    result
+                });
             }
             catch (err) {
                 res.status(400).json({
@@ -335,6 +338,67 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 commuterClaimPrize failed'
+                });
+            }
+        }));
+        app.route("/getIncentiveTypeByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getIncentiveTypeByAssociation requested `;
+            console.log(msg);
+            try {
+                const incentiveType = yield commuter_incentive_type_1.default.findOne({
+                    associationID: req.body.associationID
+                });
+                // log(result);
+                res.status(200).json(incentiveType);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getIncentiveTypeByAssociation failed'
+                });
+            }
+        }));
+        app.route("/addCommuterIncentiveType").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentiveType requested `;
+            console.log(msg);
+            try {
+                const incentiveType = new commuter_incentive_type_1.default(req.body);
+                const result = yield incentiveType.save();
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addCommuterIncentiveType failed'
+                });
+            }
+        }));
+        app.route("/addCommuterIncentive").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentive requested `;
+            console.log(msg);
+            try {
+                const incentiveType = yield commuter_incentive_type_1.default.findById(req.body.incentiveTypeID);
+                if (incentiveType === null) {
+                    throw {
+                        message: 'Incentive type not found'
+                    };
+                }
+                const user = yield user_1.default.findOne({ userID: req.body.userID });
+                if (user === null) {
+                    throw {
+                        message: 'User type not found'
+                    };
+                }
+                const incentive = new commuter_incentive_1.default(Object.assign({}, req.body, { incentive: incentiveType, user: user }));
+                const result = yield incentive.save();
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addCommuterIncentive failed'
                 });
             }
         }));
@@ -484,13 +548,14 @@ class CommuterController {
             console.log(msg);
             try {
                 const minutes = parseInt(req.body.minutes);
-                const fromLandmarkID = parseInt(req.body.fromLandmarkID);
+                const fromLandmarkID = req.body.fromLandmarkID;
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield commuter_request_1.default.find({ fromLandmarkID: fromLandmarkID, created: { $gt: cutOff }, });
                 // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
+                log_1.default(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterRequestsByFromLandmark failed'

@@ -14,6 +14,8 @@ import User from "../models/user";
 import CommuterPanicLocation from "../models/commuter_panic_location";
 import SafetyNetworkBuddy from "../models/safety_network_buddy";
 import CommuterPrize from "../models/commuter_prize";
+import CommuterIncentiveType from "../models/commuter_incentive_type";
+import CommuterIncentive from "../models/commuter_incentive";
 
 export class CommuterController {
 
@@ -29,8 +31,6 @@ export class CommuterController {
         const comm : any= new CommuterRequest(req.body);
         comm.commuterRequestID = uuid();
         comm.created = new Date().toISOString();
-        comm.stringTime = new Date().toISOString();
-        comm.time = new Date().getTime();
         comm.scanned = false;
         const result = await comm.save();
         // log(result);
@@ -50,7 +50,7 @@ export class CommuterController {
 
       try {
         const commuterRequestID = req.body.commuterRequestID;
-        const commReq: any = await CommuterRequest.findOne({commuterRequestID: commuterRequestID});
+        const commReq: any = await CommuterRequest.findById(commuterRequestID);
         if (!commReq) {
           throw new Error('CommuterRequest not found');
         }
@@ -63,6 +63,7 @@ export class CommuterController {
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        log(err);
         res.status(400).json(
           {
             error: err,
@@ -263,12 +264,17 @@ export class CommuterController {
       console.log(msg);
 
       try {
-        const c: any = new CommuterStartingLandmark(req.body);
+        const c: any = new CommuterStartingLandmark({
+          ...req.body,
+          position: JSON.parse(req.body.position)
+        });
         c.commuterStartingLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
         // log(result);
-        res.status(200).json(result);
+        res.status(200).json({
+          result
+        });
       } catch (err) {
         res.status(400).json(
           {
@@ -365,6 +371,78 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 commuterClaimPrize failed'
+          }
+        )
+      }
+    });
+    app.route("/getIncentiveTypeByAssociation").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getIncentiveTypeByAssociation requested `;
+      console.log(msg);
+
+      try {
+        const incentiveType: any = await CommuterIncentiveType.findOne({
+          associationID: req.body.associationID
+        })
+        // log(result);
+        res.status(200).json(incentiveType);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getIncentiveTypeByAssociation failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterIncentiveType").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentiveType requested `;
+      console.log(msg);
+
+      try {
+        const incentiveType: any = new CommuterIncentiveType(req.body);
+        const result = await incentiveType.save();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterIncentiveType failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterIncentive").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentive requested `;
+      console.log(msg);
+
+      try {
+        const incentiveType = await CommuterIncentiveType.findById(req.body.incentiveTypeID)
+        if (incentiveType === null) {
+          throw {
+            message: 'Incentive type not found'
+          }
+        }
+        
+        const user = await User.findOne({userID: req.body.userID})
+        if (user === null) {
+          throw {
+            message: 'User type not found'
+          }
+        }
+        const incentive: any = new CommuterIncentive({
+          ...req.body,
+          incentive: incentiveType,
+          user: user
+        });
+        const result = await incentive.save();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterIncentive failed'
           }
         )
       }
@@ -538,12 +616,13 @@ export class CommuterController {
 
       try {
         const minutes = parseInt(req.body.minutes);
-        const fromLandmarkID = parseInt(req.body.fromLandmarkID);
+        const fromLandmarkID = req.body.fromLandmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await  CommuterRequest.find({fromLandmarkID: fromLandmarkID, created: { $gt: cutOff },});
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        log(err)
         res.status(400).json(
           {
             error: err,
