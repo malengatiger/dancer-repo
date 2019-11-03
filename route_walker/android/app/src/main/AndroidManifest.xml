@@ -18,6 +18,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBvhKm4U0Blz70621ntH5ctw4XfUSuJUTc" />
+        <!-- flutter_background_geolocation licence -->
+        <meta-data android:name="com.transistorsoft.locationmanager.license"
+                   android:value="9c12af374fa51474f20329ae23938274fd975353f2b9455fcc4771a00eb1d87f" />
+
 
         <activity
             android:name=".MainActivity"

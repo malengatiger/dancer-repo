@@ -1,8 +1,7 @@
-
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
-import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
+import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps//estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/estimation.dart';
@@ -35,7 +34,8 @@ class _EstimatorTesterState extends State<EstimatorTester>
 
   _getData() async {
     _vehicles = await DancerListAPI.getVehiclesByAssociation(associationID: "");
-    _routes = await DancerListAPI.getRoutesByAssociation(associationID: '-KTzcm79kpPSSJlNQuFQ');
+    _routes = await DancerListAPI.getRoutesByAssociation(
+        associationID: '-KTzcm79kpPSSJlNQuFQ');
     assert(_routes != null);
     assert(_vehicles != null);
     List<ar.Route> mRoutes = List();
@@ -60,11 +60,11 @@ class _EstimatorTesterState extends State<EstimatorTester>
         backgroundColor: Colors.black);
 
     _bloc.startEstimationTest(
-        vehicle: _vehicles.elementAt(46),
-        route: route,
-        secondsBetweenEstimations: 15,
-        listener: this,
-        radiusInKM: 30,);
+      vehicle: _vehicles.elementAt(46),
+      secondsBetweenEstimations: 15,
+      listener: this,
+      radiusInKM: 30,
+    );
 
     if (_key.currentState != null) {
       _key.currentState.removeCurrentSnackBar();
@@ -101,7 +101,10 @@ class _EstimatorTesterState extends State<EstimatorTester>
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        title: Text('Estimation Algorithm  🍎 Tester', style: Styles.whiteSmall,),
+        title: Text(
+          'Estimation Algorithm  🍎 Tester',
+          style: Styles.whiteSmall,
+        ),
         elevation: 16,
         actions: <Widget>[
           IconButton(
@@ -116,8 +119,10 @@ class _EstimatorTesterState extends State<EstimatorTester>
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
-                Text('This temporary feature helps to test the new dynamic distance algorithm. It uses routes rhat have been prepped first.',
-                style: Styles.whiteSmall,),
+                Text(
+                  'This temporary feature helps to test the new dynamic distance algorithm. It uses routes rhat have been prepped first.',
+                  style: Styles.whiteSmall,
+                ),
                 Row(
                   children: <Widget>[
                     Text(
@@ -194,7 +199,8 @@ class _EstimatorTesterState extends State<EstimatorTester>
   @override
   onEstimations(List<Estimation> estimations) {
     if (estimations == null) {
-      debugPrint(' 👿 👿 👿 👿 👿 👿 Estimations are NULL. WTF?  👿 👿 👿 👿 👿 👿');
+      debugPrint(
+          ' 👿 👿 👿 👿 👿 👿 Estimations are NULL. WTF?  👿 👿 👿 👿 👿 👿');
       return;
     }
     debugPrint(
@@ -205,9 +211,13 @@ class _EstimatorTesterState extends State<EstimatorTester>
       debugPrint(
           '✳️ ESTIMATION  🔴  #$cnt  🔴 distance from vehicle: 🔵  ${e.distanceInKM} 🔵  km to 🔴 ${e.landmarkName} 🔴 🔴 ');
     });
-    Navigator.push(context, SlideRightRoute(
-      widget: EstimationPage(route: route,),
-    ));
+    Navigator.push(
+        context,
+        SlideRightRoute(
+          widget: EstimationPage(
+            route: route,
+          ),
+        ));
   }
 
   @override

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/position.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
@@ -14,12 +16,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
-import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
-
 
 import 'cards.dart';
+import 'flag_routepoint_landmarks.dart';
 import 'landmark_city_page.dart';
-import 'landmarks.dart';
 
 class CreateRoutePointsPage extends StatefulWidget {
   @override
@@ -50,7 +50,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   void _getRoute() async {
     _route = await Prefs.getRoute();
     assert(_route != null);
-    await _getRoutePoints();
+    await _setRoutePoints();
     await _getLandmarks();
     setState(() {});
   }
@@ -93,43 +93,33 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   List<RoutePoint> _routePoints = List();
   StreamSubscription<List<RoutePoint>> _subscription;
-  Future _getRoutePoints() async {
-    assert(_route != null);
-
+  Future _setRoutePoints() async {
     _rawRoutePoints = _route.rawRoutePoints;
-    _routePoints = _route.routePoints;
-
-    if (_rawRoutePoints.isNotEmpty) {
-      showButton = true;
-    } else {
-      showButton = false;
+    if (_rawRoutePoints == null || _rawRoutePoints.isEmpty) {
+      _rawRoutePoints = await routeBuilderBloc.getRawRoutePoints(route: _route);
     }
     debugPrint(
         '\n\n🍏 🍎 🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩  snapped: ${_routePoints.length} 🧩\n\n');
-    _setRawRouteMarkers();
     setState(() {});
   }
 
-
   Set<Marker> _markers = Set();
-  void _setRawRouteMarkers() async {
+  void _setRouteMarkers() async {
     print(
-        '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 ... points collected: ${_rawRoutePoints.length} 🍀️🍀️🍀️');
+        '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 ... points: ${_rawRoutePoints.length} 🍀️🍀️🍀️');
     _markers.clear();
     var icon =
         BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
     // await _buildMarkerIcon();
     try {
       _rawRoutePoints.forEach((m) {
-        if (m.landmarkID != null) {
-          icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
-        } else {
-          icon =
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
-        }
+        icon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+
         _markers.add(Marker(
             onTap: () {
-              print('marker tapped!! ❤️ 🧡 💛   ${m.created}');
+              print(
+                  'RoutePointManager:  🧩 🧩 🧩marker tapped!! ❤️ 🧡 💛   ${m.created}');
               _onMarkerTapped(m);
             },
             icon: icon,
@@ -138,48 +128,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             infoWindow: InfoWindow(title: m.created, snippet: m.created)));
       });
       print('🍏 🍎 markers added: ${_markers.length}');
-      if (_route.routePoints.isNotEmpty) {
-        _setRoutePolyline();
-      }
+
       _mapController.animateCamera(
           CameraUpdate.newLatLngZoom(_markers.elementAt(0).position, 15));
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Set<Polyline> polylines = Set();
-
-  void _setRoutePolyline() async {
-    polylines.clear();
-    try {
-      List<LatLng> latLngs = List();
-      try {
-        _routePoints.forEach((m) {
-          latLngs.add(LatLng(m.latitude, m.longitude));
-        });
-      } catch (e) {
-        print(
-            '👿 👿 👿 👿 👿 👿  Houston, we have a fucking problem! setting up LatLng in list 👿 👿 👿 👿 👿 👿 👿 👿');
-      }
-      print(
-          '📌 📌 📌 create polyline 🔵 🔵 🔵 🔵 latLngs:🍀️🍀️ ${latLngs.length} 🍀️🍀️\n');
-      var polyLine = Polyline(
-          polylineId: PolylineId('${DateTime.now().toIso8601String()}'),
-          color: Colors.white,
-          width: 12,
-          consumeTapEvents: true,
-          onTap: () {
-            print('🥩 🥩 polyline tapped, 🥩 now what??? - .....');
-          },
-          geodesic: true,
-          points: latLngs);
-
-      polylines.add(polyLine);
-      _mapController.animateCamera(CameraUpdate.newLatLngZoom(
-          LatLng(_routePoints.elementAt(0).latitude,
-              _routePoints.elementAt(0).longitude),
-          14));
     } catch (e) {
       print(e);
     }
@@ -188,19 +139,19 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   bool showLandmarkEditor = false, showButton = false;
   List<DropdownMenuItem<Landmark>> _items = List();
 
-  _onMarkerTapped(RoutePoint marker) {
-    print('Marker tapped: route: ${marker.created}');
+  _onMarkerTapped(RoutePoint point) {
+    print('Marker tapped: route: ${point.created}');
     _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(marker.latitude, marker.longitude), zoom: 16.0)));
+        target: LatLng(point.latitude, point.longitude), zoom: 16.0)));
 
-    _startLandmarksPage(marker);
+    _startLandmarksPage(point);
   }
 
   _startLandmarksPage(RoutePoint marker) {
     Navigator.push(
       context,
       SlideRightRoute(
-        widget: LandmarksPage(
+        widget: FlagRoutePointLandmarks(
           route: _route,
           routePoint: marker,
         ),
@@ -215,7 +166,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       stream: routeBuilderBloc.rawRoutePointsStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          _setRawRouteMarkers();
+          _rawRoutePoints = snapshot.data;
+          _setRouteMarkers();
         }
         return Scaffold(
           key: _key,
@@ -240,7 +192,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
                   icon: Icon(Icons.refresh),
-                  onPressed: _getRoutePoints,
+                  onPressed: _setRoutePoints,
                 ),
               ),
             ],
@@ -251,7 +203,6 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                 initialCameraPosition: _cameraPosition,
                 mapType: MapType.hybrid,
                 markers: _markers,
-                polylines: polylines,
                 myLocationEnabled: true,
                 compassEnabled: true,
                 zoomGesturesEnabled: true,
@@ -264,12 +215,21 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                     _completer.complete(mapController);
                     _mapController = mapController;
                   }
-                  _setRawRouteMarkers();
-                  if (_rawRoutePoints == null || _rawRoutePoints.isNotEmpty) {
+                  _setRouteMarkers();
+
+                  if (_route.routePoints != null &&
+                      _route.routePoints.isNotEmpty) {
                     _mapController.animateCamera(CameraUpdate.newLatLngZoom(
-                        LatLng(_rawRoutePoints.elementAt(0).latitude,
-                            _rawRoutePoints.elementAt(0).longitude),
+                        LatLng(_route.routePoints.elementAt(0).latitude,
+                            _route.routePoints.elementAt(0).longitude),
                         16.0));
+                  } else {
+                    if (_rawRoutePoints != null && _rawRoutePoints.isNotEmpty) {
+                      _mapController.animateCamera(CameraUpdate.newLatLngZoom(
+                          LatLng(_rawRoutePoints.elementAt(0).latitude,
+                              _rawRoutePoints.elementAt(0).longitude),
+                          16.0));
+                    }
                   }
                 },
               ),
@@ -284,7 +244,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                     Navigator.push(
                       context,
                       SlideRightRoute(
-                        widget: LandmarksPage(
+                        widget: FlagRoutePointLandmarks(
                           route: _route,
                         ),
                       ),
@@ -501,10 +461,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       landmarkName: name,
       latitude: pressedLatLng.latitude,
       longitude: pressedLatLng.longitude,
-      position: {
-        'type': 'Point',
-        'coordinates': [pressedLatLng.longitude, pressedLatLng.latitude]
-      },
+      position: Position(
+          type: 'Point',
+          coordinates: [pressedLatLng.longitude, pressedLatLng.latitude]),
       routeIDs: [_route.routeID],
       routeDetails: [
         RouteInfo(
@@ -516,6 +475,11 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     await routeBuilderBloc.addLandmark(m);
     debugPrint(
         '️♻️ ♻️♻️ ♻️   🐸 New landmark added : 🍎 ${m.landmarkName} 🍎 ');
+    List<CalculatedDistance> list =
+        await RouteDistanceCalculator.calculate(route: _route);
+    list.forEach((cd) {
+      print('Calculated Distance: 🍎 🍎 ${cd.toJson()}');
+    });
   }
 
   @override
@@ -558,7 +522,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   Widget _getBottom() {
     return PreferredSize(
-      preferredSize: Size.fromHeight(100),
+      preferredSize: Size.fromHeight(120),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -573,20 +537,19 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-//                showButton == false
-//                    ? Container()
-//                    : RaisedButton(
-//                        color: Colors.pink,
-//                        elevation: 16,
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(12.0),
-//                          child: Text(
-//                            'Confirm Route Points',
-//                            style: Styles.whiteSmall,
-//                          ),
-//                        ),
-//                        onPressed: _confirmSave),
-
+                _rawRoutePoints.isEmpty
+                    ? Container()
+                    : RaisedButton(
+                        color: Colors.indigo,
+                        elevation: 16,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            'Confirm Route Points',
+                            style: Styles.whiteSmall,
+                          ),
+                        ),
+                        onPressed: _confirmSave),
                 SizedBox(
                   width: 8,
                 ),
@@ -628,15 +591,21 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     _routePoints = await SnapToRoads.getSnappedPoints(
         route: _route, routePoints: _rawRoutePoints);
     _route.routePoints = _routePoints;
+    var index = 0;
+    _routePoints.forEach((p) {
+      p.index = index;
+      p.position =
+          Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
+      index++;
+    });
     try {
       if (_routePoints.length < 301) {
         print(
             '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${_route.name} ...');
         await DancerDataAPI.addRoutePoints(
             routeId: _route.routeID, routePoints: _routePoints, clear: true);
-        await _connectPointsAndCalculateDistances();
       } else {
-        //batches of 30
+        //batches of 300
         var rem = _routePoints.length % 300;
         var pages = _routePoints.length ~/ 300;
 
@@ -651,7 +620,6 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
           for (var j = startIndex; j < (startIndex + 300); j++) {
             try {
               map[i].add(_routePoints.elementAt(j));
-
             } catch (e) {}
           }
           print(
@@ -667,10 +635,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
               routeId: _route.routeID, routePoints: map[i], clear: clear);
           print(
               '🧩🧩🧩🧩🧩 calculating distances for route  🍎 ${_route.name} ...');
-          _connectPointsAndCalculateDistances();
-          setState(() {
-
-          });
+          setState(() {});
         }
       }
     } catch (e) {
@@ -689,45 +654,110 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       isBusy = false;
       showButton = false;
     });
-    _setRoutePolyline();
   }
-  _connectPointsAndCalculateDistances() async {
-    debugPrint('🔆🔆🔆🔆🔆🔆🔆🔆🔆🔆 _connectPoints ... calculate distances 🔆🔆');
-    try {
-      List<RoutePoint> landmarkPoints = List();
-      var landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
-      if (landmarks.isEmpty) {
-        print('💜💜💜 no landmarks in this route yet, so no calculations');
-        return;
-      }
-      debugPrint('🍀️🍀️🍀️ Connect 🔴 ${landmarks.length} landmarks to route points');
-      for (var mark in landmarks) {
-        RoutePoint point = await routeBuilderBloc.findRoutePointNearestLandmark(
-            route: _route,
-            landmark: mark);
-        landmarkPoints.add(point);
-        _route.routePoints.forEach((p) {
-          if (point.latitude == p.latitude && point.longitude == p.latitude) {
-            p.landmarkID = mark.landmarkID;
-            p.landmarkName = mark.landmarkName;
-          }
-        });
 
+//  _connectPointsAndCalculateDistances() async {
+//    debugPrint(
+//        '🔆🔆🔆🔆🔆🔆🔆🔆🔆🔆 _connectPoints ... calculate distances 🔆🔆');
+//    try {
+//      List<RoutePoint> landmarkPoints = List();
+//      var landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
+//      if (landmarks.isEmpty) {
+//        print('💜💜💜 no landmarks in this route yet, so no calculations');
+//        return;
+//      }
+//      debugPrint(
+//          '🍀️🍀️🍀️ Connect 🔴 ${landmarks.length} landmarks to route points');
+//      for (var mark in landmarks) {
+//        RoutePoint point = await routeBuilderBloc.findRoutePointNearestLandmark(
+//            route: _route, landmark: mark);
+//        landmarkPoints.add(point);
+//        _route.routePoints.forEach((p) {
+//          if (point.latitude == p.latitude && point.longitude == p.latitude) {
+//            p.landmarkID = mark.landmarkID;
+//            p.landmarkName = mark.landmarkName;
+//          }
+//        });
+//      }
+//      var cnt = 0;
+//      _route.routePoints.forEach((p) {
+//        if (p.landmarkID != null) {
+//          cnt++;
+//          prettyPrint(p.toJson(),
+//              '🔴 🔴 🔴 🔴 #$cnt -  💛 Route point that is a LANDMARK: ${p.landmarkName} 💛');
+//        }
+//      });
+//      debugPrint(
+//          '🍀️🍀️🍀️ sending ${landmarkPoints.length} landmarked points ... calculate distances between landmarks');
+//      await routeBuilderBloc.updateRoutePoints(
+//          routeID: _route.routeID, points: landmarkPoints);
+//      await RouteDistanceCalculator.calculate(route: _route);
+//      if (_key.currentState != null) _key.currentState.removeCurrentSnackBar();
+//    } catch (e) {
+//      print(e);
+//    }
+//  }
 
-      }
-      var cnt = 0;
-      _route.routePoints.forEach((p) {
-        if (p.landmarkID != null) {
-          cnt++;
-          prettyPrint(p.toJson(), '🔴 🔴 🔴 🔴 #$cnt -  💛 Route point that is a LANDMARK: ${p.landmarkName} 💛');
-        }
-      });
-      debugPrint('🍀️🍀️🍀️ sending ${landmarkPoints.length} landmarked points ... calculate distances between landmarks');
-      await routeBuilderBloc.updateRoutePoints(routeID: _route.routeID, points: landmarkPoints);
-      await RouteDistanceCalculator.calculate(route: _route);
-      if (_key.currentState != null) _key.currentState.removeCurrentSnackBar();
-    } catch (e) {
-      print(e);
-    }
+  void _confirmSave() async {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              title: new Text(
+                "Confirm Route Points",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor),
+              ),
+              content: Container(
+                height: 160.0,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            'Do you want to confirm RoutePoints for ${_route.name} ?? This will save these route points in the database for use in maps.',
+                            style: Styles.blackBoldSmall,
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    'NO',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: RaisedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _snapPoints();
+                    },
+                    elevation: 4.0,
+                    color: Colors.blue.shade700,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Save Route Points',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ));
   }
 }

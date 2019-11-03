@@ -16,6 +16,7 @@ const database_1 = __importDefault(require("../database"));
 const log_1 = __importDefault(require("../log"));
 const route_1 = __importDefault(require("../models/route"));
 const uuid = require("uuid");
+const mongoose_1 = require("mongoose");
 class LandmarkController {
     routes(app) {
         log_1.default(`🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
@@ -27,11 +28,17 @@ class LandmarkController {
                 const now = new Date().getTime();
                 const routeID = req.body.routeID;
                 const landmarkID = req.body.landmarkID;
+                const routePoint = req.body.routePoint;
                 const route = yield route_1.default.findOne({
                     routeID: routeID
                 });
+                console.log(route);
+                console.log(`id from route:  💦 💦 ${route.id} 💦 💦`);
                 const landmark = yield landmark_1.default.findOne({
                     landmarkID: landmarkID
+                });
+                landmark.routeDetails.forEach((element) => {
+                    console.log(element);
                 });
                 let isFound = false;
                 landmark.routeDetails.forEach((element) => {
@@ -47,14 +54,19 @@ class LandmarkController {
                     name: route.name,
                 });
                 const result = yield landmark.save();
-                // log(result);
+                log_1.default(`🔆🔆🔆 💙 landmark ${landmark.landmarkName} updated. Will update route point ....`);
+                // TODO - update routePount
+                const mRes = yield route_1.default.updateOne({ "_id": new mongoose_1.Types.ObjectId(route.id), "routePoints.index": routePoint.index }, { $set: { "routePoints.$.landmarkID": landmark.landmarkID, "routePoints.$.landmarkName": landmark.landmarkName } });
+                log_1.default(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 `);
+                console.log(mRes);
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`);
                 res.status(200).json(result);
             }
             catch (err) {
+                console.log(err);
                 res.status(400).json({
-                    error: err,
+                    error: err.message,
                     message: ' 🍎🍎🍎🍎 addRouteToLandmark failed'
                 });
             }

@@ -25,10 +25,10 @@ app.use((req: Request, res: Response, next) => {
 
 const port = process.env.PORT || 3003;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
-mlog(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
+mlog(`🥦🥦🥦 dancer Firebase service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
 server.listen(port, () => {
-  console.info(
-    `\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛`,
+  mlog(
+    `\n\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n\n`,
   );
 
 });

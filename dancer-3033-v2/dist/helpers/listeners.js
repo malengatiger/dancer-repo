@@ -13,25 +13,25 @@ class MongoListeners {
         const associations = client.connection.collection(constants_1.default.ASSOCIATIONS);
         const routes = client.connection.collection(constants_1.default.ROUTES);
         const landmarks = client.connection.collection(constants_1.default.LANDMARKS);
-        const commuterArrivalLandmarks = client.connection.collection(constants_1.default.COMMUTER_ARRIVAL_LANDMARKS);
-        const commuterRequests = client.connection.collection(constants_1.default.COMMUTER_REQUESTS);
         const dispatchRecords = client.connection.collection(constants_1.default.DISPATCH_RECORDS);
         const panics = client.connection.collection(constants_1.default.COMMUTER_PANICS);
         const vehicleArrivals = client.connection.collection(constants_1.default.VEHICLE_ARRIVALS);
         const vehicleDepartures = client.connection.collection(constants_1.default.VEHICLE_DEPARTURES);
         const commuterPickups = client.connection.collection(constants_1.default.COMMUTER_PICKUP_LANDMARKS);
+        const commuterArrivalLandmarks = client.connection.collection(constants_1.default.COMMUTER_ARRIVAL_LANDMARKS);
+        const commuterRequests = client.connection.collection(constants_1.default.COMMUTER_REQUESTS);
         //
         const assocStream = associations.watch({ fullDocument: 'updateLookup' });
         const routeStream = routes.watch({ fullDocument: 'updateLookup' });
         const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
         const commuterArrivalStream = commuterArrivalLandmarks.watch({ fullDocument: 'updateLookup' });
         const commuterRequestsStream = commuterRequests.watch({ fullDocument: 'updateLookup' });
+        const commuterPickupsStream = commuterPickups.watch({ fullDocument: 'updateLookup' });
         const dispatchRecordsStream = dispatchRecords.watch({ fullDocument: 'updateLookup' });
         const usersStream = users.watch({ fullDocument: 'updateLookup' });
         const panicStream = panics.watch({ fullDocument: 'updateLookup' });
         const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
         const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
-        const commuterPickupsStream = commuterPickups.watch({ fullDocument: 'updateLookup' });
         //
         vehicleArrivalsStream.on("change", (event) => {
             log_1.default(`\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
@@ -66,7 +66,7 @@ class MongoListeners {
         assocStream.on("change", (event) => {
             log_1.default(`\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
-            // AssociationHelper.onAssociationAdded(event);
+            // Messaging.se
         });
         //
         routeStream.on("change", (event) => {

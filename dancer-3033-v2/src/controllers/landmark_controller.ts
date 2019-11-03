@@ -4,6 +4,8 @@ import db from '../database';
 import log from '../log';
 import Route from "../models/route";
 import uuid = require("uuid");
+import { ObjectID } from "bson";
+import { Types } from "mongoose";
 export class LandmarkController {
     public routes(app: any): void {
         log(
@@ -19,12 +21,18 @@ export class LandmarkController {
                 const now = new Date().getTime();
                 const routeID = req.body.routeID;
                 const landmarkID = req.body.landmarkID;
+                const routePoint = req.body.routePoint
 
                 const route: any = await Route.findOne({
                     routeID: routeID
                 });
+                console.log(route);
+                console.log(`id from route:  💦 💦 ${route.id} 💦 💦`)
                 const landmark: any = await Landmark.findOne({
                     landmarkID: landmarkID
+                });
+                landmark.routeDetails.forEach((element: any) => {
+                   console.log(element)
                 });
                 let isFound: boolean = false;
                 landmark.routeDetails.forEach((element: any) => {
@@ -40,14 +48,20 @@ export class LandmarkController {
                     name: route.name,
                 })
                 const result = await landmark.save();
-                // log(result);
+                log(`🔆🔆🔆 💙 landmark ${landmark.landmarkName} updated. Will update route point ....`)
+                // TODO - update routePount
+                const mRes = await Route.updateOne({"_id": new Types.ObjectId(route.id), "routePoints.index": routePoint.index},
+                {$set: {"routePoints.$.landmarkID": landmark.landmarkID, "routePoints.$.landmarkName": landmark.landmarkName}});
+                log(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 `);
+                console.log(mRes);
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`)
                 res.status(200).json(result);
             } catch (err) {
+                console.log(err);
                 res.status(400).json(
                     {
-                        error: err,
+                        error: err.message,
                         message: ' 🍎🍎🍎🍎 addRouteToLandmark failed'
                     }
                 )

@@ -1,30 +1,30 @@
 import 'dart:async';
 
-import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/api/file_util.dart';
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/mongo_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/association_bag.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/geofence_event.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
-import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
-import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
+import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart';
+import 'package:latlong/latlong.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:latlong/latlong.dart';
-
 
 final RouteBuilderBloc routeBuilderBloc = RouteBuilderBloc();
 
@@ -52,7 +52,7 @@ class RouteBuilderModel {
 /*
 This class manages thd app's business logic and connects the model to a stream for a reactive effect
 */
-class RouteBuilderBloc  {
+class RouteBuilderBloc {
   final StreamController<RouteBuilderModel> _appModelController =
       StreamController<RouteBuilderModel>.broadcast();
   final StreamController<String> _errorController =
@@ -98,6 +98,7 @@ class RouteBuilderBloc  {
   Stream get routePointsStream => _routePointController.stream;
   Stream get rawRoutePointsStream => _rawRoutePointController.stream;
   Stream get routeLandmarksStream => _routeLandmarksController.stream;
+  Stream get errorStream => _errorController.stream;
 
   List<RoutePoint> get routePoints => _routePoints;
   List<RoutePoint> get rawRoutePoints => _rawRoutePoints;
@@ -143,6 +144,7 @@ class RouteBuilderBloc  {
       return false;
     }
   }
+
   Future<bool> requestPermission() async {
     print('\n🔵 🔵 🔵 ######################### requestPermission ..');
     try {
@@ -153,7 +155,8 @@ class RouteBuilderBloc  {
       permissions.values.forEach((perm) {
         debugPrint('🔵 🔵 🔵 check for perm:: Permission status: $perm');
       });
-      print("\n🔵 🔵 🔵  ########### permission request for location is:  ✅ . getting associations");
+      print(
+          "\n🔵 🔵 🔵  ########### permission request for location is:  ✅ . getting associations");
       getAssociations();
       return true;
     } catch (e) {
@@ -199,7 +202,8 @@ class RouteBuilderBloc  {
   Future getRoutesByAssociation(String associationID) async {
     debugPrint(
         '### ℹ️  getRoutes: getting association routes 🚨 $associationID  in Firestore ..........\n');
-    var routes = await DancerListAPI.getRoutesByAssociation(associationID: associationID);
+    var routes = await DancerListAPI.getRoutesByAssociation(
+        associationID: associationID);
 
     debugPrint(
         ' 📍📍📍📍 adding ${routes.length} routes to  📎 model and stream sink ...');
@@ -230,10 +234,10 @@ class RouteBuilderBloc  {
       route.color = 'white';
     }
     var result = await DancerDataAPI.addRoute(
-      color: route.color,
-      name: route.name,
-      associationId: route.associationID,
-    );
+        color: route.color,
+        name: route.name,
+        associationId: route.associationID,
+        associationName: route.associationName);
 
     debugPrint(
         ' 📍📍📍📍📍📍 adding route ${route.name} to model and stream sink ...');
@@ -245,12 +249,16 @@ class RouteBuilderBloc  {
   Future<Landmark> addLandmark(Landmark landmark) async {
     debugPrint('### ℹ️  add new landmark to database ..........ℹ️  ℹ️  ℹ️  ');
     Landmark result;
+    List<Map> mapList = List();
+    landmark.routeDetails.forEach((d) {
+      mapList.add(d.toJson());
+    });
     try {
       result = await DancerDataAPI.addLandmark(
           landmarkName: landmark.landmarkName,
           latitude: landmark.latitude,
           longitude: landmark.longitude,
-          routeDetails: []);
+          routeDetails: mapList);
       debugPrint(
           '❤️ 🧡 💛  adding landmark to _routeLandmarksController sink ...');
       prettyPrint(result.toJson(),
@@ -269,8 +277,13 @@ class RouteBuilderBloc  {
         '📍 📍 📍  update landmark ${landmark.landmarkName} on Firestore ..........\n');
 
     _appModel.landmarks.remove(landmark);
-    landmark.cities.add(BasicCity(name: city.name, longitude: city.longitude, latitude: city.latitude, provinceName: city.provinceName));
-    await DancerDataAPI.addCityToLandmark(cityId: city.cityID, landmarkId: landmark.landmarkID);
+    landmark.cities.add(BasicCity(
+        name: city.name,
+        longitude: city.longitude,
+        latitude: city.latitude,
+        provinceName: city.provinceName));
+    await DancerDataAPI.addCityToLandmark(
+        cityId: city.cityID, landmarkId: landmark.landmarkID);
     debugPrint(
         '❤️ 🧡 💛 ${landmark.landmarkName} updated;  🍀 add to model and stream sink ...');
     _appModel.landmarks.add(landmark);
@@ -293,12 +306,6 @@ class RouteBuilderBloc  {
     return null;
   }
 
-  Future updateRoutePoints({String routeID, List<RoutePoint> points}) async {
-
-    var res = await DancerDataAPI.updateRoutePoints(routeId: routeID, routePoints: points);
-    return res;
-  }
-
   Future<List<CityDTO>> getCities(String countryId) async {
     debugPrint('### ℹ️  getCities: getting cities in Firestore ..........\n');
     var cities = await LocalDB.getCities();
@@ -318,11 +325,10 @@ class RouteBuilderBloc  {
     return _appModel.cities;
   }
 
-
   Future<List<Landmark>> findLandmarksNearRoutePoint(
-      RoutePoint routePoint) async {
-    debugPrint(
-        '\n\n♻️♻️♻️♻️♻️♻️♻️♻️ calling  LocationFinderBloc to find nearest landmarks ... result goes to _marksNearPointController.stream ... ♻️♻️');
+      RoutePoint routePoint, double radiusInKM) async {
+//    debugPrint(
+//        '\n\n♻️♻️♻️♻️♻️♻️♻️♻️ calling  LocationFinderBloc to find nearest landmarks ... result goes to _marksNearPointController.stream ... ♻️♻️');
     assert(routePoint != null);
     if (routePoint == null) {
       _marksNearPointController.sink.add(List());
@@ -334,7 +340,7 @@ class RouteBuilderBloc  {
     list = await DancerListAPI.findLandmarksByLocation(
       latitude: routePoint.latitude,
       longitude: routePoint.longitude,
-      radiusInKM: 0.1,
+      radiusInKM: radiusInKM,
     );
     _marksNearPointController.sink.add(list);
     return list;
@@ -353,9 +359,10 @@ class RouteBuilderBloc  {
     return list;
   }
 
-  Future<List<CityDTO>>  findCitiesNearLandmark(
-      {@required Landmark landmark,
-      @required double radiusInKM,}) async {
+  Future<List<CityDTO>> findCitiesNearLandmark({
+    @required Landmark landmark,
+    @required double radiusInKM,
+  }) async {
     var list = await DancerListAPI.findCitiesByLocation(
       latitude: landmark.latitude,
       longitude: landmark.longitude,
@@ -363,6 +370,7 @@ class RouteBuilderBloc  {
     );
     return list;
   }
+
   Distance _distanceUtil = Distance();
 
   Future<RoutePoint> findRoutePointNearestLandmark(
@@ -373,7 +381,8 @@ class RouteBuilderBloc  {
     Map<double, RoutePoint> distances = Map();
     route.routePoints.forEach((p) {
       double distance = _distanceUtil.distance(
-          LatLng(landmark.latitude, landmark.longitude), LatLng(p.latitude, p.longitude ));
+          LatLng(landmark.latitude, landmark.longitude),
+          LatLng(p.latitude, p.longitude));
       distances[distance] = p;
     });
     List sortedKeys = distances.keys.toList()..sort();
@@ -381,31 +390,30 @@ class RouteBuilderBloc  {
     point.landmarkID = landmark.landmarkID;
     point.landmarkName = landmark.landmarkName;
 
-    debugPrint(
-        '\n\n♻️♻️♻️♻️♻️♻️♻️♻️ found nearest distance: 🔴 ${sortedKeys.elementAt(0)} metres to ${landmark.landmarkName}... ♻️♻️');
-    prettyPrint(point.toJson(), '🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴 Selected Point: 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴');
-
     return point;
   }
 
-  Future addRouteToLandmark({ar.Route route, Landmark landmark}) async {
+  Future addRouteToLandmark(
+      {ar.Route route, Landmark landmark, RoutePoint routePoint}) async {
+    assert(route != null);
+    assert(landmark != null);
+    assert(routePoint != null);
     debugPrint(
-        'routeBuilderBloc.addRouteToLandmark: adding .... calling DataAPI.addRouteToLandmark');
-    try {
-      var m = await DancerDataAPI.addRouteToLandmark(
-          routeId: route.routeID, landmarkId: landmark.landmarkID);
-      debugPrint(
-          'done adding route to landmark ... calling  getRouteLandmarks  ...');
-      await getRouteLandmarks(route);
-      return m;
-    } catch (e) {
-      throw e;
-    }
+        '.... 🔴 routeBuilderBloc.addRouteToLandmark: adding .... 🔴  calling DancerDataAPI.addRouteToLandmark 🔴 ');
+    prettyPrint(routePoint.toJson(), 'route point 🔆 🔆 🔆 ');
+    var m = await DancerDataAPI.addRouteToLandmark(
+        routeId: route.routeID,
+        landmarkId: landmark.landmarkID,
+        routePoint: routePoint);
+    debugPrint(
+        '👌 👌 👌 done adding route to landmark ... 👌 calling  getRouteLandmarks  ...');
+    await getRouteLandmarks(route);
+    return m;
   }
 
   Future<List<Landmark>> getRouteLandmarks(ar.Route route) async {
     debugPrint(
-        '\n\nrouteBuilderBloc ℹ️ℹ️ℹ️ℹ️ℹ️  getRouteLandmarks: getting route landmarks from Firestore ..........\n');
+        '\n\nrouteBuilderBloc ️ℹ️ℹ️ℹ️ℹ️  getRouteLandmarks: getting route landmarks from MongoDB ..........\n');
     var marks = await DancerListAPI.getRouteLandmarks(routeId: route.routeID);
 
     debugPrint(
@@ -422,7 +430,6 @@ class RouteBuilderBloc  {
     return _routeLandmarks;
   }
 
-
   Future<List<RoutePoint>> getRawRoutePoints({ar.Route route}) async {
     debugPrint(
         '\n🔵 🔵 🔵 🔵 🔵 ️ getRawRoutePoints: getting RAW route points : 🧩🧩  ${route.name}\n');
@@ -430,8 +437,10 @@ class RouteBuilderBloc  {
     _rawRoutePoints =
         await LocalDBAPI.getRawRoutePoints(routeID: route.routeID);
     if (_rawRoutePoints.isEmpty) {
-//      ar.Route mRoute = await DancerListAPI.getRoute(routeId: route.routeID);
-//      _rawRoutePoints = mRoute.rawRoutePoints;
+      print(
+          '\n🚨 🚨 🚨 🚨  rawRoutePoints NOT found on LocalDB; callng DancerListAPI.getRouteByID');
+      ar.Route mRoute = await getRouteByID(route.routeID);
+      _rawRoutePoints = mRoute.rawRoutePoints;
     }
     print(
         '\n🚨 🚨 🚨 🚨  rawRoutePoints found : 🍀️🍀️ ${_rawRoutePoints.length}  🍀️🍀️  for route  ✳️  ${route.routeID} - ${route.name}\n\n');
@@ -451,10 +460,9 @@ class RouteBuilderBloc  {
   }
 
   Future<ar.Route> getRouteByID(String routeID) async {
-//    var mRoute = await DancerListAPI.getRoute(routeId: routeID);
-//    return mRoute;
+    var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
+    return mRoute;
   }
-
 
   Timer timer;
   int timerDuration = 10;
@@ -531,6 +539,8 @@ class RouteBuilderBloc  {
     } catch (e) {
       //todo - error handling here
       print('⚠️ ⚠️ ⚠️  $e');
+      _errorController.sink.add(
+          '_addRawRoutePoint: ⚠️ Problem adding route point to Local MongoDB');
     }
   }
 
@@ -548,19 +558,21 @@ class RouteBuilderBloc  {
       created: DateTime.now().toUtc().toIso8601String(),
       index: index,
       routeID: route.routeID,
+      position: Position(type: 'Point', coordinates: [longitude, latitude]),
     );
 
     index++;
     try {
       await LocalDBAPI.addRoutePoint(route: route, routePoint: point);
-
       debugPrint(
-          '🔴🔴 🔴🔴 🔴🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
+          '🔴 🔴 🔴 🔴 🔴 🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
       _rawRoutePoints.add(point);
       _rawRoutePointController.sink.add(_rawRoutePoints);
     } catch (e) {
       print('👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿');
       print(e);
+      _errorController.sink.add(
+          '_writeRawPoint: ⚠️ Problem writing route point to Local MongoDB');
     }
     return null;
   }
@@ -586,8 +598,6 @@ class RouteBuilderBloc  {
     return null;
   }
 
-
-
   @override
   onVehicleLocationsFound(List<VehicleLocation> vehicleLocations) {
     // TODO: implement onVehicleLocationsFound
@@ -598,8 +608,6 @@ class RouteBuilderBloc  {
     _prevLongitude = null;
     _prevLatitude = null;
   }
-
-
 }
 
 abstract class LocationListener {

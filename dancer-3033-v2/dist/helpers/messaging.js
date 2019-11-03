@@ -40,7 +40,7 @@ class Messaging {
     static sendVehicleArrival(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {
-                priority: "normal",
+                priority: "high",
                 timeToLive: 60 * 60,
             };
             const payload = {
@@ -49,6 +49,7 @@ class Messaging {
                     body: data.vehicleReg + ' at ' + data.landmarkName,
                 },
                 data: {
+                    type: constants_1.default.VEHICLE_ARRIVALS,
                     vehicleArrivalID: data.vehicleArrivalID,
                     landmarkID: data.landmarkID,
                     landmarkName: data.landmarkName,
@@ -74,6 +75,7 @@ class Messaging {
                     body: data.name,
                 },
                 data: {
+                    type: constants_1.default.ROUTES,
                     routeID: data.routeID,
                     name: data.name,
                     created: data.created
@@ -97,6 +99,7 @@ class Messaging {
                     body: data.landmarkName,
                 },
                 data: {
+                    type: constants_1.default.LANDMARKS,
                     landmarkID: data.landmarkID,
                     landmarkName: data.landmarkName,
                     created: data.created
@@ -119,6 +122,7 @@ class Messaging {
                     body: data.vehicleReg + ' at ' + data.landmarkName,
                 },
                 data: {
+                    type: constants_1.default.VEHICLE_DEPARTURES,
                     vehicleDepartureID: data.vehicleDepartureID,
                     landmarkID: data.landmarkID,
                     landmarkName: data.landmarkName,
@@ -144,6 +148,7 @@ class Messaging {
                     body: data.fromLandmarkName,
                 },
                 data: {
+                    type: constants_1.default.COMMUTER_PICKUP_LANDMARKS,
                     commuterPickupLandmarkID: data.commuterPickupLandmarkID,
                     fromLandmarkID: data.fromLandmarkID,
                     fromLandmarkName: data.fromLandmarkName,
@@ -174,6 +179,7 @@ class Messaging {
                     body: data.fromLandmarkName,
                 },
                 data: {
+                    type: constants_1.default.COMMUTER_REQUESTS,
                     commuterRequestID: data.commuterRequestID,
                     fromLandmarkID: data.fromLandmarkID,
                     fromLandmarkName: data.fromLandmarkName,
@@ -205,16 +211,12 @@ class Messaging {
                     body: data.created,
                 },
                 data: {
+                    type: constants_1.default.COMMUTER_ARRIVAL_LANDMARKS,
                     commuterArrivalLandmarkID: data.commuterArrivalLandmarkID,
                     fromLandmarkID: data.fromLandmarkID,
                     fromLandmarkName: data.fromLandmarkName,
                     toLandmarkID: data.toLandmarkID,
                     toLandmarkName: data.toLandmarkName,
-                    // routeName: data.routeName,
-                    // routeID: data.routeID,
-                    // vehicleID: data.vehicleID,
-                    // vehicleReg: data.vehicleReg,
-                    // departureID: data.departureID,
                     created: data.created
                 },
             };
@@ -237,6 +239,7 @@ class Messaging {
                     body: data.created,
                 },
                 data: {
+                    type: constants_1.default.DISPATCH_RECORDS,
                     dispatched: data.dispatched ? 'true' : 'false',
                     landmarkID: data.landmarkID,
                     marshalID: data.marshalID,
@@ -278,6 +281,7 @@ class Messaging {
                     body: data.firstName + " " + data.lastName + " created:" + data.created,
                 },
                 data: {
+                    type: constants_1.default.USERS,
                     firstName: data.firstName,
                     lastName: data.lastName,
                     email: data.email,
@@ -303,8 +307,9 @@ class Messaging {
                     body: data.type + " " + data.created + " userID:" + data.userID,
                 },
                 data: {
+                    type: constants_1.default.COMMUTER_PANICS,
                     active: data.active ? 'true' : 'false',
-                    type: data.type,
+                    panicType: data.type,
                     userID: data.userID,
                     vehicleReg: data.vehicleReg ? data.vehicleReg : '',
                     vehicleID: data.vehicleID ? data.vehicleID : '',

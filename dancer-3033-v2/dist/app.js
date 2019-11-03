@@ -23,9 +23,9 @@ exports.app.use((req, res, next) => {
 });
 const port = process.env.PORT || 3003;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
-log_1.default(`🥦🥦🥦 dancer service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
+log_1.default(`🥦🥦🥦 dancer Firebase service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
 server.listen(port, () => {
-    console.info(`\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛`);
+    log_1.default(`\n\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n\n`);
 });
 const ar = new ar_1.default();
 log_1.default(`\n🔆🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);

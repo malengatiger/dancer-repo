@@ -40,6 +40,7 @@ export class Rating {
     public index: number | undefined;
     public landmarkID: string | undefined;
     public landmarkName: string | undefined;
+    public routePointID: string | undefined;
     public created: string | undefined;
   
   }

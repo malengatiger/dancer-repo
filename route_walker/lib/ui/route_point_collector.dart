@@ -38,10 +38,9 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     isStopped = true;
     _checkPermission();
     _getRoute();
-
   }
 
-  void _getRoute()  async {
+  void _getRoute() async {
     _route = await Prefs.getRoute();
     _getCollectionPoints();
   }
@@ -70,7 +69,8 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
       routeBuilderBloc.cancelTimer();
       routeBuilderBloc.startRoutePointCollectionTimer(
           route: _route, collectionSeconds: collectionSeconds);
-      _showSnack(color: Colors.teal[300], message: 'Location collection started');
+      _showSnack(
+          color: Colors.teal[300], message: 'Location collection started');
       setState(() {
         isStopped = false;
       });
@@ -84,7 +84,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   }
 
   _stopTimer() async {
-
     _showSnack(
         message:
             'Location collection stopped ${getFormattedDateHourMinuteSecond()}',
@@ -162,9 +161,8 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                 backgroundColor: isStopped == false
                     ? Colors.pink[300]
                     : Colors.blueGrey[400],
-
                 bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(240),
+                  preferredSize: Size.fromHeight(300),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 16),
                     child: Column(
@@ -243,7 +241,26 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                           ],
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 12,
+                        ),
+                        StreamBuilder<String>(
+                            stream: routeBuilderBloc.errorStream,
+                            builder: (context, snapshot) {
+                              var err = 'Error messaging will happen here';
+                              if (snapshot.hasData) {
+                                err = snapshot.data;
+                              }
+                              return Row(
+                                children: <Widget>[
+                                  Text(
+                                    err,
+                                    style: Styles.whiteSmall,
+                                  ),
+                                ],
+                              );
+                            }),
+                        SizedBox(
+                          height: 20,
                         ),
                       ],
                     ),
@@ -319,7 +336,9 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                       if (_routePointsCollected.length > 10) {
                         _onBuildRoute();
                       } else {
-                        _showSnack(message: 'Too few points collected', color: Colors.red);
+                        _showSnack(
+                            message: 'Too few points collected',
+                            color: Colors.red);
                       }
                       break;
                     case 1:
@@ -357,8 +376,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     _startCreateRoutePointsPage();
   }
 
-
-
   void _confirmStart() {
     if (_routePointsCollected.isEmpty) {
       _startTimer();
@@ -387,14 +404,12 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                 ),
               ),
               actions: <Widget>[
-
                 IconButton(
                   icon: Icon(Icons.cancel),
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-
                 ),
                 FlatButton(
                   child: Text(
@@ -426,7 +441,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   }
 
   @override
-  onModeSelected(int seconds)  {
+  onModeSelected(int seconds) {
     print(
         '****** ⌛️ ⌛️ ⌛️ ⌛️ onModeSelected, seconds: 🧩 $seconds  ⌛ - restart timer');
     routeBuilderBloc.cancelTimer();

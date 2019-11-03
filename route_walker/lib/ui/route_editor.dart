@@ -30,9 +30,12 @@ class _NewRoutePageState extends State<NewRoutePage>
 
   List<ar.Route> assocRoutes = List();
   void _getRoutes() async {
-    assocRoutes = await routeBuilderBloc.getRoutesByAssociation(widget.association.associationID);
-    debugPrint('🧩🧩🧩🧩 ${widget.association.associationName} 🍏 🍎 Association routes: 🧩🧩 ${assocRoutes.length} 🧩🧩');
+    assocRoutes = await routeBuilderBloc
+        .getRoutesByAssociation(widget.association.associationID);
+    debugPrint(
+        '🧩🧩🧩🧩 ${widget.association.associationName} 🍏 🍎 Association routes: 🧩🧩 ${assocRoutes.length} 🧩🧩');
   }
+
   void _writeRoute() async {
     if (isBusy) {
       return;
@@ -43,21 +46,22 @@ class _NewRoutePageState extends State<NewRoutePage>
           message: 'Enter route name',
           listener: this,
           actionLabel: 'Close');
-    }
-    bool isFound = false;
-    assocRoutes.forEach((r) {
-      if (r.name == name) {
-        isFound = true;
-      }
-    });
-    if (isFound) {
-      AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key,
-          message: 'Duplicate route name',
-          listener: this,
-          actionLabel: 'close');
       return;
     }
+//    bool isFound = false;
+//    assocRoutes.forEach((r) {
+//      if (r.name == name) {
+//        isFound = true;
+//      }
+//    });
+//    if (isFound) {
+//      AppSnackbar.showErrorSnackbar(
+//          scaffoldKey: _key,
+//          message: 'Duplicate route name',
+//          listener: this,
+//          actionLabel: 'close');
+//      return;
+//    }
 
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key,
@@ -74,7 +78,7 @@ class _NewRoutePageState extends State<NewRoutePage>
       associationName: widget.association.associationName,
       countryID: widget.association.countryID,
       countryName: widget.association.countryName,
-      color:  color,
+      color: color,
       created: DateTime.now().toUtc().toIso8601String(),
       isActive: true,
     );
@@ -83,20 +87,21 @@ class _NewRoutePageState extends State<NewRoutePage>
       await _bloc.addRoute(route);
       await _bloc.getRoutesByAssociation(widget.association.associationID);
       _key.currentState.removeCurrentSnackBar();
+      AppSnackbar.showSnackbarWithAction(
+          scaffoldKey: _key,
+          message: 'Route added, updating lists ...',
+          textColor: Colors.white,
+          backgroundColor: Colors.teal[800],
+          actionLabel: 'Done',
+          listener: this,
+          icon: Icons.done,
+          action: 1);
     } catch (e) {
       isBusy = false;
       print(e);
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'Failed to add Route');
     }
-
-    AppSnackbar.showSnackbarWithAction(
-        scaffoldKey: _key,
-        message: 'Route added',
-        textColor: Colors.white,
-        backgroundColor: Colors.black,
-        actionLabel: 'Done',
-        listener: this,
-        icon: Icons.done,
-        action: 1);
   }
 
   @override
@@ -110,7 +115,8 @@ class _NewRoutePageState extends State<NewRoutePage>
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(left:8.0, right: 20, bottom: 8),
+                  padding:
+                      const EdgeInsets.only(left: 8.0, right: 20, bottom: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -118,11 +124,18 @@ class _NewRoutePageState extends State<NewRoutePage>
                         widget.association.associationName,
                         style: Styles.whiteMedium,
                       ),
-                      SizedBox(width: 12,),
+                      SizedBox(
+                        width: 12,
+                      ),
                       Column(
                         children: <Widget>[
-                          Text('${assocRoutes.length}', style: Styles.blackBoldLarge,),
-                          SizedBox(height: 4,),
+                          Text(
+                            '${assocRoutes.length}',
+                            style: Styles.blackBoldLarge,
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
                           Text('Routes')
                         ],
                       ),
@@ -171,12 +184,20 @@ class _NewRoutePageState extends State<NewRoutePage>
                       height: 8,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left:28.0, bottom: 4.0),
+                      padding: const EdgeInsets.only(left: 28.0, bottom: 4.0),
                       child: Row(
                         children: <Widget>[
-                          Text('Color:', style: Styles.greyLabelSmall,),
-                          SizedBox(width: 8,),
-                          Text(color == null? 'None': color, style: Styles.blackBoldMedium,),
+                          Text(
+                            'Color:',
+                            style: Styles.greyLabelSmall,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            color == null ? 'None' : color,
+                            style: Styles.blackBoldMedium,
+                          ),
                         ],
                       ),
                     ),
@@ -184,7 +205,7 @@ class _NewRoutePageState extends State<NewRoutePage>
                       height: 20,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left:28.0, bottom: 4.0),
+                      padding: const EdgeInsets.only(left: 28.0, bottom: 4.0),
                       child: Row(
                         children: <Widget>[
                           RaisedButton(
@@ -192,33 +213,46 @@ class _NewRoutePageState extends State<NewRoutePage>
                             elevation: 4,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Black', style: Styles.whiteSmall,),
+                              child: Text(
+                                'Black',
+                                style: Styles.whiteSmall,
+                              ),
                             ),
                             onPressed: () {
                               color = RouteMap.colorBlack;
                               setState(() {});
                             },
                           ),
-                          SizedBox(width: 20,),
+                          SizedBox(
+                            width: 20,
+                          ),
                           RaisedButton(
                             color: Colors.yellow,
                             elevation: 4,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Yellow', style: Styles.blackSmall,),
+                              child: Text(
+                                'Yellow',
+                                style: Styles.blackSmall,
+                              ),
                             ),
                             onPressed: () {
                               color = RouteMap.colorYellow;
                               setState(() {});
                             },
                           ),
-                          SizedBox(width: 20,),
+                          SizedBox(
+                            width: 20,
+                          ),
                           RaisedButton(
                             color: Colors.red,
                             elevation: 4,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Red', style: Styles.whiteSmall,),
+                              child: Text(
+                                'Red',
+                                style: Styles.whiteSmall,
+                              ),
                             ),
                             onPressed: () {
                               color = RouteMap.colorRed;
@@ -228,9 +262,11 @@ class _NewRoutePageState extends State<NewRoutePage>
                         ],
                       ),
                     ),
-                    SizedBox(height: 4,),
+                    SizedBox(
+                      height: 4,
+                    ),
                     Padding(
-                      padding: const EdgeInsets.only(left:28.0, bottom: 4.0),
+                      padding: const EdgeInsets.only(left: 28.0, bottom: 4.0),
                       child: Row(
                         children: <Widget>[
                           RaisedButton(
@@ -238,33 +274,46 @@ class _NewRoutePageState extends State<NewRoutePage>
                             elevation: 4,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Azure', style: Styles.whiteSmall,),
+                              child: Text(
+                                'Azure',
+                                style: Styles.whiteSmall,
+                              ),
                             ),
                             onPressed: () {
                               color = RouteMap.colorAzure;
                               setState(() {});
                             },
                           ),
-                          SizedBox(width: 20,),
+                          SizedBox(
+                            width: 20,
+                          ),
                           RaisedButton(
                             color: Colors.green[700],
                             elevation: 4,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Green', style: Styles.whiteSmall,),
+                              child: Text(
+                                'Green',
+                                style: Styles.whiteSmall,
+                              ),
                             ),
                             onPressed: () {
                               color = RouteMap.colorGreen;
                               setState(() {});
                             },
                           ),
-                          SizedBox(width: 20,),
+                          SizedBox(
+                            width: 20,
+                          ),
                           RaisedButton(
                             color: Colors.cyan,
                             elevation: 4,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Cyan', style: Styles.whiteSmall,),
+                              child: Text(
+                                'Cyan',
+                                style: Styles.whiteSmall,
+                              ),
                             ),
                             onPressed: () {
                               color = RouteMap.colorCyan;
@@ -274,7 +323,9 @@ class _NewRoutePageState extends State<NewRoutePage>
                         ],
                       ),
                     ),
-                    SizedBox(height: 24,),
+                    SizedBox(
+                      height: 24,
+                    ),
                     RaisedButton(
                       onPressed: _writeRoute,
                       elevation: 8,

@@ -24,11 +24,9 @@ class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
     }
-    public static async sendVehicleArrival(
-        data: any,
-    ): Promise<any> {
+    public static async sendVehicleArrival(data: any,): Promise<any> {
         const options: any = {
-            priority: "normal",
+            priority: "high",
             timeToLive: 60 * 60,
         };
         const payload: any = {
@@ -37,6 +35,7 @@ class Messaging {
                 body: data.vehicleReg + ' at ' + data.landmarkName,
             },
             data: {
+                type: Constants.VEHICLE_ARRIVALS,
                 vehicleArrivalID: data.vehicleArrivalID,
                 landmarkID: data.landmarkID,
                 landmarkName: data.landmarkName,
@@ -66,6 +65,7 @@ class Messaging {
                 body: data.name,
             },
             data: {
+                type: Constants.ROUTES,
                 routeID: data.routeID,
                 name: data.name,
                 created: data.created
@@ -93,6 +93,7 @@ class Messaging {
                 body: data.landmarkName,
             },
             data: {
+                type: Constants.LANDMARKS,
                 landmarkID: data.landmarkID,
                 landmarkName: data.landmarkName,
                 created: data.created
@@ -119,6 +120,7 @@ class Messaging {
                 body: data.vehicleReg + ' at ' + data.landmarkName,
             },
             data: {
+                type: Constants.VEHICLE_DEPARTURES,
                 vehicleDepartureID: data.vehicleDepartureID,
                 landmarkID: data.landmarkID,
                 landmarkName: data.landmarkName,
@@ -148,6 +150,7 @@ class Messaging {
                 body: data.fromLandmarkName,
             },
             data: {
+                type: Constants.COMMUTER_PICKUP_LANDMARKS,
                 commuterPickupLandmarkID: data.commuterPickupLandmarkID,
                 fromLandmarkID: data.fromLandmarkID,
                 fromLandmarkName: data.fromLandmarkName,
@@ -182,6 +185,7 @@ class Messaging {
                 body: data.fromLandmarkName,
             },
             data: {
+                type: Constants.COMMUTER_REQUESTS,
                 commuterRequestID: data.commuterRequestID,
                 fromLandmarkID: data.fromLandmarkID,
                 fromLandmarkName: data.fromLandmarkName,
@@ -217,16 +221,12 @@ class Messaging {
                 body: data.created,
             },
             data: {
+                type: Constants.COMMUTER_ARRIVAL_LANDMARKS,
                 commuterArrivalLandmarkID: data.commuterArrivalLandmarkID,
                 fromLandmarkID: data.fromLandmarkID,
                 fromLandmarkName: data.fromLandmarkName,
                 toLandmarkID: data.toLandmarkID,
                 toLandmarkName: data.toLandmarkName,
-                // routeName: data.routeName,
-                // routeID: data.routeID,
-                // vehicleID: data.vehicleID,
-                // vehicleReg: data.vehicleReg,
-                // departureID: data.departureID,
                 created: data.created
             },
         };
@@ -251,6 +251,7 @@ class Messaging {
                 body: data.created,
             },
             data: {
+                type: Constants.DISPATCH_RECORDS,
                 dispatched: data.dispatched ? 'true' : 'false',
                 landmarkID: data.landmarkID,
                 marshalID: data.marshalID,
@@ -295,6 +296,7 @@ class Messaging {
                 body: data.firstName + " " + data.lastName + " created:" + data.created,
             },
             data: {
+                type: Constants.USERS,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
@@ -322,8 +324,9 @@ class Messaging {
                 body: data.type + " " + data.created + " userID:" + data.userID,
             },
             data: {
+                type: Constants.COMMUTER_PANICS,
                 active: data.active ? 'true' : 'false',
-                type: data.type,
+                panicType: data.type,
                 userID: data.userID,
                 vehicleReg: data.vehicleReg ? data.vehicleReg : '',
                 vehicleID: data.vehicleID ? data.vehicleID : '',

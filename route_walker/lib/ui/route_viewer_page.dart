@@ -3,10 +3,11 @@ import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
-import 'package:aftarobotlibrary4/data/user.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
+import 'package:aftarobotlibrary4/data/user.dart' as ar;
 import 'package:aftarobotlibrary4/maps/estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
+import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -17,9 +18,10 @@ import 'package:route_walker/bloc/route_builder_bloc.dart';
 import 'package:route_walker/ui/route_editor.dart';
 import 'package:route_walker/ui/route_point_collector.dart';
 import 'package:route_walker/ui/routepoints_manager.dart';
-import 'package:aftarobotlibrary4/signin/sign_in.dart';
+
+import 'flag_routepoint_landmarks.dart';
+import 'landmark_manager.dart';
 import 'landmark_routes_page.dart';
-import 'landmarks.dart';
 
 /*
   This widget manages a list of routes. A route builder selects a route and starts the LocationCollector
@@ -215,7 +217,8 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     if (association == null) {
       return;
     }
-    print('🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage');
+    print(
+        '🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage for ${association.toJson()}');
     Navigator.push(context, SlideRightRoute(widget: NewRoutePage(association)));
   }
 
@@ -528,7 +531,7 @@ class _RouteCardState extends State<RouteCard>
           Navigator.push(
             context,
             SlideRightRoute(
-              widget: LandmarksPage(
+              widget: FlagRoutePointLandmarks(
                 route: widget.route,
               ),
             ),
@@ -678,7 +681,11 @@ class _RouteCardState extends State<RouteCard>
   _startCreateRoutePointsPage() async {
     Navigator.pop(context);
     await Prefs.saveRoute(widget.route);
-    Navigator.push(context, SlideRightRoute(widget: CreateRoutePointsPage()));
+    if (widget.route.routePoints.isNotEmpty) {
+      Navigator.push(context, SlideRightRoute(widget: LandmarksManagerPage()));
+    } else {
+      Navigator.push(context, SlideRightRoute(widget: CreateRoutePointsPage()));
+    }
   }
 
   @override

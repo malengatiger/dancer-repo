@@ -9,8 +9,8 @@ const LandmarkSchema = new mongoose_1.default.Schema({
     position: { type: Map, required: true },
     routeDetails: { type: Array, required: true, default: [] },
     cities: { type: Array, required: true, default: [] },
-    countryID: { type: String, required: true, },
-    countryName: { type: String, required: true, },
+    countryID: { type: String, required: false, },
+    countryName: { type: String, required: false, },
     landmarkID: { type: String, required: true, },
     created: { type: String, required: true, default: new Date().toISOString() },
 });

@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const route_1 = __importDefault(require("../models/route"));
 const log_1 = __importDefault(require("../log"));
 const uuid = require("uuid");
+const mongoose_1 = require("mongoose");
 class RouteController {
     routes(app) {
         log_1.default(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
@@ -73,7 +74,7 @@ class RouteController {
                 route.routeID = uuid();
                 route.created = new Date().toISOString();
                 const result = yield route.save();
-                // log(result);
+                log_1.default(`result ${result}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -110,11 +111,39 @@ class RouteController {
                 if (req.body.clear == true) {
                     route.routePoints = [];
                 }
+                let index = 0;
                 req.body.routePoints.forEach((p) => {
                     route.routePoints.push(p);
                 });
                 const result = yield route.save();
                 log_1.default(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addRoutePoints failed'
+                });
+            }
+        }));
+        app.route("/addRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const route = yield route_1.default.findOne({ routeID: req.body.routeID });
+                // check clear flag
+                if (req.body.clear == true) {
+                    route.routePoints = [];
+                    yield route.save();
+                }
+                req.body.routePoints.forEach((p) => {
+                    route.routePoints.push(p);
+                });
+                const result = yield route.save();
+                log_1.default(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
+                const routeX = yield route_1.default.findOne({ routeID: req.body.routeID });
+                log_1.default(`💙💙 AFTER reread: Points: ${routeX.routePoints.length} - 🧡💛 ${route.name}`);
                 // log(result);
                 res.status(200).json(result);
             }
@@ -149,37 +178,64 @@ class RouteController {
                 });
             }
         }));
-        app.route("/updateRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /updateRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+        app.route("/updateLandmarkRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /updateLandmarkRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const routeID = req.body.routeID;
-                const points = req.body.routePoints;
+                const routePoints = req.body.routePoints;
                 const route = yield route_1.default.findOne({ routeID: routeID });
                 if (!route) {
                     throw new Error('Route not found');
                 }
-                let cnt = 0;
-                let cnt2 = 0;
-                route.routePoints.forEach((p) => {
-                    points.forEach((landmarkPoint) => {
-                        cnt2++;
-                        if (p.latitude === landmarkPoint.latitude && p.longitude === landmarkPoint.longitude) {
-                            p = landmarkPoint;
-                            cnt++;
-                            log_1.default(`☘️ Updated this landmark point: 🧡 #${cnt} 🧡 normal point 🍎 #${cnt2} for ${route.name} 💙💙 `);
-                        }
-                    });
+                log_1.default(`🔆🔆🔆 💙 ROUTE: ${route.name} updated. Will update route points ....`);
+                for (const routePoint of routePoints) {
+                    const mRes = yield route_1.default.updateOne({ "_id": new mongoose_1.Types.ObjectId(route.id), "routePoints.index": routePoint.index }, { $set: { "routePoints.$.landmarkID": routePoint.landmarkID,
+                            "routePoints.$.landmarkName": routePoint.landmarkName } });
+                    log_1.default(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 ${routePoint.landmarkName}`);
+                    console.log(mRes);
+                }
+                res.status(200).json({
+                    message: `${routePoints.length} route points updated for Landmarks`
                 });
-                yield route.save();
-                log_1.default(`💙💙 Points updated. ${cnt} ☘️☘️ for route: ${route.name} 🧡💛`);
-                res.status(200).json(route);
             }
             catch (err) {
                 console.error(err);
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 updateRoutePoints failed'
+                    message: ' 🍎🍎🍎🍎 updateLandmarkRoutePoints failed'
+                });
+            }
+        }));
+        app.route("/findNearestRoutePoint").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /findNearestRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const now = new Date().getTime();
+                const latitude = parseFloat(req.body.latitude);
+                const longitude = parseFloat(req.body.longitude);
+                const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+                const routeID = req.body.routeID;
+                const result = yield route_1.default.find({
+                    position: {
+                        $near: {
+                            $geometry: {
+                                coordinates: [longitude, latitude],
+                                type: "Point",
+                            },
+                            $maxDistance: RADIUS,
+                        },
+                    },
+                });
+                //// log(result);
+                const end = new Date().getTime();
+                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getLandmarks failed'
                 });
             }
         }));
