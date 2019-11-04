@@ -581,6 +581,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   bool isBusy = false;
+  static const batchSize = 300;
   void _snapPoints() async {
     setState(() {
       isBusy = true;
@@ -599,45 +600,27 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       index++;
     });
     try {
-      if (_routePoints.length < 301) {
+      var batches = BatchUtil.makeBatches(_routePoints, batchSize);
+      if (_routePoints.length < batchSize) {
         print(
             '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${_route.name} ...');
         await DancerDataAPI.addRoutePoints(
             routeId: _route.routeID, routePoints: _routePoints, clear: true);
       } else {
         //batches of 300
-        var rem = _routePoints.length % 300;
-        var pages = _routePoints.length ~/ 300;
-
-        var map = Map<int, List<RoutePoint>>();
-        if (rem > 0) {
-          pages++;
-        }
-        int startIndex = 0;
-
-        for (var i = 0; i < pages; i++) {
-          map[i] = List<RoutePoint>();
-          for (var j = startIndex; j < (startIndex + 300); j++) {
-            try {
-              map[i].add(_routePoints.elementAt(j));
-            } catch (e) {}
-          }
-          print(
-              '🍎🍎🍎🍎 adding ${map[i].length} route points to 🍎 ${_route.name} ...');
-          _route.routePoints = map[i];
-          bool clear;
-          if (i == 0) {
-            clear = true;
-          } else {
-            clear = false;
-          }
+        var index = 0;
+        for (var batch in batches.values) {
           await DancerDataAPI.addRoutePoints(
-              routeId: _route.routeID, routePoints: map[i], clear: clear);
-          print(
-              '🧩🧩🧩🧩🧩 calculating distances for route  🍎 ${_route.name} ...');
-          setState(() {});
+              routeId: _route.routeID,
+              routePoints: batch,
+              clear: index == 0 ? true : false);
+          index++;
         }
       }
+      AppSnackbar.showSnackbar(
+          scaffoldKey: _key,
+          message: 'Route Points added',
+          backgroundColor: Colors.teal[800]);
     } catch (e) {
       print(e);
       AppSnackbar.showErrorSnackbar(

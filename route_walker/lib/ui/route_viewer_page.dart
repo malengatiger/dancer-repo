@@ -203,6 +203,14 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                   icon: Icon(Icons.room),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0, top: 4.0),
+                child: IconButton(
+                  onPressed: _refresh,
+                  iconSize: 24,
+                  icon: Icon(Icons.refresh),
+                ),
+              ),
             ],
             bottom: _getTotalsView(),
           ),

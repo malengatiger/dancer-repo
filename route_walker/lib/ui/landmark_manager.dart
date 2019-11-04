@@ -109,9 +109,33 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   Set<Marker> _markers = Set();
 
+  void _checkPoints() {
+    var fList = _route.routePoints.getRange(0, 1);
+    var gList = _route.routePoints
+        .getRange(_route.routePoints.length - 1, _route.routePoints.length - 0);
+    debugPrint(
+        '\n\n\n\n💦 💦 💦 💦  total points: ${_route.routePoints.length} 🔴 route points at each end 🔆 🔆 🔆 🔆 \n\n');
+
+    fList.forEach((f) {
+      prettyPrint(f.toJson(), '💦 💦 💦 💦 💦 💦 💦 💦  FIRST ///');
+    });
+    gList.forEach((f) {
+      prettyPrint(f.toJson(), '🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  LAST ///');
+    });
+    debugPrint(
+        '\n\n\n\n💦 💦 💦 💦  end of route points at each end 🔆 🔆 🔆 🔆 \n\n');
+  }
+
   void _setRouteMarkers() async {
     print(
         '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 ... points: ${_route.routePoints.length} 🍀️🍀️🍀️');
+    _checkPoints();
+    var index = 0;
+    _route.routePoints.forEach((p) {
+      p.index = index;
+      index++;
+    });
+    _checkPoints();
     _markers.clear();
     var icon =
         BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
@@ -191,6 +215,9 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   _onMarkerTapped(RoutePoint routePoint) async {
     print('Marker tapped: route: ${routePoint.created}');
+    if ((routePoint.landmarkID != null)) {
+      return;
+    }
     await _mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
             target: LatLng(routePoint.latitude, routePoint.longitude),
