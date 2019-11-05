@@ -142,27 +142,21 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     // await _buildMarkerIcon();
     try {
       _route.routePoints.forEach((m) {
+        if (m.landmarkID == null) {
+          icon =
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+          putMarkerOnMap(m, icon);
+        }
+      });
+      _route.routePoints.forEach((m) {
         if (m.landmarkID != null) {
           icon =
               BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
-        } else {
-          icon =
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+          putMarkerOnMap(m, icon);
         }
-        _markers.add(Marker(
-            onTap: () {
-              print(
-                  'LandmarkManager: 🔴 marker tapped!! ❤️ 🧡 💛   ${m.created}');
-              _onMarkerTapped(m);
-            },
-            icon: icon,
-            markerId: MarkerId(DateTime.now().toIso8601String()),
-            position: LatLng(m.latitude, m.longitude),
-            infoWindow: InfoWindow(
-                title: m.landmarkID == null ? m.created : m.landmarkName,
-                snippet: m.landmarkID == null ? m.created : 'LANDMARK')));
       });
       print('🍏 🍎 markers added: ${_markers.length}');
+      //
       if (_route.routePoints.isNotEmpty) {
         _setRoutePolyline();
       }
@@ -171,6 +165,20 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     } catch (e) {
       print(e);
     }
+  }
+
+  void putMarkerOnMap(RoutePoint m, BitmapDescriptor icon) {
+    _markers.add(Marker(
+        onTap: () {
+          print('LandmarkManager: 🔴 marker tapped!! ❤️ 🧡 💛   ${m.created}');
+          _onMarkerTapped(m);
+        },
+        icon: icon,
+        markerId: MarkerId(DateTime.now().toIso8601String()),
+        position: LatLng(m.latitude, m.longitude),
+        infoWindow: InfoWindow(
+            title: m.landmarkID == null ? m.created : m.landmarkName,
+            snippet: m.landmarkID == null ? m.created : 'LANDMARK')));
   }
 
   Set<Polyline> polyLines = Set();
