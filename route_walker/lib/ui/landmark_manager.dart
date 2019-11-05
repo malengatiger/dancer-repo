@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
@@ -29,6 +31,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
   List<Landmark> _landmarks = List();
+  List<RoutePoint> _routePoints = List();
   Completer<GoogleMapController> _completer = Completer();
   GoogleMapController _mapController;
   CameraPosition _cameraPosition = CameraPosition(
@@ -48,32 +51,28 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   void _getRoute() async {
     _route = await Prefs.getRoute();
     assert(_route != null);
-    await _setRoutePoints();
-    //await _getLandmarks();
+
+    await _getRoutePoints();
     setState(() {});
   }
 
-  Future _getLandmarks() async {
-    _landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
+  Future _getRoutePoints() async {
+    _routePoints = await LocalDBAPI.getRoutePoints(routeID: _route.routeID);
+    if (_routePoints.isEmpty) {
+      _route = await DancerListAPI.getRouteByID(routeID: _route.routeID);
+      await LocalDBAPI.addRoutePoints(
+          routeID: _route.routeID, routePoints: _route.routePoints);
+    } else {
+      debugPrint('Route points from local DB ${_route.routePoints.length}');
+      _route.routePoints = _routePoints;
+    }
     print('🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: ${_landmarks.length}');
     _buildItems();
     if (_mapController != null) {
       _setRouteMarkers();
     }
+    _setRoutePoints();
     setState(() {});
-  }
-
-  Future _buildMarkerIcon() async {
-    if (_markerIcon != null) return;
-    final ImageConfiguration imageConfiguration =
-        createLocalImageConfiguration(context, size: Size.square(600.0));
-    await BitmapDescriptor.fromAssetImage(imageConfiguration, 'assets/pin.png')
-        .then((img) {
-      _markerIcon = img;
-      print('_buildLandmarkIcon Ⓜ️ Ⓜ️ Ⓜ️ has been created');
-    }).catchError((err) {
-      print(err);
-    });
   }
 
   void _buildItems() {
@@ -92,12 +91,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     }
   }
 
-  List<RoutePoint> _routePoints = List();
-
   Future _setRoutePoints() async {
-    assert(_route != null);
-
-    _routePoints = _route.routePoints;
     if (_route.routePoints.isNotEmpty) {
       showButton = false;
     }
@@ -129,13 +123,13 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   void _setRouteMarkers() async {
     print(
         '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 ... points: ${_route.routePoints.length} 🍀️🍀️🍀️');
-    _checkPoints();
+    //_checkPoints();
     var index = 0;
     _route.routePoints.forEach((p) {
       p.index = index;
       index++;
     });
-    _checkPoints();
+    //_checkPoints();
     _markers.clear();
     var icon =
         BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);

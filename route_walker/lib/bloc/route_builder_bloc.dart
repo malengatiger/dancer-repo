@@ -66,6 +66,10 @@ class RouteBuilderBloc {
 
   final StreamController<List<RoutePoint>> _routePointController =
       StreamController.broadcast();
+  final StreamController<List<Association>> _associationController =
+      StreamController.broadcast();
+  final StreamController<List<ar.Route>> _routeController =
+      StreamController.broadcast();
   final StreamController<List<RoutePoint>> _rawRoutePointController =
       StreamController.broadcast();
   final StreamController<List<Landmark>> _routeLandmarksController =
@@ -89,8 +93,12 @@ class RouteBuilderBloc {
     _routePointController.close();
     _rawRoutePointController.close();
     _routeLandmarksController.close();
+    _routeController.close();
+    _associationController.close();
   }
 
+  Stream get associationStream => _associationController.stream;
+  Stream get routeStream => _routeController.stream;
   Stream get appModelStream => _appModelController.stream;
   Stream get currentLocationStream => _currentLocationController.stream;
   Stream get geofenceEventStream => _geofenceEventController.stream;
@@ -189,14 +197,13 @@ class RouteBuilderBloc {
     debugPrint(
         '### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
     var asses = await DancerListAPI.getAssociations();
+    await LocalDBAPI.addAssociations(associations: asses);
 
     debugPrint(
         ' 📍📍📍📍 adding ${asses.length} Associations to  📎 model and stream sink ...');
-    _appModel.associations.clear();
-    _appModel.associations.addAll(asses);
-    _appModelController.sink.add(_appModel);
+    _associationController.sink.add(asses);
     debugPrint('++++ ✅  Associations retrieved: ${asses.length}\n');
-    return _appModel.associations;
+    return asses;
   }
 
   Future getRoutesByAssociation(String associationID) async {
@@ -204,16 +211,25 @@ class RouteBuilderBloc {
         '### ℹ️  getRoutes: getting association routes 🚨 $associationID  in Firestore ..........\n');
     var routes = await DancerListAPI.getRoutesByAssociation(
         associationID: associationID);
+    //todo - delete routes first
+    await LocalDBAPI.deleteRoutes(associationID);
+    await LocalDBAPI.addRoutes(routes: routes);
 
-    debugPrint(
-        ' 📍📍📍📍 adding ${routes.length} routes to  📎 model and stream sink ...');
-    _appModel.routes.clear();
-    _appModel.routes.addAll(routes);
-    _appModel.routes.sort((a, b) => a.name.compareTo(b.name));
-    _appModelController.sink.add(_appModel);
+    updateRoutesInStream(routes);
     debugPrint('++++ ✅  routes retrieved: ${routes.length}\n');
 
-    return _appModel.routes;
+    return routes;
+  }
+
+  void updateRoutesInStream(List<ar.Route> routes) {
+    debugPrint(
+        ' 📍📍📍📍 adding ${routes.length} routes to  📎 model and stream sink ...');
+    routes.sort((a, b) => a.name.compareTo(b.name));
+    _routeController.sink.add(routes);
+//    _appModel.routes.clear();
+//    _appModel.routes.addAll(routes);
+//    _appModel.routes.sort((a, b) => a.name.compareTo(b.name));
+//    _appModelController.sink.add(_appModel);
   }
 
   Future addRoutesToMongo(List<ar.Route> routes) async {
@@ -563,7 +579,8 @@ class RouteBuilderBloc {
 
     index++;
     try {
-      await LocalDBAPI.addRoutePoint(route: route, routePoint: point);
+      await LocalDBAPI.addRawRoutePoint(
+          routeID: route.routeID, routePoint: point);
       debugPrint(
           '🔴 🔴 🔴 🔴 🔴 🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
       _rawRoutePoints.add(point);

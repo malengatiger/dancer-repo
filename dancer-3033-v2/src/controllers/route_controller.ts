@@ -22,10 +22,9 @@ export class RouteController {
                 const assID: any = req.body.associationID;
                 const now = new Date().getTime();
                 log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`)
-                const result = await Route.find({ associationID: assID });
+                const result = await Route.find({ associationID: assID }, 'name associationID routeID id');
                 log(result);
                 result.forEach((m: any) => {
-
                     if (m.associationID === assID) {
                         log(`😍 ${m.name} - 😍 - association is OK: ${m.associationID}`);
                     }

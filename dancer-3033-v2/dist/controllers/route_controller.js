@@ -26,7 +26,7 @@ class RouteController {
                 const assID = req.body.associationID;
                 const now = new Date().getTime();
                 log_1.default(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
-                const result = yield route_1.default.find({ associationID: assID });
+                const result = yield route_1.default.find({ associationID: assID }, 'name associationID routeID id');
                 log_1.default(result);
                 result.forEach((m) => {
                     if (m.associationID === assID) {
@@ -46,19 +46,14 @@ class RouteController {
             }
         }));
         app.route("/getRouteById").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.default(`\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
-                const rID = req.body.routeID;
+                const routeID = req.body.routeID;
                 const now = new Date().getTime();
-                log_1.default(`💦 💦 💦 💦 💦 💦 routeID for routes: ☘️☘️ ${rID} ☘️☘️`);
-                const result = yield route_1.default.find({ routeID: rID });
+                log_1.default(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${routeID} ☘️☘️`);
+                const result = yield route_1.default.findOne({ routeID: routeID });
                 log_1.default(result);
-                result.forEach((m) => {
-                    if (m.routeID === rID) {
-                        log_1.default(`😍 ${m.name} - 😍 - routeID is OK: ${m.routeID}`);
-                    }
-                });
                 const end = new Date().getTime();
                 log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍route`);
                 res.status(200).json(result);

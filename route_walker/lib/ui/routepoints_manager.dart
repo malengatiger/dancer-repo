@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
@@ -50,7 +51,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   void _getRoute() async {
     _route = await Prefs.getRoute();
     assert(_route != null);
-    await _setRoutePoints();
+    await _getRawRoutePoints();
     await _getLandmarks();
     setState(() {});
   }
@@ -93,11 +94,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   List<RoutePoint> _routePoints = List();
   StreamSubscription<List<RoutePoint>> _subscription;
-  Future _setRoutePoints() async {
-    _rawRoutePoints = _route.rawRoutePoints;
-    if (_rawRoutePoints == null || _rawRoutePoints.isEmpty) {
-      _rawRoutePoints = await routeBuilderBloc.getRawRoutePoints(route: _route);
-    }
+  Future _getRawRoutePoints() async {
+    _rawRoutePoints =
+        await LocalDBAPI.getRawRoutePoints(routeID: _route.routeID);
     debugPrint(
         '\n\n🍏 🍎 🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩  snapped: ${_routePoints.length} 🧩\n\n');
     setState(() {});
@@ -192,7 +191,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
                   icon: Icon(Icons.refresh),
-                  onPressed: _setRoutePoints,
+                  onPressed: _getRawRoutePoints,
                 ),
               ),
             ],
@@ -606,7 +605,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${_route.name} ...');
         await DancerDataAPI.addRoutePoints(
             routeId: _route.routeID, routePoints: _routePoints, clear: true);
-      } else {
+        await LocalDBAPI.addRoutePoints(
+            routeID: _route.routeID, routePoints: _routePoints);
         //batches of 300
         var index = 0;
         for (var batch in batches.values) {
@@ -614,6 +614,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
               routeId: _route.routeID,
               routePoints: batch,
               clear: index == 0 ? true : false);
+          await LocalDBAPI.addRoutePoints(
+              routeID: _route.routeID, routePoints: batch);
           index++;
         }
       }
