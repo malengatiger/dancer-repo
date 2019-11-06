@@ -166,7 +166,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     if (routes.isNotEmpty) {
       debugPrint('🔆 🔆 🔆 🔆 routes from remote db: 🌿  ${routes.length}');
       routes.forEach(((r) {
-        debugPrint('🔆 🔆 🔆 🔆  route from remote db: 🌿  ${r.toJson()}');
+        debugPrint('🔆 🔆 🔆 🔆  route from remote db: 🌿  ${r.name}');
       }));
     }
     setState(() {});
@@ -481,7 +481,7 @@ class _RouteCardState extends State<RouteCard>
 
   void _showUpdateRouteDialog() async {
     print('*************** update route: ');
-    await Prefs.saveRoute(widget.route);
+    await Prefs.saveRouteID(widget.route.routeID);
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
@@ -618,7 +618,7 @@ class _RouteCardState extends State<RouteCard>
       child: GestureDetector(
         onTap: () async {
           Navigator.pop(context);
-          await Prefs.saveRoute(widget.route);
+          await Prefs.saveRouteID(widget.route.routeID);
           Navigator.push(
             context,
             SlideRightRoute(
@@ -642,7 +642,7 @@ class _RouteCardState extends State<RouteCard>
       child: GestureDetector(
         onTap: () async {
           Navigator.pop(context);
-          await Prefs.saveRoute(widget.route);
+          await Prefs.saveRouteID(widget.route.routeID);
           Navigator.push(
             context,
             SlideRightRoute(
@@ -665,7 +665,7 @@ class _RouteCardState extends State<RouteCard>
 
   _startRoutePointCollector() async {
     print('_startRoutePointCollector');
-    await Prefs.saveRoute(widget.route);
+    await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
 
     Navigator.push(context, SlideRightRoute(widget: RoutePointCollector()));
@@ -674,7 +674,7 @@ class _RouteCardState extends State<RouteCard>
   _startRouteMapPage() async {
     print('_startRouteLandmarks ........ route: ${widget.route.name}');
     Navigator.pop(context);
-    await Prefs.saveRoute(widget.route);
+    await Prefs.saveRouteID(widget.route.routeID);
     List<aftarobot.Route> list = List();
     list.add(widget.route);
 
@@ -772,7 +772,7 @@ class _RouteCardState extends State<RouteCard>
   aftarobot.Route route;
   _startCreateRoutePointsPage() async {
     debugPrint('_startCreateRoutePointsPage........... : 🍎 🍎 🍎');
-    await Prefs.saveRoute(widget.route);
+    await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
     if (widget.route.routePoints.isEmpty) {
       var points =

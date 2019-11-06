@@ -48,9 +48,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     _getRoute();
   }
 
+  String routeID;
   void _getRoute() async {
-    _route = await Prefs.getRoute();
-    assert(_route != null);
+    routeID = await Prefs.getRouteID();
+    assert(routeID != null);
     await _getRawRoutePoints();
     await _getLandmarks();
     setState(() {});
@@ -93,10 +94,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   List<RoutePoint> _routePoints = List();
-  StreamSubscription<List<RoutePoint>> _subscription;
   Future _getRawRoutePoints() async {
-    _rawRoutePoints =
-        await LocalDBAPI.getRawRoutePoints(routeID: _route.routeID);
+    _rawRoutePoints = await LocalDBAPI.getRawRoutePoints(routeID: routeID);
     debugPrint(
         '\n\n🍏 🍎 🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩  snapped: ${_routePoints.length} 🧩\n\n');
     setState(() {});

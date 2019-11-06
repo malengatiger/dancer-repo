@@ -14,14 +14,17 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="RouteWalker"
         tools:replace="android:label"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBvhKm4U0Blz70621ntH5ctw4XfUSuJUTc" />
         <!-- flutter_background_geolocation licence -->
         <meta-data android:name="com.transistorsoft.locationmanager.license"
                    android:value="9c12af374fa51474f20329ae23938274fd975353f2b9455fcc4771a00eb1d87f" />
-
+<!--        <meta-data-->
+<!--            android:name="flutterEmbedding"-->
+<!--            android:value="2" />-->
 
         <activity
             android:name=".MainActivity"
@@ -34,9 +37,9 @@
                  until Flutter renders its first frame. It can be removed if
                  there is no splash screen (such as the default splash screen
                  defined in @style/LaunchTheme). -->
-            <meta-data
-                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
-                android:value="true" />
+<!--            <meta-data-->
+<!--                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"-->
+<!--                android:value="true" />-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

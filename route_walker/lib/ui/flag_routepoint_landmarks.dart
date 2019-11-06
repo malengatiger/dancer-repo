@@ -1,3 +1,4 @@
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
@@ -557,6 +558,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
   int sequence;
   List<Landmark> landmarks;
   ar.Route _route;
+  String routeID;
 
   @override
   void initState() {
@@ -565,7 +567,11 @@ class _LandmarkEditorState extends State<LandmarkEditor>
   }
 
   void _search() async {
-    _route = await Prefs.getRoute();
+    routeID = await Prefs.getRouteID();
+    _route = await LocalDBAPI.getRoute(routeID);
+    if (_route == null) {
+      _route = await routeBuilderBloc.getRouteByID(routeID);
+    }
     landmarks = await routeBuilderBloc.findLandmarksNearRoutePoint(
         widget.routePoint, 0.1);
     landmarks.forEach((m) {

@@ -477,6 +477,9 @@ class RouteBuilderBloc {
 
   Future<ar.Route> getRouteByID(String routeID) async {
     var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
+    if (mRoute != null) {
+      await LocalDBAPI.addRoute(route: mRoute);
+    }
     return mRoute;
   }
 
@@ -506,15 +509,15 @@ class RouteBuilderBloc {
   double _prevLatitude, _prevLongitude;
   Future _collectRawRoutePoint() async {
     var currentLocation = await LocationUtil.getCurrentLocation();
-    var route = await Prefs.getRoute();
-    if (route == null) {
+    var routeID = await Prefs.getRouteID();
+    if (routeID == null) {
       return null;
     }
     if (currentLocation == null) {
       return null;
     }
     debugPrint(
-        '🧩 🧩  🧩 🧩  🧩 🧩 _collectRawRoutePoint : add point for 🔆  route:  👌 ${route.name}.............');
+        '🧩 🧩  🧩 🧩  🧩 🧩 _collectRawRoutePoint : add point for 🔆  routeID:  👌 $routeID.............');
     _addRawRoutePoint(
       latitude: currentLocation.coords.latitude,
       longitude: currentLocation.coords.longitude,
@@ -561,10 +564,10 @@ class RouteBuilderBloc {
   }
 
   Future _writeRawPoint({double latitude, double longitude}) async {
-    var route = await Prefs.getRoute();
+    var routeID = await Prefs.getRouteID();
     debugPrint(
-        '🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint to LOCAL DB for 🔆  route:  👌 ${route.name}.............');
-    assert(route != null);
+        '🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint to LOCAL DB for 🔆  routeID:  👌 $routeID.............');
+    assert(routeID != null);
     assert(latitude != null);
     assert(longitude != null);
 
@@ -573,14 +576,13 @@ class RouteBuilderBloc {
       longitude: longitude,
       created: DateTime.now().toUtc().toIso8601String(),
       index: index,
-      routeID: route.routeID,
+      routeID: routeID,
       position: Position(type: 'Point', coordinates: [longitude, latitude]),
     );
 
     index++;
     try {
-      await LocalDBAPI.addRawRoutePoint(
-          routeID: route.routeID, routePoint: point);
+      await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: point);
       debugPrint(
           '🔴 🔴 🔴 🔴 🔴 🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
       _rawRoutePoints.add(point);
@@ -589,7 +591,7 @@ class RouteBuilderBloc {
       print('👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿👿');
       print(e);
       _errorController.sink.add(
-          '_writeRawPoint: ⚠️ Problem writing route point to Local MongoDB');
+          '_writeRawPoint: ⚠️ Problem writing routeID point to Local MongoDB');
     }
     return null;
   }

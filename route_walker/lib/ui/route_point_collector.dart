@@ -1,3 +1,4 @@
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
@@ -40,8 +41,9 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     _getRoute();
   }
 
+  String routeID;
   void _getRoute() async {
-    _route = await Prefs.getRoute();
+    routeID = await Prefs.getRouteID();
     _getCollectionPoints();
   }
 
@@ -124,7 +126,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
 
   void _getCollectionPoints() async {
     _routePointsCollected =
-        await routeBuilderBloc.getRawRoutePoints(route: _route);
+        await LocalDBAPI.getRawRoutePoints(routeID: routeID);
     setState(() {});
   }
 
@@ -359,7 +361,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   }
 
   void _onBuildRoute() async {
-    await Prefs.saveRoute(_route);
+    await Prefs.saveRouteID(routeID);
     if (_routePointsCollected.length < 20) {
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key,

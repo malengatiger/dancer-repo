@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
-import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
@@ -40,6 +39,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   );
   BitmapDescriptor _markerIcon;
   aftarobot.Route _route;
+  int landmarksOnRoute = 0;
 
   @override
   void initState() {
@@ -49,24 +49,36 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   }
 
   void _getRoute() async {
-    _route = await Prefs.getRoute();
-    assert(_route != null);
+    var routeID = await Prefs.getRouteID();
+    assert(routeID != null);
+    _route = await LocalDBAPI.getRoute(routeID);
+    if (_route != null) {
+      if (_route.routePoints.isEmpty) {
+        _route = await routeBuilderBloc.getRouteByID(routeID);
+      }
+    } else {
+      _route = await routeBuilderBloc.getRouteByID(routeID);
+    }
 
     await _getRoutePoints();
     setState(() {});
   }
 
   Future _getRoutePoints() async {
-    _routePoints = await LocalDBAPI.getRoutePoints(routeID: _route.routeID);
+    _routePoints = _route.routePoints;
     if (_routePoints.isEmpty) {
-      _route = await DancerListAPI.getRouteByID(routeID: _route.routeID);
-      await LocalDBAPI.addRoutePoints(
-          routeID: _route.routeID, routePoints: _route.routePoints);
+      _route = await routeBuilderBloc.getRouteByID(_route.routeID);
     } else {
-      debugPrint('Route points from local DB ${_route.routePoints.length}');
+      debugPrint('Route points from local DB ${_routePoints.length}');
       _route.routePoints = _routePoints;
     }
-    print('🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: ${_landmarks.length}');
+    landmarksOnRoute = 0;
+    _routePoints.forEach((m) {
+      if (m.landmarkID != null) {
+        landmarksOnRoute++;
+      }
+    });
+    print('🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: $landmarksOnRoute');
     _buildItems();
     if (_mapController != null) {
       _setRouteMarkers();
@@ -234,6 +246,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                 listener: this)));
   }
 
+  bool showLandmarks = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -315,6 +328,21 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
               },
             ),
           ),
+          showLandmarks
+              ? Positioned(
+                  top: 20,
+                  left: 40,
+                  child: Card(
+                    elevation: 16,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        getNames(),
+                        style: Styles.pinkBoldSmall,
+                      ),
+                    ),
+                  ))
+              : Container(),
           isBusy == false
               ? Container()
               : Card(
@@ -351,6 +379,14 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   int sequenceNumber;
   Landmark landmark;
   String landmarkName;
+  String getNames() {
+    var dd = StringBuffer();
+    mList.forEach((m) {
+      dd.write(m.landmarkName);
+      dd.write('\n');
+    });
+    return dd.toString();
+  }
 
   @override
   onActionPressed(int action) {
@@ -582,28 +618,26 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-//                showButton == false
-//                    ? Container()
-//                    : RaisedButton(
-//                        color: Colors.pink,
-//                        elevation: 16,
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(12.0),
-//                          child: Text(
-//                            'Confirm Route Points',
-//                            style: Styles.whiteSmall,
-//                          ),
-//                        ),
-//                        onPressed: _confirmSave),
-
                 SizedBox(
                   width: 8,
+                ),
+                GestureDetector(
+                  onTap: _displayLadmarks,
+                  child: Counter(
+                    label: 'Landmarks',
+                    total: landmarksOnRoute,
+                    totalStyle: Styles.blackBoldMedium,
+                    labelStyle: Styles.whiteSmall,
+                  ),
+                ),
+                SizedBox(
+                  width: 48,
                 ),
                 Counter(
                   label: 'Collected',
                   total: _routePoints.length,
                   totalStyle: Styles.blackBoldMedium,
-                  labelStyle: Styles.blackSmall,
+                  labelStyle: Styles.whiteSmall,
                 ),
                 SizedBox(
                   width: 40,
@@ -617,6 +651,21 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         ),
       ),
     );
+  }
+
+  List<RoutePoint> mList = List();
+  _displayLadmarks() {
+    debugPrint('_displayLadmarks 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
+    mList.clear();
+    _routePoints.forEach((b) {
+      if (b.landmarkID != null) {
+        mList.add(b);
+      }
+    });
+    showLandmarks = !showLandmarks;
+    debugPrint(
+        '_displayLadmarks  ❤️ 🧡 💛 mList: ${mList.length} showLandmarks: $showLandmarks');
+    setState(() {});
   }
 
   bool isBusy = false;
