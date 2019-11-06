@@ -315,23 +315,13 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
               backgroundColor: Colors.pink.shade900,
               elevation: 16,
               child: Icon(Icons.airport_shuttle),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  SlideRightRoute(
-                    widget: FlagRoutePointLandmarks(
-                      route: _route,
-                    ),
-                  ),
-                );
-//                  _setRoutePolyline();
-              },
+              onPressed: _startFlagLandmarks,
             ),
           ),
           showLandmarks
               ? Positioned(
                   top: 20,
-                  left: 40,
+                  left: 80,
                   child: Card(
                     elevation: 16,
                     child: Padding(
@@ -379,8 +369,10 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   int sequenceNumber;
   Landmark landmark;
   String landmarkName;
+
   String getNames() {
     var dd = StringBuffer();
+    dd.write('Landmarks\n\n');
     mList.forEach((m) {
       dd.write(m.landmarkName);
       dd.write('\n');
@@ -687,5 +679,24 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     print('onSuccess: 👌 👌 👌 👌 👌 👌 👌 👌 }');
     prettyPrint(landmark.toJson(), ' 🧩 🧩 🧩 Landmark returned');
     return null;
+  }
+
+  void _startFlagLandmarks() async {
+    var update = await Navigator.push(
+      context,
+      SlideRightRoute(
+        widget: FlagRoutePointLandmarks(
+          route: _route,
+        ),
+      ),
+    );
+    if (update) {
+      debugPrint('🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route update required');
+      _route = await routeBuilderBloc.getRouteByID(_route.routeID);
+      await _getRoutePoints();
+      setState(() {});
+    } else {
+      debugPrint('🔆 🔆 🔆 🔆  Route update NOT required');
+    }
   }
 }

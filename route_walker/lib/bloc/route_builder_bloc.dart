@@ -17,6 +17,7 @@ import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
+import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
@@ -230,6 +231,80 @@ class RouteBuilderBloc {
 //    _appModel.routes.addAll(routes);
 //    _appModel.routes.sort((a, b) => a.name.compareTo(b.name));
 //    _appModelController.sink.add(_appModel);
+  }
+
+  static const batchSize = 300;
+  Future addRoutePointsToMongoDB(
+      ar.Route route, List<RoutePoint> routePoints) async {
+    var _routePoints = await SnapToRoads.getSnappedPoints(
+        route: route, routePoints: _rawRoutePoints);
+    var index = 0;
+    _routePoints.forEach((p) {
+      p.index = index;
+      p.position =
+          Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
+      index++;
+    });
+    try {
+      var batches = BatchUtil.makeBatches(_routePoints, batchSize);
+      if (_routePoints.length < batchSize) {
+        print(
+            '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${route.name} ...');
+        await DancerDataAPI.addRoutePoints(
+            routeId: route.routeID, routePoints: _routePoints, clear: true);
+        await LocalDBAPI.addRoutePoints(
+            routeID: route.routeID, routePoints: _routePoints);
+        //batches of 300
+        var index = 0;
+        for (var batch in batches.values) {
+          await DancerDataAPI.addRoutePoints(
+              routeId: route.routeID,
+              routePoints: batch,
+              clear: index == 0 ? true : false);
+          await LocalDBAPI.addRoutePoints(
+              routeID: route.routeID, routePoints: batch);
+          index++;
+        }
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future addRawRoutePointsToMongoDB(
+      ar.Route route, List<RoutePoint> routePoints) async {
+    var index = 0;
+    routePoints.forEach((p) {
+      p.index = index;
+      p.position =
+          Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
+      index++;
+    });
+    try {
+      var batches = BatchUtil.makeBatches(routePoints, batchSize);
+      if (routePoints.length < batchSize) {
+        print(
+            '🍎🍎🍎🍎 adding ${routePoints.length} RAW route points to 🍎 ${route.name} ...');
+        await DancerDataAPI.addRawRoutePoints(
+            routeId: route.routeID, routePoints: routePoints, clear: true);
+        //batches of 300
+        var index = 0;
+        for (var batch in batches.values) {
+          await DancerDataAPI.addRawRoutePoints(
+              routeId: route.routeID,
+              routePoints: batch,
+              clear: index == 0 ? true : false);
+
+          index++;
+        }
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   Future addRoutesToMongo(List<ar.Route> routes) async {
@@ -479,6 +554,8 @@ class RouteBuilderBloc {
     var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
     if (mRoute != null) {
       await LocalDBAPI.addRoute(route: mRoute);
+      await LocalDBAPI.addRoutePoints(
+          routeID: routeID, routePoints: mRoute.routePoints);
     }
     return mRoute;
   }

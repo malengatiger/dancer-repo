@@ -587,6 +587,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     debugPrint(
         '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw: ${_rawRoutePoints.length}....');
     assert(_rawRoutePoints.isNotEmpty);
+    await routeBuilderBloc.addRawRoutePointsToMongoDB(_route, _rawRoutePoints);
     _routePoints = await SnapToRoads.getSnappedPoints(
         route: _route, routePoints: _rawRoutePoints);
     _route.routePoints = _routePoints;
