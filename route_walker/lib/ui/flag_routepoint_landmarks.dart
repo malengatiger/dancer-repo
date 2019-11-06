@@ -7,6 +7,7 @@ import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
+import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
@@ -307,6 +308,8 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     });
   }
 
+  var existing = Map<String, LandmarkAndRoutePoint>();
+  var newLandmarks = Map<String, LandmarkAndRoutePoint>();
   _findPossibleLandmarksAlongRoute() async {
     if (_key == null) {
       throw Exception('_key is NULL');
@@ -320,6 +323,33 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
         widget.route.routePoints.take(1).toList(growable: true);
     debugPrint(
         '🔵 🔵 🔵 Traversing 🧡 ${widget.route.routePoints.length} points looking for landmarks');
+    _preparePoints(mList);
+    debugPrint(
+        '🔴 🔴  using ${mList.length} points to search for landmarks ...');
+    Map<String, LandmarkAndRoutePoint> hashMap = Map();
+    await _getNearestLandmarkPoints(mList, hashMap);
+    debugPrint(
+        '🔴 🔴   ${landmarkPoints.length} landmark points found ... 🔴 🔴 ');
+//    _splitExistingLandmarkPoints();
+    _key.currentState.removeCurrentSnackBar();
+
+    debugPrint(
+        '🔴 🔴 🔴 Landmarks possibly on route: 🧡 ${landmarkPoints.length} 🧡 \n\n');
+    landmarkPoints.forEach((p) {
+      debugPrint(
+          '🔴  routePointIndex : ${p.routePoint.index}  🧩 🧩 Landmark 🧩 ${p.distance} metres 🧩 from routePoint is possibly on route: 🧡 ${p.landmark.landmarkName} ');
+    });
+    debugPrint(
+        '\n🧡 🧡 🧡 🧡 landmarks found on route: ${landmarkPoints.length}');
+    setState(() {
+      showConnectButton = true;
+    });
+    if (landmarkPoints.isNotEmpty) {
+      _addRouteToLandmarks();
+    }
+  }
+
+  void _preparePoints(List<RoutePoint> mList) {
     var index = 0;
     widget.route.routePoints.forEach((p) {
       p.index = index;
@@ -327,16 +357,36 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
       p.landmarkID = null;
       index++;
     });
+
     widget.route.routePoints.forEach((p) {
       var m = p.index % 50;
       if (m == 0) {
         mList.add(p);
       }
     });
+    mList.add(widget.route.routePoints.last);
+  }
 
-    debugPrint(
-        '🔴 🔴  using ${mList.length} points to search for landmarks ...');
-    Map<String, LandmarkAndRoutePoint> hashMap = Map();
+  void _splitExistingLandmarkPoints() {
+    existing = Map<String, LandmarkAndRoutePoint>();
+    newLandmarks = Map<String, LandmarkAndRoutePoint>();
+
+    landmarkPoints.forEach((mark) {
+      bool found = false;
+      widget.route.routePoints.forEach((rp) {
+        if (mark.landmark.landmarkID == rp.landmarkID) {
+          found = true;
+          existing[mark.landmark.landmarkID] = mark;
+        }
+      });
+      if (!found) {
+        newLandmarks[mark.landmark.landmarkID] = mark;
+      }
+    });
+  }
+
+  Future _getNearestLandmarkPoints(List<RoutePoint> mList,
+      Map<String, LandmarkAndRoutePoint> hashMap) async {
     for (var point in mList) {
       List<Landmark> landmarksNearRoute =
           await routeBuilderBloc.findLandmarksNearRoutePoint(point, 5.0);
@@ -361,29 +411,13 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
             nearestPoint.landmarkName = mark.landmarkName;
             hashMap[mark.landmarkID] =
                 LandmarkAndRoutePoint(mark, nearestPoint, distance);
+            //remove landmarks already in route points  ;
             setState(() {
               landmarkPoints = hashMap.values.toList();
             });
           }
         }
       }
-    }
-
-    _key.currentState.removeCurrentSnackBar();
-
-    debugPrint(
-        '\n\n\n🔴 🔴 🔴 Landmarks possibly on route: 🧡 ${landmarkPoints.length} 🧡 ');
-    landmarkPoints.forEach((p) {
-      debugPrint(
-          '🔴  routePointIndex : ${p.routePoint.index}  🧩 🧩 Landmark 🧩 ${p.distance} metres 🧩 from routePoint is possibly on route: 🧡 ${p.landmark.landmarkName} ');
-    });
-    debugPrint(
-        '\n🧡 🧡 🧡 🧡 landmarks found on route: ${landmarkPoints.length}');
-    setState(() {
-      showConnectButton = true;
-    });
-    if (landmarkPoints.isNotEmpty) {
-      _addRouteToLandmarks();
     }
   }
 
@@ -455,7 +489,8 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
   }
 
   void _addRouteToLandmarks() async {
-    debugPrint('_addRouteToLandmarks  🧩 🧩 🧩 ... ${landmarkPoints.length}');
+    debugPrint(
+        '\n\n_addRouteToLandmarks  🧩 🧩 🧩 ... ${landmarkPoints.length}');
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key,
         message: 'Adding route to ${landmarkPoints.length} landmarks');
@@ -466,72 +501,37 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
         lp.routePoint.landmarkID = lp.landmark.landmarkID;
         routePointsForLandmarks.add(lp.routePoint);
         print(
-            '♻️♻️♻️ Landmark point to be updated: ${lp.landmark.landmarkName}');
+            '♻️♻️♻️ Landmark point to be added/updated: ${lp.landmark.landmarkName}');
       });
 
       debugPrint(
           ' 🧩 🧩 🧩 ${routePointsForLandmarks.length} landmark points to be updated ...');
       await _updatePoints(routePointsForLandmarks);
-
-      AppSnackbar.showSnackbarWithAction(
-          scaffoldKey: _key,
-          message: 'Landmark route points updated',
-          listener: this,
-          action: 3,
-          actionLabel: 'OK',
-          backgroundColor: Colors.teal[700]);
+      _route = await routeBuilderBloc.getRouteByID(widget.route.routeID);
+      Navigator.pop(context, _route);
     } catch (e) {
       print(e);
       AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key, message: 'Add Route to Landmarks Failed');
+          scaffoldKey: _key,
+          message: 'Add Route to Landmarks Failed:\n ${e.message}');
     }
   }
 
   Future _updatePoints(List<RoutePoint> routePoints) async {
     print(
         '🍎🍎🍎🍎 _updatePoints: adding ${routePoints.length} route points to 🍎 ${widget.route.name} ...');
-    try {
-      if (routePoints.length < 301) {
+
+    if (routePoints.length < 300) {
+      await DancerDataAPI.updateLandmarkRoutePoints(
+          routeId: widget.route.routeID, routePoints: routePoints);
+    } else {
+      var batches = BatchUtil.makeBatches(routePoints, 300);
+      batches.forEach((mKey, mValue) async {
         await DancerDataAPI.updateLandmarkRoutePoints(
-            routeId: widget.route.routeID, routePoints: routePoints);
-      } else {
-        //batches of 300
-        var rem = routePoints.length % 300;
-        var pages = routePoints.length ~/ 300;
-
-        var map = Map<int, List<RoutePoint>>();
-        if (rem > 0) {
-          pages++;
-        }
-        int startIndex = 0;
-
-        for (var i = 0; i < pages; i++) {
-          map[i] = List<RoutePoint>();
-          for (var j = startIndex; j < (startIndex + 300); j++) {
-            try {
-              map[i].add(routePoints.elementAt(j));
-            } catch (e) {}
-          }
-          print(
-              '🍎🍎🍎🍎 adding ${map[i].length} route points to 🍎 ${_route.name} ...');
-          _route.routePoints = map[i];
-          bool clear;
-          if (i == 0) {
-            clear = true;
-          } else {
-            clear = false;
-          }
-          await DancerDataAPI.updateLandmarkRoutePoints(
-            routeId: _route.routeID,
-            routePoints: map[i],
-          );
-          print(
-              '🧩🧩🧩🧩🧩 TODO  🔴  TODO 🔴 🔴 🔴 🔴 🔴  calculating distances for route  🍎 ${_route.name} ...');
-          setState(() {});
-        }
-      }
-    } catch (e) {
-      print(e);
+          routeId: _route.routeID,
+          routePoints: mValue,
+        );
+      });
     }
   }
 }

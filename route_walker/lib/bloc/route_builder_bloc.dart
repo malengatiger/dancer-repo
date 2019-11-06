@@ -213,7 +213,7 @@ class RouteBuilderBloc {
     var routes = await DancerListAPI.getRoutesByAssociation(
         associationID: associationID);
     //todo - delete routes first
-    await LocalDBAPI.deleteRoutes(associationID);
+    await LocalDBAPI.deleteRoutesByAssociation(associationID);
     await LocalDBAPI.addRoutes(routes: routes);
 
     updateRoutesInStream(routes);
@@ -283,17 +283,21 @@ class RouteBuilderBloc {
       index++;
     });
     try {
-      var batches = BatchUtil.makeBatches(routePoints, batchSize);
       if (routePoints.length < batchSize) {
         print(
             '🍎🍎🍎🍎 adding ${routePoints.length} RAW route points to 🍎 ${route.name} ...');
         await DancerDataAPI.addRawRoutePoints(
-            routeId: route.routeID, routePoints: routePoints, clear: true);
+            routeID: route.routeID, routePoints: routePoints, clear: true);
+      } else {
         //batches of 300
+
+        var batches = BatchUtil.makeBatches(routePoints, batchSize);
+        print(
+            '🍎🍎🍎🍎 adding ${batches.length} batches of RAW route points to 🍎 ${route.name} ...');
         var index = 0;
         for (var batch in batches.values) {
           await DancerDataAPI.addRawRoutePoints(
-              routeId: route.routeID,
+              routeID: route.routeID,
               routePoints: batch,
               clear: index == 0 ? true : false);
 
@@ -554,8 +558,10 @@ class RouteBuilderBloc {
     var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
     if (mRoute != null) {
       await LocalDBAPI.addRoute(route: mRoute);
-      await LocalDBAPI.addRoutePoints(
-          routeID: routeID, routePoints: mRoute.routePoints);
+      if (mRoute.routePoints.isNotEmpty) {
+        await LocalDBAPI.addRoutePoints(
+            routeID: routeID, routePoints: mRoute.routePoints);
+      }
     }
     return mRoute;
   }

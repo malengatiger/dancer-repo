@@ -44,6 +44,10 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   String routeID;
   void _getRoute() async {
     routeID = await Prefs.getRouteID();
+    _route = await LocalDBAPI.getRoute(routeID);
+    if (_route == null) {
+      _route = await routeBuilderBloc.getRouteByID(routeID);
+    }
     _getCollectionPoints();
   }
 

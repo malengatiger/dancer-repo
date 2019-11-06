@@ -236,7 +236,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         CameraPosition(
             target: LatLng(routePoint.latitude, routePoint.longitude),
             zoom: 16.0)));
-    Navigator.push(
+    var update = await Navigator.push(
         context,
         SlideRightRoute(
             widget: LandmarkEditor(
@@ -244,6 +244,16 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                 route: _route,
                 withScaffold: true,
                 listener: this)));
+    if (update != null) {
+      if (update is aftarobot.Route) {
+        debugPrint(
+            '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required');
+        setState(() {
+          _route = update;
+          _routePoints = _route.routePoints;
+        });
+      }
+    }
   }
 
   bool showLandmarks = false;
@@ -614,7 +624,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                   width: 8,
                 ),
                 GestureDetector(
-                  onTap: _displayLadmarks,
+                  onTap: _displayLandmarks,
                   child: Counter(
                     label: 'Landmarks',
                     total: landmarksOnRoute,
@@ -646,17 +656,21 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   }
 
   List<RoutePoint> mList = List();
-  _displayLadmarks() {
-    debugPrint('_displayLadmarks 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
+  _displayLandmarks() {
+    debugPrint('_displayLandmarks: 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
     mList.clear();
+    var mx = Map<String, RoutePoint>();
     _routePoints.forEach((b) {
       if (b.landmarkID != null) {
-        mList.add(b);
+        mx[b.landmarkID] = b;
       }
+    });
+    mx.forEach((key, value) {
+      mList.add(value);
     });
     showLandmarks = !showLandmarks;
     debugPrint(
-        '_displayLadmarks  ❤️ 🧡 💛 mList: ${mList.length} showLandmarks: $showLandmarks');
+        '_displayLadmarks  ❤️ 🧡 💛  mList: ${mList.length}: showLandmarks state: 🧡  $showLandmarks');
     setState(() {});
   }
 
@@ -691,10 +705,14 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
       ),
     );
     if (update) {
-      debugPrint('🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route update required');
-      _route = await routeBuilderBloc.getRouteByID(_route.routeID);
-      await _getRoutePoints();
-      setState(() {});
+      if ((update is aftarobot.Route)) {
+        debugPrint(
+            '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required');
+        setState(() {
+          _route = update;
+          _routePoints = _route.routePoints;
+        });
+      }
     } else {
       debugPrint('🔆 🔆 🔆 🔆  Route update NOT required');
     }

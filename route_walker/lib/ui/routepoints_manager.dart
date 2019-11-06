@@ -52,29 +52,24 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   void _getRoute() async {
     routeID = await Prefs.getRouteID();
     assert(routeID != null);
-    await _getRawRoutePoints();
-    await _getLandmarks();
+    _route = await LocalDBAPI.getRoute(routeID);
+    if (_route == null) {
+      _route = await routeBuilderBloc.getRouteByID(routeID);
+    }
+    assert(_route != null);
+    _rawRoutePoints = await LocalDBAPI.getRawRoutePoints(routeID: routeID);
+    debugPrint(
+        '\n\n🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩 '
+        ' snapped: ${_routePoints.length} 🧩\n\n');
     setState(() {});
+    _setRouteMarkers();
+    await _getLandmarks();
   }
 
   Future _getLandmarks() async {
     _landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
     _buildItems();
     setState(() {});
-    ;
-  }
-
-  Future _buildMarkerIcon() async {
-    if (_markerIcon != null) return;
-    final ImageConfiguration imageConfiguration =
-        createLocalImageConfiguration(context, size: Size.square(600.0));
-    await BitmapDescriptor.fromAssetImage(imageConfiguration, 'assets/pin.png')
-        .then((img) {
-      _markerIcon = img;
-      print('_buildLandmarkIcon Ⓜ️ Ⓜ️ Ⓜ️ has been created');
-    }).catchError((err) {
-      print(err);
-    });
   }
 
   void _buildItems() {
@@ -94,17 +89,20 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   List<RoutePoint> _routePoints = List();
-  Future _getRawRoutePoints() async {
-    _rawRoutePoints = await LocalDBAPI.getRawRoutePoints(routeID: routeID);
-    debugPrint(
-        '\n\n🍏 🍎 🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩  snapped: ${_routePoints.length} 🧩\n\n');
-    setState(() {});
-  }
 
   Set<Marker> _markers = Set();
   void _setRouteMarkers() async {
     print(
         '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 ... points: ${_rawRoutePoints.length} 🍀️🍀️🍀️');
+    if (_rawRoutePoints.isEmpty) {
+      print('🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 . QUIT! No points');
+      return;
+    }
+    if (_mapController == null) {
+      print(
+          '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 . QUIT! MapController is null');
+      return;
+    }
     _markers.clear();
     var icon =
         BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
@@ -141,8 +139,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     print('Marker tapped: route: ${point.created}');
     _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(point.latitude, point.longitude), zoom: 16.0)));
-
-    _startLandmarksPage(point);
+    if (_route.routePoints.isNotEmpty) {
+      _startLandmarksPage(point);
+    }
   }
 
   _startLandmarksPage(RoutePoint marker) {
@@ -159,150 +158,133 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<RoutePoint>>(
-      initialData: routeBuilderBloc.rawRoutePoints,
-      stream: routeBuilderBloc.rawRoutePointsStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          _rawRoutePoints = snapshot.data;
-          _setRouteMarkers();
-        }
-        return Scaffold(
-          key: _key,
-          appBar: AppBar(
-            title: Text(
-              'Points Manager',
-              style: Styles.blackBoldSmall,
+    return Scaffold(
+      key: _key,
+      appBar: AppBar(
+        title: Text(
+          'Points Manager',
+          style: Styles.blackBoldSmall,
+        ),
+        backgroundColor: Colors.pink.shade300,
+        bottom: _getBottom(),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              icon: Icon(Icons.map),
+              onPressed: () {
+                _startRouteMap(false);
+              },
             ),
-            backgroundColor: Colors.pink.shade300,
-            bottom: _getBottom(),
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  icon: Icon(Icons.map),
-                  onPressed: () {
-                    _startRouteMap(false);
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  icon: Icon(Icons.refresh),
-                  onPressed: _getRawRoutePoints,
-                ),
-              ),
-            ],
           ),
-          body: Stack(
-            children: <Widget>[
-              GoogleMap(
-                initialCameraPosition: _cameraPosition,
-                mapType: MapType.hybrid,
-                markers: _markers,
-                myLocationEnabled: true,
-                compassEnabled: true,
-                zoomGesturesEnabled: true,
-                rotateGesturesEnabled: true,
-                scrollGesturesEnabled: true,
-                tiltGesturesEnabled: true,
-                onLongPress: _onLongPress,
-                onMapCreated: (mapController) {
-                  if (!_completer.isCompleted) {
-                    _completer.complete(mapController);
-                    _mapController = mapController;
-                  }
-                  _setRouteMarkers();
+//              Padding(
+//                padding: const EdgeInsets.all(8.0),
+//                child: IconButton(
+//                  icon: Icon(Icons.refresh),
+//                  onPressed: _getRawRoutePoints,
+//                ),
+//              ),
+        ],
+      ),
+      body: Stack(
+        children: <Widget>[
+          GoogleMap(
+            initialCameraPosition: _cameraPosition,
+            mapType: MapType.hybrid,
+            markers: _markers,
+            myLocationEnabled: true,
+            compassEnabled: true,
+            zoomGesturesEnabled: true,
+            rotateGesturesEnabled: true,
+            scrollGesturesEnabled: true,
+            tiltGesturesEnabled: true,
+            onMapCreated: (mapController) {
+              if (!_completer.isCompleted) {
+                _completer.complete(mapController);
+                _mapController = mapController;
+              }
+              _setRouteMarkers();
 
-                  if (_route.routePoints != null &&
-                      _route.routePoints.isNotEmpty) {
-                    _mapController.animateCamera(CameraUpdate.newLatLngZoom(
-                        LatLng(_route.routePoints.elementAt(0).latitude,
-                            _route.routePoints.elementAt(0).longitude),
-                        16.0));
-                  } else {
-                    if (_rawRoutePoints != null && _rawRoutePoints.isNotEmpty) {
-                      _mapController.animateCamera(CameraUpdate.newLatLngZoom(
-                          LatLng(_rawRoutePoints.elementAt(0).latitude,
-                              _rawRoutePoints.elementAt(0).longitude),
-                          16.0));
-                    }
-                  }
-                },
-              ),
-              Positioned(
-                top: 12,
-                left: 12,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.pink.shade900,
-                  elevation: 16,
-                  child: Icon(Icons.airport_shuttle),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      SlideRightRoute(
-                        widget: FlagRoutePointLandmarks(
-                          route: _route,
-                        ),
-                      ),
-                    );
-//                  _setRoutePolyline();
-                  },
-                ),
-              ),
-              isBusy == false
-                  ? Container()
-                  : Card(
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 60,
-                            ),
-                            Container(
-                              width: 60,
-                              height: 60,
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.teal,
-                                strokeWidth: 24,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 40,
-                            ),
-                            Text(
-                              'Snapping ... Please Wait',
-                              style: Styles.blackMedium,
-                            ),
-                          ],
-                        ),
+              if (_rawRoutePoints != null && _rawRoutePoints.isNotEmpty) {
+                _mapController.animateCamera(CameraUpdate.newLatLngZoom(
+                    LatLng(_rawRoutePoints.elementAt(0).latitude,
+                        _rawRoutePoints.elementAt(0).longitude),
+                    16.0));
+              }
+            },
+          ),
+          Positioned(
+            top: 12,
+            left: 12,
+            child: FloatingActionButton(
+              backgroundColor: Colors.pink.shade900,
+              elevation: 16,
+              child: Icon(Icons.airport_shuttle),
+              onPressed: () {
+                if (_route != null && _route.routePoints.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    SlideRightRoute(
+                      widget: FlagRoutePointLandmarks(
+                        route: _route,
                       ),
                     ),
-              showButton == false
-                  ? Container()
-                  : Positioned(
-                      bottom: 12,
-                      right: 12,
-                      child: RaisedButton(
-                        color: Colors.indigo.shade900,
-                        elevation: 16,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            'Confirm Points',
-                            style: Styles.whiteSmall,
+                  );
+                }
+//                  _setRoutePolyline();
+              },
+            ),
+          ),
+          isBusy == false
+              ? Container()
+              : Card(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 60,
+                        ),
+                        Container(
+                          width: 60,
+                          height: 60,
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.teal,
+                            strokeWidth: 24,
                           ),
                         ),
-                        onPressed: () {
-                          _snapPoints();
-                        },
+                        SizedBox(
+                          height: 40,
+                        ),
+                        Text(
+                          'Snapping ... Please Wait',
+                          style: Styles.blackMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+          showButton == false
+              ? Container()
+              : Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: RaisedButton(
+                    color: Colors.indigo.shade900,
+                    elevation: 16,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Confirm Points',
+                        style: Styles.whiteSmall,
                       ),
                     ),
-            ],
-          ),
-        );
-      },
+                    onPressed: () {
+                      _snapPoints();
+                    },
+                  ),
+                ),
+        ],
+      ),
     );
   }
 
@@ -551,19 +533,12 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                 SizedBox(
                   width: 8,
                 ),
-                StreamBuilder<List<RoutePoint>>(
-                    stream: routeBuilderBloc.rawRoutePointsStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        _rawRoutePoints = snapshot.data;
-                      }
-                      return Counter(
-                        label: 'Collected',
-                        total: _rawRoutePoints.length,
-                        totalStyle: Styles.blackBoldMedium,
-                        labelStyle: Styles.blackSmall,
-                      );
-                    }),
+                Counter(
+                  label: 'Collected',
+                  total: _rawRoutePoints.length,
+                  totalStyle: Styles.blackBoldMedium,
+                  labelStyle: Styles.blackSmall,
+                ),
                 SizedBox(
                   width: 40,
                 ),
@@ -584,21 +559,27 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     setState(() {
       isBusy = true;
     });
-    debugPrint(
-        '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw: ${_rawRoutePoints.length}....');
     assert(_rawRoutePoints.isNotEmpty);
-    await routeBuilderBloc.addRawRoutePointsToMongoDB(_route, _rawRoutePoints);
-    _routePoints = await SnapToRoads.getSnappedPoints(
-        route: _route, routePoints: _rawRoutePoints);
-    _route.routePoints = _routePoints;
-    var index = 0;
-    _routePoints.forEach((p) {
-      p.index = index;
-      p.position =
-          Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
-      index++;
-    });
+
     try {
+      debugPrint(
+          '\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length}....');
+
+      await routeBuilderBloc.addRawRoutePointsToMongoDB(
+          _route, _rawRoutePoints);
+      debugPrint(
+          '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw: ${_rawRoutePoints.length}....');
+
+      _routePoints = await SnapToRoads.getSnappedPoints(
+          route: _route, routePoints: _rawRoutePoints);
+      _route.routePoints = _routePoints;
+      var index = 0;
+      _routePoints.forEach((p) {
+        p.index = index;
+        p.position =
+            Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
+        index++;
+      });
       var batches = BatchUtil.makeBatches(_routePoints, batchSize);
       if (_routePoints.length < batchSize) {
         print(
