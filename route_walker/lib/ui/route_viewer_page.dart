@@ -5,7 +5,6 @@ import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/user.dart' as ar;
-import 'package:aftarobotlibrary4/maps/estimation_page.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -636,30 +635,30 @@ class _RouteCardState extends State<RouteCard>
         ),
       ),
     ));
-    menuItems.add(PopupMenuItem<String>(
-      value: 'Route Estimation',
-      child: GestureDetector(
-        onTap: () async {
-          Navigator.pop(context);
-          await Prefs.saveRouteID(widget.route.routeID);
-          Navigator.push(
-            context,
-            SlideRightRoute(
-              widget: EstimationPage(
-                route: widget.route,
-              ),
-            ),
-          );
-        },
-        child: ListTile(
-          leading: Icon(
-            Icons.airport_shuttle,
-            color: Colors.pink,
-          ),
-          title: Text('Route Estimation', style: Styles.blackSmall),
-        ),
-      ),
-    ));
+//    menuItems.add(PopupMenuItem<String>(
+//      value: 'Route Estimation',
+//      child: GestureDetector(
+//        onTap: () async {
+//          Navigator.pop(context);
+//          await Prefs.saveRouteID(widget.route.routeID);
+//          Navigator.push(
+//            context,
+//            SlideRightRoute(
+//              widget: EstimationPage(
+//                route: widget.route,
+//              ),
+//            ),
+//          );
+//        },
+//        child: ListTile(
+//          leading: Icon(
+//            Icons.airport_shuttle,
+//            color: Colors.pink,
+//          ),
+//          title: Text('Route Estimation', style: Styles.blackSmall),
+//        ),
+//      ),
+//    ));
   }
 
   _startRoutePointCollector() async {
