@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/file_util.dart';
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/mongo_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
@@ -198,6 +197,7 @@ class RouteBuilderBloc {
     debugPrint(
         '### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
     var asses = await DancerListAPI.getAssociations();
+    await LocalDBAPI.deleteAssociations();
     await LocalDBAPI.addAssociations(associations: asses);
 
     debugPrint(
@@ -318,7 +318,7 @@ class RouteBuilderBloc {
   }
 
   Future addRouteToMongo(ar.Route route) async {
-    var res = await MongoAPI.addRoute(route);
+    var res = await LocalDBAPI.addRoute(route: route);
     print(res);
   }
 

@@ -110,31 +110,6 @@ class RouteController {
                 // check clear flag
                 if (req.body.clear == true) {
                     route.routePoints = [];
-                }
-                let index = 0;
-                req.body.routePoints.forEach((p) => {
-                    route.routePoints.push(p);
-                });
-                const result = yield route.save();
-                log_1.default(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
-                // log(result);
-                res.status(200).json(result);
-            }
-            catch (err) {
-                res.status(400).json({
-                    error: err,
-                    message: ' 🍎🍎🍎🍎 addRoutePoints failed'
-                });
-            }
-        }));
-        app.route("/addRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
-            console.log(req.body);
-            try {
-                const route = yield route_1.default.findOne({ routeID: req.body.routeID });
-                // check clear flag
-                if (req.body.clear == true) {
-                    route.routePoints = [];
                     yield route.save();
                 }
                 req.body.routePoints.forEach((p) => {
@@ -162,16 +137,18 @@ class RouteController {
                 // check clear flag
                 if (req.body.clear == true) {
                     route.rawRoutePoints = [];
+                    yield route.save();
                 }
-                req.body.rawRoutePoints.forEach((p) => {
+                req.body.routePoints.forEach((p) => {
                     route.rawRoutePoints.push(p);
                 });
                 const result = yield route.save();
-                log_1.default(`💙💙 Points added to route. ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
+                log_1.default(`💙💙 Raw route Points added to route. ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
                 // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
+                console.error(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addRawRoutePoints failed'

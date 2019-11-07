@@ -704,7 +704,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         ),
       ),
     );
-    if (update) {
+    if (update != null) {
       if ((update is aftarobot.Route)) {
         debugPrint(
             '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required');

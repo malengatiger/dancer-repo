@@ -508,6 +508,9 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
           ' 🧩 🧩 🧩 ${routePointsForLandmarks.length} landmark points to be updated ...');
       await _updatePoints(routePointsForLandmarks);
       _route = await routeBuilderBloc.getRouteByID(widget.route.routeID);
+      //todo - calculate distances
+      await RouteDistanceCalculator.calculate(route: _route);
+      _route = await routeBuilderBloc.getRouteByID(widget.route.routeID);
       Navigator.pop(context, _route);
     } catch (e) {
       print(e);

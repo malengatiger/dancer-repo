@@ -1,5 +1,4 @@
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/mongo_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
@@ -87,7 +86,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       debugPrint('asssociations from local cache: ${asses.length}');
     }
     _buildDropDownItems();
-    MongoAPI.setAppID();
+    LocalDBAPI.setAppID();
     _getAssociation();
   }
 
