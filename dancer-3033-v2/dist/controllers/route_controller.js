@@ -30,7 +30,7 @@ class RouteController {
                 log_1.default(result);
                 result.forEach((m) => {
                     if (m.associationID === assID) {
-                        log_1.default(`😍 ${m.name} - 😍 - association is OK: ${m.associationID}`);
+                        log_1.default(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name}`);
                     }
                 });
                 const end = new Date().getTime();
@@ -46,7 +46,8 @@ class RouteController {
             }
         }));
         app.route("/getRouteById").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.default(`\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.default(`🧩 🧩 🧩 🧩 🧩 🧩 🍎🍎 EXPENSIVE CALL! 🍎🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `);
             console.log(req.body);
             try {
                 const routeID = req.body.routeID;

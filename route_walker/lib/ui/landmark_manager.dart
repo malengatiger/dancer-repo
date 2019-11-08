@@ -51,7 +51,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   void _getRoute() async {
     var routeID = await Prefs.getRouteID();
     assert(routeID != null);
-    _route = await LocalDBAPI.getRoute(routeID);
+    _route = await LocalDBAPI.getRoute(routeID, '');
     if (_route != null) {
       if (_route.routePoints.isEmpty) {
         _route = await routeBuilderBloc.getRouteByID(routeID);

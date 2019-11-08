@@ -54,7 +54,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
         '🍎 🍎 🍎 _RouteViewerPageState: checkUser: ...................... 🔆🔆 isSignedIn: $isSignedIn  🔆🔆');
     if (!isSignedIn) {
       try {
-        user = await Navigator.push(context,
+        var user = await Navigator.push(context,
             MaterialPageRoute(builder: (BuildContext context) {
           return SignIn();
         }));
@@ -119,7 +119,10 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       routes = await routeBuilderBloc
           .getRoutesByAssociation(association.associationID);
       _key.currentState.removeCurrentSnackBar();
+
       setState(() {});
+      await routeBuilderBloc.cacheRoutes(routes: routes);
+      _key.currentState.removeCurrentSnackBar();
     } catch (e) {
       print(e);
       AppSnackbar.showErrorSnackbar(
@@ -802,7 +805,8 @@ class _RouteCardState extends State<RouteCard>
     if (route.routePoints.isNotEmpty) {
       Navigator.push(context, SlideRightRoute(widget: LandmarksManagerPage()));
     } else {
-      Navigator.push(context, SlideRightRoute(widget: CreateRoutePointsPage()));
+      Navigator.push(
+          context, SlideRightRoute(widget: CreateRoutePointsPage(route)));
     }
   }
 

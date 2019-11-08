@@ -13,7 +13,6 @@ import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
-import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
@@ -554,6 +553,17 @@ class RouteBuilderBloc {
     return _routePoints;
   }
 
+  Future cacheRoutes({List<ar.Route> routes}) async {
+    debugPrint(
+        'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  ..........');
+
+    for (var route in routes) {
+      await getRouteByID(route.routeID);
+    }
+    debugPrint('ℹ️  🍎 🍎 🍎 🍎  Routes cached: 🍎 ${routes.length}');
+    return _routePoints;
+  }
+
   Future<ar.Route> getRouteByID(String routeID) async {
     var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
     if (mRoute != null) {
@@ -561,6 +571,11 @@ class RouteBuilderBloc {
       if (mRoute.routePoints.isNotEmpty) {
         await LocalDBAPI.addRoutePoints(
             routeID: routeID, routePoints: mRoute.routePoints);
+      }
+      if (mRoute.rawRoutePoints.isNotEmpty) {
+        mRoute.rawRoutePoints.forEach((m) async {
+          await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: m);
+        });
       }
     }
     return mRoute;
@@ -697,12 +712,6 @@ class RouteBuilderBloc {
       timer.cancel();
       timer = null;
     }
-    return null;
-  }
-
-  @override
-  onVehicleLocationsFound(List<VehicleLocation> vehicleLocations) {
-    // TODO: implement onVehicleLocationsFound
     return null;
   }
 

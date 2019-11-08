@@ -26,7 +26,7 @@ export class RouteController {
                 log(result);
                 result.forEach((m: any) => {
                     if (m.associationID === assID) {
-                        log(`😍 ${m.name} - 😍 - association is OK: ${m.associationID}`);
+                        log(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name}`);
                     }
                 });
                 const end = new Date().getTime();
@@ -45,8 +45,9 @@ export class RouteController {
         });
         app.route("/getRouteById").post(async (req: Request, res: Response) => {
             log(
-                `\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+                `\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
             );
+            log(`🧩 🧩 🧩 🧩 🧩 🧩 🍎🍎 EXPENSIVE CALL! 🍎🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `)
             console.log(req.body);
             try {
                 const routeID: any = req.body.routeID;

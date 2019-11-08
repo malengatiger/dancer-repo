@@ -44,7 +44,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   String routeID;
   void _getRoute() async {
     routeID = await Prefs.getRouteID();
-    _route = await LocalDBAPI.getRoute(routeID);
+    _route = await LocalDBAPI.getRoute(routeID, '');
     if (_route == null) {
       _route = await routeBuilderBloc.getRouteByID(routeID);
     }
@@ -64,7 +64,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     Navigator.push(
       context,
       SlideRightRoute(
-        widget: CreateRoutePointsPage(),
+        widget: CreateRoutePointsPage(_route),
       ),
     );
   }
@@ -131,6 +131,12 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   void _getCollectionPoints() async {
     _routePointsCollected =
         await LocalDBAPI.getRawRoutePoints(routeID: routeID);
+    if (_routePointsCollected.isEmpty) {
+      debugPrint(
+          '🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
+      _route = await routeBuilderBloc.getRouteByID(routeID);
+      _routePointsCollected = _route.rawRoutePoints;
+    }
     setState(() {});
   }
 

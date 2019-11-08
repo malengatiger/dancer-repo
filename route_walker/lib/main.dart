@@ -1,5 +1,5 @@
+import 'package:aftarobotlibrary4/maps/distance_estimator_page.dart';
 import 'package:flutter/material.dart';
-import 'package:route_walker/ui/route_viewer_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -7,7 +7,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    print('\n🍏 🍎 🍏 🍎  MyApp: RouteBuilder starting: ✈️ ✈️ ✈️  ✈️ ✈️ ✈️ ${DateTime.now().toIso8601String()}\n');
+    print(
+        '\n🍏 🍎 🍏 🍎  MyApp: RouteBuilder starting: ✈️ ✈️ ✈️  ✈️ ✈️ ✈️ ${DateTime.now().toIso8601String()}\n');
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(color: Colors.indigo[300]),
         fontFamily: 'Raleway',
       ),
-      home: RouteViewerPage(),
+      home: EstimationPage(),
     );
   }
 }

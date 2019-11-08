@@ -23,6 +23,10 @@ import 'flag_routepoint_landmarks.dart';
 import 'landmark_city_page.dart';
 
 class CreateRoutePointsPage extends StatefulWidget {
+  final aftarobot.Route route;
+
+  CreateRoutePointsPage(this.route);
+
   @override
   _CreateRoutePointsPageState createState() => _CreateRoutePointsPageState();
 }
@@ -39,7 +43,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     zoom: 14.0,
   );
   BitmapDescriptor _markerIcon;
-  aftarobot.Route _route;
+//  aftarobot.Route _route;
 
   @override
   void initState() {
@@ -52,22 +56,20 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   void _getRoute() async {
     routeID = await Prefs.getRouteID();
     assert(routeID != null);
-    _route = await LocalDBAPI.getRoute(routeID);
-    if (_route == null) {
-      _route = await routeBuilderBloc.getRouteByID(routeID);
-    }
-    assert(_route != null);
     _rawRoutePoints = await LocalDBAPI.getRawRoutePoints(routeID: routeID);
+    assert(_rawRoutePoints.isNotEmpty);
     debugPrint(
         '\n\n🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩 '
         ' snapped: ${_routePoints.length} 🧩\n\n');
+    _rawRoutePoints.forEach((p) {
+      print(p.toJson());
+    });
     setState(() {});
-    _setRouteMarkers();
     await _getLandmarks();
   }
 
   Future _getLandmarks() async {
-    _landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
+    _landmarks = await routeBuilderBloc.getRouteLandmarks(widget.route);
     _buildItems();
     setState(() {});
   }
@@ -98,11 +100,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       print('🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 . QUIT! No points');
       return;
     }
-    if (_mapController == null) {
-      print(
-          '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 . QUIT! MapController is null');
-      return;
-    }
+
     _markers.clear();
     var icon =
         BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
@@ -124,7 +122,11 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             infoWindow: InfoWindow(title: m.created, snippet: m.created)));
       });
       print('🍏 🍎 markers added: ${_markers.length}');
-
+      if (_mapController == null) {
+        print(
+            '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 . QUIT! MapController is null');
+        return;
+      }
       _mapController.animateCamera(
           CameraUpdate.newLatLngZoom(_markers.elementAt(0).position, 15));
     } catch (e) {
@@ -139,7 +141,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     print('Marker tapped: route: ${point.created}');
     _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(point.latitude, point.longitude), zoom: 16.0)));
-    if (_route.routePoints.isNotEmpty) {
+    if (widget.route.routePoints.isNotEmpty) {
       _startLandmarksPage(point);
     }
   }
@@ -149,7 +151,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       context,
       SlideRightRoute(
         widget: FlagRoutePointLandmarks(
-          route: _route,
+          route: widget.route,
           routePoint: marker,
         ),
       ),
@@ -177,13 +179,6 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
               },
             ),
           ),
-//              Padding(
-//                padding: const EdgeInsets.all(8.0),
-//                child: IconButton(
-//                  icon: Icon(Icons.refresh),
-//                  onPressed: _getRawRoutePoints,
-//                ),
-//              ),
         ],
       ),
       body: Stack(
@@ -200,6 +195,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             tiltGesturesEnabled: true,
             onMapCreated: (mapController) {
               if (!_completer.isCompleted) {
+                debugPrint(
+                    ' 🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  onMapCreated: !_completer.isCompleted');
                 _completer.complete(mapController);
                 _mapController = mapController;
               }
@@ -221,12 +218,13 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
               elevation: 16,
               child: Icon(Icons.airport_shuttle),
               onPressed: () {
-                if (_route != null && _route.routePoints.isNotEmpty) {
+                if (widget.route != null &&
+                    widget.route.routePoints.isNotEmpty) {
                   Navigator.push(
                     context,
                     SlideRightRoute(
                       widget: FlagRoutePointLandmarks(
-                        route: _route,
+                        route: widget.route,
                       ),
                     ),
                   );
@@ -295,7 +293,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   @override
   onActionPressed(int action) {
     List<aftarobot.Route> list = List();
-    list.add(_route);
+    list.add(widget.route);
     Navigator.pop(context);
     switch (action) {
       case 2:
@@ -317,7 +315,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   void _startRouteMap(bool showConfirm) {
     List<aftarobot.Route> list = List();
-    list.add(_route);
+    list.add(widget.route);
     Navigator.push(
         context,
         SlideRightRoute(
@@ -325,7 +323,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             routes: list,
             hideAppBar: false,
             listener: this,
-            title: _route.name,
+            title: widget.route.name,
             landmarkIconColor: RouteMap.colorRed,
             containerHeight: showConfirm == false ? 0 : 60,
             container: showConfirm == false
@@ -444,11 +442,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       position: Position(
           type: 'Point',
           coordinates: [pressedLatLng.longitude, pressedLatLng.latitude]),
-      routeIDs: [_route.routeID],
       routeDetails: [
         RouteInfo(
-          name: _route.name,
-          routeID: _route.routeID,
+          name: widget.route.name,
+          routeID: widget.route.routeID,
         )
       ],
     );
@@ -456,7 +453,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     debugPrint(
         '️♻️ ♻️♻️ ♻️   🐸 New landmark added : 🍎 ${m.landmarkName} 🍎 ');
     List<CalculatedDistance> list =
-        await RouteDistanceCalculator.calculate(route: _route);
+        await RouteDistanceCalculator.calculate(route: widget.route);
     list.forEach((cd) {
       print('Calculated Distance: 🍎 🍎 ${cd.toJson()}');
     });
@@ -508,7 +505,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
         child: Column(
           children: <Widget>[
             Text(
-              _route == null ? 'No Route?' : _route.name,
+              widget.route == null ? 'No Route?' : widget.route.name,
               style: Styles.whiteBoldSmall,
             ),
             SizedBox(
@@ -566,13 +563,13 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
           '\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length}....');
 
       await routeBuilderBloc.addRawRoutePointsToMongoDB(
-          _route, _rawRoutePoints);
+          widget.route, _rawRoutePoints);
       debugPrint(
           '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw: ${_rawRoutePoints.length}....');
 
       _routePoints = await SnapToRoads.getSnappedPoints(
-          route: _route, routePoints: _rawRoutePoints);
-      _route.routePoints = _routePoints;
+          route: widget.route, routePoints: _rawRoutePoints);
+      widget.route.routePoints = _routePoints;
       var index = 0;
       _routePoints.forEach((p) {
         p.index = index;
@@ -583,20 +580,22 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       var batches = BatchUtil.makeBatches(_routePoints, batchSize);
       if (_routePoints.length < batchSize) {
         print(
-            '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${_route.name} ...');
+            '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${widget.route.name} ...');
         await DancerDataAPI.addRoutePoints(
-            routeId: _route.routeID, routePoints: _routePoints, clear: true);
+            routeId: widget.route.routeID,
+            routePoints: _routePoints,
+            clear: true);
         await LocalDBAPI.addRoutePoints(
-            routeID: _route.routeID, routePoints: _routePoints);
+            routeID: widget.route.routeID, routePoints: _routePoints);
         //batches of 300
         var index = 0;
         for (var batch in batches.values) {
           await DancerDataAPI.addRoutePoints(
-              routeId: _route.routeID,
+              routeId: widget.route.routeID,
               routePoints: batch,
               clear: index == 0 ? true : false);
           await LocalDBAPI.addRoutePoints(
-              routeID: _route.routeID, routePoints: batch);
+              routeID: widget.route.routeID, routePoints: batch);
           index++;
         }
       }
@@ -614,7 +613,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     }
 
     debugPrint(
-        '\n\nManager: 🍏 🍎 route points added to database. Done  for ${_route.name}');
+        '\n\nManager: 🍏 🍎 route points added to database. Done  for ${widget.route.name}');
     //await routeBuilderBloc.getRawRoutePoints(route: _route);
     setState(() {
       isBusy = false;
@@ -683,7 +682,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                       child: Column(
                         children: <Widget>[
                           Text(
-                            'Do you want to confirm RoutePoints for ${_route.name} ?? This will save these route points in the database for use in maps.',
+                            'Do you want to confirm RoutePoints for ${widget.route.name} ?? This will save these route points in the database for use in maps.',
                             style: Styles.blackBoldSmall,
                           ),
                           SizedBox(

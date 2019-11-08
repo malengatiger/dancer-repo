@@ -571,7 +571,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
 
   void _search() async {
     routeID = await Prefs.getRouteID();
-    _route = await LocalDBAPI.getRoute(routeID);
+    _route = await LocalDBAPI.getRoute(routeID, '');
     if (_route == null) {
       _route = await routeBuilderBloc.getRouteByID(routeID);
     }
