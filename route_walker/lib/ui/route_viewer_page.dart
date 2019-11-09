@@ -5,6 +5,7 @@ import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/user.dart' as ar;
+import 'package:aftarobotlibrary4/maps/distance_estimator_page.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -344,24 +345,24 @@ class _RouteViewerPageState extends State<RouteViewerPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-//                  RaisedButton(
-//                    color: Colors.indigo[600],
-//                    elevation: 16,
-//                    child: Padding(
-//                      padding: const EdgeInsets.all(16.0),
-//                      child: Text(
-//                        'Test Dynamic Distance',
-//                        style: Styles.whiteSmall,
-//                      ),
-//                    ),
-//                    onPressed: () {
-//                      Navigator.push(
-//                          context,
-//                          SlideRightRoute(
-//                            widget: EstimatorTester(),
-//                          ));
-//                    },
-//                  ),
+                  RaisedButton(
+                    color: Colors.indigo[600],
+                    elevation: 16,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Test Dynamic Distance',
+                        style: Styles.whiteSmall,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          SlideRightRoute(
+                            widget: EstimationPage(),
+                          ));
+                    },
+                  ),
                   SizedBox(
                     width: 0,
                   ),
@@ -786,8 +787,8 @@ class _RouteCardState extends State<RouteCard>
             Colors.white,
             Colors.indigo,
             false);
-        widget.routeCardListener.onMessage(
-            widget.route, 'Loading', Colors.yellowAccent, Colors.black, false);
+        widget.routeCardListener.onMessage(widget.route, 'Loading ...',
+            Colors.yellowAccent, Colors.black, false);
         route = await routeBuilderBloc.getRouteByID(widget.route.routeID);
         await LocalDBAPI.addRoute(route: route);
       } else {

@@ -1,5 +1,5 @@
-import 'package:aftarobotlibrary4/maps/distance_estimator_page.dart';
 import 'package:flutter/material.dart';
+import 'package:route_walker/ui/route_viewer_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(color: Colors.indigo[300]),
         fontFamily: 'Raleway',
       ),
-      home: EstimationPage(),
+      home: RouteViewerPage(),
+//      home: EstimationPage(),
     );
   }
 }
