@@ -37,6 +37,26 @@ class Messaging {
     static init() {
         log_1.default(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
     }
+    static sendRouteDistanceEstimation(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const options = {
+                priority: "high",
+                timeToLive: 60 * 60,
+            };
+            const payload = {
+                notification: {
+                    title: "Route Distance Estimation",
+                    body: data.vehicle.vehicleReg,
+                },
+                data: {
+                    estimation: JSON.stringify(data)
+                },
+            };
+            const topic = constants_1.default.ROUTE_DISTANCE_ESTIMATION + '_' + data.routeID;
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendRouteDistanceEstimation: FCM message sent: 😍 ${data.vehicle.vehicleReg} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+        });
+    }
     static sendVehicleArrival(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {

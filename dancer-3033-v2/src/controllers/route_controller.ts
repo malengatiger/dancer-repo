@@ -7,6 +7,8 @@ import uuid = require("uuid");
 import Database from '../database';
 import { Db, Cursor } from "mongodb";
 import { Types } from "mongoose";
+import RouteDistanceEstimation from "../models/route_distance";
+import Messaging from "../helpers/messaging";
 export class RouteController {
     public routes(app: any): void {
         log(
@@ -86,6 +88,30 @@ export class RouteController {
                     {
                         error: err,
                         message: ' 🍎🍎🍎🍎 addRoute failed'
+                    }
+                )
+            }
+        });
+        app.route("/addRouteDistanceEstimation").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /addRouteDistanceEstimation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                //TODO - should this go to DB????? or just to messaging?
+                //const estimation: any = new RouteDistanceEstimation (req.body);
+                //estimation.created = new Date().toISOString();
+                // const result = await estimation.save();
+                // log(`result ${result}`);
+                await Messaging.sendRouteDistanceEstimation(req.body);
+                res.status(200).json({
+                    message: `Route Distance Estimation FCM message sent`
+                });
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 addRouteDistanceEstimation failed'
                     }
                 )
             }

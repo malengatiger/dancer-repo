@@ -15,6 +15,7 @@ const route_1 = __importDefault(require("../models/route"));
 const log_1 = __importDefault(require("../log"));
 const uuid = require("uuid");
 const mongoose_1 = require("mongoose");
+const messaging_1 = __importDefault(require("../helpers/messaging"));
 class RouteController {
     routes(app) {
         log_1.default(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
@@ -82,6 +83,27 @@ class RouteController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addRoute failed'
+                });
+            }
+        }));
+        app.route("/addRouteDistanceEstimation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.default(`\n\n💦  POST: /addRouteDistanceEstimation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                //TODO - should this go to DB????? or just to messaging?
+                //const estimation: any = new RouteDistanceEstimation (req.body);
+                //estimation.created = new Date().toISOString();
+                // const result = await estimation.save();
+                // log(`result ${result}`);
+                yield messaging_1.default.sendRouteDistanceEstimation(req.body);
+                res.status(200).json({
+                    message: `Route Distance Estimation FCM message sent`
+                });
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addRouteDistanceEstimation failed'
                 });
             }
         }));

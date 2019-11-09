@@ -24,6 +24,28 @@ class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
     }
+    public static async sendRouteDistanceEstimation(data: any,): Promise<any> {
+        const options: any = {
+            priority: "high",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Route Distance Estimation",
+                body: data.vehicle.vehicleReg,
+            },
+            data: {
+                estimation: JSON.stringify(data)
+            },
+        };
+        const topic = Constants.ROUTE_DISTANCE_ESTIMATION + '_' + data.routeID;
+        const result = await fba.sendToTopic(topic, payload, options);
+        log(
+            `😍 sendRouteDistanceEstimation: FCM message sent: 😍 ${
+            data.vehicle.vehicleReg
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+        );
+    }
     public static async sendVehicleArrival(data: any,): Promise<any> {
         const options: any = {
             priority: "high",
