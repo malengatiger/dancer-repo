@@ -1,3 +1,4 @@
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/maps/route_map.dart';
@@ -30,8 +31,8 @@ class _NewRoutePageState extends State<NewRoutePage>
 
   List<ar.Route> assocRoutes = List();
   void _getRoutes() async {
-    assocRoutes = await routeBuilderBloc
-        .getRoutesByAssociation(widget.association.associationID);
+    assocRoutes = await LocalDBAPI.getRoutesByAssociation(
+        widget.association.associationID);
     debugPrint(
         '🧩🧩🧩🧩 ${widget.association.associationName} 🍏 🍎 Association routes: 🧩🧩 ${assocRoutes.length} 🧩🧩');
   }
@@ -85,7 +86,6 @@ class _NewRoutePageState extends State<NewRoutePage>
 
     try {
       await _bloc.addRoute(route);
-      await _bloc.getRoutesByAssociation(widget.association.associationID);
       _key.currentState.removeCurrentSnackBar();
       AppSnackbar.showSnackbarWithAction(
           scaffoldKey: _key,

@@ -333,6 +333,7 @@ class RouteBuilderBloc {
         associationId: route.associationID,
         associationName: route.associationName);
 
+    await LocalDBAPI.addRoute(route: result);
     debugPrint(
         ' 📍📍📍📍📍📍 adding route ${route.name} to model and stream sink ...');
     _appModel.routes.add(result);
