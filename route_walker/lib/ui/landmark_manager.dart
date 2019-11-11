@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
@@ -21,6 +19,10 @@ import 'flag_routepoint_landmarks.dart';
 import 'landmark_city_page.dart';
 
 class LandmarksManagerPage extends StatefulWidget {
+  final aftarobot.Route route;
+
+  LandmarksManagerPage(this.route);
+
   @override
   _LandmarksManagerPageState createState() => _LandmarksManagerPageState();
 }
@@ -49,29 +51,13 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   }
 
   void _getRoute() async {
-    var routeID = await Prefs.getRouteID();
-    assert(routeID != null);
-    _route = await LocalDBAPI.getRoute(routeID, '');
-    if (_route != null) {
-      if (_route.routePoints.isEmpty) {
-        _route = await routeBuilderBloc.getRouteByID(routeID);
-      }
-    } else {
-      _route = await routeBuilderBloc.getRouteByID(routeID);
-    }
-
+    _route = widget.route;
     await _getRoutePoints();
     setState(() {});
   }
 
   Future _getRoutePoints() async {
     _routePoints = _route.routePoints;
-    if (_routePoints.isEmpty) {
-      _route = await routeBuilderBloc.getRouteByID(_route.routeID);
-    } else {
-      debugPrint('Route points from local DB ${_routePoints.length}');
-      _route.routePoints = _routePoints;
-    }
     landmarksOnRoute = 0;
     _routePoints.forEach((m) {
       if (m.landmarkID != null) {

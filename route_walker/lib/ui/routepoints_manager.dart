@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/sharedprefs.dart';
-import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
@@ -17,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
+import 'package:route_walker/ui/landmark_manager.dart';
 
 import 'cards.dart';
 import 'flag_routepoint_landmarks.dart';
@@ -54,9 +53,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   String routeID;
   void _getRoute() async {
-    routeID = await Prefs.getRouteID();
-    assert(routeID != null);
-    _rawRoutePoints = await LocalDBAPI.getRawRoutePoints(routeID: routeID);
+    _rawRoutePoints =
+        await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
     assert(_rawRoutePoints.isNotEmpty);
     debugPrint(
         '\n\n🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩 '
@@ -296,6 +294,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     list.add(widget.route);
     Navigator.pop(context);
     switch (action) {
+      case 1:
+        Navigator.push(context,
+            SlideRightRoute(widget: LandmarksManagerPage(widget.route)));
+        break;
       case 2:
         _startRouteMap(true);
         break;
@@ -560,13 +562,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
     try {
       debugPrint(
-          '\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length}....');
-
-      await routeBuilderBloc.addRawRoutePointsToMongoDB(
-          widget.route, _rawRoutePoints);
-      debugPrint(
-          '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw: ${_rawRoutePoints.length}....');
-
+          '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw route points: ${_rawRoutePoints.length}....');
       _routePoints = await SnapToRoads.getSnappedPoints(
           route: widget.route, routePoints: _rawRoutePoints);
       widget.route.routePoints = _routePoints;
@@ -577,31 +573,22 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
         index++;
       });
-      var batches = BatchUtil.makeBatches(_routePoints, batchSize);
-      if (_routePoints.length < batchSize) {
-        print(
-            '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${widget.route.name} ...');
-        await DancerDataAPI.addRoutePoints(
-            routeId: widget.route.routeID,
-            routePoints: _routePoints,
-            clear: true);
-        await LocalDBAPI.addRoutePoints(
-            routeID: widget.route.routeID, routePoints: _routePoints);
-        //batches of 300
-        var index = 0;
-        for (var batch in batches.values) {
-          await DancerDataAPI.addRoutePoints(
-              routeId: widget.route.routeID,
-              routePoints: batch,
-              clear: index == 0 ? true : false);
-          await LocalDBAPI.addRoutePoints(
-              routeID: widget.route.routeID, routePoints: batch);
-          index++;
-        }
-      }
-      AppSnackbar.showSnackbar(
+      debugPrint(
+          '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${widget.route.name} ...');
+      await routeBuilderBloc.addRoutePointsToMongoDB(
+          widget.route, _routePoints);
+      debugPrint(
+          '\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length}....');
+      await routeBuilderBloc.addRawRoutePointsToMongoDB(
+          widget.route, _rawRoutePoints);
+
+      setState(() {});
+      AppSnackbar.showSnackbarWithAction(
           scaffoldKey: _key,
           message: 'Route Points added',
+          action: 1,
+          actionLabel: 'DONE',
+          listener: this,
           backgroundColor: Colors.teal[800]);
     } catch (e) {
       print(e);
@@ -614,54 +601,11 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
     debugPrint(
         '\n\nManager: 🍏 🍎 route points added to database. Done  for ${widget.route.name}');
-    //await routeBuilderBloc.getRawRoutePoints(route: _route);
     setState(() {
       isBusy = false;
       showButton = false;
     });
   }
-
-//  _connectPointsAndCalculateDistances() async {
-//    debugPrint(
-//        '🔆🔆🔆🔆🔆🔆🔆🔆🔆🔆 _connectPoints ... calculate distances 🔆🔆');
-//    try {
-//      List<RoutePoint> landmarkPoints = List();
-//      var landmarks = await routeBuilderBloc.getRouteLandmarks(_route);
-//      if (landmarks.isEmpty) {
-//        print('💜💜💜 no landmarks in this route yet, so no calculations');
-//        return;
-//      }
-//      debugPrint(
-//          '🍀️🍀️🍀️ Connect 🔴 ${landmarks.length} landmarks to route points');
-//      for (var mark in landmarks) {
-//        RoutePoint point = await routeBuilderBloc.findRoutePointNearestLandmark(
-//            route: _route, landmark: mark);
-//        landmarkPoints.add(point);
-//        _route.routePoints.forEach((p) {
-//          if (point.latitude == p.latitude && point.longitude == p.latitude) {
-//            p.landmarkID = mark.landmarkID;
-//            p.landmarkName = mark.landmarkName;
-//          }
-//        });
-//      }
-//      var cnt = 0;
-//      _route.routePoints.forEach((p) {
-//        if (p.landmarkID != null) {
-//          cnt++;
-//          prettyPrint(p.toJson(),
-//              '🔴 🔴 🔴 🔴 #$cnt -  💛 Route point that is a LANDMARK: ${p.landmarkName} 💛');
-//        }
-//      });
-//      debugPrint(
-//          '🍀️🍀️🍀️ sending ${landmarkPoints.length} landmarked points ... calculate distances between landmarks');
-//      await routeBuilderBloc.updateRoutePoints(
-//          routeID: _route.routeID, points: landmarkPoints);
-//      await RouteDistanceCalculator.calculate(route: _route);
-//      if (_key.currentState != null) _key.currentState.removeCurrentSnackBar();
-//    } catch (e) {
-//      print(e);
-//    }
-//  }
 
   void _confirmSave() async {
     showDialog(

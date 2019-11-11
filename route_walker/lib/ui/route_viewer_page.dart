@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
@@ -46,10 +48,14 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   @override
   void initState() {
     super.initState();
+    _subscribe();
     _checkUser();
   }
 
   void _checkUser() async {
+    setState(() {
+      isBusy = true;
+    });
     bool isSignedIn = await isUserSignedIn();
     print(
         '🍎 🍎 🍎 _RouteViewerPageState: checkUser: ...................... 🔆🔆 isSignedIn: $isSignedIn  🔆🔆');
@@ -87,21 +93,43 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     }
     _buildDropDownItems();
     LocalDBAPI.setAppID();
-    _getAssociation();
+    await _getAssociation();
+    setState(() {
+      isBusy = false;
+    });
   }
 
-  void _getAssociation() async {
+  Future _getAssociation() async {
     association = await Prefs.getAssociation();
     if (association != null) {
       mTitle = association.associationName;
-      _getRoutesByAssoc();
+      await _refresh(false);
     }
     setState(() {});
   }
 
   List<aftarobot.Route> routes = List();
+  StreamSubscription<bool> subscription;
+  _subscribe() {
+    var m = " 🍏 🍎 StreamSubscription: subscribe to busyStream";
+    print("$m:  start busyStream subscription: ");
+    subscription = routeBuilderBloc.busyStream.listen((data) {
+      print("$m: DataReceived:  🍎 $data");
+      setState(() {
+        isBusy = data;
+      });
+    }, onDone: () {
+      print("$m: Task Done");
+    }, onError: (error) {
+      print("$m: Some Error");
+    });
+  }
 
-  void _refresh() async {
+  void _cancelSub() {
+    subscription.cancel();
+  }
+
+  Future _refresh(bool forceRefresh) async {
     print(
         '🧩🧩 RouteViewerPage refresh routes and landmarks .................');
     if (association == null) {
@@ -110,20 +138,12 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       return;
     }
 
-    AppSnackbar.showSnackbarWithProgressIndicator(
-        scaffoldKey: _key,
-        message: 'Loading fresh data',
-        textColor: Colors.yellow,
-        backgroundColor: Colors.black);
-
     try {
-      routes = await routeBuilderBloc
-          .getRoutesByAssociation(association.associationID);
+      routes = await routeBuilderBloc.getRoutesByAssociation(
+          association.associationID, forceRefresh);
       _key.currentState.removeCurrentSnackBar();
 
-      setState(() {});
-      await routeBuilderBloc.cacheRoutes(routes: routes);
-      _key.currentState.removeCurrentSnackBar();
+//      _key.currentState.removeCurrentSnackBar();
     } catch (e) {
       print(e);
       AppSnackbar.showErrorSnackbar(
@@ -132,47 +152,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
           actionLabel: 'Err',
           listener: this);
     }
-  }
-
-  Future<List<aftarobot.Route>> _getRoutesByAssoc() async {
-    routes = await LocalDBAPI.getRoutesByAssociation(association.associationID);
-    if (routes.isNotEmpty) {
-      debugPrint('🌿 🌿 🌿 🌿  routes from local db: 🌿  ${routes.length}');
-      routes.forEach(((r) {
-        debugPrint('🌿 🌿 🌿 🌿  route from local db: 🌿  ${r.name}');
-      }));
-      routeBuilderBloc.updateRoutesInStream(routes);
-    } else {
-      AppSnackbar.showSnackbarWithProgressIndicator(
-          scaffoldKey: _key,
-          message: 'Loading fresh data',
-          textColor: Colors.yellow,
-          backgroundColor: Colors.black);
-      routes = await routeBuilderBloc
-          .getRoutesByAssociation(association.associationID);
-      _key.currentState.removeCurrentSnackBar();
-    }
-    setState(() {});
-    return routes;
-  }
-
-  Future<List<aftarobot.Route>> _getRoutesByAssocFromRemote() async {
-    AppSnackbar.showSnackbarWithProgressIndicator(
-        scaffoldKey: _key,
-        message: 'Loading fresh data',
-        textColor: Colors.yellow,
-        backgroundColor: Colors.black);
-    routes = await routeBuilderBloc
-        .getRoutesByAssociation(association.associationID);
-    _key.currentState.removeCurrentSnackBar();
-    if (routes.isNotEmpty) {
-      debugPrint('🔆 🔆 🔆 🔆 routes from remote db: 🌿  ${routes.length}');
-      routes.forEach(((r) {
-        debugPrint('🔆 🔆 🔆 🔆  route from remote db: 🌿  ${r.name}');
-      }));
-    }
-    setState(() {});
-    return routes;
   }
 
   DateTime start, end;
@@ -202,7 +181,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   }
 
   String switchLabel = 'Hide';
-  bool switchStatus = false;
+  bool switchStatus = false, isBusy = false;
   RouteBuilderModel appModel;
   void _sortRoutes() {
     //appModel.routes.sort((a, b) => a.name.compareTo(b.name));
@@ -266,7 +245,9 @@ class _RouteViewerPageState extends State<RouteViewerPage>
               Padding(
                 padding: const EdgeInsets.only(right: 8.0, top: 4.0),
                 child: IconButton(
-                  onPressed: _getRoutesByAssocFromRemote,
+                  onPressed: () {
+                    _refresh(true);
+                  },
                   iconSize: 24,
                   icon: Icon(Icons.refresh),
                 ),
@@ -274,7 +255,21 @@ class _RouteViewerPageState extends State<RouteViewerPage>
             ],
             bottom: _getTotalsView(),
           ),
-          body: _getListView(),
+          body: Stack(
+            children: <Widget>[
+              isBusy
+                  ? Center(
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 12,
+                        ),
+                      ),
+                    )
+                  : _getListView(),
+            ],
+          ),
           backgroundColor: Colors.brown.shade100,
         );
       },
@@ -295,7 +290,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
         '⚜️⚜️⚜️ onAssociationTapped ⚜️ ${ass.associationID} ⚜ ${ass.associationName} ... ♻️♻️♻️ set Association and refresh');
     association = ass;
     await Prefs.saveAssociation(association);
-    _refresh();
+    _refresh(true);
   }
 
   String mTitle;
@@ -368,7 +363,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                   ),
                   GestureDetector(
                     onTap: () {
-                      _refresh();
+                      _refresh(true);
                     },
                     child: Row(
                       children: <Widget>[
@@ -578,7 +573,7 @@ class _RouteCardState extends State<RouteCard>
     menuItems.add(PopupMenuItem<String>(
       value: 'Manage Route Points',
       child: GestureDetector(
-        onTap: _startCreateRoutePointsPage,
+        onTap: _startNavigation,
         child: ListTile(
           leading: Icon(
             Icons.settings,
@@ -772,42 +767,17 @@ class _RouteCardState extends State<RouteCard>
   }
 
   aftarobot.Route route;
-  _startCreateRoutePointsPage() async {
-    debugPrint('_startCreateRoutePointsPage........... : 🍎 🍎 🍎');
+  _startNavigation() async {
+    debugPrint('_startNavigation........... : 🍎 🍎 🍎');
     await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
     if (widget.route.routePoints.isEmpty) {
-      var points =
-          await LocalDBAPI.getRoutePoints(routeID: widget.route.routeID);
-      debugPrint('........... Route points from LOCAL DB: ${points.length}');
-      if (points.isEmpty) {
-        widget.routeCardListener.onMessage(
-            widget.route,
-            'Loading route points from REMOTE',
-            Colors.white,
-            Colors.indigo,
-            false);
-        widget.routeCardListener.onMessage(widget.route, 'Loading ...',
-            Colors.yellowAccent, Colors.black, false);
-        route = await routeBuilderBloc.getRouteByID(widget.route.routeID);
-        await LocalDBAPI.addRoute(route: route);
-      } else {
-        debugPrint('Route points from LOCAL DB');
-        widget.routeCardListener.onMessage(
-            widget.route,
-            'Loading route points from LOCAL',
-            Colors.white,
-            Colors.indigo,
-            false);
-        route.routePoints = points;
-      }
-    }
-
-    if (route.routePoints.isNotEmpty) {
-      Navigator.push(context, SlideRightRoute(widget: LandmarksManagerPage()));
-    } else {
       Navigator.push(
           context, SlideRightRoute(widget: CreateRoutePointsPage(route)));
+    } else {
+      debugPrint('Route points from LOCAL DB');
+      Navigator.push(
+          context, SlideRightRoute(widget: LandmarksManagerPage(route)));
     }
   }
 

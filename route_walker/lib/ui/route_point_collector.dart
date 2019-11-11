@@ -46,7 +46,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     routeID = await Prefs.getRouteID();
     _route = await LocalDBAPI.getRoute(routeID, '');
     if (_route == null) {
-      _route = await routeBuilderBloc.getRouteByID(routeID);
+      _route = await routeBuilderBloc.getRouteByIDAndCacheLocally(routeID);
     }
     _getCollectionPoints();
   }
@@ -134,7 +134,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     if (_routePointsCollected.isEmpty) {
       debugPrint(
           '🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
-      _route = await routeBuilderBloc.getRouteByID(routeID);
+      _route = await routeBuilderBloc.getRouteByIDAndCacheLocally(routeID);
       _routePointsCollected = _route.rawRoutePoints;
     }
     setState(() {});

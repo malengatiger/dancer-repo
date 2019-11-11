@@ -507,10 +507,12 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
       debugPrint(
           ' 🧩 🧩 🧩 ${routePointsForLandmarks.length} landmark points to be updated ...');
       await _updatePoints(routePointsForLandmarks);
-      _route = await routeBuilderBloc.getRouteByID(widget.route.routeID);
+      _route = await routeBuilderBloc
+          .getRouteByIDAndCacheLocally(widget.route.routeID);
       //todo - calculate distances
       await RouteDistanceCalculator.calculate(route: _route);
-      _route = await routeBuilderBloc.getRouteByID(widget.route.routeID);
+      _route = await routeBuilderBloc
+          .getRouteByIDAndCacheLocally(widget.route.routeID);
       Navigator.pop(context, _route);
     } catch (e) {
       print(e);
@@ -573,7 +575,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     routeID = await Prefs.getRouteID();
     _route = await LocalDBAPI.getRoute(routeID, '');
     if (_route == null) {
-      _route = await routeBuilderBloc.getRouteByID(routeID);
+      _route = await routeBuilderBloc.getRouteByIDAndCacheLocally(routeID);
     }
     landmarks = await routeBuilderBloc.findLandmarksNearRoutePoint(
         widget.routePoint, 0.1);

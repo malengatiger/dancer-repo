@@ -73,11 +73,13 @@ class RouteBuilderBloc {
       StreamController.broadcast();
   final StreamController<List<Landmark>> _routeLandmarksController =
       StreamController.broadcast();
+  final StreamController<bool> _busyController = StreamController.broadcast();
 
   List<RoutePoint> _routePoints = List();
   List<RoutePoint> _rawRoutePoints = List();
   List<GeofenceEvent> _geofenceEvents = List();
   List<Landmark> _routeLandmarks = List();
+  List<ar.Route> _routes = List();
 
   final RouteBuilderModel _appModel = RouteBuilderModel();
   bg.Location _currentLocation;
@@ -94,8 +96,10 @@ class RouteBuilderBloc {
     _routeLandmarksController.close();
     _routeController.close();
     _associationController.close();
+    _busyController.close();
   }
 
+  Stream get busyStream => _busyController.stream;
   Stream get associationStream => _associationController.stream;
   Stream get routeStream => _routeController.stream;
   Stream get appModelStream => _appModelController.stream;
@@ -119,19 +123,6 @@ class RouteBuilderBloc {
     print(
         '\n🔵 🔵 🔵 🔵 🔵 RouteBuilderBloc: ️ ✳️ initializing ... 🍀️🍀️🍀️ doing nothing so far 🔵 🔵 🔵 🔵 🔵 \n');
   }
-
-//  Future _signIn() async {
-//    //todo - to be replaced by proper authentication
-//    debugPrint(
-//        '\n### ℹ️ sign in anonymously ...(to be replaced by real auth code)');
-//    var user = await _auth.currentUser();
-//    if (user == null) {
-//      await _auth.signInAnonymously();
-//    } else {
-//      debugPrint(' ✅ User already authenticated');
-//    }
-//    checkPermission();
-//  }
 
   Future<bool> checkUserSignedIn() async {
     print('\n🔵 🔵 🔵 ######################### 🔴 isUserSignedIn ??');
@@ -206,65 +197,84 @@ class RouteBuilderBloc {
     return asses;
   }
 
-  Future getRoutesByAssociation(String associationID) async {
+  Future getRoutesByAssociation(String associationID, bool forceRefresh) async {
     debugPrint(
-        '### ℹ️  getRoutes: getting association routes 🚨 $associationID  in Firestore ..........\n');
-    var routes = await DancerListAPI.getRoutesByAssociation(
-        associationID: associationID);
-    //todo - delete routes first
-    await LocalDBAPI.deleteRoutesByAssociation(associationID);
-    await LocalDBAPI.addRoutes(routes: routes);
-
-    updateRoutesInStream(routes);
-    debugPrint('++++ ✅  routes retrieved: ${routes.length}\n');
-
-    return routes;
-  }
-
-  void updateRoutesInStream(List<ar.Route> routes) {
+        '### ℹ️  getRoutes: getting association routes 🚨 $associationID  forceRefresh $forceRefresh in Firestore ..........\n');
+    _busyController.sink.add(true);
+    var origin = 'LOCAL';
+    _routes = await LocalDBAPI.getRoutesByAssociation(associationID);
+    if (forceRefresh || _routes.isEmpty) {
+      _routes = await DancerListAPI.getRoutesByAssociation(
+          associationID: associationID);
+      origin = 'REMOTE';
+      await _cacheRoutes();
+    }
+    if (_routes.isNotEmpty) {
+      debugPrint('🌿 🌿 🌿 🌿   ${_routes.length} routes from $origin db: 🌿 ');
+      _routes.forEach(((r) {
+        debugPrint('🌿 🌿 🌿 🌿  route from $origin db: 🌿  ${r.name}');
+      }));
+    }
     debugPrint(
-        ' 📍📍📍📍 adding ${routes.length} routes to  📎 model and stream sink ...');
-    routes.sort((a, b) => a.name.compareTo(b.name));
-    _routeController.sink.add(routes);
-//    _appModel.routes.clear();
-//    _appModel.routes.addAll(routes);
-//    _appModel.routes.sort((a, b) => a.name.compareTo(b.name));
-//    _appModelController.sink.add(_appModel);
+        ' 📍📍📍📍 adding ${_routes.length} sorted routes to  📎 model and stream sink ...');
+    _routes.sort((a, b) => a.name.compareTo(b.name));
+    _routeController.sink.add(_routes);
+    debugPrint('++++ ✅  routes retrieved: ${_routes.length}\n');
+
+    _busyController.sink.add(false);
+    return _routes;
   }
 
   static const batchSize = 300;
   Future addRoutePointsToMongoDB(
       ar.Route route, List<RoutePoint> routePoints) async {
-    var _routePoints = await SnapToRoads.getSnappedPoints(
-        route: route, routePoints: _rawRoutePoints);
     var index = 0;
-    _routePoints.forEach((p) {
+    routePoints.forEach((p) {
       p.index = index;
       p.position =
           Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
       index++;
     });
     try {
-      var batches = BatchUtil.makeBatches(_routePoints, batchSize);
-      if (_routePoints.length < batchSize) {
+      await LocalDBAPI.addRoutePoints(
+          routeID: route.routeID,
+          routePoints: routePoints,
+          routeName: route.name);
+      debugPrint(
+          '\n\n🔵 🔵 🔵 🔵 🔵 Cached snapped route points: ${_routePoints.length} - ${route.name} ....');
+      var batches = BatchUtil.makeBatches(routePoints, batchSize);
+      if (routePoints.length < batchSize) {
         print(
-            '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${route.name} ...');
+            '🍎🍎🍎🍎 adding ${routePoints.length} route points to 🍎 ${route.name} ...');
         await DancerDataAPI.addRoutePoints(
-            routeId: route.routeID, routePoints: _routePoints, clear: true);
-        await LocalDBAPI.addRoutePoints(
-            routeID: route.routeID, routePoints: _routePoints);
+            routeId: route.routeID, routePoints: routePoints, clear: true);
+      } else {
         //batches of 300
+        print(
+            '🍎🍎🍎🍎 adding ${batches.length} batches of $batchSize route points to 🍎 ${route.name} to remote database');
         var index = 0;
         for (var batch in batches.values) {
           await DancerDataAPI.addRoutePoints(
               routeId: route.routeID,
               routePoints: batch,
               clear: index == 0 ? true : false);
-          await LocalDBAPI.addRoutePoints(
-              routeID: route.routeID, routePoints: batch);
+
           index++;
         }
       }
+      route.routePoints = routePoints;
+      await LocalDBAPI.addRoute(route: route);
+      List<ar.Route> mList = List();
+      mList.add(route);
+      _routes.forEach((r) {
+        if (r.routeID != route.routeID) {
+          mList.add(r);
+        }
+      });
+      _routes = mList;
+      _routeController.sink.add(_routes);
+      print(
+          '🍎🍎🍎🍎 DONE !! 👌👌👌 added ${batches.length} batches of $batchSize route points to 🍎 ${route.name} 👌👌👌 ...');
       return null;
     } catch (e) {
       print(e);
@@ -288,11 +298,9 @@ class RouteBuilderBloc {
         await DancerDataAPI.addRawRoutePoints(
             routeID: route.routeID, routePoints: routePoints, clear: true);
       } else {
-        //batches of 300
-
         var batches = BatchUtil.makeBatches(routePoints, batchSize);
         print(
-            '🍎🍎🍎🍎 adding ${batches.length} batches of RAW route points to 🍎 ${route.name} ...');
+            '🍎🍎🍎🍎 adding ${batches.length} batches of $batchSize RAW route points to 🍎 ${route.name} to remote database');
         var index = 0;
         for (var batch in batches.values) {
           await DancerDataAPI.addRawRoutePoints(
@@ -336,9 +344,11 @@ class RouteBuilderBloc {
     await LocalDBAPI.addRoute(route: result);
     debugPrint(
         ' 📍📍📍📍📍📍 adding route ${route.name} to model and stream sink ...');
-    _appModel.routes.add(result);
-    _appModelController.sink.add(_appModel);
-    return _appModel.routes;
+
+    _routes.add(result);
+    _routes.sort((a, b) => a.name.compareTo(b.name));
+    _routeController.sink.add(_routes);
+    return _routes;
   }
 
   Future<Landmark> addLandmark(Landmark landmark) async {
@@ -534,7 +544,7 @@ class RouteBuilderBloc {
     if (_rawRoutePoints.isEmpty) {
       print(
           '\n🚨 🚨 🚨 🚨  rawRoutePoints NOT found on LocalDB; callng DancerListAPI.getRouteByID');
-      ar.Route mRoute = await getRouteByID(route.routeID);
+      ar.Route mRoute = await getRouteByIDAndCacheLocally(route.routeID);
       _rawRoutePoints = mRoute.rawRoutePoints;
     }
     print(
@@ -554,31 +564,47 @@ class RouteBuilderBloc {
     return _routePoints;
   }
 
-  Future cacheRoutes({List<ar.Route> routes}) async {
+  Future _cacheRoutes() async {
     debugPrint(
         'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  ..........');
 
-    for (var route in routes) {
-      await getRouteByID(route.routeID);
+    for (var route in _routes) {
+      debugPrint(
+          'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  : 🍎  ${route.name} ..........');
+      await getRouteByIDAndCacheLocally(route.routeID);
     }
-    debugPrint('ℹ️  🍎 🍎 🍎 🍎  Routes cached: 🍎 ${routes.length}');
+    debugPrint('\n\n\nℹ️  🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
     return _routePoints;
   }
 
-  Future<ar.Route> getRouteByID(String routeID) async {
+  Future<ar.Route> getRouteByIDAndCacheLocally(String routeID) async {
     var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
     if (mRoute != null) {
       await LocalDBAPI.addRoute(route: mRoute);
       if (mRoute.routePoints.isNotEmpty) {
+        await LocalDBAPI.deleteRoutePoints(routeID);
         await LocalDBAPI.addRoutePoints(
             routeID: routeID, routePoints: mRoute.routePoints);
       }
       if (mRoute.rawRoutePoints.isNotEmpty) {
+        await LocalDBAPI.deleteRawRoutePoints(routeID);
         mRoute.rawRoutePoints.forEach((m) async {
           await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: m);
         });
       }
     }
+    List<ar.Route> routes = List();
+    _routes.forEach((m) {
+      if (routeID != m.routeID) {
+        routes.add(m);
+      }
+    });
+    _routes = routes;
+    _routes.add(mRoute);
+    _routes.sort((a, b) => a.name.compareTo(b.name));
+    _routeController.sink.add(_routes);
+    debugPrint(
+        'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ 👌👌👌 👌👌👌 👌👌👌️  getRouteByIDAndCacheLocally: DONE for  💙 ${mRoute.name}  💙 👌👌👌 👌👌👌  ..........');
     return mRoute;
   }
 
