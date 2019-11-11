@@ -155,10 +155,7 @@ export class RouteController {
                 });
 
                 const result = await route.save();
-                log(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
-                const routeX: any = await Route.findOne({ routeID: req.body.routeID });
-                log(`💙💙 AFTER reread: Points: ${routeX.routePoints.length} - 🧡💛 ${route.name}`);
-                // log(result);
+                log(`💙💙 Points added to route: ${route.routePoints.length} - 🧡💛 ${route.name}`);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -171,7 +168,7 @@ export class RouteController {
         });
         app.route("/addRawRoutePoints").post(async (req: Request, res: Response) => {
             log(
-                `\n\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+                `\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
             );
             console.log(req.body);
             try {
@@ -186,7 +183,7 @@ export class RouteController {
                 });
 
                 const result = await route.save();
-                log(`💙💙 Raw route Points added to route. ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
+                log(`💙💙 Raw route Points added to route: ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
                 // log(result);
                 res.status(200).json(result);
             } catch (err) {
