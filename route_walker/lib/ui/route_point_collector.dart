@@ -21,6 +21,10 @@ import 'package:route_walker/ui/routepoints_manager.dart';
 
  */
 class RoutePointCollector extends StatefulWidget {
+  final ar.Route route;
+
+  RoutePointCollector(this.route);
+
   @override
   _RoutePointCollectorState createState() => _RoutePointCollectorState();
 }
@@ -43,11 +47,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
 
   String routeID;
   void _getRoute() async {
-    routeID = await Prefs.getRouteID();
-    _route = await LocalDBAPI.getRoute(routeID, '');
-    if (_route == null) {
-      _route = await routeBuilderBloc.getRouteByIDAndCacheLocally(routeID);
-    }
+    _route = widget.route;
     _getCollectionPoints();
   }
 

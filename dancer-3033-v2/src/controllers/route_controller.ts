@@ -173,7 +173,6 @@ export class RouteController {
             console.log(req.body);
             try {
                 const route: any = await Route.findOne({ routeID: req.body.routeID });
-                // check clear flag
                 if (req.body.clear == true) {
                     route.rawRoutePoints = [];
                     await route.save();
@@ -183,7 +182,7 @@ export class RouteController {
                 });
 
                 const result = await route.save();
-                log(`💙💙 Raw route Points added to route: ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
+                log(`💙💙 Raw Route Points added to route: ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
                 // log(result);
                 res.status(200).json(result);
             } catch (err) {

@@ -21,7 +21,6 @@ import 'package:route_walker/ui/route_editor.dart';
 import 'package:route_walker/ui/route_point_collector.dart';
 import 'package:route_walker/ui/routepoints_manager.dart';
 
-import 'flag_routepoint_landmarks.dart';
 import 'landmark_manager.dart';
 import 'landmark_routes_page.dart';
 
@@ -223,38 +222,9 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                   ),
             elevation: 16,
             backgroundColor: Colors.pink[300],
-            actions: <Widget>[
-              association == null
-                  ? Container()
-                  : Padding(
-                      padding: const EdgeInsets.only(right: 8.0, top: 4.0),
-                      child: IconButton(
-                        onPressed: _addNewRoute,
-                        iconSize: 24,
-                        icon: Icon(Icons.library_add),
-                      ),
-                    ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0, top: 4.0),
-                child: IconButton(
-                  onPressed: writeRoutesToMongo,
-                  iconSize: 24,
-                  icon: Icon(Icons.room),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0, top: 4.0),
-                child: IconButton(
-                  onPressed: () {
-                    _refresh(true);
-                  },
-                  iconSize: 24,
-                  icon: Icon(Icons.refresh),
-                ),
-              ),
-            ],
             bottom: _getTotalsView(),
           ),
+          bottomNavigationBar: _getBottomNav(),
           body: Stack(
             children: <Widget>[
               isBusy
@@ -278,6 +248,8 @@ class _RouteViewerPageState extends State<RouteViewerPage>
 
   void _addNewRoute() {
     if (association == null) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'Please select Association');
       return;
     }
     print(
@@ -313,6 +285,23 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     });
   }
 
+  Widget _getBottomNav() {
+    List<BottomNavigationBarItem> items = List();
+    items.add(BottomNavigationBarItem(
+        title: Text('Create New Route'),
+        icon: Icon(
+          Icons.add_circle_outline,
+          color: Colors.pink,
+        )));
+    items.add(BottomNavigationBarItem(
+        title: Text('Refresh Data'), icon: Icon(Icons.refresh)));
+    return BottomNavigationBar(
+      items: items,
+      onTap: _bottomNavTapped,
+      backgroundColor: Colors.amber[100],
+    );
+  }
+
   Widget _getTotalsView() {
     return PreferredSize(
       preferredSize: Size.fromHeight(132),
@@ -340,24 +329,26 @@ class _RouteViewerPageState extends State<RouteViewerPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  RaisedButton(
-                    color: Colors.indigo[600],
-                    elevation: 16,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Test Dynamic Distance',
-                        style: Styles.whiteSmall,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          SlideRightRoute(
-                            widget: EstimationPage(),
-                          ));
-                    },
-                  ),
+                  isBusy || association == null
+                      ? Container()
+                      : RaisedButton(
+                          color: Colors.indigo[600],
+                          elevation: 16,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'Test Dynamic Distance',
+                              style: Styles.whiteSmall,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                  widget: EstimationPage(),
+                                ));
+                          },
+                        ),
                   SizedBox(
                     width: 0,
                   ),
@@ -434,6 +425,18 @@ class _RouteViewerPageState extends State<RouteViewerPage>
           message: message,
           backgroundColor: backColor,
           textColor: textColor);
+    }
+  }
+
+  void _bottomNavTapped(int index) {
+    switch (index) {
+      case 0:
+        _addNewRoute();
+        break;
+      case 1:
+        _refresh(true);
+        break;
+      default:
     }
   }
 }
@@ -610,30 +613,30 @@ class _RouteCardState extends State<RouteCard>
         ),
       ),
     ));
-    menuItems.add(PopupMenuItem<String>(
-      value: 'Route Landmarks',
-      child: GestureDetector(
-        onTap: () async {
-          Navigator.pop(context);
-          await Prefs.saveRouteID(widget.route.routeID);
-          Navigator.push(
-            context,
-            SlideRightRoute(
-              widget: FlagRoutePointLandmarks(
-                route: widget.route,
-              ),
-            ),
-          );
-        },
-        child: ListTile(
-          leading: Icon(
-            Icons.airport_shuttle,
-            color: Colors.pink,
-          ),
-          title: Text('Route Landmarks', style: Styles.blackSmall),
-        ),
-      ),
-    ));
+//    menuItems.add(PopupMenuItem<String>(
+//      value: 'Route Landmarks',
+//      child: GestureDetector(
+//        onTap: () async {
+//          Navigator.pop(context);
+//          await Prefs.saveRouteID(widget.route.routeID);
+//          Navigator.push(
+//            context,
+//            SlideRightRoute(
+//              widget: FlagRoutePointLandmarks(
+//                route: widget.route,
+//              ),
+//            ),
+//          );
+//        },
+//        child: ListTile(
+//          leading: Icon(
+//            Icons.airport_shuttle,
+//            color: Colors.pink,
+//          ),
+//          title: Text('Route Landmarks', style: Styles.blackSmall),
+//        ),
+//      ),
+//    ));
 //    menuItems.add(PopupMenuItem<String>(
 //      value: 'Route Estimation',
 //      child: GestureDetector(
@@ -662,10 +665,9 @@ class _RouteCardState extends State<RouteCard>
 
   _startRoutePointCollector() async {
     print('_startRoutePointCollector');
-    await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
-
-    Navigator.push(context, SlideRightRoute(widget: RoutePointCollector()));
+    Navigator.push(
+        context, SlideRightRoute(widget: RoutePointCollector(widget.route)));
   }
 
   _startRouteMapPage() async {
@@ -771,6 +773,11 @@ class _RouteCardState extends State<RouteCard>
     debugPrint('_startNavigation........... : 🍎 🍎 🍎');
     await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
+    if (widget.route.rawRoutePoints.isEmpty) {
+      Navigator.push(
+          context, SlideRightRoute(widget: RoutePointCollector(route)));
+      return;
+    }
     if (widget.route.routePoints.isEmpty) {
       Navigator.push(
           context, SlideRightRoute(widget: CreateRoutePointsPage(route)));

@@ -139,10 +139,7 @@ class RouteController {
                     route.routePoints.push(p);
                 });
                 const result = yield route.save();
-                log_1.default(`💙💙 Points added to route. ${route.routePoints.length} - 🧡💛 ${route.name}`);
-                const routeX = yield route_1.default.findOne({ routeID: req.body.routeID });
-                log_1.default(`💙💙 AFTER reread: Points: ${routeX.routePoints.length} - 🧡💛 ${route.name}`);
-                // log(result);
+                log_1.default(`💙💙 Points added to route: ${route.routePoints.length} - 🧡💛 ${route.name}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -153,11 +150,10 @@ class RouteController {
             }
         }));
         app.route("/addRawRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.default(`\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const route = yield route_1.default.findOne({ routeID: req.body.routeID });
-                // check clear flag
                 if (req.body.clear == true) {
                     route.rawRoutePoints = [];
                     yield route.save();
@@ -166,7 +162,7 @@ class RouteController {
                     route.rawRoutePoints.push(p);
                 });
                 const result = yield route.save();
-                log_1.default(`💙💙 Raw route Points added to route. ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
+                log_1.default(`💙💙 Raw Route Points added to route: ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
                 // log(result);
                 res.status(200).json(result);
             }
