@@ -578,7 +578,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       await routeBuilderBloc.addRoutePointsToMongoDB(
           widget.route, _routePoints);
       debugPrint(
-          '\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length}....');
+          '\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length} to REMOTE db....');
       await routeBuilderBloc.addRawRoutePointsToMongoDB(
           widget.route, _rawRoutePoints);
 
