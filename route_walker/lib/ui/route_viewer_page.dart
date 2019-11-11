@@ -229,12 +229,25 @@ class _RouteViewerPageState extends State<RouteViewerPage>
             children: <Widget>[
               isBusy
                   ? Center(
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 12,
-                        ),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 80,
+                          ),
+                          Container(
+                            width: 100,
+                            height: 100,
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.orange,
+                              strokeWidth: 48,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 60,
+                          ),
+                          Text('Refreshing Data ...',
+                              style: Styles.blackBoldSmall),
+                        ],
                       ),
                     )
                   : _getListView(),
@@ -613,54 +626,6 @@ class _RouteCardState extends State<RouteCard>
         ),
       ),
     ));
-//    menuItems.add(PopupMenuItem<String>(
-//      value: 'Route Landmarks',
-//      child: GestureDetector(
-//        onTap: () async {
-//          Navigator.pop(context);
-//          await Prefs.saveRouteID(widget.route.routeID);
-//          Navigator.push(
-//            context,
-//            SlideRightRoute(
-//              widget: FlagRoutePointLandmarks(
-//                route: widget.route,
-//              ),
-//            ),
-//          );
-//        },
-//        child: ListTile(
-//          leading: Icon(
-//            Icons.airport_shuttle,
-//            color: Colors.pink,
-//          ),
-//          title: Text('Route Landmarks', style: Styles.blackSmall),
-//        ),
-//      ),
-//    ));
-//    menuItems.add(PopupMenuItem<String>(
-//      value: 'Route Estimation',
-//      child: GestureDetector(
-//        onTap: () async {
-//          Navigator.pop(context);
-//          await Prefs.saveRouteID(widget.route.routeID);
-//          Navigator.push(
-//            context,
-//            SlideRightRoute(
-//              widget: EstimationPage(
-//                route: widget.route,
-//              ),
-//            ),
-//          );
-//        },
-//        child: ListTile(
-//          leading: Icon(
-//            Icons.airport_shuttle,
-//            color: Colors.pink,
-//          ),
-//          title: Text('Route Estimation', style: Styles.blackSmall),
-//        ),
-//      ),
-//    ));
   }
 
   _startRoutePointCollector() async {

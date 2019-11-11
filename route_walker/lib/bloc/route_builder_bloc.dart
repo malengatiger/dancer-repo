@@ -329,7 +329,7 @@ class RouteBuilderBloc {
     print(res);
   }
 
-  Future addRoute(ar.Route route) async {
+  Future<ar.Route> addRoute(ar.Route route) async {
     debugPrint('### ℹ️  ℹ️  ℹ️  add new route to database ..........☘\n');
     assert(route.name != null);
     if (route.color == null) {
@@ -341,14 +341,20 @@ class RouteBuilderBloc {
         associationId: route.associationID,
         associationName: route.associationName);
 
+    if (result.routeID == null) {
+      debugPrint('\n\n\n🍎 🍎 RouteID of fresh route is 🍎 🍎 NULL 🍎 🍎 ');
+      throw Exception('RouteID of fresh route is NULL');
+    }
     await LocalDBAPI.addRoute(route: result);
     debugPrint(
-        ' 📍📍📍📍📍📍 adding route ${route.name} to model and stream sink ...');
+        ' 📍📍📍📍📍📍 adding route ${result.name} to model and stream sink ...');
+    prettyPrint(result.toJson(),
+        'NEW route added to stream ... ♻️♻️♻️️♻️♻ check for routeID️');
 
     _routes.add(result);
     _routes.sort((a, b) => a.name.compareTo(b.name));
     _routeController.sink.add(_routes);
-    return _routes;
+    return result;
   }
 
   Future<Landmark> addLandmark(Landmark landmark) async {
@@ -578,6 +584,7 @@ class RouteBuilderBloc {
   }
 
   Future<ar.Route> getRouteByIDAndCacheLocally(String routeID) async {
+    assert(routeID != null);
     var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
     if (mRoute != null) {
       await LocalDBAPI.addRoute(route: mRoute);
