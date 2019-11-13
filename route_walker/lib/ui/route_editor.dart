@@ -1,4 +1,3 @@
-import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/maps/route_map.dart';
@@ -31,8 +30,9 @@ class _NewRoutePageState extends State<NewRoutePage>
 
   List<ar.Route> assocRoutes = List();
   void _getRoutes() async {
-    assocRoutes = await LocalDBAPI.getRoutesByAssociation(
-        widget.association.associationID);
+    assocRoutes = await routeBuilderBloc.getRoutesByAssociation(
+        widget.association.associationID, false);
+    setState(() {});
     debugPrint(
         '🧩🧩🧩🧩 ${widget.association.associationName} 🍏 🍎 Association routes: 🧩🧩 ${assocRoutes.length} 🧩🧩');
   }
@@ -41,6 +41,7 @@ class _NewRoutePageState extends State<NewRoutePage>
     if (isBusy) {
       return;
     }
+
     if (name.isEmpty) {
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key,
@@ -49,28 +50,24 @@ class _NewRoutePageState extends State<NewRoutePage>
           actionLabel: 'Close');
       return;
     }
-//    bool isFound = false;
-//    assocRoutes.forEach((r) {
-//      if (r.name == name) {
-//        isFound = true;
-//      }
-//    });
-//    if (isFound) {
-//      AppSnackbar.showErrorSnackbar(
-//          scaffoldKey: _key,
-//          message: 'Duplicate route name',
-//          listener: this,
-//          actionLabel: 'close');
-//      return;
-//    }
+    bool isFound = false;
+    assocRoutes.forEach((r) {
+      if (r.name == name) {
+        isFound = true;
+      }
+    });
+    if (isFound) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key,
+          message: 'Duplicate route name',
+          listener: this,
+          actionLabel: 'close');
+      return;
+    }
+    setState(() {
+      isBusy = true;
+    });
 
-    AppSnackbar.showSnackbarWithProgressIndicator(
-        scaffoldKey: _key,
-        message: '🍏 🍎  Adding new route ...',
-        textColor: Colors.yellow,
-        backgroundColor: Colors.black);
-
-    prettyPrint(widget.association.toJson(), ' 🔴  🔴 ASSOCIATION   🔴  🔴');
     var route = ar.Route(
       routeNumber: 'TBD',
       name: name,
@@ -87,17 +84,11 @@ class _NewRoutePageState extends State<NewRoutePage>
     try {
       await _bloc.addRoute(route);
       _key.currentState.removeCurrentSnackBar();
-      AppSnackbar.showSnackbarWithAction(
-          scaffoldKey: _key,
-          message: 'Route added, updating lists ...',
-          textColor: Colors.white,
-          backgroundColor: Colors.teal[800],
-          actionLabel: 'Done',
-          listener: this,
-          icon: Icons.done,
-          action: 1);
+      Navigator.pop(context, true);
     } catch (e) {
-      isBusy = false;
+      setState(() {
+        isBusy = false;
+      });
       print(e);
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key, message: 'Failed to add Route');
@@ -129,10 +120,17 @@ class _NewRoutePageState extends State<NewRoutePage>
                       ),
                       Column(
                         children: <Widget>[
-                          Text(
-                            '${assocRoutes.length}',
-                            style: Styles.blackBoldLarge,
-                          ),
+                          StreamBuilder<List<ar.Route>>(
+                              stream: routeBuilderBloc.routeStream,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  assocRoutes = snapshot.data;
+                                }
+                                return Text(
+                                  '${assocRoutes.length}',
+                                  style: Styles.blackBoldLarge,
+                                );
+                              }),
                           SizedBox(
                             height: 4,
                           ),
@@ -150,210 +148,224 @@ class _NewRoutePageState extends State<NewRoutePage>
             preferredSize: Size.fromHeight(80)),
       ),
       backgroundColor: Colors.brown.shade100,
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              elevation: 4,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Text(
-                      'Route Details',
-                      style: Styles.blackBoldLarge,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 28.0),
-                      child: TextField(
-                        onChanged: _onTextChanged,
-                        style: Styles.blackMedium,
-                        decoration: InputDecoration(
-                          icon: Icon(Icons.edit),
-                          hintText: 'Enter Name',
-                          labelText: 'Route Name',
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 28.0, bottom: 4.0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Color:',
-                            style: Styles.greyLabelSmall,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            color == null ? 'None' : color,
-                            style: Styles.blackBoldMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 28.0, bottom: 4.0),
-                      child: Row(
-                        children: <Widget>[
-                          RaisedButton(
-                            color: Colors.black,
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Black',
-                                style: Styles.whiteSmall,
-                              ),
-                            ),
-                            onPressed: () {
-                              color = RouteMap.colorBlack;
-                              setState(() {});
-                            },
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          RaisedButton(
-                            color: Colors.yellow,
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Yellow',
-                                style: Styles.blackSmall,
-                              ),
-                            ),
-                            onPressed: () {
-                              color = RouteMap.colorYellow;
-                              setState(() {});
-                            },
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          RaisedButton(
-                            color: Colors.red,
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Red',
-                                style: Styles.whiteSmall,
-                              ),
-                            ),
-                            onPressed: () {
-                              color = RouteMap.colorRed;
-                              setState(() {});
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 28.0, bottom: 4.0),
-                      child: Row(
-                        children: <Widget>[
-                          RaisedButton(
-                            color: Colors.blue[600],
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Azure',
-                                style: Styles.whiteSmall,
-                              ),
-                            ),
-                            onPressed: () {
-                              color = RouteMap.colorAzure;
-                              setState(() {});
-                            },
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          RaisedButton(
-                            color: Colors.green[700],
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Green',
-                                style: Styles.whiteSmall,
-                              ),
-                            ),
-                            onPressed: () {
-                              color = RouteMap.colorGreen;
-                              setState(() {});
-                            },
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          RaisedButton(
-                            color: Colors.cyan,
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Cyan',
-                                style: Styles.whiteSmall,
-                              ),
-                            ),
-                            onPressed: () {
-                              color = RouteMap.colorCyan;
-                              setState(() {});
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    RaisedButton(
-                      onPressed: _writeRoute,
-                      elevation: 8,
-                      color: Colors.pink,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(
-                          'Add New Route',
-                          style: Styles.whiteSmall,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 60,
-                    ),
-                  ],
+      body: isBusy
+          ? Center(
+              child: Container(
+                width: 100,
+                height: 100,
+                child: CircularProgressIndicator(
+                  strokeWidth: 48,
+                  backgroundColor: Colors.teal,
                 ),
               ),
+            )
+          : ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 4,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Text(
+                            'Route Details',
+                            style: Styles.blackBoldLarge,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 28.0),
+                            child: TextField(
+                              onChanged: _onTextChanged,
+                              style: Styles.blackMedium,
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.edit),
+                                hintText: 'Enter Name',
+                                labelText: 'Route Name',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 28.0, bottom: 4.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  'Color:',
+                                  style: Styles.greyLabelSmall,
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  color == null ? 'None' : color,
+                                  style: Styles.blackBoldMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 12.0, bottom: 4.0),
+                            child: Row(
+                              children: <Widget>[
+                                RaisedButton(
+                                  color: Colors.black,
+                                  elevation: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      'Black',
+                                      style: Styles.whiteSmall,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    color = RouteMap.colorBlack;
+                                    setState(() {});
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                RaisedButton(
+                                  color: Colors.yellow,
+                                  elevation: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Yellow',
+                                      style: Styles.blackSmall,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    color = RouteMap.colorYellow;
+                                    setState(() {});
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                RaisedButton(
+                                  color: Colors.red,
+                                  elevation: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Red',
+                                      style: Styles.whiteSmall,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    color = RouteMap.colorRed;
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 12.0, bottom: 4.0),
+                            child: Row(
+                              children: <Widget>[
+                                RaisedButton(
+                                  color: Colors.blue[600],
+                                  elevation: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Azure',
+                                      style: Styles.whiteSmall,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    color = RouteMap.colorAzure;
+                                    setState(() {});
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                RaisedButton(
+                                  color: Colors.green[700],
+                                  elevation: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Green',
+                                      style: Styles.whiteSmall,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    color = RouteMap.colorGreen;
+                                    setState(() {});
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                RaisedButton(
+                                  color: Colors.cyan,
+                                  elevation: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Cyan',
+                                      style: Styles.whiteSmall,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    color = RouteMap.colorCyan;
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 24,
+                          ),
+                          RaisedButton(
+                            onPressed: _writeRoute,
+                            elevation: 8,
+                            color: Colors.pink,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(
+                                'Add New Route',
+                                style: Styles.whiteSmall,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 60,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
   @override
   onActionPressed(int action) {
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   void _onTextChanged(String value) {

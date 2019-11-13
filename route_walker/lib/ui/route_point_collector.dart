@@ -41,7 +41,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   void initState() {
     super.initState();
     isStopped = true;
-    _checkPermission();
     _getRoute();
   }
 
@@ -89,6 +88,75 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     }
   }
 
+  _confirmStopType() {
+    _stopTimer();
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => new AlertDialog(
+              title: new Text(
+                "Confirm Status",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor),
+              ),
+              content: Container(
+                height: 160.0,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            'Do you want to complete the route buikding for ${widget.route.name} ?',
+                            style: Styles.blackBoldSmall,
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    'NO',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: RaisedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      widget.route.rawRoutePoints = _routePointsCollected;
+                      Navigator.push(
+                          context,
+                          SlideRightRoute(
+                              widget: CreateRoutePointsPage(widget.route)));
+                    },
+                    elevation: 4.0,
+                    color: Colors.blue.shade700,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Add Landmark',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ));
+  }
+
   _stopTimer() async {
     _showSnack(
         message:
@@ -112,13 +180,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         message: message);
   }
 
-  _checkPermission() async {
-    var ok = await routeBuilderBloc.checkPermission();
-    if (!ok) {
-      await routeBuilderBloc.requestPermission();
-    }
-  }
-
   void eraseLocations() async {
 //    try {
 //      routeBuilderBloc.deleteRoutePoints(routeID: _route.routeID);
@@ -130,11 +191,13 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
 
   void _getCollectionPoints() async {
     _routePointsCollected =
-        await LocalDBAPI.getRawRoutePoints(routeID: routeID);
+        await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
+    assert(widget.route.routeID != null);
     if (_routePointsCollected.isEmpty) {
       debugPrint(
           '🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
-      _route = await routeBuilderBloc.getRouteByIDAndCacheLocally(routeID);
+      _route = await routeBuilderBloc
+          .getRouteByIDAndCacheLocally(widget.route.routeID);
       _routePointsCollected = _route.rawRoutePoints;
     }
     setState(() {});
@@ -146,6 +209,45 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
   @override
   void onActionPressed(int action) {}
   ScrollController scrollController = ScrollController();
+
+  static const int MINIMUM_POINTS = 10;
+  List<BottomNavigationBarItem> barItems = List();
+  List<BottomNavigationBarItem> _buildNavItems() {
+    barItems.clear();
+    barItems.add(BottomNavigationBarItem(
+      icon: Icon(
+        Icons.location_on,
+        size: 24,
+        color: Colors.black,
+      ),
+      title: Text(
+        'Start',
+        style: Styles.blackSmall,
+      ),
+    ));
+    if (_routePointsCollected.length > MINIMUM_POINTS) {
+      barItems.add(BottomNavigationBarItem(
+        icon: Icon(Icons.my_location, size: 24, color: Colors.blue),
+        title: Text(
+          'Build Route',
+          style: Styles.blackSmall,
+        ),
+      ));
+    }
+    barItems.add(BottomNavigationBarItem(
+      icon: Icon(
+        Icons.close,
+        size: 24,
+        color: Colors.pink,
+      ),
+      title: Text(
+        'Stop',
+        style: Styles.blackSmall,
+      ),
+    ));
+
+    return barItems;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,11 +272,12 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
               key: _key,
               appBar: AppBar(
                 title: Text('Route Point Collector'),
+                leading: Container(),
                 backgroundColor: isStopped == false
                     ? Colors.pink[300]
                     : Colors.blueGrey[400],
                 bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(300),
+                  preferredSize: Size.fromHeight(200),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 16),
                     child: Column(
@@ -258,7 +361,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                         StreamBuilder<String>(
                             stream: routeBuilderBloc.errorStream,
                             builder: (context, snapshot) {
-                              var err = 'Error messaging will happen here';
+                              var err = '';
                               if (snapshot.hasData) {
                                 err = snapshot.data;
                               }
@@ -272,7 +375,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                               );
                             }),
                         SizedBox(
-                          height: 20,
+                          height: 4,
                         ),
                       ],
                     ),
@@ -297,7 +400,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                               color: getRandomColor(),
                             ),
                             title: Text(
-                                'Collected: ${getFormattedDateShortWithTime(point.created, context)}',
+                                '${getFormattedDateShortWithTime(point.created, context)}',
                                 style: Styles.blackBoldSmall),
                             subtitle: Text(
                                 '${point.latitude} ${point.longitude}  #${index + 1}',
@@ -311,63 +414,62 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
               ),
               backgroundColor: Colors.brown.shade100,
               bottomNavigationBar: BottomNavigationBar(
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.my_location, size: 24, color: Colors.blue),
-                    title: Text(
-                      'Build Route',
-                      style: Styles.blackSmall,
-                    ),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.close,
-                      size: 24,
-                      color: Colors.pink,
-                    ),
-                    title: Text(
-                      'Stop',
-                      style: Styles.blackSmall,
-                    ),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.location_on,
-                      size: 24,
-                      color: Colors.black,
-                    ),
-                    title: Text(
-                      'Start',
-                      style: Styles.blackSmall,
-                    ),
-                  ),
-                ],
+                items: _buildNavItems(),
                 onTap: (index) {
-                  switch (index) {
-                    case 0:
-                      if (_routePointsCollected.length > 10) {
-                        _onBuildRoute();
-                      } else {
-                        _showSnack(
-                            message: 'Too few points collected',
-                            color: Colors.red);
-                      }
-                      break;
-                    case 1:
-                      _stopTimer();
-                      setState(() {
-                        isStopped = true;
-                      });
-                      break;
-                    case 2:
-                      _confirmStart();
-                      break;
-                  }
+                  _handleNavBar(index);
                 },
               ),
             ),
           );
         });
+  }
+
+  void _handleNavBar(int index) {
+    if (index == 0) {
+      _confirmStart();
+      return;
+    }
+    if (_routePointsCollected.length == 0) {
+      debugPrint('🥏 🥏 🥏 🥏 🥏 🥏 Leaving  on pressing stop');
+      Navigator.pop(context);
+    } else {
+      if (_routePointsCollected.length > MINIMUM_POINTS) {
+        _handleThreeNavItems(index);
+      } else {
+        _handleTwoNavItems(index);
+      }
+    }
+  }
+
+  void _handleThreeNavItems(int index) {
+    switch (index) {
+      case 0:
+        _onBuildRoute();
+        break;
+      case 1:
+        _confirmStopType();
+        setState(() {
+          isStopped = true;
+        });
+        break;
+      case 2:
+        _confirmStart();
+        break;
+    }
+  }
+
+  void _handleTwoNavItems(int index) {
+    switch (index) {
+      case 0:
+        _confirmStopType();
+        setState(() {
+          isStopped = true;
+        });
+        break;
+      case 1:
+        _confirmStart();
+        break;
+    }
   }
 
   void _onBuildRoute() async {

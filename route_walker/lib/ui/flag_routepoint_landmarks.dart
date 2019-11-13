@@ -1,5 +1,4 @@
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
@@ -572,8 +571,8 @@ class _LandmarkEditorState extends State<LandmarkEditor>
   }
 
   void _search() async {
-    routeID = await Prefs.getRouteID();
-    _route = await LocalDBAPI.getRoute(routeID, '');
+    routeID = widget.route.routeID;
+    _route = await LocalDBAPI.getRoute(routeID, widget.route.name);
     if (_route == null) {
       _route = await routeBuilderBloc.getRouteByIDAndCacheLocally(routeID);
     }

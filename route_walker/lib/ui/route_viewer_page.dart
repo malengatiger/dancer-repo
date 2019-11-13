@@ -136,7 +136,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
           scaffoldKey: _key, message: 'Please select association');
       return;
     }
-
     try {
       routes = await routeBuilderBloc.getRoutesByAssociation(
           association.associationID, forceRefresh);
@@ -573,19 +572,19 @@ class _RouteCardState extends State<RouteCard>
   List<PopupMenuItem<String>> menuItems = List();
   _buildMenuItems() {
     menuItems.clear();
-    menuItems.add(PopupMenuItem<String>(
-      value: 'Collect Route Points',
-      child: GestureDetector(
-        onTap: _startRoutePointCollector,
-        child: ListTile(
-          leading: Icon(
-            Icons.location_on,
-            color: getRandomColor(),
-          ),
-          title: Text('Collect Route Points', style: Styles.blackSmall),
-        ),
-      ),
-    ));
+//    menuItems.add(PopupMenuItem<String>(
+//      value: 'Collect Route Points',
+//      child: GestureDetector(
+//        onTap: _startRoutePointCollector,
+//        child: ListTile(
+//          leading: Icon(
+//            Icons.location_on,
+//            color: getRandomColor(),
+//          ),
+//          title: Text('Collect Route Points', style: Styles.blackSmall),
+//        ),
+//      ),
+//    ));
     menuItems.add(PopupMenuItem<String>(
       value: 'Manage Route Points',
       child: GestureDetector(
@@ -602,18 +601,20 @@ class _RouteCardState extends State<RouteCard>
         ),
       ),
     ));
-    menuItems.add(PopupMenuItem<String>(
-      child: GestureDetector(
-        onTap: _startRouteMapPage,
-        child: ListTile(
-          leading: Icon(
-            Icons.map,
-            color: getRandomColor(),
+    if (widget.route.routePoints.isNotEmpty) {
+      menuItems.add(PopupMenuItem<String>(
+        child: GestureDetector(
+          onTap: _startRouteMapPage,
+          child: ListTile(
+            leading: Icon(
+              Icons.map,
+              color: getRandomColor(),
+            ),
+            title: Text('Route Map', style: Styles.blackSmall),
           ),
-          title: Text('Route Map', style: Styles.blackSmall),
         ),
-      ),
-    ));
+      ));
+    }
     menuItems.add(PopupMenuItem<String>(
       child: GestureDetector(
         onTap: _showUpdateRouteDialog,

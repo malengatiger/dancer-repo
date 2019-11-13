@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/file_util.dart';
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/association_bag.dart';
@@ -154,8 +153,12 @@ class RouteBuilderBloc {
         debugPrint('🔵 🔵 🔵 check for perm:: Permission status: $perm');
       });
       print(
-          "\n🔵 🔵 🔵  ########### permission request for location is:  ✅ . getting associations");
-      getAssociations();
+          "\n🔵 🔵 🔵  ########### permission request for location is:  ✅ ✅ ✅ ✅ ✅ ✅ ");
+//      associations = await LocalDBAPI.getAssociations();
+//      if (associations.isEmpty) {
+//        getAssociations();
+//      }
+
       return true;
     } catch (e) {
       print(e);
@@ -163,6 +166,7 @@ class RouteBuilderBloc {
     return false;
   }
 
+  List<Association> associations;
   Future<bool> checkPermission() async {
     print('\n🔵 🔵 🔵 ######################### 🔴 checkPermission ..');
     try {
@@ -618,6 +622,7 @@ class RouteBuilderBloc {
   Timer timer;
   int timerDuration = 10;
   int index;
+  ar.Route _route;
 
   startRoutePointCollectionTimer(
       {@required ar.Route route, @required int collectionSeconds}) async {
@@ -625,6 +630,7 @@ class RouteBuilderBloc {
     assert(route != null);
     assert(collectionSeconds != null);
     index = 0;
+    _route = route;
     _rawRoutePoints.clear();
     _rawRoutePointController.sink.add(_rawRoutePoints);
     _collectRawRoutePoint();
@@ -641,7 +647,8 @@ class RouteBuilderBloc {
   double _prevLatitude, _prevLongitude;
   Future _collectRawRoutePoint() async {
     var currentLocation = await LocationUtil.getCurrentLocation();
-    var routeID = await Prefs.getRouteID();
+    //todo - get route from method .......
+    var routeID = _route.routeID;
     if (routeID == null) {
       return null;
     }
@@ -696,7 +703,7 @@ class RouteBuilderBloc {
   }
 
   Future _writeRawPoint({double latitude, double longitude}) async {
-    var routeID = await Prefs.getRouteID();
+    var routeID = _route.routeID;
     debugPrint(
         '🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint to LOCAL DB for 🔆  routeID:  👌 $routeID.............');
     assert(routeID != null);
@@ -749,7 +756,7 @@ class RouteBuilderBloc {
     return null;
   }
 
-  clearPreviousLocation() async {
+  clearPreviousLocation() {
     _prevLongitude = null;
     _prevLatitude = null;
   }
