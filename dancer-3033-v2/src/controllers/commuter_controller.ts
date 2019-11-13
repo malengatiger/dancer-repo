@@ -510,8 +510,12 @@ export class CommuterController {
 
       try {
         const panic: any = new CommuterPanic(req.body);
+        panic.created = new Date().toISOString();
+        panic.updated = new Date().toISOString();
+        panic.commuterPanicID = uuid();
+
         const result = await panic.save();
-        // log(result);
+        log(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(

@@ -456,8 +456,11 @@ class CommuterController {
             console.log(msg);
             try {
                 const panic = new commuter_panic_1.default(req.body);
+                panic.created = new Date().toISOString();
+                panic.updated = new Date().toISOString();
+                panic.commuterPanicID = v1_1.default();
                 const result = yield panic.save();
-                // log(result);
+                log_1.default(result);
                 res.status(200).json(result);
             }
             catch (err) {

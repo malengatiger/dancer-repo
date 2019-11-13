@@ -22,13 +22,15 @@ const admin = __importStar(require("firebase-admin"));
 const landmark_1 = __importDefault(require("../models/landmark"));
 const log_1 = __importDefault(require("../log"));
 const constants_1 = __importDefault(require("./constants"));
+const StringBuffer = require("stringbuffer");
+// create a string buffer that simply concatenates strings
 log_1.default(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
 const ssa1 = JSON.parse(sa1);
 log_1.default(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
 const appTo = admin.initializeApp({
     credential: admin.credential.cert(ssa1),
-    databaseURL: "https://dancer-3303.firebaseio.com",
+    databaseURL: "https://dancer26983.firebaseio.com",
 }, "appTo");
 log_1.default(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
 const fba = appTo.messaging();
@@ -321,25 +323,11 @@ class Messaging {
                 priority: "high",
                 timeToLive: 60 * 60,
             };
-            const payload = {
-                notification: {
-                    title: "Commuter Panic",
-                    body: data.type + " " + data.created + " userID:" + data.userID,
-                },
-                data: {
-                    type: constants_1.default.COMMUTER_PANICS,
-                    active: data.active ? 'true' : 'false',
-                    panicType: data.type,
-                    userID: data.userID,
-                    vehicleReg: data.vehicleReg ? data.vehicleReg : '',
-                    vehicleID: data.vehicleID ? data.vehicleID : '',
-                    commuterPanicID: data.commuterPanicID,
-                    created: data.created
-                },
-            };
+            log_1.default('Sending commute panic message');
+            console.log(data.commuterPanicID);
+            const longitude = '' + data.position.coordinates[0];
+            const latitude = '' + data.position.coordinates[1];
             // todo - find nearest landmarks to find routes - send panic to landmarks found
-            const longitude = data.position.coordinates[0];
-            const latitude = data.position.coordinates[1];
             const list = yield landmark_1.default.find({
                 position: {
                     $near: {
@@ -352,19 +340,35 @@ class Messaging {
                 },
             });
             log_1.default(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
-            const mTopic = constants_1.default.COMMUTER_PANICS;
-            const result = yield fba.sendToTopic(mTopic, payload, options);
-            log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 topic: 🍎 ${mTopic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 👽`);
-            // send messages to nearbylandmarks
+            // Define a condition which will send to devices which are subscribed
+            // to either the Google stock or the tech industry topics.
+            const payload = {
+                notification: {
+                    title: "AftaRobot Panic Message",
+                    body: data.type + " " + data.created,
+                },
+                data: {
+                    type: constants_1.default.COMMUTER_PANICS,
+                    active: data.active ? 'true' : 'false',
+                    panicType: data.type,
+                    userID: data.userID == null ? '' : data.userID,
+                    vehicleReg: data.vehicleReg ? data.vehicleReg : '',
+                    vehicleID: data.vehicleID ? data.vehicleID : '',
+                    commuterPanicID: data.commuterPanicID,
+                    latitude: latitude, longitude: longitude,
+                    created: data.created
+                },
+            };
             let cnt = 0;
             for (const landmark of list) {
                 if (landmark.landmarkID) {
                     const topic1 = constants_1.default.COMMUTER_PANICS + '_' + landmark.landmarkID;
                     const result = yield fba.sendToTopic(topic1, payload, options);
                     cnt++;
-                    log_1.default(`😍😍 sendPanic: FCM message sent: 😍😍 ${data.type} ${data.created} 👽👽 nearby #${cnt} landmark topic: 🍎 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 🍎 👽👽`);
+                    console.log(`🍎🍎🍎🍎🍎 FCM Panic message #${cnt} sent to  💙 ${landmark.landmarkName} :  💙💙 topic: 🔆 ${topic1} 🔆`);
                 }
             }
+            console.log(`🍎🍎🍎🍎🍎  💛 FCM Panic messages sent:  💛 ${cnt}  💛 `);
         });
     }
 }
