@@ -7,6 +7,7 @@ import VehicleDeparture from "../models/vehicle_departure";
 import moment from "moment";
 import VehicleType from "../models/vehicle_type";
 import uuid = require("uuid");
+import VehicleRouteAssignment from "../models/vehicle_route_assignment";
 
 export class VehicleController {
 
@@ -357,6 +358,25 @@ export class VehicleController {
         )
       }
     });
+    app.route("/addVehicleRouteAssignment").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 addVehicleRouteAssignment requested `;
+      console.log(msg);
+
+      try {
+        const c: any = new VehicleRouteAssignment(req.body);
+        c.routeAssignmentID = uuid();
+        c.created = new Date().toISOString();
+        const result = await c.save();
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 addVehicleRouteAssignment failed'
+          }
+        )
+      }
+    });
     app.route("/addVehicleDeparture").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addVehicleDeparture requested `;
       console.log(msg);
@@ -479,7 +499,41 @@ export class VehicleController {
         )
       }
     });
-
+    app.route("/getVehicleRoutesByAssociation").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getVehicleRoutesByAssociation requested `;
+      console.log(msg);
+      try {
+        const days = parseInt(req.body.days);
+        const cutOff: string = moment().subtract(days, "days").toISOString();
+        const result = await VehicleRouteAssignment.find(
+          { associationID: req.body.associationID,
+            created: { $gt: cutOff } });
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 getVehicleRoutesByAssociation failed'
+          }
+        )
+      }
+    });
+    app.route("/getVehicleRoutesByVehicle").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getVehicleRoutesByVehicle requested `;
+      console.log(msg);
+      try {
+        const result = await VehicleRouteAssignment.find(
+          { vehicleID: req.body.vehicleID });
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 getVehicleRoutesByVehicle failed'
+          }
+        )
+      }
+    });
 
   }
 

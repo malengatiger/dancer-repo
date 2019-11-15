@@ -263,11 +263,13 @@ class Messaging {
                     fromLandmarkName: data.fromLandmarkName,
                     toLandmarkID: data.toLandmarkID,
                     toLandmarkName: data.toLandmarkName,
-                    created: data.created
+                    created: data.created,
+                    userID: data.userID
                 },
             };
             const body = data.fullDocument;
-            log_1.default(data);
+            log_1.default(`userID: ${data.userID}`);
+            log_1.default(body);
             const topic = constants_1.default.COMMUTER_ARRIVAL_LANDMARKS + '_' + data.fromLandmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
             log_1.default(`😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);

@@ -19,6 +19,7 @@ const vehicle_departure_1 = __importDefault(require("../models/vehicle_departure
 const moment_1 = __importDefault(require("moment"));
 const vehicle_type_1 = __importDefault(require("../models/vehicle_type"));
 const uuid = require("uuid");
+const vehicle_route_assignment_1 = __importDefault(require("../models/vehicle_route_assignment"));
 class VehicleController {
     routes(app) {
         console.log(`🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`);
@@ -326,6 +327,23 @@ class VehicleController {
                 });
             }
         }));
+        app.route("/addVehicleRouteAssignment").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 addVehicleRouteAssignment requested `;
+            console.log(msg);
+            try {
+                const c = new vehicle_route_assignment_1.default(req.body);
+                c.routeAssignmentID = uuid();
+                c.created = new Date().toISOString();
+                const result = yield c.save();
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: '🍎🍎🍎🍎 addVehicleRouteAssignment failed'
+                });
+            }
+        }));
         app.route("/addVehicleDeparture").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addVehicleDeparture requested `;
             console.log(msg);
@@ -435,6 +453,38 @@ class VehicleController {
                 res.status(400).json({
                     error: err,
                     message: '🍎🍎🍎🍎 getVehiclesByAssociation failed'
+                });
+            }
+        }));
+        app.route("/getVehicleRoutesByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 getVehicleRoutesByAssociation requested `;
+            console.log(msg);
+            try {
+                const days = parseInt(req.body.days);
+                const cutOff = moment_1.default().subtract(days, "days").toISOString();
+                const result = yield vehicle_route_assignment_1.default.find({ associationID: req.body.associationID,
+                    created: { $gt: cutOff } });
+                log_1.default(`🌽🌽🌽 getVehicleRoutesByAssociation vehicles found: ${result.length}`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: '🍎🍎🍎🍎 getVehicleRoutesByAssociation failed'
+                });
+            }
+        }));
+        app.route("/getVehicleRoutesByVehicle").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽🌽🌽 getVehicleRoutesByVehicle requested `;
+            console.log(msg);
+            try {
+                const result = yield vehicle_route_assignment_1.default.find({ vehicleID: req.body.vehicleID });
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: '🍎🍎🍎🍎 getVehicleRoutesByVehicle failed'
                 });
             }
         }));

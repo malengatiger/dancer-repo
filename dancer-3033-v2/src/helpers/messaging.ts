@@ -281,11 +281,13 @@ class Messaging {
                 fromLandmarkName: data.fromLandmarkName,
                 toLandmarkID: data.toLandmarkID,
                 toLandmarkName: data.toLandmarkName,
-                created: data.created
+                created: data.created,
+                userID: data.userID
             },
         };
         const body = data.fullDocument;
-        log(data);
+        log(`userID: ${data.userID}`)
+        log(body);
         const topic = Constants.COMMUTER_ARRIVAL_LANDMARKS + '_' + data.fromLandmarkID;
         const result = await fba.sendToTopic(topic, payload, options);
         log(

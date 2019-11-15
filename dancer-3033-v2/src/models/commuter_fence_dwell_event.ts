@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const CommuterFenceEventSchema = new mongoose.Schema(
+const CommuterFenceDwellEventSchema = new mongoose.Schema(
     {
         landmarkID: {type: String, required: true, trim: true},
         landmarkName: {type: String, required: true, trim: true},
@@ -14,5 +14,5 @@ const CommuterFenceEventSchema = new mongoose.Schema(
 );
 
 
-const CommuterFenceEvent = mongoose.model('CommuterFenceEvent', CommuterFenceEventSchema);
-export default CommuterFenceEvent;
+const CommuterFenceDwellEvent = mongoose.model('CommuterFenceDwellEvent', CommuterFenceDwellEventSchema);
+export default CommuterFenceDwellEvent;

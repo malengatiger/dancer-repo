@@ -27,7 +27,8 @@ const safety_network_buddy_1 = __importDefault(require("../models/safety_network
 const commuter_prize_1 = __importDefault(require("../models/commuter_prize"));
 const commuter_incentive_type_1 = __importDefault(require("../models/commuter_incentive_type"));
 const commuter_incentive_1 = __importDefault(require("../models/commuter_incentive"));
-const commuter_fence_event_1 = __importDefault(require("../models/commuter_fence_event"));
+const commuter_fence_dwell_event_1 = __importDefault(require("../models/commuter_fence_dwell_event"));
+const commuter_fence_exit_event_1 = __importDefault(require("../models/commuter_fence_exit_event"));
 class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -471,11 +472,11 @@ class CommuterController {
                 });
             }
         }));
-        app.route("/addCommuterFenceEvent").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `\n\n🌽 POST 🌽🌽 addCommuterFenceEvent requested `;
+        app.route("/addCommuterFenceDwellEvent").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterFenceDwellEvent requested `;
             console.log(msg);
             try {
-                const event = new commuter_fence_event_1.default(req.body);
+                const event = new commuter_fence_dwell_event_1.default(req.body);
                 event.created = new Date().toISOString();
                 event.commuterFenceEventID = v1_1.default();
                 const result = yield event.save();
@@ -485,7 +486,25 @@ class CommuterController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 addCommuterFenceEvent failed'
+                    message: ' 🍎🍎🍎🍎 addCommuterFenceDwellEvent failed'
+                });
+            }
+        }));
+        app.route("/addCommuterFenceExitEvent").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterFenceExitEvent requested `;
+            console.log(msg);
+            try {
+                const event = new commuter_fence_exit_event_1.default(req.body);
+                event.created = new Date().toISOString();
+                event.commuterFenceEventID = v1_1.default();
+                const result = yield event.save();
+                log_1.default(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addCommuterFenceExitEvent failed'
                 });
             }
         }));
@@ -543,17 +562,17 @@ class CommuterController {
                 });
             }
         }));
-        app.route("/getCommuterFenceEvents").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceEvents requested `;
+        app.route("/getCommuterFenceDwellEvents").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceDwellEvents requested `;
             console.log(msg);
             try {
                 const landmarkID = req.body.landmarkID;
                 const minutes = parseInt(req.body.minutes);
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
-                const result = yield commuter_fence_event_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
+                const result = yield commuter_fence_dwell_event_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
                 if (result == null) {
                     res.status(400).json({
-                        error: 'getCommuterFenceEvents failed',
+                        error: 'getCommuterFenceDwellEvents failed',
                     });
                 }
                 // log(result);
@@ -562,7 +581,30 @@ class CommuterController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 getCommuterFenceEvents failed'
+                    message: ' 🍎🍎🍎🍎 getCommuterFenceDwellEvents failed'
+                });
+            }
+        }));
+        app.route("/getCommuterFenceExitEvents").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceExitEvents requested `;
+            console.log(msg);
+            try {
+                const landmarkID = req.body.landmarkID;
+                const minutes = parseInt(req.body.minutes);
+                const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
+                const result = yield commuter_fence_exit_event_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
+                if (result == null) {
+                    res.status(400).json({
+                        error: 'getCommuterFenceExitEvents failed',
+                    });
+                }
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getCommuterFenceExitEvents failed'
                 });
             }
         }));
