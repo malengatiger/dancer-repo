@@ -109,6 +109,30 @@ class Messaging {
             fba;
         });
     }
+    static sendUserFenceEvent(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const options = {
+                priority: "normal",
+                timeToLive: 60 * 60,
+            };
+            const payload = {
+                notification: {
+                    title: "Commuter Landmark Event",
+                    body: `${data.landmarkName} at ${data.created}`,
+                },
+                data: {
+                    type: constants_1.default.COMMUTER_FENCE_EVENTS,
+                    landmarkID: data.landmarkID,
+                    landmarkName: data.landmarkName,
+                    created: data.created
+                },
+            };
+            const topic = constants_1.default.COMMUTER_FENCE_EVENTS + '_' + data.landmarkID;
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendRoute: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            fba;
+        });
+    }
     static sendLandmark(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {

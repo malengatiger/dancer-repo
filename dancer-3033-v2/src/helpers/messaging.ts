@@ -106,6 +106,34 @@ class Messaging {
         );
         fba
     }
+    public static async sendUserFenceEvent(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Commuter Landmark Event",
+                body: `${data.landmarkName} at ${data.created}`,
+            },
+            data: {
+                type: Constants.COMMUTER_FENCE_EVENTS,
+                landmarkID: data.landmarkID,
+                landmarkName: data.landmarkName,
+                created: data.created
+            },
+        };
+        const topic = Constants.COMMUTER_FENCE_EVENTS + '_' + data.landmarkID;
+        const result = await fba.sendToTopic(topic, payload, options);
+        log(
+            `😍 sendRoute: FCM message sent: 😍 ${
+            data.name
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+        );
+        fba
+    }
     public static async sendLandmark(
         data: any,
     ): Promise<any> {

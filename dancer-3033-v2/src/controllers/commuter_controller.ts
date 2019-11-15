@@ -16,6 +16,7 @@ import SafetyNetworkBuddy from "../models/safety_network_buddy";
 import CommuterPrize from "../models/commuter_prize";
 import CommuterIncentiveType from "../models/commuter_incentive_type";
 import CommuterIncentive from "../models/commuter_incentive";
+import CommuterFenceEvent from "../models/commuter_fence_event";
 
 export class CommuterController {
 
@@ -526,6 +527,27 @@ export class CommuterController {
         )
       }
     });
+    app.route("/addCommuterFenceEvent").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterFenceEvent requested `;
+      console.log(msg);
+
+      try {
+        const event: any = new CommuterFenceEvent(req.body);
+        event.created = new Date().toISOString();
+        event.commuterFenceEventID = uuid();
+
+        const result = await event.save();
+        log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterFenceEvent failed'
+          }
+        )
+      }
+    });
     app.route("/getCommuterPanicsByUserID").post(async(req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 getCommuterPanicsByUserID requested `;
       console.log(msg);
@@ -585,6 +607,34 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 getCommuterRequestsByUserID failed'
+          }
+        )
+      }
+    });
+    app.route("/getCommuterFenceEvents").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceEvents requested `;
+      console.log(msg);
+
+      try {
+        const landmarkID = req.body.landmarkID;
+        const minutes = parseInt(req.body.minutes);
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await  CommuterFenceEvent.find(
+          {landmarkID: landmarkID, created: {$gt: cutOff}}
+          );
+
+        if (result == null) {
+          res.status(400).json({
+            error: 'getCommuterFenceEvents failed',
+          })
+        }
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterFenceEvents failed'
           }
         )
       }

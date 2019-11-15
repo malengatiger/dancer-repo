@@ -14,6 +14,7 @@ Constants.VEHICLES = 'vehicles';
 Constants.VEHICLE_TYPES = 'vehicletypes';
 Constants.COMMUTER_ARRIVAL_LANDMARKS = 'commuterarrivallandmarks';
 Constants.COMMUTER_REQUESTS = 'commuterrequests';
+Constants.COMMUTER_FENCE_EVENTS = 'commuterfenceevents';
 Constants.DISPATCH_RECORDS = 'dispatchrecords';
 Constants.COMMUTER_PANICS = 'commuterpanics';
 Constants.USERS = 'users';

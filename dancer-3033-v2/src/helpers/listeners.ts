@@ -12,6 +12,7 @@ class MongoListeners {
     );
 
     const users = client.connection.collection(Constants.USERS);
+    const userFenceEvents = client.connection.collection(Constants.COMMUTER_FENCE_EVENTS);
     const associations = client.connection.collection(Constants.ASSOCIATIONS);
     const routes = client.connection.collection(Constants.ROUTES);
     const landmarks = client.connection.collection(Constants.LANDMARKS);
@@ -26,6 +27,7 @@ class MongoListeners {
     const commuterRequests = client.connection.collection(Constants.COMMUTER_REQUESTS);
     
     //
+    const userFenceEventsStream = userFenceEvents.watch({ fullDocument: 'updateLookup' });
     const assocStream = associations.watch({ fullDocument: 'updateLookup' });
     const routeStream = routes.watch({ fullDocument: 'updateLookup' });
     const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
@@ -42,6 +44,14 @@ class MongoListeners {
     const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
     const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
    
+    //
+    userFenceEventsStream.on("change", (event: any) => {
+      log(
+        `\n🔆🔆🔆🔆   🍎  userFenceEventsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+      );
+      log(event);
+      Messaging.sendUserFenceEvent(event.fullDocument);
+    });
     //
     vehicleArrivalsStream.on("change", (event: any) => {
       log(

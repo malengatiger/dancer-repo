@@ -317,7 +317,6 @@ class VehicleController {
                 c.vehicleArrivalID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {

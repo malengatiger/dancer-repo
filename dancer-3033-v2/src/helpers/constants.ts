@@ -12,6 +12,7 @@ class Constants {
     public static VEHICLE_TYPES = 'vehicletypes';
     public static COMMUTER_ARRIVAL_LANDMARKS = 'commuterarrivallandmarks';
     public static COMMUTER_REQUESTS = 'commuterrequests';
+    public static COMMUTER_FENCE_EVENTS = 'commuterfenceevents';
     public static DISPATCH_RECORDS = 'dispatchrecords';
     public static COMMUTER_PANICS = 'commuterpanics';
     public static USERS = 'users';
