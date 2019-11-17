@@ -159,7 +159,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
         elevation: 16,
         backgroundColor: Colors.indigo.shade400,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(200),
+          preferredSize: Size.fromHeight(240),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -184,7 +184,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Text(
-                                    'Find Possible Landmarks',
+                                    'Find Landmarks',
                                     style: Styles.whiteSmall,
                                   ),
                                 ),
@@ -205,7 +205,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
                             landmarkPoints == null
                                 ? '0'
                                 : '${landmarkPoints.length}',
-                            style: Styles.blackBoldLarge,
+                            style: Styles.whiteBoldLarge,
                           ),
                           SizedBox(
                             height: 4,
@@ -220,14 +220,14 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
                   ],
                 ),
                 SizedBox(
-                  height: 8,
+                  height: 28,
                 ),
                 Text(
                   'This will flag route points that are situated at an existing landmark. RoutePoint will carry that landmark data',
                   style: Styles.whiteSmall,
                 ),
                 SizedBox(
-                  height: 8,
+                  height: 28,
                 ),
               ],
             ),

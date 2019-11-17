@@ -67,9 +67,13 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   }
 
   Future _getLandmarks() async {
-    _landmarks = await routeBuilderBloc.getRouteLandmarks(widget.route);
-    _buildItems();
-    setState(() {});
+    try {
+      _landmarks = await routeBuilderBloc.getRouteLandmarks(widget.route);
+      _buildItems();
+      setState(() {});
+    } catch (e) {
+      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: e.toString());
+    }
   }
 
   void _buildItems() {
@@ -503,12 +507,26 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     return PreferredSize(
       preferredSize: Size.fromHeight(120),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(left: 8.0),
         child: Column(
           children: <Widget>[
-            Text(
-              widget.route == null ? 'No Route?' : widget.route.name,
-              style: Styles.whiteBoldSmall,
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    'Route',
+                    style: Styles.greyLabelSmall,
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    widget.route == null ? 'No Route?' : widget.route.name,
+                    style: Styles.whiteBoldSmall,
+                  ),
+                ],
+              ),
             ),
             SizedBox(
               height: 8,
@@ -530,7 +548,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                         ),
                         onPressed: _confirmSave),
                 SizedBox(
-                  width: 8,
+                  width: 24,
                 ),
                 Counter(
                   label: 'Collected',
@@ -539,12 +557,12 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                   labelStyle: Styles.blackSmall,
                 ),
                 SizedBox(
-                  width: 40,
+                  width: 8,
                 ),
               ],
             ),
             SizedBox(
-              height: 8,
+              height: 28,
             ),
           ],
         ),

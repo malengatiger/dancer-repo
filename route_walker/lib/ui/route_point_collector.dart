@@ -225,15 +225,14 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         style: Styles.blackSmall,
       ),
     ));
-    if (_routePointsCollected.length > MINIMUM_POINTS) {
-      barItems.add(BottomNavigationBarItem(
-        icon: Icon(Icons.my_location, size: 24, color: Colors.blue),
-        title: Text(
-          'Build Route',
-          style: Styles.blackSmall,
-        ),
-      ));
-    }
+    barItems.add(BottomNavigationBarItem(
+      icon: Icon(Icons.my_location, size: 24, color: Colors.blue),
+      title: Text(
+        'Build Route',
+        style: Styles.blackSmall,
+      ),
+    ));
+
     barItems.add(BottomNavigationBarItem(
       icon: Icon(
         Icons.close,
@@ -277,7 +276,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                     ? Colors.pink[300]
                     : Colors.blueGrey[400],
                 bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(200),
+                  preferredSize: Size.fromHeight(240),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 16),
                     child: Column(
@@ -305,25 +304,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                         ),
                         SizedBox(
                           height: 8,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Flexible(
-                              child: Container(
-                                child: Text(
-                                  _route == null ? '' : _route.name,
-                                  style: Styles.blackBoldSmall,
-                                  overflow: TextOverflow.clip,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                          ],
                         ),
                         SizedBox(
                           height: 10,
@@ -433,44 +413,42 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
       debugPrint('🥏 🥏 🥏 🥏 🥏 🥏 Leaving  on pressing stop');
       Navigator.pop(context);
     } else {
-      if (_routePointsCollected.length > MINIMUM_POINTS) {
-        _handleThreeNavItems(index);
-      } else {
-        _handleTwoNavItems(index);
-      }
+      _handleNavItems(index);
     }
   }
 
-  void _handleThreeNavItems(int index) {
+  void _handleNavItems(int index) {
     switch (index) {
-      case 0:
-        _onBuildRoute();
-        break;
       case 1:
-        _confirmStopType();
-        setState(() {
-          isStopped = true;
-        });
+        if (_routePointsCollected.length > MINIMUM_POINTS) {
+          _onBuildRoute();
+        }
         break;
       case 2:
-        _confirmStart();
-        break;
-    }
-  }
-
-  void _handleTwoNavItems(int index) {
-    switch (index) {
-      case 0:
         _confirmStopType();
         setState(() {
           isStopped = true;
         });
         break;
-      case 1:
+      case 0:
         _confirmStart();
         break;
     }
   }
+
+//  void _handleTwoNavItems(int index) {
+//    switch (index) {
+//      case 0:
+//        _confirmStopType();
+//        setState(() {
+//          isStopped = true;
+//        });
+//        break;
+//      case 1:
+//        _confirmStart();
+//        break;
+//    }
+//  }
 
   void _onBuildRoute() async {
     await Prefs.saveRouteID(routeID);
