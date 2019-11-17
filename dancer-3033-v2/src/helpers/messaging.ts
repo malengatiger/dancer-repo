@@ -77,6 +77,8 @@ class Messaging {
             data.landmarkName
             } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
+        console.log(payload.data);
+
     }
     public static async sendRoute(
         data: any,

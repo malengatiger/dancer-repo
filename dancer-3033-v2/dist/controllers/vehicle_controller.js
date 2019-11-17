@@ -464,7 +464,6 @@ class VehicleController {
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
                 const result = yield vehicle_route_assignment_1.default.find({ associationID: req.body.associationID,
                     created: { $gt: cutOff } });
-                log_1.default(`🌽🌽🌽 getVehicleRoutesByAssociation vehicles found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {

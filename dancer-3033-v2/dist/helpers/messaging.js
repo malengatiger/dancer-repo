@@ -83,6 +83,7 @@ class Messaging {
             const topic = constants_1.default.VEHICLE_ARRIVALS + '_' + data.landmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
             log_1.default(`😍 sendVehicleArrival: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            console.log(payload.data);
         });
     }
     static sendRoute(data) {

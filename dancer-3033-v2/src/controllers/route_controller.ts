@@ -210,8 +210,12 @@ export class RouteController {
                 log(`🔆🔆🔆 💙 ROUTE: ${route.name} updated. Will update route points ....`)
                 for (const routePoint of routePoints) {
                     const mRes = await Route.updateOne({ "_id": new Types.ObjectId(route.id), "routePoints.index": routePoint.index },
-                        { $set: { "routePoints.$.landmarkID": routePoint.landmarkID, 
-                        "routePoints.$.landmarkName": routePoint.landmarkName } });
+                        {
+                            $set: {
+                                "routePoints.$.landmarkID": routePoint.landmarkID,
+                                "routePoints.$.landmarkName": routePoint.landmarkName
+                            }
+                        });
                     log(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 ${routePoint.landmarkName}`);
                     console.log(mRes);
                 }
@@ -260,6 +264,43 @@ export class RouteController {
                     {
                         error: err,
                         message: ' 🍎🍎🍎🍎 getLandmarks failed'
+                    }
+                )
+            }
+        });
+        app.route("/findNearestRoutes").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /findNearestRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const now = new Date().getTime();
+                const latitude = parseFloat(req.body.latitude);
+                const longitude = parseFloat(req.body.longitude);
+                const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+                
+                const result = await Route.find({
+                    'routePoints.position': {
+                        $near: {
+                            $geometry: {
+                                coordinates: [longitude, latitude],
+                                type: "Point",
+                            },
+                            $maxDistance: RADIUS,
+                        }
+                    }
+                });
+                log(` 🍎🍎🍎🍎 🍎🍎🍎🍎 ROUTES FOUND  🍎🍎🍎🍎 ${result.length}`);
+                console.log(result);
+                const end = new Date().getTime();
+                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: routes found: 🍎 ${result.length} 🍎`);
+                res.status(200).json(result);
+            } catch (err) {
+                console.error(err)
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 findNearestRoutes failed'
                     }
                 )
             }

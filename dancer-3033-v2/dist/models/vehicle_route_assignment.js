@@ -9,7 +9,8 @@ const VehicleRouteAssignmentSchema = new mongoose_1.default.Schema({
     vehicleID: { type: String, required: true, trim: true },
     vehicleReg: { type: String, required: true, trim: true },
     routeID: { type: String, required: true, trim: true },
-    routeName: { type: String, required: false, trim: true },
+    activeFlag: { type: Boolean, required: true, default: true },
+    routeName: { type: String, required: true, trim: true },
     routeAssignmentID: { type: String, required: true, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
