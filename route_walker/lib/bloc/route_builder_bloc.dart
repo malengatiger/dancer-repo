@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/file_util.dart';
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
+import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/association_bag.dart';
@@ -362,7 +363,9 @@ class RouteBuilderBloc {
   }
 
   Future<Landmark> addLandmark(Landmark landmark) async {
-    debugPrint('### ℹ️  add new landmark to database ..........ℹ️  ℹ️  ℹ️  ');
+    debugPrint(
+        '### ℹ️  add new landmark : addLandmark starting ..........ℹ️  ℹ️  ℹ️  ');
+    assert(landmark.routeDetails.length == 1);
     Landmark result;
     List<Map> mapList = List();
     landmark.routeDetails.forEach((d) {
@@ -377,11 +380,14 @@ class RouteBuilderBloc {
       debugPrint(
           '❤️ 🧡 💛  adding landmark to _routeLandmarksController sink ...');
       prettyPrint(result.toJson(),
-          '❤️ 🧡 💛 NEW LANDMARK added: ${landmark.landmarkName}');
+          '❤️ 🧡 💛 NEW LANDMARK added: ${landmark.landmarkName} - update route on local database');
       routeLandmarks.add(result);
       _routeLandmarksController.sink.add(_routeLandmarks);
+      await getRouteByIDAndCacheLocally(
+          landmark.routeDetails.elementAt(0).routeID);
+      //
     } catch (e) {
-      print('🌶 🌶 🌶  $e  🌶 🌶 🌶 ');
+      print('🌶 🌶 🌶  ${e.toString()}  🌶 🌶 🌶 ');
       throw e;
     }
     return result;
@@ -522,6 +528,8 @@ class RouteBuilderBloc {
         routePoint: routePoint);
     debugPrint(
         '👌 👌 👌 done adding route to landmark ... 👌 calling  getRouteLandmarks  ...');
+
+    await getRouteByIDAndCacheLocally(route.routeID);
     await getRouteLandmarks(route);
     return m;
   }
@@ -616,6 +624,9 @@ class RouteBuilderBloc {
     _routeController.sink.add(_routes);
     debugPrint(
         'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ 👌👌👌 👌👌👌 👌👌👌️  getRouteByIDAndCacheLocally: DONE for  💙 ${mRoute.name}  💙 👌👌👌 👌👌👌  ..........');
+    //refresh association
+    var association = await Prefs.getAssociation();
+    await getRoutesByAssociation(association.associationID, false);
     return mRoute;
   }
 

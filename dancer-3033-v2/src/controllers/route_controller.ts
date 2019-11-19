@@ -115,6 +115,36 @@ export class RouteController {
                 )
             }
         });
+        app.route("/addRouteDistanceEstimations").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /addRouteDistanceEstimations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                //TODO - should this go to DB????? or just to messaging?
+                //const estimation: any = new RouteDistanceEstimation (req.body);
+                //estimation.created = new Date().toISOString();
+                // const result = await estimation.save();
+                // log(`result ${result}`);
+                const list: any[] = req.body.estimations
+                let cnt = 0;
+                for (const estimate of list) {
+                    await Messaging.sendRouteDistanceEstimation(estimate);
+                    cnt++
+                }
+                
+                res.status(200).json({
+                    message: `Route Distance Estimations: ${cnt} FCM messages sent`
+                });
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 addRouteDistanceEstimations failed'
+                    }
+                )
+            }
+        });
         app.route("/addCalculatedDistances").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /addCalculatedDistances requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,

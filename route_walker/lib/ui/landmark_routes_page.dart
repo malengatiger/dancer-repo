@@ -37,7 +37,7 @@ class LandmarkRoutesPage extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         Text(
-                          '${landmark.routeIDs.length}',
+                          '${landmark.routeDetails.length}',
                           style: Styles.blackBoldLarge,
                         ),
                         SizedBox(

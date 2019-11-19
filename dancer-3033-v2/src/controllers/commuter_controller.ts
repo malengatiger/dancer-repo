@@ -228,7 +228,7 @@ export class CommuterController {
         });
         // log(result);
         res.status(200).json(result);
-        log(`\n\n 🍎🍎🍎🍎 getCommuterArrivalLandmarks: found : 🍎🍎🍎🍎 ${result.length} 🍎🍎🍎🍎\n\n`)
+        log(`🍎🍎🍎🍎 getCommuterArrivalLandmarks: found : 🍎🍎🍎🍎 ${result.length} 🍎🍎🍎🍎`)
       } catch (err) {
         log(err);
         res.status(400).json(

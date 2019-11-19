@@ -88,74 +88,74 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     }
   }
 
-  _confirmStopType() {
-    _stopTimer();
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => new AlertDialog(
-              title: new Text(
-                "Confirm Status",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor),
-              ),
-              content: Container(
-                height: 160.0,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            'Do you want to complete the route buikding for ${widget.route.name} ?',
-                            style: Styles.blackBoldSmall,
-                          ),
-                          SizedBox(
-                            height: 12,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(
-                    'NO',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: RaisedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      widget.route.rawRoutePoints = _routePointsCollected;
-                      Navigator.push(
-                          context,
-                          SlideRightRoute(
-                              widget: CreateRoutePointsPage(widget.route)));
-                    },
-                    elevation: 4.0,
-                    color: Colors.blue.shade700,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Add Landmark',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ));
-  }
+//  _confirmStopType() {
+//    _stopTimer();
+//    showDialog(
+//        context: context,
+//        barrierDismissible: false,
+//        builder: (_) => new AlertDialog(
+//              title: new Text(
+//                "Confirm Status",
+//                style: TextStyle(
+//                    fontWeight: FontWeight.bold,
+//                    color: Theme.of(context).primaryColor),
+//              ),
+//              content: Container(
+//                height: 160.0,
+//                child: Column(
+//                  children: <Widget>[
+//                    Padding(
+//                      padding: const EdgeInsets.all(8.0),
+//                      child: Column(
+//                        children: <Widget>[
+//                          Text(
+//                            'Do you want to complete the route buikding for ${widget.route.name} ?',
+//                            style: Styles.blackBoldSmall,
+//                          ),
+//                          SizedBox(
+//                            height: 12,
+//                          ),
+//                        ],
+//                      ),
+//                    ),
+//                  ],
+//                ),
+//              ),
+//              actions: <Widget>[
+//                FlatButton(
+//                  child: Text(
+//                    'NO',
+//                    style: TextStyle(color: Colors.grey),
+//                  ),
+//                  onPressed: () {
+//                    Navigator.pop(context);
+//                  },
+//                ),
+//                Padding(
+//                  padding: const EdgeInsets.only(bottom: 20.0),
+//                  child: RaisedButton(
+//                    onPressed: () {
+//                      Navigator.pop(context);
+//                      widget.route.rawRoutePoints = _routePointsCollected;
+//                      Navigator.push(
+//                          context,
+//                          SlideRightRoute(
+//                              widget: CreateRoutePointsPage(widget.route)));
+//                    },
+//                    elevation: 4.0,
+//                    color: Colors.blue.shade700,
+//                    child: Padding(
+//                      padding: const EdgeInsets.all(16.0),
+//                      child: Text(
+//                        'Add Landmark',
+//                        style: TextStyle(color: Colors.white),
+//                      ),
+//                    ),
+//                  ),
+//                ),
+//              ],
+//            ));
+//  }
 
   _stopTimer() async {
     _showSnack(
@@ -425,7 +425,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         }
         break;
       case 2:
-        _confirmStopType();
+        _stopTimer();
         setState(() {
           isStopped = true;
         });
@@ -435,20 +435,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         break;
     }
   }
-
-//  void _handleTwoNavItems(int index) {
-//    switch (index) {
-//      case 0:
-//        _confirmStopType();
-//        setState(() {
-//          isStopped = true;
-//        });
-//        break;
-//      case 1:
-//        _confirmStart();
-//        break;
-//    }
-//  }
 
   void _onBuildRoute() async {
     await Prefs.saveRouteID(routeID);

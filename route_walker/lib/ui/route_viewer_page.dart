@@ -231,7 +231,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: 80,
+                            height: 48,
                           ),
                           Container(
                             width: 100,

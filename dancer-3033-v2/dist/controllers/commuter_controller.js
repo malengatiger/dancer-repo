@@ -216,7 +216,7 @@ class CommuterController {
                 });
                 // log(result);
                 res.status(200).json(result);
-                log_1.default(`\n\n 🍎🍎🍎🍎 getCommuterArrivalLandmarks: found : 🍎🍎🍎🍎 ${result.length} 🍎🍎🍎🍎\n\n`);
+                log_1.default(`🍎🍎🍎🍎 getCommuterArrivalLandmarks: found : 🍎🍎🍎🍎 ${result.length} 🍎🍎🍎🍎`);
             }
             catch (err) {
                 log_1.default(err);

@@ -233,7 +233,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     if (update != null) {
       if (update is aftarobot.Route) {
         debugPrint(
-            '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required');
+            '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required: points: ${update.routePoints.length}');
         setState(() {
           _route = update;
           _routePoints = _route.routePoints;
@@ -533,7 +533,6 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
       position: Position(
           type: 'Point',
           coordinates: [pressedLatLng.longitude, pressedLatLng.latitude]),
-      routeIDs: [_route.routeID],
       routeDetails: [
         RouteInfo(
           name: _route.name,
@@ -676,8 +675,10 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   @override
   onSuccess(Landmark landmark) {
-    print('onSuccess: 👌 👌 👌 👌 👌 👌 👌 👌 }');
-    prettyPrint(landmark.toJson(), ' 🧩 🧩 🧩 Landmark returned');
+    print('LandmarkManager: onSuccess: 👌 👌 👌 👌 👌 👌 👌 👌 }');
+    prettyPrint(
+        landmark.toJson(), ' 🧩 🧩 🧩 Landmark returned to LandmarkManager');
+    setState(() {});
     return null;
   }
 
@@ -693,7 +694,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     if (update != null) {
       if ((update is aftarobot.Route)) {
         debugPrint(
-            '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required');
+            '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required: points: ${update.routePoints.length}');
         setState(() {
           _route = update;
           _routePoints = _route.routePoints;

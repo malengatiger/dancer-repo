@@ -423,7 +423,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
   mlb.Distance _distanceUtil = mlb.Distance();
   @override
   onLandmarkInfoWindowTapped(Landmark landmark) {
-    if (landmark.routeDetails.isNotEmpty && landmark.routeIDs.isNotEmpty) {
+    if (landmark.routeDetails.isNotEmpty) {
       Navigator.push(
           context, SlideRightRoute(widget: LandmarkRoutesPage(landmark)));
     }
@@ -718,9 +718,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
       latitude: widget.routePoint.latitude,
       longitude: widget.routePoint.longitude,
     );
-    landmark.routeIDs = List();
     landmark.routeDetails = List();
-    landmark.routeIDs.add(widget.route.routeID);
     landmark.routeDetails
         .add(RouteInfo(name: widget.route.name, routeID: widget.route.routeID));
 
@@ -730,10 +728,6 @@ class _LandmarkEditorState extends State<LandmarkEditor>
       var m = await routeBuilderBloc.addLandmark(landmark);
       debugPrint(
           '\n️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️  New landmark added: ️🍀️️🍀️️🍀️ $landmarkName');
-      prettyPrint(
-          widget.routePoint.toJson(),
-          "Landmark Route Point 🔴 TODO 🔴  "
-          "- has to be updated on MongoDB");
 
       widget.listener.onSuccess(m);
       AppSnackbar.showSnackbarWithAction(
