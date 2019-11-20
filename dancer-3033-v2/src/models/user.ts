@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema(
         associationID: {type: String, required: false},
         associationName: {type: String, required: false},
         userType: {type: String, required: true, enum: ['Staff', 'Administrator', 'Owner', 'Driver', 'Marshal', 'Patroller', 'Commuter'],},
+        gender: {type: String, required: true, enum: ['Male', 'Female'],},
         created: {type: String, required: true, default: new Date().toISOString()}
     }
 );
