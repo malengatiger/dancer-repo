@@ -64,7 +64,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         landmarksOnRoute++;
       }
     });
-    print('🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: $landmarksOnRoute');
+    myDebugPrint('🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: $landmarksOnRoute');
     _buildItems();
     if (_mapController != null) {
       _setRouteMarkers();
@@ -162,7 +162,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   void putMarkerOnMap(RoutePoint m, BitmapDescriptor icon) {
     _markers.add(Marker(
         onTap: () {
-          print('LandmarkManager: 🔴 marker tapped!! ❤️ 🧡 💛   ${m.created}');
+          myDebugPrint('LandmarkManager: 🔴 marker tapped!! ❤️ 🧡 💛   ${m.created}');
           _onMarkerTapped(m);
         },
         icon: icon,
@@ -184,10 +184,10 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
           latLngs.add(LatLng(m.latitude, m.longitude));
         });
       } catch (e) {
-        print(
+        myDebugPrint(
             '👿 👿 👿 👿 👿 👿  Houston, we have a fucking problem! setting up LatLng in list 👿 👿 👿 👿 👿 👿 👿 👿');
       }
-      print(
+      myDebugPrint(
           '📌 📌 📌 create polyline 🔵 🔵 🔵 🔵 latLngs:🍀️🍀️ ${latLngs.length} 🍀️🍀️\n');
       var polyLine = Polyline(
           polylineId: PolylineId('${DateTime.now().toIso8601String()}'),
@@ -214,7 +214,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   List<DropdownMenuItem<Landmark>> _items = List();
 
   _onMarkerTapped(RoutePoint routePoint) async {
-    print('Marker tapped: route: ${routePoint.created}');
+    myDebugPrint('Marker tapped: route: ${routePoint.created}');
     if ((routePoint.landmarkID != null)) {
       return;
     }
@@ -233,7 +233,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     if (update != null) {
       if (update is aftarobot.Route) {
         myDebugPrint(
-            '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required: points: ${update.routePoints.length}');
+            '🐥 🐥 🐥  Route state refresh required, points: ${update.routePoints.length}');
         setState(() {
           _route = update;
           _routePoints = _route.routePoints;
@@ -642,7 +642,8 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   List<RoutePoint> mList = List();
   _displayLandmarks() {
-    myDebugPrint('_displayLandmarks: 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
+    myDebugPrint(
+        '_displayLandmarks: 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
     mList.clear();
     var mx = Map<String, RoutePoint>();
     _routePoints.forEach((b) {
