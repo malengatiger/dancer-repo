@@ -64,7 +64,8 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         landmarksOnRoute++;
       }
     });
-    myDebugPrint('🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: $landmarksOnRoute');
+    myDebugPrint(
+        '🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: $landmarksOnRoute');
     _buildItems();
     if (_mapController != null) {
       _setRouteMarkers();
@@ -162,7 +163,8 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   void putMarkerOnMap(RoutePoint m, BitmapDescriptor icon) {
     _markers.add(Marker(
         onTap: () {
-          myDebugPrint('LandmarkManager: 🔴 marker tapped!! ❤️ 🧡 💛   ${m.created}');
+          myDebugPrint(
+              'LandmarkManager: 🔴 marker tapped!! ❤️ 🧡 💛   ${m.created}');
           _onMarkerTapped(m);
         },
         icon: icon,
