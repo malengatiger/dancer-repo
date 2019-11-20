@@ -194,7 +194,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
     assert(widget.route.routeID != null);
     if (_routePointsCollected.isEmpty) {
-      debugPrint(
+      myDebugPrint(
           '🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
       _route = await routeBuilderBloc
           .getRouteByIDAndCacheLocally(widget.route.routeID);
@@ -410,7 +410,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
       return;
     }
     if (_routePointsCollected.length == 0) {
-      debugPrint('🥏 🥏 🥏 🥏 🥏 🥏 Leaving  on pressing stop');
+      myDebugPrint('🥏 🥏 🥏 🥏 🥏 🥏 Leaving  on pressing stop');
       Navigator.pop(context);
     } else {
       _handleNavItems(index);
@@ -542,7 +542,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
           textColor: Colors.pink,
           backgroundColor: Colors.black);
       //await routeBuilderBloc.deleteRoutePoints(routeID: _route.routeID);
-      debugPrint('_startFreshCollection: points deleted!');
+      myDebugPrint('_startFreshCollection: points deleted!');
       if (_key.currentState != null) {
         _key.currentState.removeCurrentSnackBar();
       }

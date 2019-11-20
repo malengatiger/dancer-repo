@@ -88,7 +88,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     if (asses.isEmpty) {
       asses = await routeBuilderBloc.getAssociations();
     } else {
-      debugPrint('asssociations from local cache: ${asses.length}');
+      myDebugPrint('asssociations from local cache: ${asses.length}');
     }
     _buildDropDownItems();
     LocalDBAPI.setAppID();
@@ -736,7 +736,7 @@ class _RouteCardState extends State<RouteCard>
 
   aftarobot.Route route;
   _startNavigation() async {
-    debugPrint('_startNavigation........... : 🍎 🍎 🍎');
+    myDebugPrint('_startNavigation........... : 🍎 🍎 🍎');
     await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
     if (widget.route.rawRoutePoints.isEmpty) {
@@ -748,7 +748,7 @@ class _RouteCardState extends State<RouteCard>
       Navigator.push(
           context, SlideRightRoute(widget: CreateRoutePointsPage(route)));
     } else {
-      debugPrint('Route points from LOCAL DB');
+      myDebugPrint('Route points from LOCAL DB');
       Navigator.push(
           context, SlideRightRoute(widget: LandmarksManagerPage(route)));
     }

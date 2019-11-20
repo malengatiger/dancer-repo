@@ -93,7 +93,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     if (_route.routePoints.isNotEmpty) {
       showButton = false;
     }
-    debugPrint(
+    myDebugPrint(
         '\n\n🍏 🍎 🍏 🍎  Route points:  🧩  snapped: ${_routePoints.length} 🧩\n\n');
     _setRouteMarkers();
     setState(() {});
@@ -105,7 +105,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     var fList = _route.routePoints.getRange(0, 1);
     var gList = _route.routePoints
         .getRange(_route.routePoints.length - 1, _route.routePoints.length - 0);
-    debugPrint(
+    myDebugPrint(
         '\n\n\n\n💦 💦 💦 💦  total points: ${_route.routePoints.length} 🔴 route points at each end 🔆 🔆 🔆 🔆 \n\n');
 
     fList.forEach((f) {
@@ -114,7 +114,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     gList.forEach((f) {
       prettyPrint(f.toJson(), '🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  LAST ///');
     });
-    debugPrint(
+    myDebugPrint(
         '\n\n\n\n💦 💦 💦 💦  end of route points at each end 🔆 🔆 🔆 🔆 \n\n');
   }
 
@@ -232,7 +232,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                 listener: this)));
     if (update != null) {
       if (update is aftarobot.Route) {
-        debugPrint(
+        myDebugPrint(
             '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required: points: ${update.routePoints.length}');
         setState(() {
           _route = update;
@@ -421,7 +421,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                         color: Colors.blue.shade800,
                         elevation: 16,
                         onPressed: () {
-                          debugPrint(
+                          myDebugPrint(
                               '🧩 🧩 🧩 🧩 Confirm Route button pressed  🧩 🧩 🧩 🧩 ');
                         },
                         child: Padding(
@@ -442,7 +442,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   LatLng pressedLatLng;
 
   void _onLongPress(LatLng latLng) {
-    debugPrint('🧩🧩🧩  map has been long pressed, 🧩 $latLng');
+    myDebugPrint('🧩🧩🧩  map has been long pressed, 🧩 $latLng');
     pressedLatLng = latLng;
     showDialog(
         context: context,
@@ -541,7 +541,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
       ],
     );
     await routeBuilderBloc.addLandmark(m);
-    debugPrint(
+    myDebugPrint(
         '️♻️ ♻️♻️ ♻️   🐸 New landmark added : 🍎 ${m.landmarkName} 🍎 ');
     List<CalculatedDistance> list =
         await RouteDistanceCalculator.calculate(route: _route);
@@ -552,38 +552,38 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   @override
   onLandmarkInfoWindowTapped(Landmark landmark) {
-    debugPrint(
+    myDebugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkInfoWindowTapped: 🧩🧩 ${landmark.landmarkName}  🍎 ');
     landmark.routeDetails.forEach((m) {
-      debugPrint(
+      myDebugPrint(
           ' 🐸 🐸 🐸  You can get on route :  🍎 ${m.name} from 🧩🧩 ${landmark.landmarkName}');
     });
   }
 
   @override
   onLandmarkTapped(Landmark landmark) {
-    debugPrint(
+    myDebugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkTapped: 🧩🧩 ${landmark.landmarkName}  🥬 ');
     // todo - show UPDATE landmark editor
   }
 
   @override
   onLongPress(LatLng latLng) {
-    debugPrint(
+    myDebugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onLongPress: map pressed on latLng: 🧩🧩 $latLng  💛 ');
     // todo - show NEW landmark editor
   }
 
   @override
   onPointInfoWindowTapped(RoutePoint point) {
-    debugPrint(
+    myDebugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointInfoWindowTapped: 🧩🧩 created: ${point.created}  🧡 index: ${point.index}');
     // todo - show NEW landmark editor
   }
 
   @override
   onPointTapped(RoutePoint point) {
-    debugPrint(
+    myDebugPrint(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointTapped: 🧩🧩  created: ${point.created}  ❤️ index: ${point.index}');
     // todo - show NEW landmark editor
   }
@@ -642,7 +642,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   List<RoutePoint> mList = List();
   _displayLandmarks() {
-    debugPrint('_displayLandmarks: 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
+    myDebugPrint('_displayLandmarks: 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
     mList.clear();
     var mx = Map<String, RoutePoint>();
     _routePoints.forEach((b) {
@@ -654,7 +654,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
       mList.add(value);
     });
     showLandmarks = !showLandmarks;
-    debugPrint(
+    myDebugPrint(
         '_displayLadmarks  ❤️ 🧡 💛  mList: ${mList.length}: showLandmarks state: 🧡  $showLandmarks');
     setState(() {});
   }
@@ -693,7 +693,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     );
     if (update != null) {
       if ((update is aftarobot.Route)) {
-        debugPrint(
+        myDebugPrint(
             '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required: points: ${update.routePoints.length}');
         setState(() {
           _route = update;
@@ -701,7 +701,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         });
       }
     } else {
-      debugPrint('🔆 🔆 🔆 🔆  Route update NOT required');
+      myDebugPrint('🔆 🔆 🔆 🔆  Route update NOT required');
     }
   }
 }

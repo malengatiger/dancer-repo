@@ -146,11 +146,41 @@ class LandmarkController {
                 const landmark = new landmark_1.default(req.body);
                 landmark.landmarkID = uuid();
                 landmark.created = new Date().toISOString();
+                //update route point in route
+                const routeID = landmark.routeDetails[0].routeID;
+                const latitude = landmark.latitude;
+                const longitude = landmark.longitude;
+                const route = yield route_1.default.findOne({ routeID: routeID });
+                if (!route) {
+                    throw new Error('Route in routeDetails does not exist');
+                }
+                console.log(route);
                 const result = yield landmark.save();
-                // log(result);
+                log_1.default(`🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️landmark saved ${landmark.landmarkName}`);
+                const mList = [];
+                if (route) {
+                    route.routePoints.forEach((point) => {
+                        if (point.position.coordinates[1] == latitude && point.position.coordinates[0] == longitude) {
+                            point.landmarkID = landmark.landmarkID;
+                            point.landmarkName = landmark.landmarkName;
+                            mList.push(point);
+                            log_1.default(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route point updated ${point}`);
+                        }
+                        else {
+                            mList.push(point);
+                        }
+                    });
+                }
+                route.routePoints = [];
+                yield route.save();
+                log_1.default(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route points to be refreshed ${mList.length}`);
+                route.routePoints = mList;
+                yield route.save();
+                log_1.default(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route ${route.name} updated with landmark route point`);
                 res.status(200).json(result);
             }
             catch (err) {
+                console.error(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addLandmark failed'
