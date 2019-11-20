@@ -126,7 +126,6 @@ class UserController {
                 else {
                     user.userID = uuid();
                 }
-                // user.firebaseUID = req.body.firebaseUID;
                 user.created = new Date().toISOString();
                 const result = yield user.save();
                 // log(result);
