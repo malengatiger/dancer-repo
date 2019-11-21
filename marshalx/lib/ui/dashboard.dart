@@ -175,6 +175,8 @@ class _DashboardState extends State<Dashboard> {
       key: _key,
       appBar: AppBar(
         title: Text('Marshal Dashboard'),
+        elevation: 16,
+        backgroundColor: Colors.pink[300],
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.my_location),
@@ -314,6 +316,7 @@ class _DashboardState extends State<Dashboard> {
         SlideRightRoute(
             widget: RouteMap(
           hideAppBar: false,
+          landmarkIconColor: RouteMap.colorAzure,
           routes: routes,
         )));
   }
