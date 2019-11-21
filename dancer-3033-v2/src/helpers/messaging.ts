@@ -361,10 +361,8 @@ class Messaging {
                 created: data.created
             },
         };
-        const topic1 = "users";
-        const topic2 = Constants.USERS;
-        const con = `${topic1} in topics || ${topic2} in topics`;
-        const result = await fba.sendToCondition(con, payload, options);
+        const topic1 = Constants.USERS;
+        const result = await fba.sendToTopic(topic1, payload, options);
         log(
             `😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${
             data.lastName

@@ -337,10 +337,8 @@ class Messaging {
                     created: data.created
                 },
             };
-            const topic1 = "users";
-            const topic2 = constants_1.default.USERS;
-            const con = `${topic1} in topics || ${topic2} in topics`;
-            const result = yield fba.sendToCondition(con, payload, options);
+            const topic1 = constants_1.default.USERS;
+            const result = yield fba.sendToTopic(topic1, payload, options);
             log_1.default(`😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
