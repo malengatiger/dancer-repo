@@ -5,6 +5,7 @@ import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/commuter_arrival_landmark.dart';
 import 'package:aftarobotlibrary4/data/commuter_fence_event.dart';
+import 'package:aftarobotlibrary4/data/commuter_request.dart';
 import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
@@ -34,6 +35,8 @@ class MarshalBloc {
       StreamController.broadcast();
   StreamController<List<CommuterArrivalLandmark>> _commuterArrivalsController =
       StreamController.broadcast();
+  StreamController<List<CommuterRequest>> _commuterRequestsController =
+      StreamController.broadcast();
   StreamController<List<Landmark>> _landmarksController =
       StreamController.broadcast();
   StreamController<List<Vehicle>> _vehiclesController =
@@ -42,6 +45,8 @@ class MarshalBloc {
   StreamController<String> _errorController = StreamController.broadcast();
   StreamController<bool> _busyController = StreamController.broadcast();
 
+  Stream<List<CommuterRequest>> get commuterRequestStream =>
+      _commuterRequestsController.stream;
   Stream<bool> get busyStream => _busyController.stream;
   Stream<String> get errorStream => _errorController.stream;
   Stream<List<Vehicle>> get vehicleStream => _vehiclesController.stream;
@@ -77,8 +82,8 @@ class MarshalBloc {
       _errorController.sink.add('AftaRobot user not found');
       return;
     }
-    myDebugPrint('\n\n Loading data into streams ... may take a while ...');
-    await initializeData();
+    //myDebugPrint('\n\n Loading data into streams ... may take a while ...');
+    //await initializeData();
   }
 
   Future initializeData() async {
@@ -90,6 +95,16 @@ class MarshalBloc {
     await findLandmarksByLocation();
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 DONE Loading data into streams\n\n');
+    _busyController.sink.add(false);
+  }
+
+  Future refreshDashboardData() async {
+    _busyController.sink.add(true);
+    await getAssociationVehicles();
+    await findLandmarksByLocation(radiusInKM: 30);
+    await getCommuterRequests();
+    await getCommuterFenceDwellEvents();
+    await getVehicleArrivals();
     _busyController.sink.add(false);
   }
 
@@ -107,25 +122,47 @@ class MarshalBloc {
     return true;
   }
 
+  List<VehicleArrival> vehicleArrivals;
   Future<List<VehicleArrival>> getVehicleArrivals({String landmarkID}) async {
     var markID;
     if (landmarkID == null) {
       var mark = await Prefs.getLandmark();
       if (mark == null) {
-        throw Exception('landmarkID ot found for query');
+        throw Exception('landmarkID not found for query');
       }
       markID = mark.landmarkID;
     } else {
       markID = landmarkID;
     }
-    var mList = await DancerListAPI.getVehicleArrivalsByLandmark(
+    vehicleArrivals = await DancerListAPI.getVehicleArrivalsByLandmark(
         landmarkID: markID, minutes: 15);
     myDebugPrint(
-        " 🌸  🌸  🌸  ${mList.length} vehicle arrivals found within  🌸 15 minutes");
-    _vehicleArrivalsController.sink.add(mList);
-    return mList;
+        " 🌸  🌸  🌸  ${vehicleArrivals.length} vehicle arrivals found within  🌸 15 minutes");
+    _vehicleArrivalsController.sink.add(vehicleArrivals);
+    return vehicleArrivals;
   }
 
+  List<CommuterRequest> commuterRequests;
+  Future<List<CommuterRequest>> getCommuterRequests({String landmarkID}) async {
+    var markID;
+    if (landmarkID == null) {
+      var mark = await Prefs.getLandmark();
+      if (mark == null) {
+        throw Exception('landmarkID not found for query');
+      }
+      markID = mark.landmarkID;
+    } else {
+      markID = landmarkID;
+    }
+    commuterRequests = await DancerListAPI.getCommuterRequests(
+        landmarkID: markID, minutes: 15);
+    myDebugPrint(
+        " 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 15 minutes");
+    _commuterRequestsController.sink.add(commuterRequests);
+    return commuterRequests;
+  }
+
+  List<CommuterFenceDwellEvent> commuterFenceDwellEvents;
   Future<List<CommuterFenceDwellEvent>> getCommuterFenceDwellEvents(
       {String landmarkID}) async {
     var markID;
@@ -138,35 +175,37 @@ class MarshalBloc {
     } else {
       markID = landmarkID;
     }
-    var mList = await DancerListAPI.getCommuterFenceDwellEvents(
+    commuterFenceDwellEvents = await DancerListAPI.getCommuterFenceDwellEvents(
         landmarkID: markID, minutes: 15);
     myDebugPrint(
-        " 👽  👽  👽  👽  ${mList.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
-    _commuterDwellEventsController.sink.add(mList);
-    return mList;
+        " 👽  👽  👽  👽  ${commuterFenceDwellEvents.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
+    _commuterDwellEventsController.sink.add(commuterFenceDwellEvents);
+    return commuterFenceDwellEvents;
   }
 
+  List<Landmark> landmarks;
   Future<List<Landmark>> findLandmarksByLocation(
       {bool forceRefresh = false, double radiusInKM}) async {
     myDebugPrint('🌸 🌸 findLandmarksByLocation.....');
     try {
       var loc = await LocationUtil.getCurrentLocation();
-      var mList = await LocalDBAPI.findLandmarksByLocation(
+      landmarks = await LocalDBAPI.findLandmarksByLocation(
           latitude: loc.coords.latitude,
           longitude: loc.coords.longitude,
           radiusInKM:
               radiusInKM != null ? radiusInKM : Constants.GEO_QUERY_RADIUS);
-      if (mList.isEmpty || forceRefresh) {
-        mList = await DancerListAPI.findLandmarksByLocation(
+      if (landmarks.isEmpty || forceRefresh) {
+        landmarks = await DancerListAPI.findLandmarksByLocation(
             latitude: loc.coords.latitude,
             longitude: loc.coords.longitude,
             radiusInKM: Constants.GEO_QUERY_RADIUS);
         myDebugPrint('🌸 🌸 Cache landmarks in local DB .....');
-        await LocalDBAPI.addLandmarks(landmarks: mList);
+        await LocalDBAPI.addLandmarks(landmarks: landmarks);
       }
-      myDebugPrint('🌸 🌸  ${mList.length} landmarks found');
-      _landmarksController.sink.add(mList);
-      return mList;
+      myDebugPrint(
+          '🌸 🌸  ${landmarks.length} landmarks found, adding to _landmarksController.sink ');
+      _landmarksController.sink.add(landmarks);
+      return landmarks;
     } catch (e) {
       print(e);
       _errorController.sink
@@ -205,22 +244,23 @@ class MarshalBloc {
     return null;
   }
 
+  List<Vehicle> vehicles;
   Future<List<Vehicle>> getAssociationVehicles(
       {bool forceRefresh = false}) async {
     myDebugPrint(
         '🦠 🦠 🦠 getAssociationVehicles....._user.associationID: ${_user.associationID}');
     try {
-      var list = await LocalDBAPI.getVehiclesByAssociation(_user.associationID);
-      if (list.isEmpty || forceRefresh) {
-        list = await DancerListAPI.getVehiclesByAssociation(
+      vehicles = await LocalDBAPI.getVehiclesByAssociation(_user.associationID);
+      if (vehicles.isEmpty || forceRefresh) {
+        vehicles = await DancerListAPI.getVehiclesByAssociation(
             associationID: _user.associationID);
         myDebugPrint('🦠 🦠 🦠 Cache vehicles in local DB .....');
-        await LocalDBAPI.addVehicles(vehicles: list);
+        await LocalDBAPI.addVehicles(vehicles: vehicles);
       }
       myDebugPrint(
-          '🦠 🦠 🦠  ${list.length} vehicles found. put on stream: 🌸 _vehiclesController.sink');
-      _vehiclesController.sink.add(list);
-      return list;
+          '🦠 🦠 🦠  ${vehicles.length} vehicles found. put on stream: 🌸 _vehiclesController.sink');
+      _vehiclesController.sink.add(vehicles);
+      return vehicles;
     } catch (e) {
       print(e);
       _errorController.sink.add(e.toString());

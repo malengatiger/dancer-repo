@@ -1,5 +1,7 @@
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
+import 'package:aftarobotlibrary4/data/commuter_arrival_landmark.dart';
 import 'package:aftarobotlibrary4/data/commuter_fence_event.dart';
+import 'package:aftarobotlibrary4/data/commuter_request.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/user.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
@@ -24,6 +26,12 @@ class _DashboardState extends State<Dashboard> {
   User user;
   Landmark landmark;
   List<Vehicle> _vehicles = List();
+  List<VehicleArrival> vehicleArrivals = List();
+  List<CommuterRequest> commuterRequests = List();
+  List<CommuterArrivalLandmark> commuterArrivals = List();
+  List<CommuterFenceDwellEvent> commuterFenceDwellEvents = List();
+  List<Landmark> landmarks = List();
+
   @override
   void initState() {
     super.initState();
@@ -48,9 +56,6 @@ class _DashboardState extends State<Dashboard> {
               backgroundColor: Colors.pink[600]);
           return;
         }
-        user = await Prefs.getUser();
-        landmark = await Prefs.getLandmark();
-        setState(() {});
         await marshalBloc.initializeData();
       } catch (e) {
         AppSnackbar.showSnackbar(
@@ -63,8 +68,20 @@ class _DashboardState extends State<Dashboard> {
       myDebugPrint('💜 💜 💜 💜  subscribing to streams ...');
       _subscribeToBusy();
       _subscribeToError();
-      _subscribeToTotalVehicle();
+      _subscribeToDataStreams();
+      myDebugPrint('💜 💜 💜 💜  finding nearby landmarks...');
+      setState(() {
+        isBusy = true;
+      });
+      await marshalBloc.findLandmarksByLocation(radiusInKM: 25);
+      setState(() {
+        isBusy = false;
+      });
     }
+    user = await Prefs.getUser();
+    landmark = await Prefs.getLandmark();
+    setState(() {});
+    _refresh();
   }
 
   void _subscribeToBusy() {
@@ -86,12 +103,42 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  void _subscribeToTotalVehicle() {
+  void _subscribeToDataStreams() {
+    myDebugPrint(
+        '💜 💜 💜 💜 _subscribeToDataStreams 💜 💜 💜 💜 _subscribeToDataStreams 💜 💜 💜 💜');
     marshalBloc.vehicleStream.listen((cars) {
       myDebugPrint(
-          '💜 💜 💜 💜   Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 _subscribeToDataStreams:  Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         _vehicles = cars;
+      });
+    });
+    marshalBloc.landmarkStream.listen((marks) {
+      myDebugPrint(
+          '💜 💜 💜 💜 _subscribeToDataStreams:  Received landmarks: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+      setState(() {
+        landmarks = marks;
+      });
+    });
+    marshalBloc.vehicleArrivalStream.listen((arrivals) {
+      myDebugPrint(
+          '💜 💜 💜 💜 _subscribeToDataStreams:  Received vehicleArrivals: 🦠 ${arrivals.length} 🦠 💜 💜 💜 💜 ');
+      setState(() {
+        vehicleArrivals = arrivals;
+      });
+    });
+    marshalBloc.commuterDwellStream.listen((dwells) {
+      myDebugPrint(
+          '💜 💜 💜 💜 _subscribeToDataStreams:  Received commuterDwells: 🦠 ${dwells.length} 🦠 💜 💜 💜 💜 ');
+      setState(() {
+        commuterFenceDwellEvents = dwells;
+      });
+    });
+    marshalBloc.commuterArrivalsStream.listen((marks) {
+      myDebugPrint(
+          '💜 💜 💜 💜 _subscribeToDataStreams:  Received commuterArrivals: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+      setState(() {
+        commuterArrivals = marks;
       });
     });
   }
@@ -99,113 +146,107 @@ class _DashboardState extends State<Dashboard> {
   void _refresh() async {
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key, message: 'Refreshing data');
-    await marshalBloc.getCommuterFenceDwellEvents();
-    await marshalBloc.getVehicleArrivals();
+
+    await marshalBloc.refreshDashboardData();
     _key.currentState.removeCurrentSnackBar();
+  }
+
+  void _openConfirmLandmark() async {
+    var result = await Navigator.push(
+        context,
+        SlideRightRoute(
+          widget: ConfirmLandmark(),
+        ));
+    if (result is Landmark) {
+      setState(() {
+        landmark = result;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _key,
-        appBar: AppBar(
-          title: Text('Marshal Dashboard'),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.my_location),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    SlideRightRoute(
-                      widget: ConfirmLandmark(),
-                    ));
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: _refresh,
-            ),
-          ],
-          bottom: PreferredSize(
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    landmark == null ? '' : landmark.landmarkName,
-                    style: Styles.whiteBoldSmall,
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    user == null ? '' : '${user.firstName} ${user.lastName}',
-                    style: Styles.blackSmall,
-                  ),
-                ],
-              ),
-              preferredSize: Size.fromHeight(120)),
-        ),
-        backgroundColor: Colors.brown[100],
-        body: isBusy
-            ? Center(
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 32,
-                    backgroundColor: Colors.teal,
-                  ),
+      key: _key,
+      appBar: AppBar(
+        title: Text('Marshal Dashboard'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.my_location),
+            onPressed: _openConfirmLandmark,
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _refresh,
+          ),
+        ],
+        bottom: PreferredSize(
+            child: Column(
+              children: <Widget>[
+                Text(
+                  landmark == null ? '' : landmark.landmarkName,
+                  style: Styles.whiteBoldMedium,
                 ),
-              )
-            : GridView(
+                SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  user == null ? '' : '${user.firstName} ${user.lastName}',
+                  style: Styles.blackBoldSmall,
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+              ],
+            ),
+            preferredSize: Size.fromHeight(120)),
+      ),
+      backgroundColor: Colors.brown[100],
+      body: isBusy
+          ? Center(
+              child: Container(
+                width: 100,
+                height: 100,
+                child: CircularProgressIndicator(
+                  strokeWidth: 32,
+                  backgroundColor: Colors.teal,
+                ),
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(12),
+              child: GridView(
                 children: <Widget>[
-                  StreamBuilder<List<VehicleArrival>>(
-                      stream: marshalBloc.vehicleArrivalStream,
-                      builder: (context, snapshot) {
-                        var cnt = 0;
-                        if (snapshot.hasData) {
-                          cnt = snapshot.data.length;
-                          myDebugPrint(
-                              '💜 💜 💜 💜 StreamBuilder:............... Received vehicleArrivals: 💜 💜 💜 💜 $cnt');
-                        }
-                        return CounterCard(
-                          title: 'Vehicle Arrivals',
-                          total: cnt,
-                          icon: Icon(Icons.apps),
-                        );
-                      }),
-                  StreamBuilder<List<CommuterFenceDwellEvent>>(
-                      stream: marshalBloc.commuterDwellStream,
-                      builder: (context, snapshot) {
-                        var cnt = 0;
-                        if (snapshot.hasData) {
-                          cnt = snapshot.data.length;
-                          myDebugPrint(
-                              '💜 💜 💜 💜 StreamBuilder:............... Received commuterDwellEvents: 💜 💜 💜 💜 $cnt');
-                        }
-                        return CounterCard(
-                          title: 'Commuter Arrivals',
-                          total: cnt,
-                          icon: Icon(Icons.people),
-                        );
-                      }),
-                  StreamBuilder<List<Vehicle>>(
-                      stream: marshalBloc.vehicleStream,
-                      builder: (context, snapshot) {
-                        var cnt = 0;
-                        if (snapshot.hasData) {
-                          cnt = snapshot.data.length;
-                          myDebugPrint(
-                              '💜 💜 💜 💜 StreamBuilder:............... Received vehicles: 💜 💜 💜 💜 $cnt');
-                        }
-                        return CounterCard(
-                          title: 'Total Vehicles',
-                          total: cnt,
-                          icon: Icon(Icons.airport_shuttle),
-                        );
-                      }),
+                  CounterCard(
+                    title: 'Vehicle Arrivals',
+                    total: vehicleArrivals.length,
+                    icon: Icon(Icons.apps),
+                  ),
+                  CounterCard(
+                    title: 'Commuter Requests',
+                    total: commuterRequests.length,
+                    icon: Icon(Icons.people),
+                  ),
+                  CounterCard(
+                    title: 'Commuter Arrivals',
+                    total: commuterArrivals.length,
+                    icon: Icon(Icons.people),
+                  ),
+                  CounterCard(
+                    title: 'Total Vehicles',
+                    total: _vehicles.length,
+                    icon: Icon(Icons.airport_shuttle),
+                  ),
+                  CounterCard(
+                    title: 'Landmarks Around',
+                    total: landmarks.length,
+                    icon: Icon(Icons.my_location),
+                  ),
                 ],
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
-              ));
+              ),
+            ),
+    );
   }
 }

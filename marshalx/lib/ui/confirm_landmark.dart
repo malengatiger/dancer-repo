@@ -84,7 +84,8 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
 
   void _saveLandmark(Landmark landmark) async {
     await Prefs.saveLandmark(landmark);
-    Navigator.pop(context);
+
+    Navigator.pop(context, landmark);
   }
 
   @override
