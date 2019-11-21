@@ -662,6 +662,34 @@ export class CommuterController {
         )
       }
     });
+    app.route("/getCommuterRequestsByLandmark").post(async (req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByLandmark requested `;
+      console.log(msg);
+
+      try {
+        const landmarkID = req.body.landmarkID;
+        const minutes = parseInt(req.body.minutes);
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await  CommuterRequest.find(
+          {fromLandmarkID: landmarkID, created: {$gt: cutOff}}
+          );
+
+        if (result == null) {
+          res.status(400).json({
+            error: 'getCommuterRequestsByLandmark failed',
+          })
+        }
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterRequestsByLandmark failed'
+          }
+        )
+      }
+    });
     app.route("/getCommuterFenceExitEvents").post(async (req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceExitEvents requested `;
       console.log(msg);

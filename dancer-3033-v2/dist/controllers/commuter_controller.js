@@ -585,6 +585,29 @@ class CommuterController {
                 });
             }
         }));
+        app.route("/getCommuterRequestsByLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByLandmark requested `;
+            console.log(msg);
+            try {
+                const landmarkID = req.body.landmarkID;
+                const minutes = parseInt(req.body.minutes);
+                const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
+                const result = yield commuter_request_1.default.find({ fromLandmarkID: landmarkID, created: { $gt: cutOff } });
+                if (result == null) {
+                    res.status(400).json({
+                        error: 'getCommuterRequestsByLandmark failed',
+                    });
+                }
+                // log(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getCommuterRequestsByLandmark failed'
+                });
+            }
+        }));
         app.route("/getCommuterFenceExitEvents").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceExitEvents requested `;
             console.log(msg);
