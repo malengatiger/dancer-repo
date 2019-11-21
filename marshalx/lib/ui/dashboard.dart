@@ -3,17 +3,20 @@ import 'package:aftarobotlibrary4/data/commuter_arrival_landmark.dart';
 import 'package:aftarobotlibrary4/data/commuter_fence_event.dart';
 import 'package:aftarobotlibrary4/data/commuter_request.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/user.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
+import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
-import 'package:marshalx/bloc/MarshalBloc.dart';
+import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
+import 'package:marshalx/ui/dispatch.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -70,16 +73,18 @@ class _DashboardState extends State<Dashboard> {
       _subscribeToError();
       _subscribeToDataStreams();
       myDebugPrint('💜 💜 💜 💜  finding nearby landmarks...');
-      setState(() {
-        isBusy = true;
-      });
-      await marshalBloc.findLandmarksByLocation(radiusInKM: 25);
-      setState(() {
-        isBusy = false;
-      });
     }
+    setState(() {
+      isBusy = true;
+    });
+    await marshalBloc.findLandmarksByLocation(radiusInKM: 25);
+    setState(() {
+      isBusy = false;
+    });
     user = await Prefs.getUser();
+    myDebugPrint('💜 💜 💜 💜  my Landmark ...');
     landmark = await Prefs.getLandmark();
+    print(landmark.toJson());
     setState(() {});
     _refresh();
   }
@@ -195,13 +200,32 @@ class _DashboardState extends State<Dashboard> {
                   style: Styles.blackBoldSmall,
                 ),
                 SizedBox(
-                  height: 40,
+                  height: 8,
+                ),
+                Text(
+                  landmark == null
+                      ? ''
+                      : '${landmark.routeDetails.length} Routes from here',
+                  style: Styles.whiteSmall,
+                ),
+                SizedBox(
+                  height: 20,
                 ),
               ],
             ),
             preferredSize: Size.fromHeight(120)),
       ),
       backgroundColor: Colors.brown[100],
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.map), title: Text('Route Maps')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.airport_shuttle), title: Text('Dispatch Taxis')),
+        ],
+        backgroundColor: Colors.brown[50],
+        onTap: _handleBottomNav,
+      ),
       body: isBusy
           ? Center(
               child: Container(
@@ -220,7 +244,10 @@ class _DashboardState extends State<Dashboard> {
                   CounterCard(
                     title: 'Vehicle Arrivals',
                     total: vehicleArrivals.length,
-                    icon: Icon(Icons.apps),
+                    icon: Icon(
+                      Icons.apps,
+                      color: Colors.teal[700],
+                    ),
                   ),
                   CounterCard(
                     title: 'Commuter Requests',
@@ -230,7 +257,18 @@ class _DashboardState extends State<Dashboard> {
                   CounterCard(
                     title: 'Commuter Arrivals',
                     total: commuterArrivals.length,
-                    icon: Icon(Icons.people),
+                    icon: Icon(
+                      Icons.people,
+                      color: Colors.pink,
+                    ),
+                  ),
+                  CounterCard(
+                    title: 'Casual Commuters',
+                    total: commuterFenceDwellEvents.length,
+                    icon: Icon(
+                      Icons.people,
+                      color: Colors.blue,
+                    ),
                   ),
                   CounterCard(
                     title: 'Total Vehicles',
@@ -248,5 +286,35 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
     );
+  }
+
+  void _handleBottomNav(int index) {
+    switch (index) {
+      case 0:
+        _startRouteMap();
+        break;
+      case 1:
+        Navigator.push(context, SlideRightRoute(widget: Dispatch()));
+        break;
+    }
+  }
+
+  void _startRouteMap() async {
+    AppSnackbar.showSnackbarWithProgressIndicator(
+        scaffoldKey: _key, message: 'Loading routes');
+    List<ar.Route> routes = List();
+    for (var rd in landmark.routeDetails) {
+      var mRoute = await marshalBloc.getRouteByID(rd.routeID);
+      routes.add(mRoute);
+    }
+    assert(routes.isNotEmpty);
+    _key.currentState.removeCurrentSnackBar();
+    Navigator.push(
+        context,
+        SlideRightRoute(
+            widget: RouteMap(
+          hideAppBar: false,
+          routes: routes,
+        )));
   }
 }

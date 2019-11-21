@@ -244,6 +244,25 @@ class MarshalBloc {
     return null;
   }
 
+  Future<ar.Route> getRouteByID(String routeID) async {
+    myDebugPrint('🧩 🧩 🧩 getRouteByID.....RouteID: $routeID');
+    try {
+      var mRoute = await LocalDBAPI.getRoute(routeID: routeID);
+      if (mRoute == null) {
+        mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
+        myDebugPrint('🧩 🧩 🧩 Cache route in local DB .....${mRoute.name}');
+        await LocalDBAPI.addRoute(route: mRoute);
+      }
+
+      return mRoute;
+    } catch (e) {
+      print(e);
+      _errorController.sink.add('getRouteByID failed: ${e.toString()}');
+    }
+
+    return null;
+  } //eagleworkshop@gmail.com 01019760657
+
   List<Vehicle> vehicles;
   Future<List<Vehicle>> getAssociationVehicles(
       {bool forceRefresh = false}) async {

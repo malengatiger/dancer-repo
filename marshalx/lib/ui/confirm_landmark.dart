@@ -2,7 +2,7 @@ import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:flutter/material.dart';
-import 'package:marshalx/bloc/MarshalBloc.dart';
+import 'package:marshalx/bloc/marshal_bloc.dart';
 
 class ConfirmLandmark extends StatefulWidget {
   @override
@@ -83,6 +83,8 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
   }
 
   void _saveLandmark(Landmark landmark) async {
+    myDebugPrint('🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩  saving Marshal landmark');
+    print(landmark.toJson());
     await Prefs.saveLandmark(landmark);
 
     Navigator.pop(context, landmark);
