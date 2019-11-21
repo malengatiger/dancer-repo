@@ -107,15 +107,55 @@ class MarshalBloc {
     return true;
   }
 
+  Future<List<VehicleArrival>> getVehicleArrivals({String landmarkID}) async {
+    var markID;
+    if (landmarkID == null) {
+      var mark = await Prefs.getLandmark();
+      if (mark == null) {
+        throw Exception('landmarkID ot found for query');
+      }
+      markID = mark.landmarkID;
+    } else {
+      markID = landmarkID;
+    }
+    var mList = await DancerListAPI.getVehicleArrivalsByLandmark(
+        landmarkID: markID, minutes: 15);
+    myDebugPrint(
+        " 🌸  🌸  🌸  ${mList.length} vehicle arrivals found within  🌸 15 minutes");
+    _vehicleArrivalsController.sink.add(mList);
+    return mList;
+  }
+
+  Future<List<CommuterFenceDwellEvent>> getCommuterFenceDwellEvents(
+      {String landmarkID}) async {
+    var markID;
+    if (landmarkID == null) {
+      var mark = await Prefs.getLandmark();
+      if (mark == null) {
+        throw Exception('landmarkID ot found for query');
+      }
+      markID = mark.landmarkID;
+    } else {
+      markID = landmarkID;
+    }
+    var mList = await DancerListAPI.getCommuterFenceDwellEvents(
+        landmarkID: markID, minutes: 15);
+    myDebugPrint(
+        " 👽  👽  👽  👽  ${mList.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
+    _commuterDwellEventsController.sink.add(mList);
+    return mList;
+  }
+
   Future<List<Landmark>> findLandmarksByLocation(
-      {bool forceRefresh = false}) async {
+      {bool forceRefresh = false, double radiusInKM}) async {
     myDebugPrint('🌸 🌸 findLandmarksByLocation.....');
     try {
       var loc = await LocationUtil.getCurrentLocation();
       var mList = await LocalDBAPI.findLandmarksByLocation(
           latitude: loc.coords.latitude,
           longitude: loc.coords.longitude,
-          radiusInKM: Constants.GEO_QUERY_RADIUS);
+          radiusInKM:
+              radiusInKM != null ? radiusInKM : Constants.GEO_QUERY_RADIUS);
       if (mList.isEmpty || forceRefresh) {
         mList = await DancerListAPI.findLandmarksByLocation(
             latitude: loc.coords.latitude,
