@@ -17,6 +17,7 @@ import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 MarshalBloc marshalBloc = MarshalBloc();
 
@@ -36,6 +37,10 @@ class MarshalBloc {
   StreamController<List<CommuterArrivalLandmark>> _commuterArrivalsController =
       StreamController.broadcast();
   StreamController<List<CommuterRequest>> _commuterRequestsController =
+      StreamController.broadcast();
+  StreamController<List<CommuterFenceDwellEvent>> _dwellController =
+      StreamController.broadcast();
+  StreamController<List<CommuterFenceExitEvent>> _exitController =
       StreamController.broadcast();
   StreamController<List<Landmark>> _landmarksController =
       StreamController.broadcast();
@@ -67,6 +72,15 @@ class MarshalBloc {
   FirebaseAuth _auth = FirebaseAuth.instance;
   User _user;
   User get user => _user;
+  Landmark _landmark;
+  Landmark get marshalLandmark => _landmark;
+  List<VehicleArrival> _vehicleArrivals = List();
+  List<CommuterFenceDwellEvent> _dwellEvents = List();
+  List<VehicleDeparture> _vehicleDepartures = List();
+  List<CommuterFenceExitEvent> _exitEvents = List();
+  List<CommuterArrivalLandmark> _commuterArrivals = List();
+  List<Vehicle> _vehicles = List();
+  List<CommuterRequest> _commuterRequests = List();
 
   _init() async {
     var fbUser = await _auth.currentUser();
@@ -82,8 +96,12 @@ class MarshalBloc {
       _errorController.sink.add('AftaRobot user not found');
       return;
     }
-    //myDebugPrint('\n\n Loading data into streams ... may take a while ...');
-    //await initializeData();
+    _landmark = await Prefs.getLandmark();
+    if (_landmark != null) {
+      prettyPrint(
+          _landmark.toJson(), '🧩 🧩 🧩 CURRENT MARSHAL LANDMARK 🧩 🧩 🧩 ');
+      subscribeToArrivalsFCM(_landmark);
+    }
   }
 
   Future initializeData() async {
@@ -300,6 +318,153 @@ class MarshalBloc {
     _landmarksController.close();
     _vehiclesController.close();
     _busyController.close();
+  }
+
+  final FirebaseMessaging fcm = FirebaseMessaging();
+  final Map<String, Landmark> landmarksSubscribedMap = Map();
+
+  void subscribeToArrivalsFCM(Landmark landmark) async {
+    await _configureFCM();
+    List<String> topics = List();
+    topics
+        .add('${Constants.COMMUTER_ARRIVAL_LANDMARKS}_${landmark.landmarkID}');
+    topics.add('${Constants.VEHICLE_ARRIVALS}_${landmark.landmarkID}');
+    topics
+        .add('${Constants.ROUTE_DISTANCE_ESTIMATIONS}_${landmark.landmarkID}');
+    topics
+        .add('${Constants.COMMUTER_FENCE_DWELL_EVENTS}_${landmark.landmarkID}');
+    topics
+        .add('${Constants.COMMUTER_FENCE_EXIT_EVENTS}_${landmark.landmarkID}');
+    topics.add('${Constants.COMMUTER_REQUESTS}_${landmark.landmarkID}');
+
+    if (landmarksSubscribedMap.containsKey(landmark.landmarkID)) {
+      myDebugPrint(
+          '🍏 Landmark ${landmark.landmarkName} has already subscribed to FCM');
+    } else {
+      await _subscribe(topics, landmark);
+      myDebugPrint(
+          'MarshalBloc:: 🧩 🧩 🧩 ... Subscribed to ${topics.length} FCM topics'
+          ' for landmark: 🍎 ${landmark.landmarkName} 🍎 ');
+    }
+
+    myDebugPrint('MarshalBloc:... 💜 💜 Subscribed to FCM topics for '
+        '${landmarksSubscribedMap.length} landmark ✳️ ${_landmark == null ? '' : _landmark.landmarkName}\n');
+  }
+
+  _subscribe(List<String> topics, Landmark landmark) async {
+    for (var t in topics) {
+      await fcm.subscribeToTopic(t);
+      myDebugPrint('MarshalBloc:... 💜 💜 Subscribed to FCM topic:🍎  $t ✳️ ');
+    }
+    landmarksSubscribedMap[landmark.landmarkID] = landmark;
+    return;
+  }
+
+  bool _listenerSetupAlready = false;
+
+  Future _configureFCM() async {
+    if (_listenerSetupAlready) {
+      myDebugPrint('MarshalBloc:FCM already configured, ignoring');
+      return null;
+    }
+    myDebugPrint(
+        '✳️ ✳️ ✳️ ✳️ MarshalBloc:listenForArrivals: CONFIGURE FCM: ✳️ ✳️ ✳️ ✳️  ${_landmark == null ? '' : _landmark.landmarkName}');
+    fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        String messageType = message['data']['type'];
+        myDebugPrint(
+            "\n\n️♻️♻️♻️️♻️♻️♻️  ✳️ ✳️ ✳️ ✳️ MarshalBloc:FCM onMessage messageType: 🍎 $messageType arrived 🍎 \n\n");
+        switch (messageType) {
+          case Constants.VEHICLE_ARRIVALS:
+            myDebugPrint(
+                "✳️ ✳️ FCM onMessage messageType: 🍎 VEHICLE_ARRIVALS arrived 🍎");
+            _processVehicleArrival(message);
+            break;
+          case Constants.VEHICLE_DEPARTURES:
+            myDebugPrint(
+                "✳️ ✳️ FCM onMessage messageType: 🍎 VEHICLE_DEPARTURES arrived 🍎");
+            _processVehicleDeparture(message);
+            break;
+
+          case Constants.COMMUTER_ARRIVALS:
+            myDebugPrint(
+                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_ARRIVALS arrived 🍎");
+            _processCommuterArrivals(message);
+            break;
+          case Constants.COMMUTER_FENCE_DWELL_EVENTS:
+            myDebugPrint(
+                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_FENCE_DWELL_EVENTS arrived 🍎");
+            _processCommuterFenceDwellEvent(message);
+            break;
+          case Constants.COMMUTER_FENCE_EXIT_EVENTS:
+            myDebugPrint(
+                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_FENCE_EXIT_EVENTS arrived 🍎");
+            _processCommuterFenceExitEvent(message);
+            break;
+          case Constants.COMMUTER_REQUESTS:
+            myDebugPrint(
+                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_REQUESTS arrived 🍎");
+            _processCommuterRequests(message);
+            break;
+        }
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        myDebugPrint(
+            "️♻️♻️♻️️♻️♻️♻️ onLaunch:  🧩 triggered by FCM message: $message  🧩 ");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        myDebugPrint(
+            "️♻️♻️♻️️♻️♻️♻️ App onResume  🧩 triggered by FCM message: $message  🧩 ");
+      },
+    );
+    fcm.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    fcm.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+      myDebugPrint("IosNotificationSettings Settings registered: $settings");
+    });
+    fcm.getToken().then((String token) {
+      assert(token != null);
+      myDebugPrint(
+          '♻️♻️♻️️♻️♻️♻️ MarshalBloc:FCM token  ❤️ 🧡 💛️ $token ❤️ 🧡 💛');
+    });
+    _listenerSetupAlready = true;
+    return null;
+  }
+
+  void _processCommuterFenceExitEvent(Map<String, dynamic> message) {
+    var data = CommuterFenceExitEvent.fromJson(message['data']);
+    _exitEvents.add(data);
+    _commuterExitEventsController.sink.add(_exitEvents);
+  }
+
+  void _processCommuterFenceDwellEvent(Map<String, dynamic> message) {
+    var data = CommuterFenceDwellEvent.fromJson(message['data']);
+    _dwellEvents.add(data);
+    _commuterDwellEventsController.sink.add(_dwellEvents);
+  }
+
+  void _processCommuterRequests(Map<String, dynamic> message) {
+    var data = CommuterRequest.fromJson(message['data']);
+    _commuterRequests.add(data);
+    _commuterRequestsController.sink.add(_commuterRequests);
+  }
+
+  void _processVehicleArrival(Map<String, dynamic> message) async {
+    var data = VehicleArrival.fromJson(message['data']);
+    _vehicleArrivals.add(data);
+    _vehicleArrivalsController.sink.add(_vehicleArrivals);
+  }
+
+  void _processVehicleDeparture(Map<String, dynamic> message) async {
+    var data = VehicleDeparture.fromJson(message['data']);
+    _vehicleDepartures.add(data);
+    _vehicleDeparturesController.sink.add(_vehicleDepartures);
+  }
+
+  void _processCommuterArrivals(Map<String, dynamic> message) async {
+    var data = CommuterArrivalLandmark.fromJson(message['data']);
+    _commuterArrivals.add(data);
+    _commuterArrivalsController.sink.add(_commuterArrivals);
   }
 
   MarshalBloc() {
