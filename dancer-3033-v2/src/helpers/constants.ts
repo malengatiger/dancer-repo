@@ -18,6 +18,8 @@ class Constants {
     public static USERS = 'users';
     public static ROUTE_DISTANCE_ESTIMATION = 'routedistanceestimations';
     public static COMMUTER_PICKUP_LANDMARKS = 'commuterpickuplandmarks';
+    public static COMMUTER_FENCE_DWELL_EVENTS = 'commuterfencedwellevents';
+    public static COMMUTER_FENCE_EXIT_EVENTS = 'commuterfenceexitevents';
 }
 
 export default Constants;

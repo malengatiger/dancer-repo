@@ -11,6 +11,12 @@ class _DispatchState extends State<Dispatch> {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   List<Vehicle> _vehicles = List();
   List<VehicleArrival> vehicleArrivals = List();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

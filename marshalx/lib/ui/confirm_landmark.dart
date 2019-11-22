@@ -1,6 +1,6 @@
-import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
+import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 
@@ -15,7 +15,29 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
   @override
   initState() {
     super.initState();
+    _subscribeToError();
+    _subscribeToBusy();
     _getNearestLandmarks();
+  }
+
+  void _subscribeToBusy() {
+    marshalBloc.busyStream.listen((busy) {
+      myDebugPrint('💙 💙 💙 Received busy: $busy : will setState');
+      if (!busy) {
+        _key.currentState.removeCurrentSnackBar();
+        Navigator.pop(context, _landmark);
+      }
+      setState(() {
+        isBusy = busy;
+      });
+    });
+  }
+
+  void _subscribeToError() {
+    marshalBloc.errorStream.listen((err) {
+      myDebugPrint('👿  👿  👿  Received error: $err');
+      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err);
+    });
   }
 
   Future _getNearestLandmarks() async {
@@ -82,14 +104,15 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
             ));
   }
 
+  Landmark _landmark;
   void _saveLandmark(Landmark landmark) async {
-    myDebugPrint('🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩  saving Marshal landmark');
-    print(landmark.toJson());
-    await Prefs.saveLandmark(landmark);
-
-    Navigator.pop(context, landmark);
+    landmark = _landmark;
+    prettyPrint(landmark.toJson(),
+        '🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩  saving Marshal landmark ...  🔴 calling marshalBloc.refreshMarshalLandmark');
+    await marshalBloc.refreshMarshalLandmark(landmark);
   }
 
+  bool isBusy = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,34 +139,45 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
       backgroundColor: Colors.brown[100],
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: ListView.builder(
-            itemCount: _landmarks.length,
-            itemBuilder: (context, index) {
-              var landmark = _landmarks.elementAt(index);
-              var bf = StringBuffer();
-              landmark.routeDetails.forEach((d) {
-                bf.write('Route: ${d.name}\n');
-              });
-              return GestureDetector(
-                onTap: () {
-                  _confirmLandmark(landmark);
-                },
-                child: Card(
-                  elevation: 2,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.my_location,
-                      color: getRandomColor(),
-                    ),
-                    title: Text(
-                      landmark.landmarkName,
-                      style: Styles.blackBoldSmall,
-                    ),
-                    subtitle: Text(bf.toString()),
+        child: isBusy
+            ? Center(
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 32,
+                    backgroundColor: Colors.blue,
                   ),
                 ),
-              );
-            }),
+              )
+            : ListView.builder(
+                itemCount: _landmarks.length,
+                itemBuilder: (context, index) {
+                  var landmark = _landmarks.elementAt(index);
+                  var bf = StringBuffer();
+                  landmark.routeDetails.forEach((d) {
+                    bf.write('Route: ${d.name}\n');
+                  });
+                  return GestureDetector(
+                    onTap: () {
+                      _confirmLandmark(landmark);
+                    },
+                    child: Card(
+                      elevation: 2,
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.my_location,
+                          color: getRandomColor(),
+                        ),
+                        title: Text(
+                          landmark.landmarkName,
+                          style: Styles.blackBoldSmall,
+                        ),
+                        subtitle: Text(bf.toString()),
+                      ),
+                    ),
+                  );
+                }),
       ),
     );
   }

@@ -12,6 +12,7 @@ import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/user.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicle_departure.dart';
+import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
@@ -49,12 +50,15 @@ class MarshalBloc {
 
   StreamController<String> _errorController = StreamController.broadcast();
   StreamController<bool> _busyController = StreamController.broadcast();
-
+  StreamController<List<VehicleLocation>> _vehicleLocationController =
+      StreamController.broadcast();
   Stream<List<CommuterRequest>> get commuterRequestStream =>
       _commuterRequestsController.stream;
   Stream<bool> get busyStream => _busyController.stream;
   Stream<String> get errorStream => _errorController.stream;
   Stream<List<Vehicle>> get vehicleStream => _vehiclesController.stream;
+  Stream<List<VehicleLocation>> get vehicleLocationStream =>
+      _vehicleLocationController.stream;
   Stream<List<Landmark>> get landmarkStream => _landmarksController.stream;
   Stream<List<CommuterArrivalLandmark>> get commuterArrivalsStream =>
       _commuterArrivalsController.stream;
@@ -105,25 +109,69 @@ class MarshalBloc {
   }
 
   Future initializeData() async {
+    myDebugPrint(
+        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 initializeData: Loading data into streams ....');
+    _busyController.sink.add(true);
     LocalDBAPI.setAppID();
     _user = await Prefs.getUser();
-    _busyController.sink.add(true);
+    _landmark = await Prefs.getLandmark();
+
     await getAssociationRoutes();
     await getAssociationVehicles();
     await findLandmarksByLocation();
     myDebugPrint(
-        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 DONE Loading data into streams\n\n');
+        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 initializeData:  🔴 🔴 DONE Loading data into streams');
     _busyController.sink.add(false);
   }
 
   Future refreshDashboardData() async {
+    myDebugPrint(
+        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData: Loading data into streams ...');
     _busyController.sink.add(true);
+    _landmark = await Prefs.getLandmark();
     await getAssociationVehicles();
-    await findLandmarksByLocation(radiusInKM: 30);
+    await findLandmarksByLocation(radiusInKM: Constants.GEO_QUERY_RADIUS);
     await getCommuterRequests();
     await getCommuterFenceDwellEvents();
     await getVehicleArrivals();
     _busyController.sink.add(false);
+    myDebugPrint(
+        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData:  🔴 🔴 DONE Loading data into streams');
+  }
+
+  Future refreshMarshalLandmark(Landmark landmark) async {
+    myDebugPrint(
+        '\n\n💙  💙  💙  💙  💙  💙  💙 refreshMarshalLandmark ..... ${landmark.landmarkName}');
+    await Prefs.saveLandmark(landmark);
+    refreshDashboardData();
+    return null;
+  }
+
+  List<VehicleLocation> _vehicleLocations = List();
+
+  Future<List<VehicleLocation>> findVehiclesByLocation() async {
+    myDebugPrint('\n\n💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation .....');
+    _busyController.sink.add(true);
+    var loc = await LocationUtil.getCurrentLocation();
+    _vehicleLocations = await DancerListAPI.findVehiclesByLocation(
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+        radiusInKM: Constants.GEO_QUERY_RADIUS,
+        minutes: 5);
+    //remove duplicate vehicles
+    _vehicleLocations.sort((a, b) => a.created.compareTo(b.created));
+    Map<String, VehicleLocation> map = Map();
+    _vehicleLocations.forEach((v) {
+      if (v.associationID == _user.associationID) {
+        map[v.vehicleID] = v;
+      }
+    });
+    _vehicleLocations = map.values.toList();
+    _vehicleLocationController.sink.add(_vehicleLocations);
+    myDebugPrint(
+        '💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation ..... found  🔴 🔴 ${_vehicleLocations.length} vehicles');
+    _busyController.sink.add(false);
+    return _vehicleLocations;
   }
 
   Future<bool> checkUserLoggedIn() async {

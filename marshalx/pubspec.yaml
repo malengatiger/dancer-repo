@@ -22,5 +22,8 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
-
+  assets:
+    - assets/icons8-bus-24.png
+    - assets/icons8-bus-48.png
+    - assets/icons8-bus-96.png
 

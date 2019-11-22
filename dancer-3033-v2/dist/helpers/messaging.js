@@ -110,7 +110,7 @@ class Messaging {
             fba;
         });
     }
-    static sendUserFenceEvent(data) {
+    static sendFenceDwellEvent(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {
                 priority: "normal",
@@ -118,19 +118,45 @@ class Messaging {
             };
             const payload = {
                 notification: {
-                    title: "Commuter Landmark Event",
+                    title: "Commuter Landmark Dwell Event",
                     body: `${data.landmarkName} at ${data.created}`,
                 },
                 data: {
-                    type: constants_1.default.COMMUTER_FENCE_EVENTS,
+                    type: constants_1.default.COMMUTER_FENCE_DWELL_EVENTS,
                     landmarkID: data.landmarkID,
                     landmarkName: data.landmarkName,
+                    userID: data.userID,
                     created: data.created
                 },
             };
-            const topic = constants_1.default.COMMUTER_FENCE_EVENTS + '_' + data.landmarkID;
+            const topic = constants_1.default.COMMUTER_FENCE_DWELL_EVENTS + '_' + data.landmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendRoute: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.default(`😍 sendFenceDwellEvent: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            fba;
+        });
+    }
+    static sendFenceExitEvent(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const options = {
+                priority: "normal",
+                timeToLive: 60 * 60,
+            };
+            const payload = {
+                notification: {
+                    title: "Commuter Landmark Exit Event",
+                    body: `${data.landmarkName} at ${data.created}`,
+                },
+                data: {
+                    type: constants_1.default.COMMUTER_FENCE_EXIT_EVENTS,
+                    landmarkID: data.landmarkID,
+                    landmarkName: data.landmarkName,
+                    userID: data.userID,
+                    created: data.created
+                },
+            };
+            const topic = constants_1.default.COMMUTER_FENCE_EXIT_EVENTS + '_' + data.landmarkID;
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.default(`😍 sendFenceExitEvent: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             fba;
         });
     }

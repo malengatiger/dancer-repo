@@ -25,12 +25,16 @@ class MongoListeners {
     const commuterPickups = client.connection.collection(Constants.COMMUTER_PICKUP_LANDMARKS);
     const commuterArrivalLandmarks = client.connection.collection(Constants.COMMUTER_ARRIVAL_LANDMARKS);
     const commuterRequests = client.connection.collection(Constants.COMMUTER_REQUESTS);
-    
+    const commuterDwellEvents = client.connection.collection(Constants.COMMUTER_FENCE_DWELL_EVENTS);
+    const commuterExitEvents = client.connection.collection(Constants.COMMUTER_FENCE_EXIT_EVENTS);
     //
     const userFenceEventsStream = userFenceEvents.watch({ fullDocument: 'updateLookup' });
     const assocStream = associations.watch({ fullDocument: 'updateLookup' });
     const routeStream = routes.watch({ fullDocument: 'updateLookup' });
     const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
+
+    const dwellStream = commuterDwellEvents.watch({ fullDocument: 'updateLookup' });
+    const exitStream = commuterExitEvents.watch({ fullDocument: 'updateLookup' });
 
     const commuterArrivalStream = commuterArrivalLandmarks.watch({ fullDocument: 'updateLookup' });
     const commuterRequestsStream = commuterRequests.watch({ fullDocument: 'updateLookup' });
@@ -44,13 +48,21 @@ class MongoListeners {
     const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
     const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
    
+      //
+      dwellStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendFenceDwellEvent(event.fullDocument);
+      });
     //
-    userFenceEventsStream.on("change", (event: any) => {
+    exitStream.on("change", (event: any) => {
       log(
-        `\n🔆🔆🔆🔆   🍎  userFenceEventsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        `\n🔆🔆🔆🔆   🍎  exitStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
       );
       log(event);
-      Messaging.sendUserFenceEvent(event.fullDocument);
+      Messaging.sendFenceExitEvent(event.fullDocument);
     });
     //
     vehicleArrivalsStream.on("change", (event: any) => {

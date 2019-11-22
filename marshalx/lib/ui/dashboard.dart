@@ -1,4 +1,3 @@
-import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/commuter_arrival_landmark.dart';
 import 'package:aftarobotlibrary4/data/commuter_fence_event.dart';
 import 'package:aftarobotlibrary4/data/commuter_request.dart';
@@ -17,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
 import 'package:marshalx/ui/dispatch.dart';
+
+import 'find_vehicles.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -60,6 +61,7 @@ class _DashboardState extends State<Dashboard> {
           return;
         }
         await marshalBloc.initializeData();
+        Navigator.push(context, SlideRightRoute(widget: ConfirmLandmark()));
       } catch (e) {
         AppSnackbar.showSnackbar(
             scaffoldKey: _key,
@@ -72,21 +74,13 @@ class _DashboardState extends State<Dashboard> {
       _subscribeToBusy();
       _subscribeToError();
       _subscribeToDataStreams();
-      myDebugPrint('💜 💜 💜 💜  finding nearby landmarks...');
+      myDebugPrint('💜 💜 💜 💜 calling marshalBloc.refreshDashboardData...');
+      await marshalBloc.refreshDashboardData();
     }
-    setState(() {
-      isBusy = true;
-    });
-    await marshalBloc.findLandmarksByLocation(radiusInKM: 25);
-    setState(() {
-      isBusy = false;
-    });
-    user = await Prefs.getUser();
+
+    user = marshalBloc.user;
     myDebugPrint('💜 💜 💜 💜  my Landmark ...');
-    landmark = await Prefs.getLandmark();
-    print(landmark.toJson());
-    setState(() {});
-    _refresh();
+    landmark = marshalBloc.marshalLandmark;
   }
 
   void _subscribeToBusy() {
@@ -157,16 +151,14 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _openConfirmLandmark() async {
-    var result = await Navigator.push(
+    await Navigator.push(
         context,
         SlideRightRoute(
           widget: ConfirmLandmark(),
         ));
-    if (result is Landmark) {
-      setState(() {
-        landmark = result;
-      });
-    }
+    setState(() {
+      landmark = marshalBloc.marshalLandmark;
+    });
   }
 
   @override
@@ -222,6 +214,8 @@ class _DashboardState extends State<Dashboard> {
         items: [
           BottomNavigationBarItem(
               icon: Icon(Icons.map), title: Text('Route Maps')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.search), title: Text('Find Taxis')),
           BottomNavigationBarItem(
               icon: Icon(Icons.airport_shuttle), title: Text('Dispatch Taxis')),
         ],
@@ -296,6 +290,9 @@ class _DashboardState extends State<Dashboard> {
         _startRouteMap();
         break;
       case 1:
+        Navigator.push(context, SlideRightRoute(widget: FindVehicles()));
+        break;
+      case 2:
         Navigator.push(context, SlideRightRoute(widget: Dispatch()));
         break;
     }
