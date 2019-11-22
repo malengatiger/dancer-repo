@@ -62,6 +62,8 @@ class _FindVehiclesState extends State<FindVehicles> {
   _startVehicleMap(VehicleLocation vehicleLocation) {
     myDebugPrint(
         '🍏 🍏 🍏 🍏 🍏 🍏 Start map for single vehicle :  🔴 🔴 ${vehicleLocation.vehicleReg}');
+    prettyPrint(vehicleLocation.toJson(),
+        '🍏 🍏 🍏 🍏 🍏 🍏 VEHICLE to send to VehicleMap');
     List<VehicleLocation> locs = List();
     locs.add(vehicleLocation);
     Navigator.push(context, SlideRightRoute(widget: VehicleMap(locs)));
