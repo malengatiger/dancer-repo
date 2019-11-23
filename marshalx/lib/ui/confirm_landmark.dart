@@ -23,10 +23,10 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
   void _subscribeToBusy() {
     marshalBloc.busyStream.listen((busy) {
       myDebugPrint('💙 💙 💙 Received busy: $busy : will setState');
-      if (!busy) {
-        _key.currentState.removeCurrentSnackBar();
-        Navigator.pop(context, _landmark);
-      }
+//      if (!busy) {
+//        _key.currentState.removeCurrentSnackBar();
+//        Navigator.pop(context, _landmark);
+//      }
       setState(() {
         isBusy = busy;
       });
@@ -51,21 +51,18 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
   }
 
   void _confirmLandmark(Landmark landmark) {
+    assert(landmark != null);
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
               title:
                   new Text("Confirm Landmark", style: Styles.blackBoldMedium),
               content: Container(
-                height: 160.0,
+                height: 80.0,
                 child: Column(
                   children: <Widget>[
-                    Text(
-                      landmark.landmarkName,
-                      style: Styles.blackBoldSmall,
-                    ),
                     Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(4.0),
                       child: Text(
                           'Do you confirm that you are working from ${landmark.landmarkName}?'),
                     ),
@@ -106,10 +103,12 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
 
   Landmark _landmark;
   void _saveLandmark(Landmark landmark) async {
-    landmark = _landmark;
+    assert(landmark != null);
+    _landmark = landmark;
     prettyPrint(landmark.toJson(),
         '🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩  saving Marshal landmark ...  🔴 calling marshalBloc.refreshMarshalLandmark');
     await marshalBloc.refreshMarshalLandmark(landmark);
+    Navigator.pop(context);
   }
 
   bool isBusy = false;
@@ -160,6 +159,7 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
                   });
                   return GestureDetector(
                     onTap: () {
+                      assert(landmark != null);
                       _confirmLandmark(landmark);
                     },
                     child: Card(

@@ -28,9 +28,9 @@ class _FindVehiclesState extends State<FindVehicles> {
   void _subscribeToBusy() {
     marshalBloc.busyStream.listen((busy) {
       myDebugPrint('💙 💙 💙 Received busy: $busy : will setState');
-      if (!busy) {
-        _key.currentState.removeCurrentSnackBar();
-      }
+//      if (!busy) {
+//        _key.currentState.removeCurrentSnackBar();
+//      }
       setState(() {
         isBusy = busy;
       });
@@ -72,6 +72,11 @@ class _FindVehiclesState extends State<FindVehicles> {
   _startVehiclesMap() {
     myDebugPrint(
         '🍏 🍏 🍏 🍏 🍏 🍏 Start map for all vehicles found :  🔴 🔴 ${_vehicleLocations.length}');
+    if (_vehicleLocations.isEmpty) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'No taxis available for map');
+      return;
+    }
     Navigator.push(
         context, SlideRightRoute(widget: VehicleMap(_vehicleLocations)));
   }
@@ -82,6 +87,7 @@ class _FindVehiclesState extends State<FindVehicles> {
       key: _key,
       appBar: AppBar(
         title: Text('Find Taxis'),
+        backgroundColor: Colors.indigo[400],
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.map),
@@ -109,7 +115,7 @@ class _FindVehiclesState extends State<FindVehicles> {
                     children: <Widget>[
                       Text(
                         'Taxis Found:',
-                        style: Styles.blackSmall,
+                        style: Styles.greyLabelSmall,
                       ),
                       SizedBox(
                         width: 12,
@@ -148,7 +154,7 @@ class _FindVehiclesState extends State<FindVehicles> {
                 return _vehicleLocations.isEmpty
                     ? Center(
                         child: Text(
-                          'No Vehicles Found',
+                          'No Taxis Found',
                           style: Styles.blackBoldMedium,
                         ),
                       )
@@ -159,7 +165,7 @@ class _FindVehiclesState extends State<FindVehicles> {
                           return _vehicleLocations.isEmpty
                               ? Center(
                                   child: Text(
-                                    'No Vehicles Found',
+                                    'No Tazis Found',
                                     style: Styles.blackBoldMedium,
                                   ),
                                 )

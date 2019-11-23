@@ -39,13 +39,12 @@ class MarshalBloc {
       StreamController.broadcast();
   StreamController<List<CommuterRequest>> _commuterRequestsController =
       StreamController.broadcast();
-  StreamController<List<CommuterFenceDwellEvent>> _dwellController =
-      StreamController.broadcast();
-  StreamController<List<CommuterFenceExitEvent>> _exitController =
-      StreamController.broadcast();
+
   StreamController<List<Landmark>> _landmarksController =
       StreamController.broadcast();
   StreamController<List<Vehicle>> _vehiclesController =
+      StreamController.broadcast();
+  StreamController<VehicleArrival> _vehicleArrivalDispatchedController =
       StreamController.broadcast();
 
   StreamController<String> _errorController = StreamController.broadcast();
@@ -72,6 +71,8 @@ class MarshalBloc {
       _commuterDwellEventsController.stream;
   Stream<List<CommuterFenceExitEvent>> get commuterExitStream =>
       _commuterExitEventsController.stream;
+  Stream<VehicleArrival> get vehicleArrivalDispatchedStream =>
+      _vehicleArrivalDispatchedController.stream;
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   User _user;
@@ -87,6 +88,8 @@ class MarshalBloc {
   List<CommuterRequest> _commuterRequests = List();
 
   _init() async {
+    findLandmarksByLocation(
+        radiusInKM: Constants.settings.vehicleGeoQueryRadius);
     var fbUser = await _auth.currentUser();
     if (fbUser == null) {
       myDebugPrint(
@@ -116,24 +119,26 @@ class MarshalBloc {
     _user = await Prefs.getUser();
     _landmark = await Prefs.getLandmark();
 
-    await getAssociationRoutes();
-    await getAssociationVehicles();
+    await getAssociationVehicles(forceRefresh: true);
     await findLandmarksByLocation();
+    await getAssociationRoutes(forceRefresh: true);
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 initializeData:  🔴 🔴 DONE Loading data into streams');
     _busyController.sink.add(false);
   }
 
-  Future refreshDashboardData() async {
+  Future refreshDashboardData(bool forceRefresh) async {
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData: Loading data into streams ...');
     _busyController.sink.add(true);
     _landmark = await Prefs.getLandmark();
-    await getAssociationVehicles();
-    await findLandmarksByLocation(radiusInKM: Constants.GEO_QUERY_RADIUS);
+    await getAssociationVehicles(forceRefresh: forceRefresh);
+    await findLandmarksByLocation(
+        radiusInKM: Constants.settings.vehicleGeoQueryRadius);
     await getCommuterRequests();
     await getCommuterFenceDwellEvents();
     await getVehicleArrivals();
+    await getAssociationRoutes(forceRefresh: forceRefresh);
     _busyController.sink.add(false);
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData:  🔴 🔴 DONE Loading data into streams');
@@ -143,7 +148,7 @@ class MarshalBloc {
     myDebugPrint(
         '\n\n💙  💙  💙  💙  💙  💙  💙 refreshMarshalLandmark ..... ${landmark.landmarkName}');
     await Prefs.saveLandmark(landmark);
-    refreshDashboardData();
+    refreshDashboardData(false);
     return null;
   }
 
@@ -189,23 +194,38 @@ class MarshalBloc {
   }
 
   List<VehicleArrival> vehicleArrivals;
-  Future<List<VehicleArrival>> getVehicleArrivals({String landmarkID}) async {
+  Future<List<VehicleArrival>> getVehicleArrivals(
+      {String landmarkID, int minutes = 5}) async {
     var markID;
     if (landmarkID == null) {
       var mark = await Prefs.getLandmark();
       if (mark == null) {
-        throw Exception('landmarkID not found for query');
+        return List();
       }
       markID = mark.landmarkID;
     } else {
       markID = landmarkID;
     }
     vehicleArrivals = await DancerListAPI.getVehicleArrivalsByLandmark(
-        landmarkID: markID, minutes: 15);
+        landmarkID: markID, minutes: minutes);
     myDebugPrint(
         " 🌸  🌸  🌸  ${vehicleArrivals.length} vehicle arrivals found within  🌸 15 minutes");
     _vehicleArrivalsController.sink.add(vehicleArrivals);
     return vehicleArrivals;
+  }
+
+  removeVehicleArrival(VehicleArrival vehicleArrival) {
+    List<VehicleArrival> temp = List();
+    vehicleArrivals.forEach((m) {
+      if (m.vehicleID != vehicleArrival.vehicleID) {
+        temp.add(m);
+      }
+    });
+    vehicleArrivals = temp;
+    myDebugPrint(
+        " 🌸  🌸  🌸  ${vehicleArrival.vehicleReg} removed from arrivals. 🌺 updating stream");
+    _vehicleArrivalsController.sink.add(vehicleArrivals);
+    _vehicleArrivalDispatchedController.sink.add(vehicleArrival);
   }
 
   List<CommuterRequest> commuterRequests;
@@ -214,16 +234,16 @@ class MarshalBloc {
     if (landmarkID == null) {
       var mark = await Prefs.getLandmark();
       if (mark == null) {
-        throw Exception('landmarkID not found for query');
+        return List();
       }
       markID = mark.landmarkID;
     } else {
       markID = landmarkID;
     }
     commuterRequests = await DancerListAPI.getCommuterRequests(
-        landmarkID: markID, minutes: 15);
+        landmarkID: markID, minutes: 30);
     myDebugPrint(
-        " 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 15 minutes");
+        " 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 30 minutes");
     _commuterRequestsController.sink.add(commuterRequests);
     return commuterRequests;
   }
@@ -235,14 +255,14 @@ class MarshalBloc {
     if (landmarkID == null) {
       var mark = await Prefs.getLandmark();
       if (mark == null) {
-        throw Exception('landmarkID ot found for query');
+        return List();
       }
       markID = mark.landmarkID;
     } else {
       markID = landmarkID;
     }
     commuterFenceDwellEvents = await DancerListAPI.getCommuterFenceDwellEvents(
-        landmarkID: markID, minutes: 15);
+        landmarkID: markID, minutes: 30);
     myDebugPrint(
         " 👽  👽  👽  👽  ${commuterFenceDwellEvents.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
     _commuterDwellEventsController.sink.add(commuterFenceDwellEvents);
@@ -366,6 +386,9 @@ class MarshalBloc {
     _landmarksController.close();
     _vehiclesController.close();
     _busyController.close();
+    _commuterRequestsController.close();
+    _vehicleArrivalDispatchedController.close();
+    _vehicleLocationController.close();
   }
 
   final FirebaseMessaging fcm = FirebaseMessaging();
@@ -383,6 +406,7 @@ class MarshalBloc {
         .add('${Constants.COMMUTER_FENCE_DWELL_EVENTS}_${landmark.landmarkID}');
     topics
         .add('${Constants.COMMUTER_FENCE_EXIT_EVENTS}_${landmark.landmarkID}');
+
     topics.add('${Constants.COMMUTER_REQUESTS}_${landmark.landmarkID}');
 
     if (landmarksSubscribedMap.containsKey(landmark.landmarkID)) {
@@ -402,7 +426,7 @@ class MarshalBloc {
   _subscribe(List<String> topics, Landmark landmark) async {
     for (var t in topics) {
       await fcm.subscribeToTopic(t);
-      myDebugPrint('MarshalBloc:... 💜 💜 Subscribed to FCM topic:🍎  $t ✳️ ');
+      myDebugPrint('MarshalBloc:... 💜 💜 Subscribed to FCM topic: 🍎  $t ✳️ ');
     }
     landmarksSubscribedMap[landmark.landmarkID] = landmark;
     return;
@@ -451,7 +475,7 @@ class MarshalBloc {
             break;
           case Constants.COMMUTER_REQUESTS:
             myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_REQUESTS arrived 🍎");
+                "✳️ ✳️ FCM onMessage messageType: 🍎 💛️💛️💛️💛️💛️ COMMUTER_REQUESTS 💛️  arrived, calling _processCommuterRequests 🍎");
             _processCommuterRequests(message);
             break;
         }
@@ -492,9 +516,18 @@ class MarshalBloc {
   }
 
   void _processCommuterRequests(Map<String, dynamic> message) {
-    var data = CommuterRequest.fromJson(message['data']);
-    _commuterRequests.add(data);
-    _commuterRequestsController.sink.add(_commuterRequests);
+    myDebugPrint('💜 💜 💜 💜  _processCommuterRequests ... 🥬🥬🥬🥬🥬');
+    try {
+      var data = CommuterRequest.fromJson(message['data']);
+      _commuterRequests.add(data);
+      myDebugPrint(
+          'MarshalBoc: ❤️ 🧡 💛️ commuter request added to _commuterRequests: ❤️ ${_commuterRequests.length} 💛️ 💛️  ${data.fromLandmarkName} 💛️ 💛️ ');
+      _commuterRequestsController.sink.add(_commuterRequests);
+    } catch (e) {
+      myDebugPrint(
+          '😈😈😈😈_processCommuterRequests fell down: ${e.toString()}');
+      print(e);
+    }
   }
 
   void _processVehicleArrival(Map<String, dynamic> message) async {

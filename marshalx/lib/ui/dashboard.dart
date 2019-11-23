@@ -9,13 +9,14 @@ import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
+import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
-import 'package:marshalx/ui/dispatch.dart';
+import 'package:marshalx/ui/select_dispatch.dart';
 
 import 'find_vehicles.dart';
 
@@ -39,6 +40,10 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    myDebugPrint('💜 💜 💜 💜  subscribing to streams ...');
+    _subscribeToBusy();
+    _subscribeToError();
+    _subscribeToDataStreams();
     _checkUser();
   }
 
@@ -60,8 +65,7 @@ class _DashboardState extends State<Dashboard> {
               backgroundColor: Colors.pink[600]);
           return;
         }
-        await marshalBloc.initializeData();
-        Navigator.push(context, SlideRightRoute(widget: ConfirmLandmark()));
+        marshalBloc.initializeData();
       } catch (e) {
         AppSnackbar.showSnackbar(
             scaffoldKey: _key,
@@ -70,12 +74,8 @@ class _DashboardState extends State<Dashboard> {
             backgroundColor: Colors.pink[600]);
       }
     } else {
-      myDebugPrint('💜 💜 💜 💜  subscribing to streams ...');
-      _subscribeToBusy();
-      _subscribeToError();
-      _subscribeToDataStreams();
       myDebugPrint('💜 💜 💜 💜 calling marshalBloc.refreshDashboardData...');
-      await marshalBloc.refreshDashboardData();
+      await marshalBloc.refreshDashboardData(false);
     }
 
     user = marshalBloc.user;
@@ -85,10 +85,8 @@ class _DashboardState extends State<Dashboard> {
 
   void _subscribeToBusy() {
     marshalBloc.busyStream.listen((busy) {
-      myDebugPrint('💙 💙 💙 Received busy: $busy : will setState');
-      if (!busy) {
-        _key.currentState.removeCurrentSnackBar();
-      }
+      myDebugPrint(
+          '💙 💙 💙 _DashboardState: Received busy: $busy : will setState');
       setState(() {
         isBusy = busy;
       });
@@ -97,7 +95,7 @@ class _DashboardState extends State<Dashboard> {
 
   void _subscribeToError() {
     marshalBloc.errorStream.listen((err) {
-      myDebugPrint('👿  👿  👿  Received error: $err');
+      myDebugPrint('👿  👿  👿  _DashboardStateReceived error: $err');
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err);
     });
   }
@@ -140,22 +138,31 @@ class _DashboardState extends State<Dashboard> {
         commuterArrivals = marks;
       });
     });
+    marshalBloc.commuterRequestStream.listen((requests) {
+      myDebugPrint(
+          '💜 💜 💜 💜 _subscribeToDataStreams:  Received commuterRequests: 🦠 ${requests.length} 🦠 💜 💜 💜 💜 ');
+      setState(() {
+        commuterRequests = requests;
+      });
+    });
   }
 
   void _refresh() async {
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key, message: 'Refreshing data');
 
-    await marshalBloc.refreshDashboardData();
+    await marshalBloc.refreshDashboardData(true);
     _key.currentState.removeCurrentSnackBar();
   }
 
   void _openConfirmLandmark() async {
-    await Navigator.push(
+    myDebugPrint('Dashboard: 🥬🥬🥬🥬🥬_openConfirmLandmark');
+    var result = await Navigator.push(
         context,
         SlideRightRoute(
           widget: ConfirmLandmark(),
         ));
+    print(result);
     setState(() {
       landmark = marshalBloc.marshalLandmark;
     });
@@ -223,32 +230,37 @@ class _DashboardState extends State<Dashboard> {
         onTap: _handleBottomNav,
       ),
       body: isBusy
-          ? Center(
-              child: Container(
-                width: 100,
-                height: 100,
-                child: CircularProgressIndicator(
-                  strokeWidth: 32,
-                  backgroundColor: Colors.teal,
-                ),
-              ),
-            )
+          ? Busy()
           : Padding(
               padding: const EdgeInsets.all(12),
               child: GridView(
                 children: <Widget>[
-                  CounterCard(
-                    title: 'Vehicle Arrivals',
-                    total: vehicleArrivals.length,
-                    icon: Icon(
-                      Icons.apps,
-                      color: Colors.teal[700],
+                  GestureDetector(
+                    onTap: () {
+                      myDebugPrint('GestureDetector onTap 🌺 🌺 🌺 🌺 🌺 🌺 ');
+                      marshalBloc.getVehicleArrivals(
+                          landmarkID: landmark.landmarkID, minutes: 10);
+                    },
+                    child: CounterCard(
+                      title: 'Vehicle Arrivals',
+                      total: vehicleArrivals.length,
+                      icon: Icon(
+                        Icons.apps,
+                        color: Colors.teal[700],
+                      ),
                     ),
                   ),
-                  CounterCard(
-                    title: 'Commuter Requests',
-                    total: commuterRequests.length,
-                    icon: Icon(Icons.people),
+                  GestureDetector(
+                    onTap: () {
+                      marshalBloc.getCommuterRequests(
+                        landmarkID: landmark.landmarkID,
+                      );
+                    },
+                    child: CounterCard(
+                      title: 'Commuter Requests',
+                      total: commuterRequests.length,
+                      icon: Icon(Icons.people),
+                    ),
                   ),
                   CounterCard(
                     title: 'Commuter Arrivals',
@@ -258,23 +270,39 @@ class _DashboardState extends State<Dashboard> {
                       color: Colors.pink,
                     ),
                   ),
-                  CounterCard(
-                    title: 'Casual Commuters',
-                    total: commuterFenceDwellEvents.length,
-                    icon: Icon(
-                      Icons.people,
-                      color: Colors.blue,
+                  GestureDetector(
+                    onTap: () {
+                      marshalBloc.getCommuterFenceDwellEvents(
+                          landmarkID: landmark.landmarkID);
+                    },
+                    child: CounterCard(
+                      title: 'Casual Commuters',
+                      total: commuterFenceDwellEvents.length,
+                      icon: Icon(
+                        Icons.people,
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
-                  CounterCard(
-                    title: 'Total Vehicles',
-                    total: _vehicles.length,
-                    icon: Icon(Icons.airport_shuttle),
+                  GestureDetector(
+                    onTap: () {
+                      marshalBloc.getAssociationVehicles(forceRefresh: true);
+                    },
+                    child: CounterCard(
+                      title: 'Total Vehicles',
+                      total: _vehicles.length,
+                      icon: Icon(Icons.airport_shuttle),
+                    ),
                   ),
-                  CounterCard(
-                    title: 'Landmarks Around',
-                    total: landmarks.length,
-                    icon: Icon(Icons.my_location),
+                  GestureDetector(
+                    onTap: () {
+                      marshalBloc.findLandmarksByLocation(forceRefresh: true);
+                    },
+                    child: CounterCard(
+                      title: 'Landmarks Around',
+                      total: landmarks.length,
+                      icon: Icon(Icons.my_location),
+                    ),
                   ),
                 ],
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -285,6 +313,10 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _handleBottomNav(int index) {
+    if (marshalBloc.marshalLandmark == null) {
+      _openConfirmLandmark();
+      return;
+    }
     switch (index) {
       case 0:
         _startRouteMap();
@@ -293,7 +325,8 @@ class _DashboardState extends State<Dashboard> {
         Navigator.push(context, SlideRightRoute(widget: FindVehicles()));
         break;
       case 2:
-        Navigator.push(context, SlideRightRoute(widget: Dispatch()));
+        Navigator.push(
+            context, SlideRightRoute(widget: SelectVehicleForDispatch()));
         break;
     }
   }
