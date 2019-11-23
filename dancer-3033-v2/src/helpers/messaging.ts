@@ -26,7 +26,7 @@ const fba: admin.messaging.Messaging = appTo.messaging();
 log(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
 class Messaging {
     public static init() {
-        log(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
+        log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);
     }
     public static async sendRouteDistanceEstimation(data: any, ): Promise<any> {
         const options: any = {
