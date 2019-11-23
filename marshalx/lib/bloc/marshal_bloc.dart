@@ -497,7 +497,7 @@ class MarshalBloc {
     fcm.getToken().then((String token) {
       assert(token != null);
       myDebugPrint(
-          '♻️♻️♻️️♻️♻️♻️ MarshalBloc:FCM token  ❤️ 🧡 💛️ $token ❤️ 🧡 💛');
+          '♻️♻️♻️️♻️♻️️ MarshalBloc:FCM token  ❤️ 🧡 💛️ $token ❤️ 🧡 💛');
     });
     _listenerSetupAlready = true;
     return null;
