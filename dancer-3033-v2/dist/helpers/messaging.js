@@ -37,7 +37,7 @@ const fba = appTo.messaging();
 log_1.default(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
 class Messaging {
     static init() {
-        log_1.default(`😍 😍 😍 initializing Messaging ... 😍 fake call to test environment variables config`);
+        log_1.default(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);
     }
     static sendRouteDistanceEstimation(data) {
         return __awaiter(this, void 0, void 0, function* () {

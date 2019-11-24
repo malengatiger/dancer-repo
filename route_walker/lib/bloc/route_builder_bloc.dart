@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:aftarobotlibrary4/api/file_util.dart';
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
-import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/association_bag.dart';
@@ -20,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart';
 import 'package:latlong/latlong.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -77,7 +74,7 @@ class RouteBuilderBloc {
 
   List<RoutePoint> _routePoints = List();
   List<RoutePoint> _rawRoutePoints = List();
-  List<GeofenceEvent> _geofenceEvents = List();
+  List<bg.GeofenceEvent> _geofenceEvents = List();
   List<Landmark> _routeLandmarks = List();
   List<ar.Route> _routes = List();
 
@@ -204,29 +201,36 @@ class RouteBuilderBloc {
 
   Future getRoutesByAssociation(String associationID, bool forceRefresh) async {
     myDebugPrint(
-        '### ℹ️  getRoutes: getting association routes 🚨 $associationID  forceRefresh $forceRefresh in Firestore ..........\n');
-    _busyController.sink.add(true);
-    var origin = 'LOCAL';
-    _routes = await LocalDBAPI.getRoutesByAssociation(associationID);
-    if (forceRefresh || _routes.isEmpty) {
-      _routes = await DancerListAPI.getRoutesByAssociation(
-          associationID: associationID);
-      origin = 'REMOTE';
-      await _cacheRoutes();
-    }
-    if (_routes.isNotEmpty) {
-      myDebugPrint('🌿 🌿 🌿 🌿   ${_routes.length} routes from $origin db: 🌿 ');
-      _routes.forEach(((r) {
-        myDebugPrint('🌿 🌿 🌿 🌿  route from $origin db: 🌿  ${r.name}');
-      }));
-    }
+        '\n### ℹ️  getRoutes: getting association routes 🚨 $associationID  forceRefresh: 🍏 🍎 $forceRefresh 🍏 🍎 ..\n');
     myDebugPrint(
-        ' 📍📍📍📍 adding ${_routes.length} sorted routes to  📎 model and stream sink ...');
-    _routes.sort((a, b) => a.name.compareTo(b.name));
-    _routeController.sink.add(_routes);
-    myDebugPrint('++++ ✅  routes retrieved: ${_routes.length}\n');
-
-    _busyController.sink.add(false);
+        '### ℹ️  getRoutes: ${forceRefresh ? '🍎 🍎 🍎 🍎 REMOTE REFRESH 🍎 🍎 🍎 🍎 ' : '🍏 🍏 🍏 🍏 LOCAL REFRESH, 👌👌👌 Yebo!'} 🍏 🍏 🍏 🍏 ..\n');
+    try {
+      _busyController.sink.add(true);
+      var origin = 'LOCAL';
+      _routes = await LocalDBAPI.getRoutesByAssociation(associationID);
+      if (forceRefresh || _routes.isEmpty) {
+        _routes = await DancerListAPI.getRoutesByAssociation(
+            associationID: associationID);
+        origin = 'REMOTE';
+        await _cacheRoutes();
+      }
+      if (_routes.isNotEmpty) {
+        myDebugPrint(
+            '🌿 🌿 🌿 🌿   ${_routes.length} routes from $origin db: 🌿 ');
+        _routes.forEach(((r) {
+          myDebugPrint('🌿 🌿 🌿 🌿  route from $origin db: 🌿  ${r.name}');
+        }));
+      }
+      myDebugPrint(
+          ' 📍📍📍📍 adding ${_routes.length} sorted routes to  📎 model and stream sink ...');
+      _routes.sort((a, b) => a.name.compareTo(b.name));
+      _routeController.sink.add(_routes);
+      myDebugPrint('++++ ✅  routes retrieved: ${_routes.length}\n');
+      _busyController.sink.add(false);
+    } catch (e) {
+      print(e);
+      _errorController.sink.add(e.toString());
+    }
     return _routes;
   }
 
@@ -420,7 +424,8 @@ class RouteBuilderBloc {
     route.created = DateTime.now().toUtc().toIso8601String();
     await DancerDataAPI.updateRoute(
         routeId: route.routeID, name: route.name, color: route.color);
-    myDebugPrint(' 📍 adding route, after update,  to model and stream sink ...');
+    myDebugPrint(
+        ' 📍 adding route, after update,  to model and stream sink ...');
 
     _appModel.routes.add(route);
     _appModelController.sink.add(_appModel);
@@ -428,21 +433,21 @@ class RouteBuilderBloc {
   }
 
   Future<List<CityDTO>> getCities(String countryId) async {
-    myDebugPrint('### ℹ️  getCities: getting cities in Firestore ..........\n');
-    var cities = await LocalDB.getCities();
-    if (cities == null || cities.isEmpty) {
-      cities = await DancerListAPI.getCountryCities(countryId);
-      if (cities.isNotEmpty) {
-        await LocalDB.saveCities(Cities(cities));
-      }
-    }
-
-    myDebugPrint(
-        ' 📍 adding model with ${cities.length} cities to model and stream sink ...');
-    _appModel.cities.clear();
-    _appModel.cities.addAll(cities);
-    _appModelController.sink.add(_appModel);
-    myDebugPrint('++++ ✅  cities retrieved: ${cities.length}\n');
+//    myDebugPrint('### ℹ️  getCities: getting cities in Firestore ..........\n');
+//    var cities = await LocalDBAPI.getCities();
+//    if (cities == null || cities.isEmpty) {
+//      cities = await DancerListAPI.getCountryCities(countryId);
+//      if (cities.isNotEmpty) {
+//        await LocalDB.saveCities(Cities(cities));
+//      }
+//    }
+//
+//    myDebugPrint(
+//        ' 📍 adding model with ${cities.length} cities to model and stream sink ...');
+//    _appModel.cities.clear();
+//    _appModel.cities.addAll(cities);
+//    _appModelController.sink.add(_appModel);
+//    myDebugPrint('++++ ✅  cities retrieved: ${cities.length}\n');
     return _appModel.cities;
   }
 
@@ -589,9 +594,10 @@ class RouteBuilderBloc {
     for (var route in _routes) {
       myDebugPrint(
           'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  : 🍎  ${route.name} ..........');
-      await getRouteByIDAndCacheLocally(route.routeID);
+      await LocalDBAPI.addRoute(route: route);
     }
-    myDebugPrint('\n\n\nℹ️  🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
+    myDebugPrint(
+        '\n\n️ℹ️ ℹ️ ℹ️ ℹ️   🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
     return _routePoints;
   }
 
@@ -625,8 +631,8 @@ class RouteBuilderBloc {
     myDebugPrint(
         'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ 👌👌👌 👌👌👌 👌👌👌️  getRouteByIDAndCacheLocally: DONE for  💙 ${mRoute.name}  💙 👌👌👌 👌👌👌  ..........');
     //refresh association
-    var association = await Prefs.getAssociation();
-    await getRoutesByAssociation(association.associationID, false);
+//    var association = await Prefs.getAssociation();
+//    await getRoutesByAssociation(association.associationID, false);
     return mRoute;
   }
 
@@ -730,7 +736,6 @@ class RouteBuilderBloc {
       position: Position(type: 'Point', coordinates: [longitude, latitude]),
     );
 
-    index++;
     try {
       await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: point);
       myDebugPrint(

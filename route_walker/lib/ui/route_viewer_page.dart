@@ -9,6 +9,7 @@ import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/user.dart' as ar;
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
+import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -109,17 +110,21 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   List<aftarobot.Route> routes = List();
   StreamSubscription<bool> subscription;
   _subscribe() {
-    var m = " 🍏 🍎 StreamSubscription: subscribe to busyStream";
+    var m = " 🍏 🍎 StreamSubscription: subscribe to 🍏 🍎 busyStream";
     print("$m:  start busyStream subscription: ");
-    subscription = routeBuilderBloc.busyStream.listen((data) {
-      print("$m: DataReceived:  🍎 $data");
+    subscription = routeBuilderBloc.busyStream.listen((busy) {
+      print(
+          "\n\n\n$m: ..............subscription DataReceived:  busy: 🍎 $busy\n\n");
       setState(() {
-        isBusy = data;
+        isBusy = busy;
       });
     }, onDone: () {
       print("$m: Task Done");
     }, onError: (error) {
-      print("$m: Some Error");
+      print("$m: Some Error: ${error.toString()}");
+    });
+    routeBuilderBloc.errorStream.listen((msg) {
+      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: msg);
     });
   }
 
@@ -138,9 +143,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     try {
       routes = await routeBuilderBloc.getRoutesByAssociation(
           association.associationID, forceRefresh);
-      _key.currentState.removeCurrentSnackBar();
-
-//      _key.currentState.removeCurrentSnackBar();
     } catch (e) {
       print(e);
       AppSnackbar.showErrorSnackbar(
@@ -157,7 +159,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
         itemCount: routes.length,
         controller: scrollController,
         itemBuilder: (BuildContext context, int index) {
-//          - app;
           return Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16, top: 4.0),
             child: StreamBuilder<List<aftarobot.Route>>(
@@ -182,10 +183,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   RouteBuilderModel appModel;
   void _sortRoutes() {
     //appModel.routes.sort((a, b) => a.name.compareTo(b.name));
-  }
-
-  void writeRoutesToMongo() async {
-    await routeBuilderBloc.addRoutesToMongo(appModel.routes);
   }
 
   @override
@@ -225,30 +222,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
           bottomNavigationBar: _getBottomNav(),
           body: Stack(
             children: <Widget>[
-              isBusy
-                  ? Center(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 48,
-                          ),
-                          Container(
-                            width: 100,
-                            height: 100,
-                            child: CircularProgressIndicator(
-                              backgroundColor: Colors.orange,
-                              strokeWidth: 48,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 60,
-                          ),
-                          Text('Refreshing Data ...',
-                              style: Styles.blackBoldSmall),
-                        ],
-                      ),
-                    )
-                  : _getListView(),
+              isBusy ? Busy() : _getListView(),
             ],
           ),
           backgroundColor: Colors.brown.shade100,
@@ -408,6 +382,10 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   @override
   onMessage(aftarobot.Route route, String message, Color textColor,
       Color backColor, bool isError) {
+    myDebugPrint(
+        'onMessage: 🍏 🍏 🍏 🍏 ${route.rawRoutePoints.length} 🍎 in route ${route.name}');
+    myDebugPrint(
+        'onMessage: 🍏 🍏 🍏 🍏 ${route.routePoints.length} 🍎 in route ${route.name}');
     if (isError) {
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: message);
     } else {
@@ -466,6 +444,9 @@ class _RouteCardState extends State<RouteCard>
       throw Exception('🍎 🍎 🍎 Route in RouteCard is NULL 🍎');
     } else {
       route = widget.route;
+      myDebugPrint(
+          '\n\n🌿 🌿 🌿 🌿  _RouteCardState: ❤️ 🧡 CHECKING ROUTE points :: 🧩🧩🧩 rawRoutePoints: ${route.rawRoutePoints.length}  '
+          '🧩🧩🧩  routePoints: ${route.routePoints.length} at 🍎 ${route.name} 🌿 🌿 🌿 🌿 ');
     }
     _buildMenuItems();
   }
@@ -718,16 +699,30 @@ class _RouteCardState extends State<RouteCard>
     myDebugPrint('_startNavigation........... : 🍎 🍎 🍎');
     await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
-    if (widget.route.rawRoutePoints.isEmpty) {
+
+    if (widget.route.rawRoutePoints.isEmpty &&
+        widget.route.routePoints.isEmpty) {
       Navigator.push(
           context, SlideRightRoute(widget: RoutePointCollector(route)));
       return;
     }
-    if (widget.route.routePoints.isEmpty) {
+    if (widget.route.rawRoutePoints.isNotEmpty &&
+        widget.route.routePoints.isEmpty) {
+      Navigator.push(
+          context, SlideRightRoute(widget: CreateRoutePointsPage(route)));
+      return;
+    }
+    if (widget.route.rawRoutePoints.isNotEmpty &&
+        widget.route.routePoints.isNotEmpty) {
+      Navigator.push(
+          context, SlideRightRoute(widget: LandmarksManagerPage(route)));
+      return;
+    }
+    if (widget.route.routePoints.isEmpty &&
+        widget.route.rawRoutePoints.isNotEmpty) {
       Navigator.push(
           context, SlideRightRoute(widget: CreateRoutePointsPage(route)));
     } else {
-      myDebugPrint('Route points from LOCAL DB');
       Navigator.push(
           context, SlideRightRoute(widget: LandmarksManagerPage(route)));
     }

@@ -17,18 +17,19 @@ export class RouteController {
         /////////
         app.route("/getRoutesByAssociation").post(async (req: Request, res: Response) => {
             log(
-                `\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+                `\n\n💦💦 💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
             );
             console.log(req.body);
             try {
                 const assID: any = req.body.associationID;
                 const now = new Date().getTime();
                 log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`)
-                const result = await Route.find({ associationID: assID }, 'name associationID routeID id');
+                const result = await Route.find({ associationID: assID });
                 log(result);
                 result.forEach((m: any) => {
                     if (m.associationID === assID) {
-                        log(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name}`);
+                        log(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎rawRoutePoints: ${m.rawRoutePoints.length} `);
+                        log(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎routePoints: ${m.routePoints.length} \n\n`);
                     }
                 });
                 const end = new Date().getTime();

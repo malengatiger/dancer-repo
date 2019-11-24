@@ -21,17 +21,18 @@ class RouteController {
         log_1.default(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
         /////////
         app.route("/getRoutesByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.default(`\n\n💦💦 💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const assID = req.body.associationID;
                 const now = new Date().getTime();
                 log_1.default(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
-                const result = yield route_1.default.find({ associationID: assID }, 'name associationID routeID id');
+                const result = yield route_1.default.find({ associationID: assID });
                 log_1.default(result);
                 result.forEach((m) => {
                     if (m.associationID === assID) {
-                        log_1.default(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name}`);
+                        log_1.default(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎rawRoutePoints: ${m.rawRoutePoints.length} `);
+                        log_1.default(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎routePoints: ${m.routePoints.length} \n\n`);
                     }
                 });
                 const end = new Date().getTime();
