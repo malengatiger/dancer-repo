@@ -1,3 +1,4 @@
+import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/util/busy.dart';
@@ -52,7 +53,14 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
     landmark = marshalBloc.marshalLandmark;
     prettyPrint(landmark.toJson(), 'LANDMARK for dispatching');
     vehicleArrivals = await marshalBloc.getVehicleArrivals(
-        landmarkID: landmark.landmarkID, minutes: 30);
+        landmarkID: landmark.landmarkID, minutes: 5);
+    _removeDuplicates();
+    setState(() {
+      isBusy = false;
+    });
+  }
+
+  void _removeDuplicates() {
     //deduplicate
     Map<String, VehicleArrival> vMap = Map();
     vehicleArrivals.sort((a, b) => a.created.compareTo(b.created));
@@ -60,9 +68,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
       vMap[v.vehicleID] = v;
     });
     vehicleArrivals = vMap.values.toList();
-    setState(() {
-      isBusy = false;
-    });
+    vehicleArrivals.sort((a, b) => a.created.compareTo(b.created));
   }
 
   @override
@@ -123,6 +129,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
               myDebugPrint(
                   ' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving ${snapshot.data.length} arrivals');
               vehicleArrivals = snapshot.data;
+              _removeDuplicates();
             }
             return isBusy
                 ? Busy()
@@ -166,9 +173,13 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
     var res = await Navigator.push(
         context, SlideRightRoute(widget: Dispatch(vehicleArrival)));
     if (res != null) {
-      if (res is VehicleArrival) {
-        myDebugPrint('Back in _startDispatch ... 🥬🥬🥬 cool!');
-      }
+      DispatchRecord mm = res as DispatchRecord;
+      myDebugPrint(
+          '🥬🥬🥬 Back in _startDispatch ... 🥬🥬🥬 cool 🥬🥬🥬 ! : ${mm.toJson()}');
+      AppSnackbar.showSnackbar(
+          scaffoldKey: _key,
+          message: '${mm.vehicleReg} '
+              'has been dispached with  🌺 ${mm.passengers} passengers');
     }
   }
 }

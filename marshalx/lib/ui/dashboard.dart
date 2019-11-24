@@ -102,45 +102,49 @@ class _DashboardState extends State<Dashboard> {
 
   void _subscribeToDataStreams() {
     myDebugPrint(
-        '💜 💜 💜 💜 _subscribeToDataStreams 💜 💜 💜 💜 _subscribeToDataStreams 💜 💜 💜 💜');
+        '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams 💜 💜 💜 💜 _subscribeToDataStreams 💜 💜 💜 💜');
     marshalBloc.vehicleStream.listen((cars) {
       myDebugPrint(
-          '💜 💜 💜 💜 _subscribeToDataStreams:  Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         _vehicles = cars;
       });
     });
     marshalBloc.landmarkStream.listen((marks) {
       myDebugPrint(
-          '💜 💜 💜 💜 _subscribeToDataStreams:  Received landmarks: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received landmarks: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         landmarks = marks;
       });
     });
-    marshalBloc.vehicleArrivalStream.listen((arrivals) {
-      myDebugPrint(
-          '💜 💜 💜 💜 _subscribeToDataStreams:  Received vehicleArrivals: 🦠 ${arrivals.length} 🦠 💜 💜 💜 💜 ');
-      setState(() {
-        vehicleArrivals = arrivals;
+    try {
+      marshalBloc.vehicleArrivalStream.listen((arrivals) {
+        myDebugPrint(
+            '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received vehicleArrivals: 🦠 ${arrivals.length} 🦠 💜 💜 💜 💜 ');
+        setState(() {
+          vehicleArrivals = arrivals;
+        });
       });
-    });
+    } catch (e, s) {
+      print(s);
+    }
     marshalBloc.commuterDwellStream.listen((dwells) {
       myDebugPrint(
-          '💜 💜 💜 💜 _subscribeToDataStreams:  Received commuterDwells: 🦠 ${dwells.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received commuterDwells: 🦠 ${dwells.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterFenceDwellEvents = dwells;
       });
     });
     marshalBloc.commuterArrivalsStream.listen((marks) {
       myDebugPrint(
-          '💜 💜 💜 💜 _subscribeToDataStreams:  Received commuterArrivals: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received commuterArrivals: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterArrivals = marks;
       });
     });
     marshalBloc.commuterRequestStream.listen((requests) {
       myDebugPrint(
-          '💜 💜 💜 💜 _subscribeToDataStreams:  Received commuterRequests: 🦠 ${requests.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received commuterRequests: 🦠 ${requests.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterRequests = requests;
       });

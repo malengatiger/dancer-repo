@@ -17,6 +17,7 @@ import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
+import 'package:aftarobotlibrary4/util/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -154,16 +155,25 @@ class MarshalBloc {
 
   List<VehicleLocation> _vehicleLocations = List();
 
-  Future<List<VehicleLocation>> findVehiclesByLocation() async {
+  Future<List<VehicleLocation>> findVehiclesByLocation(
+      {int minutes, double radiusInKM}) async {
     myDebugPrint('\n\n💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation .....');
     _busyController.sink.add(true);
     var loc = await LocationUtil.getCurrentLocation();
+    print(loc);
     _vehicleLocations = await DancerListAPI.findVehiclesByLocation(
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
-        radiusInKM: Constants.GEO_QUERY_RADIUS,
-        minutes: 5);
+        radiusInKM: radiusInKM == null
+            ? SettingsModel().vehicleGeoQueryRadius
+            : radiusInKM,
+        minutes: minutes == null ? 5 : minutes);
+    myDebugPrint('💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation ..... '
+        'found  🔴 🔴 ${_vehicleLocations.length} vehicles 🧡 before filter by association');
+
     //remove duplicate vehicles
+    prettyPrint(_user.toJson(),
+        '🌿 🌿 🌿 🌿 USER object 🌿 🌿 🌿 🌿  check association');
     _vehicleLocations.sort((a, b) => a.created.compareTo(b.created));
     Map<String, VehicleLocation> map = Map();
     _vehicleLocations.forEach((v) {
@@ -174,7 +184,8 @@ class MarshalBloc {
     _vehicleLocations = map.values.toList();
     _vehicleLocationController.sink.add(_vehicleLocations);
     myDebugPrint(
-        '💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation ..... found  🔴 🔴 ${_vehicleLocations.length} vehicles');
+        '💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation ..... found  '
+        '🔴 🔴 ${_vehicleLocations.length} UNIQUE vehicles 🍎 🍎  after filtering');
     _busyController.sink.add(false);
     return _vehicleLocations;
   }
@@ -284,7 +295,7 @@ class MarshalBloc {
         landmarks = await DancerListAPI.findLandmarksByLocation(
             latitude: loc.coords.latitude,
             longitude: loc.coords.longitude,
-            radiusInKM: Constants.GEO_QUERY_RADIUS);
+            radiusInKM: SettingsModel().vehicleGeoQueryRadius);
         myDebugPrint('🌸 🌸 Cache landmarks in local DB .....');
         await LocalDBAPI.addLandmarks(landmarks: landmarks);
       }
@@ -305,23 +316,19 @@ class MarshalBloc {
       {bool forceRefresh = false}) async {
     myDebugPrint(
         '🧩 🧩 🧩 getAssociationRoutes....._user.associationID: ${_user.associationID}');
-    List<ar.Route> fullRoutes = List();
     try {
       var mList = await LocalDBAPI.getRoutesByAssociation(_user.associationID);
       if (mList.isEmpty || forceRefresh) {
         mList = await DancerListAPI.getRoutesByAssociation(
             associationID: _user.associationID);
         myDebugPrint('🧩 🧩 🧩 Cache routes in local DB .....');
-
         for (var r in mList) {
-          var route = await DancerListAPI.getRouteByID(routeID: r.routeID);
-          await LocalDBAPI.addRoute(route: route);
-          fullRoutes.add(route);
+          await LocalDBAPI.addRoute(route: r);
         }
       }
       myDebugPrint('🧩 🧩 🧩  ${mList.length} routes found');
       _routesController.sink.add(mList);
-      return fullRoutes;
+      return mList;
     } catch (e) {
       print(e);
       _errorController.sink.add('getAssociationRoutes failed: ${e.toString()}');

@@ -214,11 +214,19 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
           passengers: number,
           position:
               Position(coordinates: [landmark.longitude, landmark.latitude]));
-      var es = await DancerDataAPI.addDispatchRecord(dispatchRecord: dr);
+      try {
+        AppSnackbar.showSnackbarWithProgressIndicator(
+            scaffoldKey: _key, message: ' 🌺  🌺  Dispatching taxi ..');
+      } catch (e, s) {
+        print(s);
+      }
+      var dispatchRecord =
+          await DancerDataAPI.addDispatchRecord(dispatchRecord: dr);
       marshalBloc.removeVehicleArrival(widget.vehicleArrival);
-      prettyPrint(
-          es.toJson(), '🎁 🎁 🎁 🎁 DISPATCH RECORD returned, about to pop!');
-      Navigator.pop(context, es);
+      prettyPrint(dispatchRecord.toJson(),
+          '🎁 🎁 🎁 🎁 DISPATCH RECORD returned, about to pop!');
+      _key.currentState.removeCurrentSnackBar();
+      Navigator.pop(context, dispatchRecord);
     } catch (e) {
       print(e);
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: e.toString());
