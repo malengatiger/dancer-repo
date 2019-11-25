@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-mongoose.set('debug', true);
+
 
 const SafetyNetworkBuddySchema = new mongoose.Schema(
     {

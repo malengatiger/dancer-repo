@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-mongoose.set('debug', true);
 /*
  String routeID, routeName, nearestLandmark;
   List<DynamicDistance> dynamicDistances;

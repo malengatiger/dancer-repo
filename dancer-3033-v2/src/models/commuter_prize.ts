@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-mongoose.set('debug', true);
 
 const CommuterPrizeSchema = new mongoose.Schema(
     {

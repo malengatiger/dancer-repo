@@ -15,6 +15,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const log_1 = __importDefault(require("./log"));
 const listeners_1 = __importDefault(require("./helpers/listeners"));
 const messaging_1 = __importDefault(require("./helpers/messaging"));
+const mongoose_debug_1 = __importDefault(require("./helpers/mongoose_debug"));
 const port = process.env.PORT || "8083";
 const password = process.env.MONGODB_PASSWORD || "xxxxx";
 const user = process.env.MONGODB_USER || "xxxx";
@@ -29,6 +30,7 @@ mongoose_1.default
     log_1.default(`\n🔆🔆🔆🔆🔆🔆  Mongo connected ... 🔆🔆🔆  💛  ${new Date()}  💛 💛`);
     log_1.default(`\n🍎🍎  ${appName} :: database:  ☘️  Mongo Client version: 💙${client.version} 💙 model names: ${JSON.stringify(client.modelNames())}  ☘️  is OK   🍎🍎 `);
     log_1.default(`🍎🍎🍎  MongoDB config ...${JSON.stringify(mongoose_1.default.connection.config)}`);
+    mongoose_debug_1.default.setDebug();
     messaging_1.default.init();
     listeners_1.default.listen(client);
     console.log(`🍎🍎🍎  MongoDB collections available ...`);
