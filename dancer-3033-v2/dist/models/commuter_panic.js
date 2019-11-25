@@ -15,6 +15,7 @@ const CommuterPanicSchema = new mongoose_1.default.Schema({
     created: { type: String, required: true, default: new Date().toISOString() },
     updated: { type: String, required: true, default: new Date().toISOString() },
 });
+CommuterPanicSchema.index({ position: "2dsphere" });
 const CommuterPanic = mongoose_1.default.model('CommuterPanic', CommuterPanicSchema);
 exports.default = CommuterPanic;
 //# sourceMappingURL=commuter_panic.js.map

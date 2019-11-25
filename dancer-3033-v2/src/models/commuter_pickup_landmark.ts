@@ -12,7 +12,7 @@ const CommuterPickupandmarkSchema = new mongoose.Schema(
         vehicleReg: {type: String, required: true},
         commuterRequestID: {type: String, required: true},
         // departureID: {type: String, required: true},
-        // position: {type: Map, required: true},
+        position: {type: Map, required: true},
         userID: {type: String, required: true, trim: true},
         commuterPickupLandmarkID: {type: String, required: true,},
         associationD: {type: String, required: false,trim: true, index: true},
@@ -22,6 +22,6 @@ const CommuterPickupandmarkSchema = new mongoose.Schema(
     }
 );
 
-
+CommuterPickupandmarkSchema.index({ position: "2dsphere" });
 const CommuterPickupLandmark = mongoose.model('CommuterPickupLandmark', CommuterPickupandmarkSchema);
 export default CommuterPickupLandmark;

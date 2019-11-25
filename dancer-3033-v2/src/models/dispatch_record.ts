@@ -24,6 +24,6 @@ const DispatchRecordSchema = new mongoose.Schema(
     }
 );
 
-
+DispatchRecordSchema.index({ position: "2dsphere" });
 const DispatchRecord = mongoose.model('DispatchRecord', DispatchRecordSchema);
 export default DispatchRecord

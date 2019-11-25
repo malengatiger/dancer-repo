@@ -5,7 +5,7 @@ const CountrySchema = new mongoose.Schema(
         name: {type: String, required: true, trim: true, unique: true, index: true},
         countryID: {type: String, required: false},
         countryCode: {type: String, required: true, default: 'ZA'},
-        
+        position: {type: Object, required: false},
         created: {type: String, required: true, default: new Date().toISOString()},
 
     }

@@ -8,6 +8,7 @@ const CommuterPanicLocationSchema = new mongoose.Schema(
     }
 );
 
+CommuterPanicLocationSchema.index({ position: "2dsphere" });
 
 const CommuterPanicLocation = mongoose.model('CommuterPanicLocation', CommuterPanicLocationSchema);
 export default CommuterPanicLocation

@@ -18,6 +18,7 @@ const VehicleArrivalSchema = new mongoose_1.default.Schema({
     routeName: { type: String, required: false, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
+VehicleArrivalSchema.index({ position: "2dsphere" });
 const VehicleArrival = mongoose_1.default.model('VehicleArrival', VehicleArrivalSchema);
 exports.default = VehicleArrival;
 //# sourceMappingURL=vehicle_arrival.js.map

@@ -21,9 +21,9 @@ const UserSchema = new mongoose.Schema(
         lastName: {type: String, required: true},
         email: {type: String, unique: true, required: true, index: true},
         fcmToken: {type: String, required: false},
-        cellphone: {type: String, required: true},
+        cellphone: {type: String, required: true, unique: true,},
         userID: {type: String, required: true},
-        associationID: {type: String, required: false},
+        associationID: {type: String, required: false,  index: true},
         associationName: {type: String, required: false},
         userType: {type: String, required: true, enum: ['Staff', 'Administrator', 'Owner', 'Driver', 'Marshal', 'Patroller', 'Commuter'],},
         gender: {type: String, required: true, enum: ['Male', 'Female'],},
@@ -31,6 +31,7 @@ const UserSchema = new mongoose.Schema(
     }
 );
 UserSchema.plugin(uniqueValidator);
-
+UserSchema.indexes().push({email: 1}, {unique: true});
+UserSchema.indexes().push({cellphone: 1}, {unique: true});
 const User = mongoose.model<IUser>('User', UserSchema);
 export default User;

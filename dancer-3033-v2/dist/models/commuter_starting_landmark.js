@@ -10,12 +10,13 @@ const CommuterStartingLandmarkSchema = new mongoose_1.default.Schema({
     toLandmarkID: { type: String, required: true },
     toLandmarkName: { type: String, required: true },
     commuterStartingLandmarkID: { type: String, required: true },
-    position: { type: Object, required: true },
+    position: { type: Object, required: true, },
     userID: { type: String, required: true, trim: true },
     associationID: { type: String, required: false, trim: true, index: true },
     associationName: { type: String, required: false, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
+CommuterStartingLandmarkSchema.index({ position: "2dsphere" });
 const CommuterStartingLandmark = mongoose_1.default.model('CommuterStartingLandmark', CommuterStartingLandmarkSchema);
 exports.default = CommuterStartingLandmark;
 //# sourceMappingURL=commuter_starting_landmark.js.map

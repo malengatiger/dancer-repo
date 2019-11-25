@@ -26,6 +26,6 @@ const CommuterRequestSchema = new mongoose.Schema(
     }
 );
 
-
+CommuterRequestSchema.index({ position: "2dsphere" });
 const CommuterRequest = mongoose.model('CommuterRequest', CommuterRequestSchema);
 export default CommuterRequest

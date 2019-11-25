@@ -12,7 +12,7 @@ const CommuterArrivalLandmarkSchema = new mongoose.Schema(
         vehicleReg: {type: String, required: false},
         commuterRequestID: {type: String, required: false},
         departureID: {type: String, required: false},
-        position: {type: Map, required: true},
+        position: {type: Map, required: true,},
         userID: {type: String, required: true, trim: true},
         commuterArrivalLandmarkID: {type: String, required: true,},
         associationD: {type: String, required: false,trim: true, index: true},
@@ -23,6 +23,6 @@ const CommuterArrivalLandmarkSchema = new mongoose.Schema(
     }
 );
 
-
+CommuterArrivalLandmarkSchema.index({ position: "2dsphere" });
 const CommuterArrivalLandmark = mongoose.model('CommuterArrivalLandmark', CommuterArrivalLandmarkSchema);
 export default CommuterArrivalLandmark;

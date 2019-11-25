@@ -25,6 +25,7 @@ const CommuterRequestSchema = new mongoose_1.default.Schema({
     associationName: { type: String, required: false, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
+CommuterRequestSchema.index({ position: "2dsphere" });
 const CommuterRequest = mongoose_1.default.model('CommuterRequest', CommuterRequestSchema);
 exports.default = CommuterRequest;
 //# sourceMappingURL=commuter_request.js.map

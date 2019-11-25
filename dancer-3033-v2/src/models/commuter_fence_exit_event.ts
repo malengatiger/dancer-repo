@@ -13,6 +13,6 @@ const CommuterFenceExitEventSchema = new mongoose.Schema(
     }
 );
 
-
+CommuterFenceExitEventSchema.index({ position: "2dsphere" });
 const CommuterFenceExitEvent = mongoose.model('CommuterFenceExitEvent', CommuterFenceExitEventSchema);
 export default CommuterFenceExitEvent;

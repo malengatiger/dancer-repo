@@ -4,7 +4,7 @@ const CommuterFenceDwellEventSchema = new mongoose.Schema(
     {
         landmarkID: {type: String, required: true, trim: true},
         landmarkName: {type: String, required: true, trim: true},
-        position: {type: Map, required: true},
+        position: {type: Map, required: true,},
         userID: {type: String, required: false,},
         commuterFenceEventID: {type: String, required: true, },
 
@@ -13,6 +13,6 @@ const CommuterFenceDwellEventSchema = new mongoose.Schema(
     }
 );
 
-
+CommuterFenceDwellEventSchema.index({ position: "2dsphere" });
 const CommuterFenceDwellEvent = mongoose.model('CommuterFenceDwellEvent', CommuterFenceDwellEventSchema);
 export default CommuterFenceDwellEvent;

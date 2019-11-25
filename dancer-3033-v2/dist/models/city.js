@@ -14,6 +14,7 @@ const CitySchema = new mongoose_1.default.Schema({
     position: { type: Map, required: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
+CitySchema.index({ position: '2dsphere' });
 const City = mongoose_1.default.model('City', CitySchema);
 exports.default = City;
 //# sourceMappingURL=city.js.map

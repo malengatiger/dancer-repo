@@ -7,11 +7,12 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const CommuterFenceDwellEventSchema = new mongoose_1.default.Schema({
     landmarkID: { type: String, required: true, trim: true },
     landmarkName: { type: String, required: true, trim: true },
-    position: { type: Map, required: true },
+    position: { type: Map, required: true, },
     userID: { type: String, required: false, },
     commuterFenceEventID: { type: String, required: true, },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
+CommuterFenceDwellEventSchema.index({ position: "2dsphere" });
 const CommuterFenceDwellEvent = mongoose_1.default.model('CommuterFenceDwellEvent', CommuterFenceDwellEventSchema);
 exports.default = CommuterFenceDwellEvent;
 //# sourceMappingURL=commuter_fence_dwell_event.js.map

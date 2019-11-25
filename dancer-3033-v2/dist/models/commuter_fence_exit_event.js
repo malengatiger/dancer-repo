@@ -12,6 +12,7 @@ const CommuterFenceExitEventSchema = new mongoose_1.default.Schema({
     commuterFenceEventID: { type: String, required: true, },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
+CommuterFenceExitEventSchema.index({ position: "2dsphere" });
 const CommuterFenceExitEvent = mongoose_1.default.model('CommuterFenceExitEvent', CommuterFenceExitEventSchema);
 exports.default = CommuterFenceExitEvent;
 //# sourceMappingURL=commuter_fence_exit_event.js.map

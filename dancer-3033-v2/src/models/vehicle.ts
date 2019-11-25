@@ -18,6 +18,6 @@ const VehicleSchema = new mongoose.Schema(
     }
 );
 VehicleSchema.plugin(uniqueValidator);
-
+VehicleSchema.index({vehicleReg: 1}, {unique: true})
 const Vehicle = mongoose.model('Vehicle', VehicleSchema);
 export default Vehicle

@@ -18,6 +18,6 @@ const VehicleDepartureSchema = new mongoose.Schema(
     }
 );
 
-
+VehicleDepartureSchema.index({ position: "2dsphere" });
 const VehicleDeparture = mongoose.model('VehicleDeparture', VehicleDepartureSchema);
 export default VehicleDeparture

@@ -18,6 +18,7 @@ const VehicleSchema = new mongoose_1.default.Schema({
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 VehicleSchema.plugin(mongoose_unique_validator_1.default);
+VehicleSchema.index({ vehicleReg: 1 }, { unique: true });
 const Vehicle = mongoose_1.default.model('Vehicle', VehicleSchema);
 exports.default = Vehicle;
 //# sourceMappingURL=vehicle.js.map

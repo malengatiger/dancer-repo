@@ -19,6 +19,6 @@ const VehicleArrivalSchema = new mongoose.Schema(
     }
 );
 
-
+VehicleArrivalSchema.index({ position: "2dsphere" });
 const VehicleArrival = mongoose.model('VehicleArrival', VehicleArrivalSchema);
 export default VehicleArrival
