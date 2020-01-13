@@ -23,6 +23,7 @@ const commuter_controller_1 = require("./controllers/commuter_controller");
 const vehicle_controller_1 = require("./controllers/vehicle_controller");
 const dispatch_controller_1 = require("./controllers/dispatch_controller");
 const city_controller_1 = require("./controllers/city_controller");
+const bg_controller_1 = require("./controllers/bg_controller");
 const port = process.env.PORT || "8083";
 class AftaRobotApp {
     constructor() {
@@ -35,6 +36,7 @@ class AftaRobotApp {
         this.vehicleController = new vehicle_controller_1.VehicleController();
         this.dispatchController = new dispatch_controller_1.DispatchController();
         this.cityController = new city_controller_1.CityController();
+        this.bgController = new bg_controller_1.BGController();
         log_1.default(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
         this.app = app_1.app;
         this.port = port;
@@ -48,6 +50,7 @@ class AftaRobotApp {
         this.commuterController.routes(this.app);
         this.vehicleController.routes(this.app);
         this.dispatchController.routes(this.app);
+        this.bgController.routes(this.app);
     }
     initializeMiddleware() {
         console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);

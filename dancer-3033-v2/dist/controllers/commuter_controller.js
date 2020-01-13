@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -216,7 +217,7 @@ class CommuterController {
                 });
                 // log(result);
                 res.status(200).json(result);
-                log_1.default(`🍎🍎🍎🍎 getCommuterArrivalLandmarks: found : 🍎🍎🍎🍎 ${result.length} 🍎🍎🍎🍎`);
+                log_1.default(`🍎 getCommuterArrivalLandmarks: found : 🍎 ${result.length} 🍎`);
             }
             catch (err) {
                 log_1.default(err);
@@ -251,7 +252,7 @@ class CommuterController {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
             console.log(msg);
             try {
-                const c = new commuter_starting_landmark_1.default(Object.assign({}, req.body, { position: JSON.parse(req.body.position) }));
+                const c = new commuter_starting_landmark_1.default(Object.assign(Object.assign({}, req.body), { position: JSON.parse(req.body.position) }));
                 c.commuterStartingLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
@@ -293,7 +294,7 @@ class CommuterController {
                     userID: req.body.userID
                 });
                 if (commuterRequest != null) {
-                    const c = new commuter_rating_1.default(Object.assign({}, req.body, { commuterRequestID: commuterRequest._id }));
+                    const c = new commuter_rating_1.default(Object.assign(Object.assign({}, req.body), { commuterRequestID: commuterRequest._id }));
                     c.commuterRatingID = v1_1.default();
                     c.created = new Date().toISOString();
                     const result = yield c.save();
@@ -392,7 +393,7 @@ class CommuterController {
                         message: 'User type not found'
                     };
                 }
-                const incentive = new commuter_incentive_1.default(Object.assign({}, req.body, { incentive: incentiveType, user: user }));
+                const incentive = new commuter_incentive_1.default(Object.assign(Object.assign({}, req.body), { incentive: incentiveType, user: user }));
                 const result = yield incentive.save();
                 // log(result);
                 res.status(200).json(result);

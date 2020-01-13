@@ -11,7 +11,7 @@ log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ..
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
 const ssa1 = JSON.parse(sa1);
 log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
-const appTo: admin.app.App = admin.initializeApp(
+export const appTo: admin.app.App = admin.initializeApp(
     {
         credential: admin.credential.cert(ssa1),
         databaseURL: "https://dancer26983.firebaseio.com",

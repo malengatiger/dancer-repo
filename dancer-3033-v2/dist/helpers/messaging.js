@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -28,12 +29,12 @@ log_1.default(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env 
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
 const ssa1 = JSON.parse(sa1);
 log_1.default(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
-const appTo = admin.initializeApp({
+exports.appTo = admin.initializeApp({
     credential: admin.credential.cert(ssa1),
     databaseURL: "https://dancer26983.firebaseio.com",
 }, "appTo");
 log_1.default(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
-const fba = appTo.messaging();
+const fba = exports.appTo.messaging();
 log_1.default(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
 class Messaging {
     static init() {

@@ -23,13 +23,13 @@ exports.app.use((req, res, next) => {
 });
 const port = process.env.PORT || 3003;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
-log_1.default(`🥦🥦🥦 dancer Firebase service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
+log_1.default(`🥦🥦🥦 Dancer Web(aka ARWeb) Firebase service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
 server.listen(port, () => {
-    log_1.default(`\n\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n\n`);
+    log_1.default(`\n\n🔵🔵🔵  Dancer Web(aka ARWeb) API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n\n`);
 });
 const ar = new ar_1.default();
-log_1.default(`\n🔆🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
-log_1.default(`🔆🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+log_1.default(`\n🔆🔆 Dancer Web(aka ARWeb) API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
+log_1.default(`🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆`);
 const list = listEndpoints(exports.app);
 const stringList = [];
 list.forEach((m) => {
@@ -41,6 +41,8 @@ stringList.forEach((m) => {
     cnt++;
     log_1.default(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
 });
-log_1.default(`🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of endpoints available; total endpoints: 💛 ${cnt}  💛 \n\n`);
+log_1.default(`🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of Dancer Web(aka ARWeb) endpoints available; total endpoints: 💛 ${cnt}  💛 \n\n`);
+// mlog(`🥦🥦🥦 initializing SQLite ...`)
+// mlog(`🔵🔵 SQLite  initialized  🔵🔵🔵🔵`)
 module.exports = server;
 //# sourceMappingURL=app.js.map

@@ -12,6 +12,7 @@ import { CommuterController } from "./controllers/commuter_controller";
 import { VehicleController } from "./controllers/vehicle_controller";
 import { DispatchController } from "./controllers/dispatch_controller";
 import { CityController } from "./controllers/city_controller";
+import { BGController } from "./controllers/bg_controller";
 
 const port = process.env.PORT || "8083";
 
@@ -30,6 +31,7 @@ class AftaRobotApp {
     
     public dispatchController: DispatchController = new DispatchController();
     public cityController: CityController = new CityController();
+    public bgController: BGController = new BGController();
 
     constructor() {
         l(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
@@ -49,6 +51,7 @@ class AftaRobotApp {
 
         this.vehicleController.routes(this.app);
         this.dispatchController.routes(this.app);
+        this.bgController.routes(this.app);
        
     }
     private initializeMiddleware() {

@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import http from "http";
 import mlog from './log';
 import AftaRobotApp from './ar';
+import initializeDatabase from "./database/initializeDatabase";
 const listEndpoints = require('express-list-endpoints')
 
 export const app: Application = express();
@@ -25,16 +26,16 @@ app.use((req: Request, res: Response, next) => {
 
 const port = process.env.PORT || 3003;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
-mlog(`🥦🥦🥦 dancer Firebase service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
+mlog(`🥦🥦🥦 Dancer Web(aka ARWeb) Firebase service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
 server.listen(port, () => {
   mlog(
-    `\n\n🔵🔵🔵  Dancer Web API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n\n`,
+    `\n\n🔵🔵🔵  Dancer Web(aka ARWeb) API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n\n`,
   );
 
 });
 const ar = new AftaRobotApp();
-mlog(`\n🔆🔆 Dancer Web API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
-mlog(`🔆🔆 Dancer Web API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+mlog(`\n🔆🔆 Dancer Web(aka ARWeb) API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
+mlog(`🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆`);
 const list: any[] = listEndpoints(app);
 const stringList: string[] = [];
 list.forEach((m) => {
@@ -47,6 +48,9 @@ stringList.forEach((m) => {
   mlog(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
 });
 
-mlog(`🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of endpoints available; total endpoints: 💛 ${cnt}  💛 \n\n`);
+mlog(`🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of Dancer Web(aka ARWeb) endpoints available; total endpoints: 💛 ${cnt}  💛 \n\n`);
+// mlog(`🥦🥦🥦 initializing SQLite ...`)
+
+// mlog(`🔵🔵 SQLite  initialized  🔵🔵🔵🔵`)
 
 module.exports = server;
