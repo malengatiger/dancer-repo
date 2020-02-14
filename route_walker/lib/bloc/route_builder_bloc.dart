@@ -431,7 +431,7 @@ class RouteBuilderBloc {
         routeId: route.routeID, routePoints: route.routePoints, clear: true);
 
     myDebugPrint(
-        '🔆 🔆 🔆 🔆 🔆 🔆 🔆 adding route, after update, to model and stream sink ...');
+        '🔆 🔆 🔆 🔆 🔆 🔆 🔆 adding route, after local and remote update, to model and stream sink ...');
 
     _appModel.routes.add(route);
     _appModelController.sink.add(_appModel);
