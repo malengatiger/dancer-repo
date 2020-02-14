@@ -579,7 +579,8 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     landmarks = await routeBuilderBloc.findLandmarksNearRoutePoint(
         widget.routePoint, 0.1);
     landmarks.forEach((m) {
-      prettyPrint(m.toJson(), 'LANDMARK NEAREST 🔆 🔆 🔆 🔆 ');
+      prettyPrint(m.toJson(),
+          'LANDMARK NEAREST this route point: ${widget.routePoint.index}🔆 🔆 🔆 🔆 ');
     });
     setState(() {});
   }
@@ -726,8 +727,29 @@ class _LandmarkEditorState extends State<LandmarkEditor>
         scaffoldKey: _key, message: 'Adding new landmark ');
     try {
       var m = await routeBuilderBloc.addLandmark(landmark);
+      widget.routePoint.landmarkID = m.landmarkID;
+      widget.routePoint.landmarkName = m.landmarkName;
+      _route.routePoints.forEach((point) {
+        if (point.latitude == widget.routePoint.latitude &&
+            point.longitude == widget.routePoint.longitude) {
+          point.landmarkID = m.landmarkID;
+          point.landmarkName = m.landmarkName;
+          debugPrint(
+              'Route point updated in widget as a 🍎 landmark. 🍎  need to refresh route locally and remote server');
+        }
+      });
+      var cnt = 0;
+      ;
+      _route.routePoints.forEach((element) {
+        if (element.landmarkName != null) {
+          cnt++;
+          myDebugPrint(
+              "🌽🌽 Landmark point found: 🍎  #$cnt 🌽 ${element.landmarkName}");
+        }
+      });
       myDebugPrint(
-          '\n️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️  New landmark added: ️🍀️️🍀️️🍀️ $landmarkName');
+          '\n️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️  New landmark added: ️🍀️️🍀️️🍀️ $landmarkName - update the fucking route');
+      await routeBuilderBloc.updateRoute(widget.route);
 
       widget.listener.onSuccess(m);
       AppSnackbar.showSnackbarWithAction(

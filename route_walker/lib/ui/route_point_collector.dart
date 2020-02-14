@@ -496,7 +496,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
                   ),
                   onPressed: () {
                     Navigator.pop(context);
-                    //routeBuilderBloc.setIndex(_routePointsCollected.length);
                     _startTimer();
                   },
                 ),

@@ -208,6 +208,7 @@ class RouteBuilderBloc {
       _busyController.sink.add(true);
       var origin = 'LOCAL';
       _routes = await LocalDBAPI.getRoutesByAssociation(associationID);
+
       if (forceRefresh || _routes.isEmpty) {
         _routes = await DancerListAPI.getRoutesByAssociation(
             associationID: associationID);
@@ -418,14 +419,19 @@ class RouteBuilderBloc {
 
   Future updateRoute(ar.Route route) async {
     myDebugPrint(
-        '### 📍 📍 📍  update route:  ${route.name} on Firestore ..........\n');
+        '### 📍 📍 📍  update route:  ${route.name} routePoints: ${route.routePoints} ..........\n');
     _appModel.routes.remove(route);
 
     route.created = DateTime.now().toUtc().toIso8601String();
-    await DancerDataAPI.updateRoute(
-        routeId: route.routeID, name: route.name, color: route.color);
+    await LocalDBAPI.deleteRoute(route.routeID);
+    await LocalDBAPI.addRoute(route: route, listener: null);
     myDebugPrint(
-        ' 📍 adding route, after update,  to model and stream sink ...');
+        'Route has been updated on the local database, need to do the same on remote mongodb ........🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
+    await DancerDataAPI.addRoutePoints(
+        routeId: route.routeID, routePoints: route.routePoints, clear: true);
+
+    myDebugPrint(
+        '🔆 🔆 🔆 🔆 🔆 🔆 🔆 adding route, after update, to model and stream sink ...');
 
     _appModel.routes.add(route);
     _appModelController.sink.add(_appModel);

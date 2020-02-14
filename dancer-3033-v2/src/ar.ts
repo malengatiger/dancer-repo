@@ -6,6 +6,7 @@ import l from './log';
 import RouteController from './controllers/assoc_controller';
 import AssociationController from './controllers/route_controller';
 import { AppController } from "./controllers/app_controller";
+import { DeleteController } from "./controllers/delete";
 import LandmarkController from "./controllers/landmark_controller";
 import UserController from "./controllers/user_controller";
 import { CommuterController } from "./controllers/commuter_controller";
@@ -20,7 +21,7 @@ class AftaRobotApp {
     public app: express.Application;
     public port: string;
     public appController: AppController = new AppController();
-
+    public deleteController: DeleteController = new DeleteController();
     public routeController: RouteController = new RouteController();
     public assocController: AssociationController = new AssociationController();
     public userController: UserController = new UserController();
@@ -52,6 +53,7 @@ class AftaRobotApp {
         this.vehicleController.routes(this.app);
         this.dispatchController.routes(this.app);
         this.bgController.routes(this.app);
+        this.deleteController.routes(this.app);
        
     }
     private initializeMiddleware() {

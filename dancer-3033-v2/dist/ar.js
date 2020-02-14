@@ -17,6 +17,7 @@ const log_1 = __importDefault(require("./log"));
 const assoc_controller_1 = __importDefault(require("./controllers/assoc_controller"));
 const route_controller_1 = __importDefault(require("./controllers/route_controller"));
 const app_controller_1 = require("./controllers/app_controller");
+const delete_1 = require("./controllers/delete");
 const landmark_controller_1 = __importDefault(require("./controllers/landmark_controller"));
 const user_controller_1 = __importDefault(require("./controllers/user_controller"));
 const commuter_controller_1 = require("./controllers/commuter_controller");
@@ -28,6 +29,7 @@ const port = process.env.PORT || "8083";
 class AftaRobotApp {
     constructor() {
         this.appController = new app_controller_1.AppController();
+        this.deleteController = new delete_1.DeleteController();
         this.routeController = new assoc_controller_1.default();
         this.assocController = new route_controller_1.default();
         this.userController = new user_controller_1.default();
@@ -51,6 +53,7 @@ class AftaRobotApp {
         this.vehicleController.routes(this.app);
         this.dispatchController.routes(this.app);
         this.bgController.routes(this.app);
+        this.deleteController.routes(this.app);
     }
     initializeMiddleware() {
         console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);

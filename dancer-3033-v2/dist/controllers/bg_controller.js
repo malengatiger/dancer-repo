@@ -14,7 +14,7 @@ class BGController {
             try {
                 if (req.body) {
                     let firestore = messaging_1.appTo.firestore();
-                    firestore.collection('bgLocations').add(req.body);
+                    firestore.collection('locations').add(req.body);
                     log_1.default('🍏 Background location added to  😍 Firestore');
                 }
                 else {
@@ -59,6 +59,26 @@ class BGController {
                 }
                 else {
                     log_1.default(' 😍 😍 😍 Background heartbeat is null. 🥦🥦 ignore! ');
+                }
+            }
+            catch (e) {
+                console.error('Firestore problem. may not be available');
+            }
+            res.status(200).json({
+                message: msg,
+            });
+        });
+        app.route("/activityChanges").post((req, res) => {
+            const msg = `🧡 BGController/activityChanges: Adding activityChanges : 💙💙💙💙💙💙 ${req.body}`;
+            log_1.default(msg);
+            try {
+                if (req.body) {
+                    let firestore = messaging_1.appTo.firestore();
+                    firestore.collection('activityChanges').add(req.body);
+                    log_1.default('🧡 Background activityChanges added to  😍 Firestore');
+                }
+                else {
+                    log_1.default(' 😍 😍 😍 Background activityChanges is null. 🥦🥦 ignore! ');
                 }
             }
             catch (e) {

@@ -39,6 +39,10 @@ flutter:
     - assets/bus.png
     - assets/number_1.png
     - assets/hda.png
+    - assets/icons8-bus-24.png
+    - assets/icons8-bus-48.png
+    - assets/icons8-bus-96.png
+    - .env
     #    - files/routes.json
     #    - files/cities.json
     #    - files/landmarks.json

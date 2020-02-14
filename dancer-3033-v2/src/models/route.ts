@@ -19,8 +19,3 @@ const RouteSchema = new mongoose.Schema(
 
 const Route = mongoose.model('Route', RouteSchema);
 export default Route;
-/*
-mongoose.model('category', CategorySchema, 'categories');
-mongoose.model('topics', TopicSchema, 'categories');
-mongoose.model('articles', ArticlesSchema, 'categories');
-*/

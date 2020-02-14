@@ -216,8 +216,9 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   List<DropdownMenuItem<Landmark>> _items = List();
 
   _onMarkerTapped(RoutePoint routePoint) async {
-    myDebugPrint('Marker tapped: route: ${routePoint.created}');
+    myDebugPrint('Marker tapped: route: ${routePoint.toJson()}');
     if ((routePoint.landmarkID != null)) {
+      myDebugPrint('Marker tapped: route point is already a landmark');
       return;
     }
     await _mapController.animateCamera(CameraUpdate.newCameraPosition(

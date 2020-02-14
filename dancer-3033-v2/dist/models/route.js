@@ -17,9 +17,4 @@ const RouteSchema = new mongoose_1.default.Schema({
 });
 const Route = mongoose_1.default.model('Route', RouteSchema);
 exports.default = Route;
-/*
-mongoose.model('category', CategorySchema, 'categories');
-mongoose.model('topics', TopicSchema, 'categories');
-mongoose.model('articles', ArticlesSchema, 'categories');
-*/ 
 //# sourceMappingURL=route.js.map
