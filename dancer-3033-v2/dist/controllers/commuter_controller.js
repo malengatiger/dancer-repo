@@ -61,11 +61,11 @@ class CommuterController {
                 if (!commReq) {
                     throw new Error('CommuterRequest not found');
                 }
-                commReq.scanned = req.body.scanned;
-                commReq.associationID = req.body.associationID;
-                commReq.associationName = req.body.associationName;
-                commReq.vehicleID = req.body.vehicleID;
-                commReq.vehicleReg = req.body.vehicleReg;
+                commReq.scanned = true;
+                // commReq.associationID = req.body.associationID;
+                // commReq.associationName = req.body.associationName;
+                // commReq.vehicleID = req.body.vehicleID;
+                // commReq.vehicleReg = req.body.vehicleReg;
                 const result = yield commReq.save();
                 // log(result);
                 res.status(200).json(result);
@@ -251,8 +251,9 @@ class CommuterController {
         app.route("/addCommuterStartingLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
             console.log(msg);
+            log_1.default(req.body);
             try {
-                const c = new commuter_starting_landmark_1.default(Object.assign(Object.assign({}, req.body), { position: JSON.parse(req.body.position) }));
+                const c = new commuter_starting_landmark_1.default(req.body);
                 c.commuterStartingLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
@@ -262,6 +263,7 @@ class CommuterController {
                 });
             }
             catch (err) {
+                log_1.default(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addCommuterStartingLandmark failed'
@@ -422,6 +424,15 @@ class CommuterController {
         app.route("/addCommuterPanicLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
             console.log(msg);
+            if (!req.body.commuterPanicID) {
+                throw Error('panicID not present in call parameters');
+            }
+            if (!req.body.longitude) {
+                throw Error('longitude not present in call parameters');
+            }
+            if (!req.body.longitude) {
+                throw Error('longitude not present in call parameters');
+            }
             try {
                 const commuterPanic = yield commuter_panic_1.default.findById(req.body.commuterPanicID);
                 if (commuterPanic) {
@@ -442,7 +453,7 @@ class CommuterController {
                 }
                 else {
                     res.status(400).json({
-                        message: 'Commuter Panic not found'
+                        message: 'addCommuterPanicLocation failed: commuterPanic'
                     });
                 }
                 // log(result);

@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong/latlong.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -119,6 +120,13 @@ class RouteBuilderBloc {
   _initialize() async {
     print(
         '\n🔵 🔵 🔵 🔵 🔵 RouteBuilderBloc: ️ ✳️ initializing ... 🍀️🍀️🍀️ doing nothing so far 🔵 🔵 🔵 🔵 🔵 \n');
+    await DotEnv().load('.env');
+    print('🌸 DotEnv has been created. Check content of variables');
+    var status = DotEnv().env['status'];
+    var devURL = DotEnv().env['devURL'];
+    var prodURL = DotEnv().env['prodURL'];
+    print(
+        '🌸 properties from .env : 🌸  status: $status 🌸  devURL: $devURL 🍏 prodURL: $prodURL 🍏 ');
   }
 
   Future<bool> checkUserSignedIn() async {

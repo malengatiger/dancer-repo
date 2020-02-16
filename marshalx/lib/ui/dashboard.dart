@@ -16,6 +16,7 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
+import 'package:marshalx/ui/scanner.dart';
 import 'package:marshalx/ui/select_dispatch.dart';
 
 import 'find_vehicles.dart';
@@ -43,7 +44,7 @@ class _DashboardState extends State<Dashboard> {
     myDebugPrint('💜 💜 💜 💜  subscribing to streams ...');
     _subscribeToBusy();
     _subscribeToError();
-    _subscribeToDataStreams();
+    _listenToDataStreams();
     _checkUser();
   }
 
@@ -100,19 +101,19 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  void _subscribeToDataStreams() {
+  void _listenToDataStreams() {
     myDebugPrint(
-        '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams 💜 💜 💜 💜 _subscribeToDataStreams 💜 💜 💜 💜');
+        '💜 💜 💜 💜 Dashboard: _listenToDataStreams 💜 💜 💜 💜 _listenToDataStreams 💜 💜 💜 💜');
     marshalBloc.vehicleStream.listen((cars) {
       myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         _vehicles = cars;
       });
     });
     marshalBloc.landmarkStream.listen((marks) {
       myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received landmarks: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received landmarks: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         landmarks = marks;
       });
@@ -120,7 +121,7 @@ class _DashboardState extends State<Dashboard> {
     try {
       marshalBloc.vehicleArrivalStream.listen((arrivals) {
         myDebugPrint(
-            '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received vehicleArrivals: 🦠 ${arrivals.length} 🦠 💜 💜 💜 💜 ');
+            '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received vehicleArrivals: 🦠 ${arrivals.length} 🦠 💜 💜 💜 💜 ');
         setState(() {
           vehicleArrivals = arrivals;
         });
@@ -130,21 +131,21 @@ class _DashboardState extends State<Dashboard> {
     }
     marshalBloc.commuterDwellStream.listen((dwells) {
       myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received commuterDwells: 🦠 ${dwells.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterDwells: 🦠 ${dwells.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterFenceDwellEvents = dwells;
       });
     });
     marshalBloc.commuterArrivalsStream.listen((marks) {
       myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received commuterArrivals: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterArrivals: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterArrivals = marks;
       });
     });
     marshalBloc.commuterRequestStream.listen((requests) {
       myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _subscribeToDataStreams: 👌👌 Received commuterRequests: 🦠 ${requests.length} 🦠 💜 💜 💜 💜 ');
+          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterRequests: 🦠 ${requests.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterRequests = requests;
       });
@@ -207,11 +208,39 @@ class _DashboardState extends State<Dashboard> {
                 SizedBox(
                   height: 8,
                 ),
-                Text(
-                  landmark == null
-                      ? ''
-                      : '${landmark.routeDetails.length} Routes from here',
-                  style: Styles.whiteSmall,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      landmark == null
+                          ? ''
+                          : '${landmark.routeDetails.length} Routes from here',
+                      style: Styles.whiteSmall,
+                    ),
+                    SizedBox(
+                      width: 24,
+                    ),
+                    RaisedButton(
+                        elevation: 8,
+                        color: Colors.indigo[700],
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Scan',
+                            style: Styles.whiteSmall,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              SlideRightRoute(
+                                widget: Scanner(),
+                              ));
+                        }),
+                    SizedBox(
+                      width: 20,
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 20,
@@ -226,9 +255,11 @@ class _DashboardState extends State<Dashboard> {
           BottomNavigationBarItem(
               icon: Icon(Icons.map), title: Text('Route Maps')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.search), title: Text('Find Taxis')),
+              icon: Icon(Icons.search), title: Text('Find')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.airport_shuttle), title: Text('Dispatch Taxis')),
+              icon: Icon(Icons.airport_shuttle), title: Text('Dispatch')),
+//          BottomNavigationBarItem(
+//              icon: Icon(Icons.scanner), title: Text('Scan')),
         ],
         backgroundColor: Colors.brown[50],
         onTap: _handleBottomNav,
@@ -331,6 +362,9 @@ class _DashboardState extends State<Dashboard> {
       case 2:
         Navigator.push(
             context, SlideRightRoute(widget: SelectVehicleForDispatch()));
+        break;
+      case 3:
+        Navigator.push(context, SlideRightRoute(widget: Scanner()));
         break;
     }
   }

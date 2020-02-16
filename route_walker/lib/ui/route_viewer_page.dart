@@ -301,7 +301,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                   padding: const EdgeInsets.only(left: 4.0),
                   child: Text(
                     'Tap to Select Association',
-                    style: Styles.whiteMedium,
+                    style: Styles.whiteSmall,
                   ),
                 ),
                 onChanged: (Association ass) {
@@ -515,20 +515,6 @@ class _RouteCardState extends State<RouteCard>
             ));
   }
 
-  void _addNewRoute() async {
-    print('🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage');
-    Navigator.pop(context);
-
-    var association = await Prefs.getAssociation();
-    if (association != null) {
-      Navigator.push(
-          context, SlideRightRoute(widget: NewRoutePage(association)));
-    } else {
-      widget.routeCardListener.onMessage(
-          null, 'Please select Association', Colors.white, Colors.pink, true);
-    }
-  }
-
   List<PopupMenuItem<String>> menuItems = List();
   _buildMenuItems() {
     menuItems.clear();
@@ -589,13 +575,6 @@ class _RouteCardState extends State<RouteCard>
     ));
   }
 
-  _startRoutePointCollector() async {
-    print('_startRoutePointCollector');
-    Navigator.pop(context);
-    Navigator.push(
-        context, SlideRightRoute(widget: RoutePointCollector(widget.route)));
-  }
-
   _startRouteMapPage() async {
     print('_startRouteLandmarks ........ route: ${widget.route.name}');
     Navigator.pop(context);
@@ -619,78 +598,6 @@ class _RouteCardState extends State<RouteCard>
 //          topLeftWidget: card2,
 ////          container: container,
 //          containerHeight: 100,
-        )));
-  }
-
-  _testLibraryMap() async {
-    List<aftarobot.Route> list = List();
-    list.add(widget.route);
-
-    var card = Card(
-      color: Colors.pink.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Text('Testing Map Positioned Widget'),
-      ),
-    );
-    var card2 = Card(
-      color: Colors.blue.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Text('Top Left'),
-      ),
-    );
-    var container = Container(
-      height: 100,
-      width: double.infinity,
-      color: Colors.teal,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text('🍏 🍎 I am a Container, height 🍎  100',
-            style: Styles.whiteSmall),
-      ),
-    );
-
-    var btn = RaisedButton(
-      elevation: 16,
-      color: Colors.red,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          'Show Places',
-          style: Styles.whiteSmall,
-        ),
-      ),
-      onPressed: () {
-        print('🥬 🥬 🥬  Top Left Button inside RouteMap pressed  🥬 🥬 🥬');
-      },
-    );
-
-    var fab = FloatingActionButton(
-      child: Icon(Icons.airport_shuttle),
-      backgroundColor: Colors.red.shade800,
-      elevation: 16,
-      onPressed: () {
-        print(
-            '🍑 🍑 🍑  FloatingActionButton inside RouteMap pressed  🍑 🍑 🍑');
-      },
-    );
-
-    Navigator.push(
-        context,
-        SlideRightRoute(
-            widget: RouteMap(
-          routes: list,
-          hideAppBar: false,
-          landmarkIconColor: RouteMap.colorAzure,
-          title: widget.route.name,
-          listener: this,
-          bottomRightWidget: btn,
-          topLeftWidget: fab,
-//          bottomRightWidget: card,
-//          topLeftWidget: card2,
-          container: container,
-          containerHeight: 100,
         )));
   }
 
@@ -728,6 +635,19 @@ class _RouteCardState extends State<RouteCard>
     }
   }
 
+  Widget _getLandmarks() {
+    var cnt = 0;
+    widget.route.routePoints.forEach((point) {
+      if (point.landmarkID != null) {
+        cnt++;
+      }
+    });
+    return Text(
+      '$cnt',
+      style: Styles.tealBoldSmall,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -741,7 +661,38 @@ class _RouteCardState extends State<RouteCard>
               name: route == null ? 'Route is NULL! 🍎' : route.name,
               number: widget.number,
             ),
-//
+            Padding(
+              padding: const EdgeInsets.only(left: 40.0),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    'Landmarks',
+                    style: Styles.greyLabelSmall,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  _getLandmarks(),
+                  SizedBox(
+                    width: 24,
+                  ),
+                  Text(
+                    'Route Points',
+                    style: Styles.greyLabelSmall,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    '${route.routePoints.length}',
+                    style: Styles.tealBoldSmall,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
@@ -758,6 +709,9 @@ class _RouteCardState extends State<RouteCard>
                   },
                 ),
               ],
+            ),
+            SizedBox(
+              height: 20,
             ),
           ],
         ),

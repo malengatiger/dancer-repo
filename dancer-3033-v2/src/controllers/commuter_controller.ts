@@ -57,11 +57,11 @@ export class CommuterController {
         if (!commReq) {
           throw new Error('CommuterRequest not found');
         }
-        commReq.scanned = req.body.scanned;
-        commReq.associationID = req.body.associationID;
-        commReq.associationName = req.body.associationName;
-        commReq.vehicleID = req.body.vehicleID;
-        commReq.vehicleReg = req.body.vehicleReg;
+        commReq.scanned = true;
+        // commReq.associationID = req.body.associationID;
+        // commReq.associationName = req.body.associationName;
+        // commReq.vehicleID = req.body.vehicleID;
+        // commReq.vehicleReg = req.body.vehicleReg;
         const result = await commReq.save();
         // log(result);
         res.status(200).json(result);
@@ -265,12 +265,9 @@ export class CommuterController {
     app.route("/addCommuterStartingLandmark").post(async (req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
       console.log(msg);
-
+      log(req.body)
       try {
-        const c: any = new CommuterStartingLandmark({
-          ...req.body,
-          position: JSON.parse(req.body.position)
-        });
+        const c: any = new CommuterStartingLandmark(req.body);
         c.commuterStartingLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
@@ -279,6 +276,7 @@ export class CommuterController {
           result
         });
       } catch (err) {
+        log(err)
         res.status(400).json(
           {
             error: err,
@@ -472,6 +470,15 @@ export class CommuterController {
       const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
       console.log(msg);
 
+      if (!req.body.commuterPanicID) {
+        throw Error('panicID not present in call parameters')
+      }
+      if (!req.body.longitude) {
+        throw Error('longitude not present in call parameters')
+      }
+      if (!req.body.longitude) {
+        throw Error('longitude not present in call parameters')
+      }
       try {
         const commuterPanic = await CommuterPanic.findById(req.body.commuterPanicID)
 
@@ -492,7 +499,7 @@ export class CommuterController {
           res.status(200).json(result);
         } else {
           res.status(400).json({
-            message: 'Commuter Panic not found'
+            message: 'addCommuterPanicLocation failed: commuterPanic'
           })
         }
         

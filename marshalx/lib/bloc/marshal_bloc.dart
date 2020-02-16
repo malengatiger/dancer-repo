@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/commuter_arrival_landmark.dart';
 import 'package:aftarobotlibrary4/data/commuter_fence_event.dart';
@@ -20,6 +21,7 @@ import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 MarshalBloc marshalBloc = MarshalBloc();
 
@@ -97,18 +99,18 @@ class MarshalBloc {
           '🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  Firebase fbUser is null.  👺  need to 🔑 🔑 🔑');
       return;
     }
+    await DotEnv().load('.env');
+    String status = DotEnv().env['status'];
+    var devURL = DotEnv().env['devURL'];
+    var prodURL = DotEnv().env['prodURL'];
+    myDebugPrint(
+        'App status: 🔑 $status devURL: 🔑 $devURL prodURL: 🔑 $prodURL');
     _user = await Prefs.getUser();
     if (_user == null) {
       myDebugPrint(
           '🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  AftaRobot User is null.  👺  need to be created by portal 🔑 🔑 🔑');
       _errorController.sink.add('AftaRobot user not found');
       return;
-    }
-    _landmark = await Prefs.getLandmark();
-    if (_landmark != null) {
-      prettyPrint(
-          _landmark.toJson(), '🧩 🧩 🧩 CURRENT MARSHAL LANDMARK 🧩 🧩 🧩 ');
-      subscribeToArrivalsFCM(_landmark);
     }
   }
 
@@ -337,6 +339,16 @@ class MarshalBloc {
     return null;
   }
 
+  Future updateCommuterRequestScanned(String commuterRequestID) async {
+    final request = await DancerDataAPI.updateCommuterRequestScanned(
+        commuterRequestID: commuterRequestID);
+
+    print(
+        '💙💙💙💙 updateCommuterRequestScanned: 🧩 🧩 🧩 updateCommuterRequestScanned added for 🔴 ${commuterRequestID} 🔴 🔴 ');
+//    return null;
+    return request;
+  }
+
   Future<ar.Route> getRouteByID(String routeID) async {
     myDebugPrint('🧩 🧩 🧩 getRouteByID.....RouteID: $routeID');
     try {
@@ -402,7 +414,6 @@ class MarshalBloc {
   final Map<String, Landmark> landmarksSubscribedMap = Map();
 
   void subscribeToArrivalsFCM(Landmark landmark) async {
-    await _configureFCM();
     List<String> topics = List();
     topics
         .add('${Constants.COMMUTER_ARRIVAL_LANDMARKS}_${landmark.landmarkID}');
@@ -507,6 +518,10 @@ class MarshalBloc {
           '♻️♻️♻️️♻️♻️️ MarshalBloc:FCM token  ❤️ 🧡 💛️ $token ❤️ 🧡 💛');
     });
     _listenerSetupAlready = true;
+    var mark = await Prefs.getLandmark();
+    if (mark != null) {
+      subscribeToArrivalsFCM(mark);
+    }
     return null;
   }
 
@@ -528,7 +543,8 @@ class MarshalBloc {
       var data = CommuterRequest.fromJson(message['data']);
       _commuterRequests.add(data);
       myDebugPrint(
-          'MarshalBoc: ❤️ 🧡 💛️ commuter request added to _commuterRequests: ❤️ ${_commuterRequests.length} 💛️ 💛️  ${data.fromLandmarkName} 💛️ 💛️ ');
+          'MarshalBoc: ❤️ 🧡 💛️ commuter request added to _commuterRequests: ❤️ '
+          '${_commuterRequests.length} 💛️ 💛️  ${data.fromLandmarkName} 💛️ 💛️ ');
       _commuterRequestsController.sink.add(_commuterRequests);
     } catch (e) {
       myDebugPrint(
@@ -555,7 +571,11 @@ class MarshalBloc {
     _commuterArrivalsController.sink.add(_commuterArrivals);
   }
 
+  final Map<String, Landmark> landmarksSubscribed = Map();
+  static const MAX_NUMBER_GEOFENCES = 30;
+
   MarshalBloc() {
     _init();
+    _configureFCM();
   }
 }
