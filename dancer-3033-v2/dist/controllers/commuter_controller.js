@@ -38,10 +38,22 @@ class CommuterController {
             const msg = `🌽 POST 🌽🌽 addCommuterRequest requested `;
             console.log(msg);
             try {
+                const walletFlag = req.body.isWallet;
                 const comm = new commuter_request_1.default(req.body);
                 comm.commuterRequestID = v1_1.default();
                 comm.created = new Date().toISOString();
                 comm.scanned = false;
+                comm.autoDetected = false;
+                if (walletFlag === true) {
+                    console.log(`about to set isWallet to true .....`);
+                    comm.isWallet = true;
+                }
+                else {
+                    console.log(`about to set isWallet to false .....`);
+                    comm.isWallet = false;
+                }
+                console.log(`stringWallet: ${walletFlag} .................... Check the incoming isWallet boolean below`);
+                console.log(comm);
                 const result = yield comm.save();
                 // log(result);
                 res.status(200).json(result);
@@ -58,10 +70,12 @@ class CommuterController {
             console.log(msg);
             try {
                 const commuterRequestID = req.body.commuterRequestID;
-                const commReq = yield commuter_request_1.default.findById(commuterRequestID);
+                console.log(`🍎🍎🍎incoming requestID: 🍎🍎🍎 ${commuterRequestID}`);
+                const commReq = yield commuter_request_1.default.findOne({ commuterRequestID: commuterRequestID });
                 if (!commReq) {
                     throw new Error('CommuterRequest not found');
                 }
+                console.log(commReq);
                 commReq.scanned = true;
                 const result = yield commReq.save();
                 // log(result);
@@ -242,6 +256,7 @@ class CommuterController {
                 });
             }
         }));
+        //findCommuterRequestByID
         app.route("/getCommuterStartingLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 getCommuterStartingLandmarks requested `;
             console.log(msg);
@@ -260,6 +275,24 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterStartingLandmarks failed'
+                });
+            }
+        }));
+        app.route("/findCommuterRequestByID").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n🌽 POST 🌽🌽 findCommuterRequestByID requested `;
+            console.log(msg);
+            console.log(req.body);
+            try {
+                const commuterRequestID = req.body.commuterRequestID;
+                const result = yield commuter_request_1.default.findOne({
+                    commuterRequestID: commuterRequestID,
+                });
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 findCommuterRequestByID failed'
                 });
             }
         }));

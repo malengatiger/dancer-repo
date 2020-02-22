@@ -243,6 +243,8 @@ class Messaging {
     }
     static sendCommuterRequest(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(`Check below to see isWallet value... should be fucking true`);
+            console.log(data);
             const options = {
                 priority: "normal",
                 timeToLive: 60 * 60,
@@ -261,13 +263,19 @@ class Messaging {
                     toLandmarkName: data.toLandmarkName,
                     routeName: data.routeName,
                     routeID: data.routeID,
-                    scanned: data.scanned ? 'true' : 'false',
-                    autoDetected: data.autoDetected ? 'true' : 'false',
+                    scanned: data.scanned == true ? 'true' : 'false',
+                    autoDetected: data.autoDetected === true ? 'true' : 'false',
+                    isWallet: data.isWallet === true ? 'true' : 'false',
                     passengers: `${data.passengers}`,
                     stringTime: data.stringTime,
+                    associationD: data.associationD ? data.associationD : '',
+                    associationName: data.associationName ? data.associationName : '',
+                    vehicleID: data.vehicleID ? data.vehicleID : '',
+                    vehicleReg: data.vehicleReg ? data.vehicleReg : '',
                     created: data.created
                 },
             };
+            console.log(payload);
             const topic = constants_1.default.COMMUTER_REQUESTS + '_' + data.fromLandmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
             log_1.default(`😍 sendCommuterRequest: FCM message sent: 😍 ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
