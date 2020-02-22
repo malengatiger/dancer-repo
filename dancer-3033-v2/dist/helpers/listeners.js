@@ -23,8 +23,9 @@ class MongoListeners {
         const commuterRequests = client.connection.collection(constants_1.default.COMMUTER_REQUESTS);
         const commuterDwellEvents = client.connection.collection(constants_1.default.COMMUTER_FENCE_DWELL_EVENTS);
         const commuterExitEvents = client.connection.collection(constants_1.default.COMMUTER_FENCE_EXIT_EVENTS);
+        const payments = client.connection.collection(constants_1.default.PAYMENTS);
         //
-        const userFenceEventsStream = userFenceEvents.watch({ fullDocument: 'updateLookup' });
+        const paymentStream = payments.watch({ fullDocument: 'updateLookup' });
         const assocStream = associations.watch({ fullDocument: 'updateLookup' });
         const routeStream = routes.watch({ fullDocument: 'updateLookup' });
         const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
@@ -38,11 +39,16 @@ class MongoListeners {
         const panicStream = panics.watch({ fullDocument: 'updateLookup' });
         const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
         const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
-        //
         dwellStream.on("change", (event) => {
             log_1.default(`\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
             log_1.default(event);
             messaging_1.default.sendFenceDwellEvent(event.fullDocument);
+        });
+        //
+        paymentStream.on("change", (event) => {
+            log_1.default(`\n🔆🔆🔆🔆   🍎  paymentStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
+            log_1.default(event);
+            messaging_1.default.sendPayment(event.fullDocument);
         });
         //
         exitStream.on("change", (event) => {

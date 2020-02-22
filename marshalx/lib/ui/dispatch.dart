@@ -212,6 +212,7 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
           routeID: detail.routeID,
           routeName: detail.name,
           passengers: number,
+          ownerID: veh.ownerID,
           position:
               Position(coordinates: [landmark.longitude, landmark.latitude]));
       try {

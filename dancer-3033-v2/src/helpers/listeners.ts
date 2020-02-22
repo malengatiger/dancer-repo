@@ -27,8 +27,9 @@ class MongoListeners {
     const commuterRequests = client.connection.collection(Constants.COMMUTER_REQUESTS);
     const commuterDwellEvents = client.connection.collection(Constants.COMMUTER_FENCE_DWELL_EVENTS);
     const commuterExitEvents = client.connection.collection(Constants.COMMUTER_FENCE_EXIT_EVENTS);
+    const payments = client.connection.collection(Constants.PAYMENTS);
     //
-    const userFenceEventsStream = userFenceEvents.watch({ fullDocument: 'updateLookup' });
+    const paymentStream = payments.watch({ fullDocument: 'updateLookup' });
     const assocStream = associations.watch({ fullDocument: 'updateLookup' });
     const routeStream = routes.watch({ fullDocument: 'updateLookup' });
     const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
@@ -48,15 +49,23 @@ class MongoListeners {
     const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
     const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
    
-      //
-      dwellStream.on("change", (event: any) => {
-        log(
-          `\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-        );
-        log(event);
-        Messaging.sendFenceDwellEvent(event.fullDocument);
-      });
-    //
+
+    dwellStream.on("change", (event: any) => {
+      log(
+        `\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+      );
+      log(event);
+      Messaging.sendFenceDwellEvent(event.fullDocument);
+    });
+  //
+    paymentStream.on("change", (event: any) => {
+      log(
+        `\n🔆🔆🔆🔆   🍎  paymentStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+      );
+      log(event);
+      Messaging.sendPayment(event.fullDocument);
+    });
+  //
     exitStream.on("change", (event: any) => {
       log(
         `\n🔆🔆🔆🔆   🍎  exitStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,

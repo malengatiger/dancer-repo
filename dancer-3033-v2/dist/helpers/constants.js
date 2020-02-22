@@ -18,6 +18,7 @@ Constants.COMMUTER_FENCE_EVENTS = 'commuterfenceevents';
 Constants.DISPATCH_RECORDS = 'dispatchrecords';
 Constants.COMMUTER_PANICS = 'commuterpanics';
 Constants.USERS = 'users';
+Constants.PAYMENTS = 'payments';
 Constants.ROUTE_DISTANCE_ESTIMATION = 'routedistanceestimations';
 Constants.COMMUTER_PICKUP_LANDMARKS = 'commuterpickuplandmarks';
 Constants.COMMUTER_FENCE_DWELL_EVENTS = 'commuterfencedwellevents';

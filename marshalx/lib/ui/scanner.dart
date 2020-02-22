@@ -11,6 +11,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 class Scanner extends StatefulWidget {
+  final String type;
+
+  const Scanner({Key key, this.type}) : super(key: key);
+
   @override
   _ScannerState createState() => _ScannerState();
 }
@@ -63,30 +67,54 @@ class _ScannerState extends State<Scanner> {
       var parts = stringTitle.split('@');
       print(parts);
 
-      try {
-        DancerDataAPI.updateCommuterRequestScanned(commuterRequestID: parts[0]);
-        Navigator.pop(context);
-        Navigator.push(
-            context,
-            SlideRightRoute(
-              widget: Scanner(),
-            ));
-      } catch (e) {
-        AppSnackbar.showSnackbar(scaffoldKey: _key, message: 'Unable to scan');
+      if (widget.type == 'request') {
+        try {
+          DancerDataAPI.updateCommuterRequestScanned(
+              commuterRequestID: parts[0]);
+          Navigator.pop(context);
+          Navigator.push(
+              context,
+              SlideRightRoute(
+                widget: Scanner(
+                  type: 'request',
+                ),
+              ));
+        } catch (e) {
+          AppSnackbar.showSnackbar(
+              scaffoldKey: _key, message: 'Unable to scan');
+        }
+      }
+      if (widget.type == 'payment') {
+        try {
+          myDebugPrint('will process a payment here ...................');
+//          DancerDataAPI.updateCommuterRequestScanned(commuterRequestID: parts[0]);
+//          Navigator.pop(context);
+//          Navigator.push(
+//              context,
+//              SlideRightRoute(
+//                widget: Scanner(),
+//              ));
+        } catch (e) {
+          AppSnackbar.showSnackbar(
+              scaffoldKey: _key, message: 'Unable to scan');
+        }
       }
     } on PlatformException catch (e) {
-      if (e.code == scanner.CameraAccessDenied) {
-        setState(() {
-          this.barcode =
-              '✨✨✨ The user did not grant the camera permission! ✨✨✨';
-        });
-      } else {
-        setState(() => this.barcode = 'Unknown error: $e');
-      }
+      cameraError(e);
     } on FormatException {
       setState(() => this.barcode =
           'null (User returned using the "back"-button before scanning anything. Result)');
     } catch (e) {
+      setState(() => this.barcode = 'Unknown error: $e');
+    }
+  }
+
+  void cameraError(PlatformException e) {
+    if (e.code == scanner.CameraAccessDenied) {
+      setState(() {
+        this.barcode = '✨✨✨ The user did not grant the camera permission! ✨✨✨';
+      });
+    } else {
       setState(() => this.barcode = 'Unknown error: $e');
     }
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
@@ -219,11 +220,15 @@ class MarshalBloc {
     } else {
       markID = landmarkID;
     }
-    vehicleArrivals = await DancerListAPI.getVehicleArrivalsByLandmark(
-        landmarkID: markID, minutes: minutes);
-    myDebugPrint(
-        " 🌸  🌸  🌸  ${vehicleArrivals.length} vehicle arrivals found within  🌸 15 minutes");
-    _vehicleArrivalsController.sink.add(vehicleArrivals);
+    try {
+      vehicleArrivals = await DancerListAPI.getVehicleArrivalsByLandmark(
+          landmarkID: markID, minutes: minutes);
+      myDebugPrint(
+          " 🌸  🌸  🌸  ${vehicleArrivals.length} vehicle arrivals found within  🌸 15 minutes");
+      _vehicleArrivalsController.sink.add(vehicleArrivals);
+    } catch (e) {
+      dealWithError(e);
+    }
     return vehicleArrivals;
   }
 
@@ -253,12 +258,31 @@ class MarshalBloc {
     } else {
       markID = landmarkID;
     }
-    commuterRequests = await DancerListAPI.getCommuterRequests(
-        landmarkID: markID, minutes: 30);
-    myDebugPrint(
-        " 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 30 minutes");
-    _commuterRequestsController.sink.add(commuterRequests);
+    try {
+      commuterRequests = await DancerListAPI.getCommuterRequests(
+          landmarkID: markID, minutes: 30);
+      myDebugPrint(
+          " 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 30 minutes");
+      _commuterRequestsController.sink.add(commuterRequests);
+    } catch (e) {
+      dealWithError(e);
+    }
     return commuterRequests;
+  }
+
+  void dealWithError(e) {
+    if (e is TimeoutException) {
+      myDebugPrint('Call has 🔆 🔆 🔆 timed out 🔆 🔆 🔆');
+      _errorController.sink.add('Network TimeOut');
+    }
+    if (e is SocketException) {
+      myDebugPrint(
+          'Call has run into  🔴  🔴  🔴 SocketException  🔴  🔴  🔴 ');
+      _errorController.sink.add('Network SocketException');
+    }
+    _errorController.sink
+        .add(e.message == null ? 'Unknown Network Error' : e.message);
+    print(e);
   }
 
   List<CommuterFenceDwellEvent> commuterFenceDwellEvents;
@@ -274,11 +298,16 @@ class MarshalBloc {
     } else {
       markID = landmarkID;
     }
-    commuterFenceDwellEvents = await DancerListAPI.getCommuterFenceDwellEvents(
-        landmarkID: markID, minutes: 30);
-    myDebugPrint(
-        " 👽  👽  👽  👽  ${commuterFenceDwellEvents.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
-    _commuterDwellEventsController.sink.add(commuterFenceDwellEvents);
+    try {
+      commuterFenceDwellEvents =
+          await DancerListAPI.getCommuterFenceDwellEvents(
+              landmarkID: markID, minutes: 30);
+      myDebugPrint(
+          " 👽  👽  👽  👽  ${commuterFenceDwellEvents.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
+      _commuterDwellEventsController.sink.add(commuterFenceDwellEvents);
+    } catch (e) {
+      dealWithError(e);
+    }
     return commuterFenceDwellEvents;
   }
 
@@ -309,6 +338,7 @@ class MarshalBloc {
       print(e);
       _errorController.sink
           .add('findLandmarksByLocation failed: ${e.toString()}');
+      dealWithError(e);
     }
 
     return null;

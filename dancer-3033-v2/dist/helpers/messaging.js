@@ -273,6 +273,53 @@ class Messaging {
             log_1.default(`😍 sendCommuterRequest: FCM message sent: 😍 ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
+    static sendPayment(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const options = {
+                priority: "normal",
+                timeToLive: 60 * 60,
+            };
+            const payload = {
+                notification: {
+                    title: "Payment",
+                    body: `${data.amount}`,
+                },
+                data: {
+                    type: constants_1.default.PAYMENTS,
+                    commuterID: data.commuterID,
+                    driverID: data.driverID,
+                    marshalID: data.marshalID,
+                    routeID: data.routeID,
+                    toLandmarkName: data.toLandmarkName,
+                    routeName: data.routeName,
+                    vehicleID: data.vehicleID,
+                    passengers: `${data.passengers}`,
+                    amount: `${data.amount}`,
+                    vehicleReg: data.vehicleReg,
+                    ownerID: data.ownerID,
+                    discounted: data.discounted,
+                    associationD: data.associationD,
+                    associationName: data.associationName,
+                    created: data.created
+                },
+            };
+            if (data.driverID) {
+                const topic = constants_1.default.PAYMENTS + '_' + data.driverID;
+                const result = yield fba.sendToTopic(topic, payload, options);
+                log_1.default(`😍 sendPayment: FCM message sent to Driver: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            }
+            if (data.ownerID) {
+                const topic = constants_1.default.PAYMENTS + '_' + data.ownerID;
+                const result = yield fba.sendToTopic(topic, payload, options);
+                log_1.default(`😍 sendPayment: FCM message sent to Owner: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            }
+            if (data.marshalID) {
+                const topic = constants_1.default.PAYMENTS + '_' + data.marshalID;
+                const result = yield fba.sendToTopic(topic, payload, options);
+                log_1.default(`😍 sendPayment: FCM message sent to Marshal: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            }
+        });
+    }
     static sendCommuterArrivalLandmark(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {
@@ -306,7 +353,7 @@ class Messaging {
     static sendDispatchRecord(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = {
-                priority: "normal",
+                priority: "high",
                 timeToLive: 60 * 60,
             };
             const payload = {

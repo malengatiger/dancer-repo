@@ -16,6 +16,7 @@ class Constants {
     public static DISPATCH_RECORDS = 'dispatchrecords';
     public static COMMUTER_PANICS = 'commuterpanics';
     public static USERS = 'users';
+    public static PAYMENTS = 'payments';
     public static ROUTE_DISTANCE_ESTIMATION = 'routedistanceestimations';
     public static COMMUTER_PICKUP_LANDMARKS = 'commuterpickuplandmarks';
     public static COMMUTER_FENCE_DWELL_EVENTS = 'commuterfencedwellevents';

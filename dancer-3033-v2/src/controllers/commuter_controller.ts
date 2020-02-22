@@ -19,6 +19,7 @@ import CommuterIncentive from "../models/commuter_incentive";
 import CommuterFenceEvent from "../models/commuter_fence_dwell_event";
 import CommuterFenceDwellEvent from "../models/commuter_fence_dwell_event";
 import CommuterFenceExitEvent from "../models/commuter_fence_exit_event";
+import Payment from "../models/payment";
 
 export class CommuterController {
 
@@ -58,10 +59,6 @@ export class CommuterController {
           throw new Error('CommuterRequest not found');
         }
         commReq.scanned = true;
-        // commReq.associationID = req.body.associationID;
-        // commReq.associationName = req.body.associationName;
-        // commReq.vehicleID = req.body.vehicleID;
-        // commReq.vehicleReg = req.body.vehicleReg;
         const result = await commReq.save();
         // log(result);
         res.status(200).json(result);
@@ -71,6 +68,26 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 updateCommuterRequestScanned failed'
+          }
+        )
+      }
+    });
+    app.route("/addPayment").post(async (req: Request, res: Response) => {
+      const msg = `🌽 POST 🌽🌽 addPayment requested `;
+      console.log(msg);
+      console.log(req.body);
+
+      try {
+        const comm : any= new Payment(req.body);
+        comm.created = new Date().toISOString();
+        const result = await comm.save();
+        res.status(200).json(result);
+      } catch (err) {
+        log(err);
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addPayment failed'
           }
         )
       }

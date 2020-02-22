@@ -9,7 +9,6 @@ import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
-import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -18,6 +17,7 @@ import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
 import 'package:marshalx/ui/scanner.dart';
 import 'package:marshalx/ui/select_dispatch.dart';
+import 'package:marshalx/ui/wifi.dart';
 
 import 'find_vehicles.dart';
 
@@ -94,10 +94,28 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  String _errorMessage;
+  bool hasAlreadyShownWifi = false;
   void _subscribeToError() {
-    marshalBloc.errorStream.listen((err) {
-      myDebugPrint('👿  👿  👿  _DashboardStateReceived error: $err');
-      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err);
+    hasAlreadyShownWifi = false;
+    marshalBloc.errorStream.listen((message) {
+      myDebugPrint(
+          '💙 💙 💙 _DashboardState: Received ERROR: 🔴  🔴  🔴 $message : will setState');
+      setState(() {
+        _errorMessage = message;
+        isBusy = false;
+      });
+//      AppSnackbar.showErrorSnackbar(
+//          scaffoldKey: _key,
+//          message: message == null ? 'Network call failed' : '$message',
+//          actionLabel: '');
+      if (hasAlreadyShownWifi) {
+        myDebugPrint(
+            'ignoring this ....................hasAlreadyShownWifi: $hasAlreadyShownWifi');
+      } else {
+        Navigator.push(context, SlideRightRoute(widget: WifiError()));
+        hasAlreadyShownWifi = true;
+      }
     });
   }
 
@@ -153,11 +171,15 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _refresh() async {
-    AppSnackbar.showSnackbarWithProgressIndicator(
-        scaffoldKey: _key, message: 'Refreshing data');
-
+    setState(() {
+      isBusy = true;
+      hasAlreadyShownWifi = false;
+    });
     await marshalBloc.refreshDashboardData(true);
     _key.currentState.removeCurrentSnackBar();
+    setState(() {
+      isBusy = false;
+    });
   }
 
   void _openConfirmLandmark() async {
@@ -173,14 +195,26 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  void _tryAnimation() {
+    Navigator.push(
+        context,
+        SlideRightRoute(
+            widget: ARAnimations(
+          type: 'ball',
+        )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        title: Text('Marshal Dashboard'),
-        elevation: 16,
-        backgroundColor: Colors.pink[300],
+        title: Text(
+          'Marshal Dashboard',
+          style: Styles.whiteSmall,
+        ),
+        elevation: 0,
+        backgroundColor: Colors.black,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.my_location),
@@ -194,19 +228,29 @@ class _DashboardState extends State<Dashboard> {
         bottom: PreferredSize(
             child: Column(
               children: <Widget>[
-                Text(
-                  landmark == null ? '' : landmark.landmarkName,
-                  style: Styles.whiteBoldMedium,
+                Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 12,
+                    ),
+                    SizedBox(
+                      height: 120,
+                      width: 120,
+                      child: ARAnimations(
+                        type: 'ball',
+                      ),
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Text(
+                      landmark == null ? '' : landmark.landmarkName,
+                      style: Styles.whiteBoldMedium,
+                    ),
+                  ],
                 ),
                 SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  user == null ? '' : '${user.firstName} ${user.lastName}',
-                  style: Styles.blackBoldSmall,
-                ),
-                SizedBox(
-                  height: 8,
+                  height: 0,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -214,7 +258,11 @@ class _DashboardState extends State<Dashboard> {
                     Text(
                       landmark == null
                           ? ''
-                          : '${landmark.routeDetails.length} Routes from here',
+                          : landmark.routeDetails.isEmpty
+                              ? 'No Routes for Landmark'
+                              : landmark.routeDetails.length == 1
+                                  ? '1 Route from here'
+                                  : '${landmark.routeDetails.length} Routes from here',
                       style: Styles.whiteSmall,
                     ),
                     SizedBox(
@@ -222,11 +270,11 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     RaisedButton(
                         elevation: 8,
-                        color: Colors.indigo[700],
+                        color: Colors.pink[400],
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            'Scan',
+                            'Scan Passenger',
                             style: Styles.whiteSmall,
                           ),
                         ),
@@ -247,25 +295,49 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            preferredSize: Size.fromHeight(120)),
+            preferredSize: Size.fromHeight(180)),
       ),
-      backgroundColor: Colors.brown[100],
+      backgroundColor: Colors.black,
       bottomNavigationBar: BottomNavigationBar(
+        fixedColor: Colors.blue,
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.map), title: Text('Route Maps')),
+              icon: Icon(
+                Icons.scanner,
+                color: Colors.pink,
+              ),
+              title: Text(
+                'Scan Payment',
+                style: Styles.blueSmall,
+              )),
           BottomNavigationBarItem(
-              icon: Icon(Icons.search), title: Text('Find')),
+              icon: Icon(
+                Icons.departure_board,
+                color: Colors.white,
+              ),
+              title: Text(
+                'Scan Trip',
+                style: Styles.whiteSmall,
+              )),
           BottomNavigationBarItem(
-              icon: Icon(Icons.airport_shuttle), title: Text('Dispatch')),
+              icon: Icon(
+                Icons.airport_shuttle,
+                color: Colors.green,
+              ),
+              title: Text(
+                'Dispatch',
+                style: Styles.blueBoldSmall,
+              )),
 //          BottomNavigationBarItem(
 //              icon: Icon(Icons.scanner), title: Text('Scan')),
         ],
-        backgroundColor: Colors.brown[50],
+        backgroundColor: Colors.black,
         onTap: _handleBottomNav,
       ),
       body: isBusy
-          ? Busy()
+          ? ARAnimations(
+              type: 'loader',
+            )
           : Padding(
               padding: const EdgeInsets.all(12),
               child: GridView(
@@ -279,6 +351,10 @@ class _DashboardState extends State<Dashboard> {
                     child: CounterCard(
                       title: 'Vehicle Arrivals',
                       total: vehicleArrivals.length,
+                      titleStyle: Styles.whiteSmall,
+                      totalStyle: Styles.whiteBoldLarge,
+                      cardColor: Colors.pink[400],
+                      elevation: 2.0,
                       icon: Icon(
                         Icons.apps,
                         color: Colors.teal[700],
@@ -294,15 +370,26 @@ class _DashboardState extends State<Dashboard> {
                     child: CounterCard(
                       title: 'Commuter Requests',
                       total: commuterRequests.length,
-                      icon: Icon(Icons.people),
+                      elevation: 4.0,
+                      icon: Icon(
+                        Icons.people,
+                        color: Colors.white,
+                      ),
+                      titleStyle: Styles.whiteSmall,
+                      totalStyle: Styles.whiteBoldLarge,
+                      cardColor: Colors.pink[400],
                     ),
                   ),
                   CounterCard(
                     title: 'Commuter Arrivals',
                     total: commuterArrivals.length,
+                    elevation: 2.0,
+                    titleStyle: Styles.whiteSmall,
+                    totalStyle: Styles.whiteBoldLarge,
+                    cardColor: Colors.blue[800],
                     icon: Icon(
                       Icons.people,
-                      color: Colors.pink,
+                      color: Colors.white,
                     ),
                   ),
                   GestureDetector(
@@ -313,9 +400,13 @@ class _DashboardState extends State<Dashboard> {
                     child: CounterCard(
                       title: 'Casual Commuters',
                       total: commuterFenceDwellEvents.length,
+                      titleStyle: Styles.whiteSmall,
+                      totalStyle: Styles.whiteBoldLarge,
+                      cardColor: Colors.blue[800],
+                      elevation: 1.0,
                       icon: Icon(
                         Icons.people,
-                        color: Colors.blue,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -326,7 +417,13 @@ class _DashboardState extends State<Dashboard> {
                     child: CounterCard(
                       title: 'Total Vehicles',
                       total: _vehicles.length,
-                      icon: Icon(Icons.airport_shuttle),
+                      titleStyle: Styles.greyLabelSmall,
+                      totalStyle: Styles.greyLabelLarge,
+                      cardColor: Colors.black,
+                      icon: Icon(
+                        Icons.airport_shuttle,
+                        color: Colors.pink,
+                      ),
                     ),
                   ),
                   GestureDetector(
@@ -336,7 +433,13 @@ class _DashboardState extends State<Dashboard> {
                     child: CounterCard(
                       title: 'Landmarks Around',
                       total: landmarks.length,
-                      icon: Icon(Icons.my_location),
+                      titleStyle: Styles.greyLabelSmall,
+                      totalStyle: Styles.greyLabelLarge,
+                      cardColor: Colors.grey[800],
+                      icon: Icon(
+                        Icons.my_location,
+                        color: Colors.lightBlue,
+                      ),
                     ),
                   ),
                 ],

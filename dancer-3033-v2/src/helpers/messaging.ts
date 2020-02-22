@@ -295,6 +295,60 @@ class Messaging {
             } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
+    public static async sendPayment(
+        data: any,
+    ): Promise<any> {
+        const options: any = {
+            priority: "normal",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Payment",
+                body: `${data.amount}`,
+            },
+            data: {
+                type: Constants.PAYMENTS,
+                commuterID: data.commuterID,
+                driverID: data.driverID,
+                marshalID: data.marshalID,
+                routeID: data.routeID,
+                toLandmarkName: data.toLandmarkName,
+                routeName: data.routeName,
+                vehicleID: data.vehicleID,
+                passengers: `${data.passengers}`,
+                amount: `${data.amount}`,
+                vehicleReg: data.vehicleReg,
+                ownerID: data.ownerID,
+                discounted: data.discounted,
+                associationD: data.associationD,
+                associationName: data.associationName,
+                created: data.created
+            },
+        };
+        if (data.driverID) {
+            const topic = Constants.PAYMENTS + '_' + data.driverID;
+            const result = await fba.sendToTopic(topic, payload, options);
+            log(
+                `😍 sendPayment: FCM message sent to Driver: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+            );
+        }
+        if (data.ownerID) {
+            const topic = Constants.PAYMENTS + '_' + data.ownerID;
+            const result = await fba.sendToTopic(topic, payload, options);
+            log(
+                `😍 sendPayment: FCM message sent to Owner: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+            );
+        }
+        if (data.marshalID) {
+            const topic = Constants.PAYMENTS + '_' + data.marshalID;
+            const result = await fba.sendToTopic(topic, payload, options);
+            log(
+                `😍 sendPayment: FCM message sent to Marshal: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+            );
+        }
+      
+    }
     public static async sendCommuterArrivalLandmark(
         data: any,
     ): Promise<any> {
@@ -331,7 +385,7 @@ class Messaging {
     }
     public static async sendDispatchRecord(data: any): Promise<any> {
         const options: any = {
-            priority: "normal",
+            priority: "high",
             timeToLive: 60 * 60,
         };
         const payload: any = {

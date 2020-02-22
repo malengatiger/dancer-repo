@@ -30,6 +30,7 @@ const commuter_incentive_type_1 = __importDefault(require("../models/commuter_in
 const commuter_incentive_1 = __importDefault(require("../models/commuter_incentive"));
 const commuter_fence_dwell_event_1 = __importDefault(require("../models/commuter_fence_dwell_event"));
 const commuter_fence_exit_event_1 = __importDefault(require("../models/commuter_fence_exit_event"));
+const payment_1 = __importDefault(require("../models/payment"));
 class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -62,10 +63,6 @@ class CommuterController {
                     throw new Error('CommuterRequest not found');
                 }
                 commReq.scanned = true;
-                // commReq.associationID = req.body.associationID;
-                // commReq.associationName = req.body.associationName;
-                // commReq.vehicleID = req.body.vehicleID;
-                // commReq.vehicleReg = req.body.vehicleReg;
                 const result = yield commReq.save();
                 // log(result);
                 res.status(200).json(result);
@@ -75,6 +72,24 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 updateCommuterRequestScanned failed'
+                });
+            }
+        }));
+        app.route("/addPayment").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `🌽 POST 🌽🌽 addPayment requested `;
+            console.log(msg);
+            console.log(req.body);
+            try {
+                const comm = new payment_1.default(req.body);
+                comm.created = new Date().toISOString();
+                const result = yield comm.save();
+                res.status(200).json(result);
+            }
+            catch (err) {
+                log_1.default(err);
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addPayment failed'
                 });
             }
         }));
