@@ -27,9 +27,11 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
 //        _key.currentState.removeCurrentSnackBar();
 //        Navigator.pop(context, _landmark);
 //      }
-      setState(() {
-        isBusy = busy;
-      });
+      if ((mounted)) {
+        setState(() {
+          isBusy = busy;
+        });
+      }
     });
   }
 

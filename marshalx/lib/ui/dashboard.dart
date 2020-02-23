@@ -9,6 +9,7 @@ import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
+import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/scanner.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
@@ -77,6 +78,8 @@ class _DashboardState extends State<Dashboard> {
     } else {
       myDebugPrint('💜 💜 💜 💜 calling marshalBloc.refreshDashboardData...');
       await marshalBloc.refreshDashboardData(false);
+      marshalBloc.findLandmarksByLocation(
+          radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
     }
 
     user = marshalBloc.user;

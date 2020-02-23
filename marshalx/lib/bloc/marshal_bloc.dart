@@ -8,6 +8,7 @@ import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/commuter_arrival_landmark.dart';
 import 'package:aftarobotlibrary4/data/commuter_fence_event.dart';
 import 'package:aftarobotlibrary4/data/commuter_request.dart';
+import 'package:aftarobotlibrary4/data/commuterdeparturedto.dart';
 import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
@@ -16,17 +17,20 @@ import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicle_departure.dart';
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
+import 'package:aftarobotlibrary4/geofencing/geofencer.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
+import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 MarshalBloc marshalBloc = MarshalBloc();
 
-class MarshalBloc {
+class MarshalBloc implements GeofencerListener {
   StreamController<List<CommuterFenceDwellEvent>>
       _commuterDwellEventsController = StreamController.broadcast();
   StreamController<List<CommuterFenceExitEvent>> _commuterExitEventsController =
@@ -90,6 +94,7 @@ class MarshalBloc {
   List<CommuterArrivalLandmark> _commuterArrivals = List();
   List<Vehicle> _vehicles = List();
   List<CommuterRequest> _commuterRequests = List();
+  GeoFencer _geoFencer;
 
   _init() async {
     findLandmarksByLocation(
@@ -113,6 +118,9 @@ class MarshalBloc {
       _errorController.sink.add('AftaRobot user not found');
       return;
     }
+    _configureFCM();
+    _geoFencer = GeoFencer(Constants.USER_MARSHAL, geofencerListener: this);
+    _geoFencer.findLandmarksByLocation();
   }
 
   Future initializeData() async {
@@ -150,9 +158,10 @@ class MarshalBloc {
 
   Future refreshMarshalLandmark(Landmark landmark) async {
     myDebugPrint(
-        '\n\n💙  💙  💙  💙  💙  💙  💙 refreshMarshalLandmark ..... ${landmark.landmarkName}');
+        '\n💙  💙  💙  💙  💙  💙  💙 refreshMarshalLandmark ..... ${landmark.landmarkName}');
     await Prefs.saveLandmark(landmark);
     refreshDashboardData(false);
+    findLandmarksByLocation(radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
     return null;
   }
 
@@ -329,9 +338,13 @@ class MarshalBloc {
         myDebugPrint('🌸 🌸 Cache landmarks in local DB .....');
         await LocalDBAPI.addLandmarks(landmarks: landmarks);
       }
+
       myDebugPrint(
           '🌸 🌸  ${landmarks.length} landmarks found, adding to _landmarksController.sink ');
       _landmarksController.sink.add(landmarks);
+      for (var landmark in landmarks) {
+        _geoFencer.addLandmarkGeoFence(landmark);
+      }
       return landmarks;
     } catch (e) {
       print(e);
@@ -442,7 +455,7 @@ class MarshalBloc {
   final FirebaseMessaging fcm = FirebaseMessaging();
   final Map<String, Landmark> landmarksSubscribedMap = Map();
 
-  void subscribeToArrivalsFCM(Landmark landmark) async {
+  void _subscribeToArrivalsFCM(Landmark landmark) async {
     List<String> topics = List();
     topics
         .add('${Constants.COMMUTER_ARRIVAL_LANDMARKS}_${landmark.landmarkID}');
@@ -466,14 +479,16 @@ class MarshalBloc {
           ' for landmark: 🍎 ${landmark.landmarkName} 🍎 ');
     }
 
-    myDebugPrint('MarshalBloc:... 💜 💜 Subscribed to FCM topics for '
-        '${landmarksSubscribedMap.length} landmark ✳️ ${_landmark == null ? '' : _landmark.landmarkName}\n');
+    myDebugPrint(
+        'MarshalBloc:... 💜 💜 Subscribed to FCM ${landmarksSubscribedMap.length} topics for '
+        'landmark ✳️ ${_landmark == null ? 'unknown' : _landmark.landmarkName}\n');
   }
 
   _subscribe(List<String> topics, Landmark landmark) async {
     for (var t in topics) {
       await fcm.subscribeToTopic(t);
-      myDebugPrint('MarshalBloc:... 💜 💜 Subscribed to FCM topic: 🍎  $t ✳️ ');
+      myDebugPrint(
+          'MarshalBloc:... 💜 💜 Subscribed to FCM topic: 🍎  $t ✳️ at ${landmark.landmarkName}');
     }
     landmarksSubscribedMap[landmark.landmarkID] = landmark;
     return;
@@ -487,7 +502,7 @@ class MarshalBloc {
       return null;
     }
     myDebugPrint(
-        '✳️ ✳️ ✳️ ✳️ MarshalBloc:listenForArrivals: CONFIGURE FCM: ✳️ ✳️ ✳️ ✳️  ${_landmark == null ? '' : _landmark.landmarkName}');
+        '✳️ ✳️ ✳️ ✳️ MarshalBloc:_configureFCM: CONFIGURE FCM: ✳️ ✳️ ✳️ ✳️  ${_landmark == null ? '' : _landmark.landmarkName}');
     fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         String messageType = message['data']['type'];
@@ -549,7 +564,7 @@ class MarshalBloc {
     _listenerSetupAlready = true;
     var mark = await Prefs.getLandmark();
     if (mark != null) {
-      subscribeToArrivalsFCM(mark);
+      _subscribeToArrivalsFCM(mark);
     }
     return null;
   }
@@ -605,6 +620,77 @@ class MarshalBloc {
 
   MarshalBloc() {
     _init();
-    _configureFCM();
+  }
+
+  @override
+  onCommuterArrival(CommuterArrivalLandmark arrival) {
+    // TODO: implement onCommuterArrival
+    return null;
+  }
+
+  @override
+  onCommuterDeparture(CommuterDeparture departure) {
+    // TODO: implement onCommuterDeparture
+    return null;
+  }
+
+  @override
+  onConnectivityChange(bool connected) {
+    // TODO: implement onConnectivityChange
+    return null;
+  }
+
+  @override
+  onDwell(List<Landmark> landmarks) {
+    // TODO: implement onDwell
+    return null;
+  }
+
+  @override
+  onDynamicDistanceCalculated(List<RouteDistanceEstimation> estimations) {
+    // TODO: implement onDynamicDistanceCalculated
+    return null;
+  }
+
+  @override
+  onHeartbeat(List<Landmark> landmarks) {
+    // TODO: implement onHeartbeat
+    return null;
+  }
+
+  @override
+  onInVehicle(Location location) {
+    // TODO: implement onInVehicle
+    return null;
+  }
+
+  @override
+  onLandmarksFound(List<Landmark> landmarks) {
+    // TODO: implement onLandmarksFound
+    return null;
+  }
+
+  @override
+  onMoving(Location location) {
+    // TODO: implement onMoving
+    return null;
+  }
+
+  @override
+  onStandingStill(Location location) {
+    // TODO: implement onStandingStill
+    return null;
+  }
+
+  @override
+  onVehicleArrival(VehicleArrival arrival) {
+    // TODO: implement onVehicleArrival
+    return null;
+  }
+
+  @override
+  onVehicleDeparture(VehicleDeparture departure) {
+    // TODO: implement onVehicleDeparture
+    return null;
   }
 }
