@@ -282,7 +282,7 @@ class _DashboardState extends State<Dashboard> implements ScannerListener {
                               context,
                               SlideRightRoute(
                                 widget: Scanner(
-                                  type: 'request',
+                                  type: Constants.SCAN_TYPE_REQUEST,
                                   scannerListener: this,
                                 ),
                               ));
@@ -473,7 +473,7 @@ class _DashboardState extends State<Dashboard> implements ScannerListener {
             context,
             SlideRightRoute(
                 widget: Scanner(
-              type: 'request',
+              type: Constants.SCAN_TYPE_REQUEST,
               scannerListener: this,
             )));
         break;

@@ -48,11 +48,11 @@ class DriverBloc {
   Future<List<CommuterRequest>> getMyScannedRequests() async {
     List mList = await LocalDBAPI.getCommuterRequests();
     myDebugPrint('Scanned requests found on local database: ${mList.length}');
-    List<CommuterRequest> mm = List();
     mList.forEach((r) {
-      mm.add(CommuterRequest.fromJson(json.decode(r)));
+      _commuterRequests.add(CommuterRequest.fromJson(json.decode(r)));
     });
-    return mm;
+    _reqController.sink.add(_commuterRequests);
+    return _commuterRequests;
   }
 
   void close() {

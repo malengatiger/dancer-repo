@@ -62,7 +62,7 @@ class _ScannerStarterState extends State<ScannerStarter>
         context,
         SlideRightRoute(
           widget: Scanner(
-            type: 'request',
+            type: Constants.SCAN_TYPE_REQUEST,
             scannerListener: this,
           ),
         ));
@@ -75,7 +75,7 @@ class _ScannerStarterState extends State<ScannerStarter>
       key: _key,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _startScan,
-        icon: Icon(Icons.scanner),
+        icon: Icon(Icons.language),
         label: Text("Scan Passenger Phone"),
         foregroundColor: Colors.white,
         backgroundColor: Colors.pink,
@@ -157,7 +157,7 @@ class _ScannerStarterState extends State<ScannerStarter>
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Text(
-                                'Passengers Scanned:',
+                                'Total Passengers:',
                                 style: Styles.greyLabelSmall,
                               ),
                               SizedBox(
@@ -166,6 +166,25 @@ class _ScannerStarterState extends State<ScannerStarter>
                               Text(
                                 '${getTotalPassengers()}',
                                 style: Styles.tealBoldLarge,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                ' Number of Scans:',
+                                style: Styles.greyLabelSmall,
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                '${_requests.length}',
+                                style: Styles.blueBoldLarge,
                               ),
                             ],
                           ),
@@ -195,9 +214,9 @@ class _ScannerStarterState extends State<ScannerStarter>
     var tot = 0.00;
     _requests.forEach((m) {
       if (m.isWallet) {
-        tot += Constants.DUMMY_FARE * .9;
+        tot += Constants.DUMMY_FARE * .9 * m.passengers;
       } else {
-        tot += Constants.DUMMY_FARE;
+        tot += Constants.DUMMY_FARE * m.passengers;
       }
     });
     return getFormattedAmount(tot.toString(), context);
