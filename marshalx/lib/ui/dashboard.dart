@@ -27,7 +27,7 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard> implements ScannerListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   bool isBusy = false;
   User user;
@@ -283,6 +283,7 @@ class _DashboardState extends State<Dashboard> {
                               SlideRightRoute(
                                 widget: Scanner(
                                   type: 'request',
+                                  scannerListener: this,
                                 ),
                               ));
                         }),
@@ -468,7 +469,13 @@ class _DashboardState extends State<Dashboard> {
             context, SlideRightRoute(widget: SelectVehicleForDispatch()));
         break;
       case 3:
-        Navigator.push(context, SlideRightRoute(widget: Scanner()));
+        Navigator.push(
+            context,
+            SlideRightRoute(
+                widget: Scanner(
+              type: 'request',
+              scannerListener: this,
+            )));
         break;
     }
   }
@@ -491,5 +498,11 @@ class _DashboardState extends State<Dashboard> {
           landmarkIconColor: RouteMap.colorAzure,
           routes: routes,
         )));
+  }
+
+  @override
+  onScan(String commuterRequestID) {
+    myDebugPrint('Dashboard: onScan: $commuterRequestID');
+    return null;
   }
 }
