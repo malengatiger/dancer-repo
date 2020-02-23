@@ -115,9 +115,9 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
                   Row(
                     children: <Widget>[
                       Image(
-                        image: AssetImage('assets/std5.png'),
-                        height: 48,
-                        width: 48,
+                        image: AssetImage('assets/ty1.png'),
+                        height: 60,
+                        width: 60,
                       ),
                       SizedBox(
                         width: 12,

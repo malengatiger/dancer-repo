@@ -280,8 +280,7 @@ class MarshalBloc {
           'Call has run into  🔴  🔴  🔴 SocketException  🔴  🔴  🔴 ');
       _errorController.sink.add('Network SocketException');
     }
-    _errorController.sink
-        .add(e.message == null ? 'Unknown Network Error' : e.message);
+    _errorController.sink.add(e == null ? 'Unknown Network Error' : e.message);
     print(e);
   }
 

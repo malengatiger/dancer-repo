@@ -10,12 +10,12 @@ import 'package:aftarobotlibrary4/maps/cards.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
+import 'package:aftarobotlibrary4/util/scanner.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
-import 'package:marshalx/ui/scanner.dart';
 import 'package:marshalx/ui/select_dispatch.dart';
 import 'package:marshalx/ui/wifi.dart';
 
@@ -105,10 +105,6 @@ class _DashboardState extends State<Dashboard> {
         _errorMessage = message;
         isBusy = false;
       });
-//      AppSnackbar.showErrorSnackbar(
-//          scaffoldKey: _key,
-//          message: message == null ? 'Network call failed' : '$message',
-//          actionLabel: '');
       if (hasAlreadyShownWifi) {
         myDebugPrint(
             'ignoring this ....................hasAlreadyShownWifi: $hasAlreadyShownWifi');
@@ -282,7 +278,9 @@ class _DashboardState extends State<Dashboard> {
                           Navigator.push(
                               context,
                               SlideRightRoute(
-                                widget: Scanner(),
+                                widget: Scanner(
+                                  type: 'request',
+                                ),
                               ));
                         }),
                     SizedBox(
@@ -303,11 +301,11 @@ class _DashboardState extends State<Dashboard> {
         items: [
           BottomNavigationBarItem(
               icon: Icon(
-                Icons.scanner,
+                Icons.map,
                 color: Colors.pink,
               ),
               title: Text(
-                'Scan Payment',
+                'RouteMaps',
                 style: Styles.blueSmall,
               )),
           BottomNavigationBarItem(
@@ -316,7 +314,7 @@ class _DashboardState extends State<Dashboard> {
                 color: Colors.white,
               ),
               title: Text(
-                'Scan Trip',
+                'Find Taxis',
                 style: Styles.whiteSmall,
               )),
           BottomNavigationBarItem(
@@ -356,8 +354,8 @@ class _DashboardState extends State<Dashboard> {
                       cardColor: Colors.pink[400],
                       elevation: 2.0,
                       icon: Icon(
-                        Icons.apps,
-                        color: Colors.teal[700],
+                        Icons.airport_shuttle,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -372,7 +370,7 @@ class _DashboardState extends State<Dashboard> {
                       total: commuterRequests.length,
                       elevation: 4.0,
                       icon: Icon(
-                        Icons.people,
+                        Icons.alarm,
                         color: Colors.white,
                       ),
                       titleStyle: Styles.whiteSmall,
