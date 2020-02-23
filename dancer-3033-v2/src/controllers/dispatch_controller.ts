@@ -3,6 +3,8 @@ import DispatchRecord from "../models/dispatch_record";
 import log from '../log';
 import moment from "moment";
 import uuid = require("uuid");
+import MarshalFenceDwellEvent from "../models/marshal_fence_dwell_event";
+import MarshalFenceExitEvent from "../models/marshal_fence_exit_event";
 
 export class DispatchController {
 
@@ -142,6 +144,48 @@ export class DispatchController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 getDispatchRecordsByVehicle failed'
+          }
+        )
+      }
+    });
+
+    app.route("/addMarshalFenceDwellEvent").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceDwellEvent requested `;
+      console.log(msg);
+
+      try {
+        const event: any = new MarshalFenceDwellEvent(req.body);
+        event.created = new Date().toISOString();
+        event.marshalFenceEventID = uuid();
+
+        const result = await event.save();
+        log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addMarshalFenceDwellEvent failed'
+          }
+        )
+      }
+    });
+    app.route("/addMarshalFenceExitEvent").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceExitEvent requested `;
+      console.log(msg);
+
+      try {
+        const event: any = new MarshalFenceExitEvent(req.body);
+        event.created = new Date().toISOString();
+        event.marshalFenceEventID = uuid();
+        const result = await event.save();
+        log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addMarshalFenceExitEvent failed'
           }
         )
       }

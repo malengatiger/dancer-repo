@@ -16,6 +16,8 @@ const dispatch_record_1 = __importDefault(require("../models/dispatch_record"));
 const log_1 = __importDefault(require("../log"));
 const moment_1 = __importDefault(require("moment"));
 const uuid = require("uuid");
+const marshal_fence_dwell_event_1 = __importDefault(require("../models/marshal_fence_dwell_event"));
+const marshal_fence_exit_event_1 = __importDefault(require("../models/marshal_fence_exit_event"));
 class DispatchController {
     routes(app) {
         console.log(`🏓🏓🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
@@ -144,6 +146,42 @@ class DispatchController {
                 });
             }
         });
+        app.route("/addMarshalFenceDwellEvent").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceDwellEvent requested `;
+            console.log(msg);
+            try {
+                const event = new marshal_fence_dwell_event_1.default(req.body);
+                event.created = new Date().toISOString();
+                event.marshalFenceEventID = uuid();
+                const result = yield event.save();
+                log_1.default(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addMarshalFenceDwellEvent failed'
+                });
+            }
+        }));
+        app.route("/addMarshalFenceExitEvent").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceExitEvent requested `;
+            console.log(msg);
+            try {
+                const event = new marshal_fence_exit_event_1.default(req.body);
+                event.created = new Date().toISOString();
+                event.marshalFenceEventID = uuid();
+                const result = yield event.save();
+                log_1.default(result);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addMarshalFenceExitEvent failed'
+                });
+            }
+        }));
     }
 }
 exports.DispatchController = DispatchController;

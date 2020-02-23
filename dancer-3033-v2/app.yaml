@@ -1,0 +1,3 @@
+# [START aftarobot_yaml]
+runtime: nodejs10
+# [END aftarobot_yaml]
