@@ -5,7 +5,6 @@ import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
 import 'package:aftarobotlibrary4/data/route_point.dart';
-import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
@@ -360,110 +359,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   TextEditingController controller = TextEditingController();
   LatLng pressedLatLng;
-  void _onLongPress(LatLng latLng) {
-    myDebugPrint('🧩🧩🧩  map has been long pressed, 🧩 $latLng');
-    pressedLatLng = latLng;
-    showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-              title: new Text(
-                "New Landmark",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor),
-              ),
-              content: Container(
-                height: 160.0,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            'New Landmark',
-                            style: Styles.blackBoldSmall,
-                          ),
-                          SizedBox(
-                            height: 12,
-                          ),
-                          TextField(
-                            controller: controller,
-                            onChanged: _onNameChanged,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(hintText: 'Enter Name'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(
-                    'NO',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: RaisedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _saveLandmark();
-                    },
-                    elevation: 4.0,
-                    color: Colors.blue.shade700,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Update Landmark',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ));
-  }
 
   String name;
-  void _onNameChanged(String value) async {
-    print(value);
-    name = value;
-  }
-
-  _saveLandmark() async {
-    if (name.isEmpty) {
-      return;
-    }
-    var m = Landmark(
-      landmarkName: name,
-      latitude: pressedLatLng.latitude,
-      longitude: pressedLatLng.longitude,
-      position: Position(
-          type: 'Point',
-          coordinates: [pressedLatLng.longitude, pressedLatLng.latitude]),
-      routeDetails: [
-        RouteInfo(
-          name: widget.route.name,
-          routeID: widget.route.routeID,
-        )
-      ],
-    );
-    await routeBuilderBloc.addLandmark(m);
-    myDebugPrint(
-        '️♻️ ♻️♻️ ♻️   🐸 New landmark added : 🍎 ${m.landmarkName} 🍎 ');
-    List<CalculatedDistance> list =
-        await RouteDistanceCalculator.calculate(route: widget.route);
-    list.forEach((cd) {
-      print('Calculated Distance: 🍎 🍎 ${cd.toJson()}');
-    });
-  }
 
   @override
   onLandmarkInfoWindowTapped(Landmark landmark) {

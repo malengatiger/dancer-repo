@@ -336,6 +336,59 @@ export class RouteController {
                 )
             }
         });
+        /*
+        db.students.update(
+   { _id: 1 },
+   {
+     $push: {
+        scores: {
+           $each: [ 20, 30 ],
+           $position: 2
+        }
+     }
+   }
+)
+        */
+        app.route("/updateRoutePoint").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const routePoint = req.body;
+                if (!routePoint.landmarkID) {
+                    throw new Error(`landmarkID is not found in routePoint`);
+                }
+                if (!routePoint.landmarkName) {
+                    throw new Error(`landmarkName is not found in routePoint`);
+                }
+                if (!routePoint.routeID) {
+                    throw new Error(`routeID is not found in routePoint`);
+                }
+                const route: any = await Route.findOne({ routeID: routePoint.routeID });
+
+                const list: any[] = []
+                route.routePoints.forEach((p: any) => {
+                    if (p.index === routePoint.index) {
+                        list.push(routePoint);
+                    } else {
+                        list.push(p);
+                    }
+                });
+                route.routePoints = list;
+                await route.save();
+                log(`💙💙 💙💙 💙💙 RoutePoint index: ${routePoint.index} updated on route: 🧡💛 ${route.name}`);
+                res.status(200).json({ status: 'OK', message: `RoutePoint index ${routePoint.index} updated route: 🧡💛 ${route.name} - landmark: ${routePoint.landmarkName}` });
+            } catch (err) {
+                console.log(err);
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 updateRoutePoint failed'
+                    }
+                )
+            }
+        });
     }
 
     public static async fixRoutes() {

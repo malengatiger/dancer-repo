@@ -299,21 +299,21 @@ class _NewRoutePageState extends State<NewRoutePage>
                                 SizedBox(
                                   width: 8,
                                 ),
-                                RaisedButton(
-                                  color: Colors.green[700],
-                                  elevation: 4,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Green',
-                                      style: Styles.whiteSmall,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    color = RouteMap.colorGreen;
-                                    setState(() {});
-                                  },
-                                ),
+//                                RaisedButton(
+//                                  color: Colors.green[700],
+//                                  elevation: 4,
+//                                  child: Padding(
+//                                    padding: const EdgeInsets.all(8.0),
+//                                    child: Text(
+//                                      'Green',
+//                                      style: Styles.whiteSmall,
+//                                    ),
+//                                  ),
+//                                  onPressed: () {
+//                                    color = RouteMap.colorGreen;
+//                                    setState(() {});
+//                                  },
+//                                ),
                                 SizedBox(
                                   width: 8,
                                 ),

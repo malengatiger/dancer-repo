@@ -1,5 +1,6 @@
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -196,8 +197,8 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     if (_routePointsCollected.isEmpty) {
       myDebugPrint(
           '🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
-      _route = await routeBuilderBloc
-          .getRouteByIDAndCacheLocally(widget.route.routeID);
+      _route = await DancerListAPI.getRouteByID(routeID: widget.route.routeID);
+      await LocalDBAPI.addRoute(route: _route);
       _routePointsCollected = _route.rawRoutePoints;
     }
     setState(() {});

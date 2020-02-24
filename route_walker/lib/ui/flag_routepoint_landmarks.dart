@@ -1,5 +1,6 @@
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
@@ -506,12 +507,9 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
       myDebugPrint(
           ' 🧩 🧩 🧩 ${routePointsForLandmarks.length} landmark points to be updated ...');
       await _updatePoints(routePointsForLandmarks);
-      _route = await routeBuilderBloc
-          .getRouteByIDAndCacheLocally(widget.route.routeID);
       //todo - calculate distances
       await RouteDistanceCalculator.calculate(route: _route);
-      _route = await routeBuilderBloc
-          .getRouteByIDAndCacheLocally(widget.route.routeID);
+
       Navigator.pop(context, _route);
     } catch (e) {
       print(e);
@@ -574,7 +572,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     routeID = widget.route.routeID;
     _route = await LocalDBAPI.getRoute(routeID: routeID);
     if (_route == null) {
-      _route = await routeBuilderBloc.getRouteByIDAndCacheLocally(routeID);
+      _route = await DancerListAPI.getRouteByID(routeID: routeID);
     }
     landmarks = await routeBuilderBloc.findLandmarksNearRoutePoint(
         widget.routePoint, 0.1);
@@ -726,39 +724,10 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key, message: 'Adding new landmark ');
     try {
-      var m = await routeBuilderBloc.addLandmark(landmark);
-      widget.routePoint.landmarkID = m.landmarkID;
-      widget.routePoint.landmarkName = m.landmarkName;
-      _route.routePoints.forEach((point) {
-        if (point.latitude == widget.routePoint.latitude &&
-            point.longitude == widget.routePoint.longitude) {
-          point.landmarkID = m.landmarkID;
-          point.landmarkName = m.landmarkName;
-          debugPrint(
-              'Route point updated in widget as a 🍎 landmark. 🍎  need to refresh route locally and remote server');
-        }
-      });
-      var cnt = 0;
-      ;
-      _route.routePoints.forEach((element) {
-        if (element.landmarkName != null) {
-          cnt++;
-          myDebugPrint(
-              "🌽🌽 Landmark point found: 🍎  #$cnt 🌽 ${element.landmarkName}");
-        }
-      });
+      var m = await routeBuilderBloc.addLandmark(landmark, widget.routePoint);
       myDebugPrint(
-          '\n️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️  New landmark added: ️🍀️️🍀️️🍀️ $landmarkName - update the fucking route');
-      await routeBuilderBloc.updateRoute(widget.route);
-
-      widget.listener.onSuccess(m);
-      AppSnackbar.showSnackbarWithAction(
-          scaffoldKey: _key,
-          message: 'Route Added to Landmark ',
-          action: 1,
-          listener: this,
-          backgroundColor: Colors.teal[800],
-          actionLabel: 'Done');
+          '............Popping off ... 🍏 🍎 done with editor, caller must check if new landmark made');
+      Navigator.pop(context, m);
     } catch (e) {
       widget.listener.onError('Failed');
       AppSnackbar.showErrorSnackbar(
@@ -766,6 +735,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     }
   }
 
+  var landmarkAdded = false;
   var _key = GlobalKey<ScaffoldState>();
   void _setAsLandmark(Landmark mark) async {
     print(

@@ -502,7 +502,11 @@ class _DashboardState extends State<Dashboard> implements ScannerListener {
 
   @override
   onScan(String commuterRequestID) {
-    myDebugPrint('Dashboard: onScan: $commuterRequestID');
+    myDebugPrint('Dashboard: 👌👌👌 received onScan: $commuterRequestID');
+    if (mounted) {
+      AppSnackbar.showSnackbar(
+          scaffoldKey: _key, message: '💙 Passenger scanned 👌 OK  💙');
+    }
     return null;
   }
 }

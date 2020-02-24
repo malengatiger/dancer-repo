@@ -157,36 +157,36 @@ export class LandmarkController {
                 landmark.landmarkID = uuid();
                 landmark.created = new Date().toISOString();
                 
-                //update route point in route
-                const routeID = landmark.routeDetails[0].routeID;
-                const latitude = landmark.latitude
-                const longitude = landmark.longitude
-                const route: any = await Route.findOne({ routeID: routeID })
-                if (!route) {
-                    throw new Error('Route in routeDetails does not exist')
-                }
-                console.log(route)
+                // //update route point in route
+                // const routeID = landmark.routeDetails[0].routeID;
+                // const latitude = landmark.latitude
+                // const longitude = landmark.longitude
+                // const route: any = await Route.findOne({ routeID: routeID })
+                // if (!route) {
+                //     throw new Error('Route in routeDetails does not exist')
+                // }
+                // console.log(route)
                 const result = await landmark.save();
                 log(`🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️landmark saved ${landmark.landmarkName}`)
-                const mList: any[]  = []
-                if (route) {
-                    route.routePoints.forEach((point: any) => {
-                        if (point.position.coordinates[1] == latitude && point.position.coordinates[0] == longitude) {
-                            point.landmarkID = landmark.landmarkID
-                            point.landmarkName = landmark.landmarkName
-                            mList.push(point);
-                            log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route point updated ${point}`)
-                        } else {
-                            mList.push(point);
-                        }
-                    })
-                }
-                route.routePoints = []
-                await route.save();
-                log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route points to be refreshed ${mList.length}`)
-                route.routePoints = mList;
-                await route.save();
-                log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route ${route.name} updated with landmark route point`)
+                // const mList: any[]  = []
+                // if (route) {
+                //     route.routePoints.forEach((point: any) => {
+                //         if (point.position.coordinates[1] == latitude && point.position.coordinates[0] == longitude) {
+                //             point.landmarkID = landmark.landmarkID
+                //             point.landmarkName = landmark.landmarkName
+                //             mList.push(point);
+                //             log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route point updated ${point}`)
+                //         } else {
+                //             mList.push(point);
+                //         }
+                //     })
+                // }
+                // route.routePoints = []
+                // await route.save();
+                // log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route points to be refreshed ${mList.length}`)
+                // route.routePoints = mList;
+                // await route.save();
+                // log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route ${route.name} updated with landmark route point`)
                 res.status(200).json(result);
             } catch (err) {
                 console.error(err)

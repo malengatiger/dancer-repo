@@ -375,9 +375,9 @@ class RouteBuilderBloc {
     return result;
   }
 
-  Future<Landmark> addLandmark(Landmark landmark) async {
+  Future<Landmark> addLandmark(Landmark landmark, RoutePoint point) async {
     myDebugPrint(
-        '### ℹ️  add new landmark : addLandmark starting ..........ℹ️  ℹ️  ℹ️  ');
+        '### ℹ️   📌 📌 📌 add new landmark ${landmark.landmarkName} : addLandmark and 🍏 update routePoint ..........ℹ️  ℹ️  ℹ️  ');
     assert(landmark.routeDetails.length == 1);
     Landmark result;
     List<Map> mapList = List();
@@ -390,17 +390,32 @@ class RouteBuilderBloc {
           latitude: landmark.latitude,
           longitude: landmark.longitude,
           routeDetails: mapList);
-      myDebugPrint(
-          '❤️ 🧡 💛  adding landmark to _routeLandmarksController sink ...');
+
+      await LocalDBAPI.addLandmarks(landmarks: [result]);
+
+      //update route point
+      point.landmarkID = result.landmarkID;
+      point.landmarkName = result.landmarkName;
+      await DancerDataAPI.updateRoutePoint(routePoint: point);
+
       prettyPrint(result.toJson(),
-          '❤️ 🧡 💛 NEW LANDMARK added: ${landmark.landmarkName} - update route on local database');
+          '❤️ 🧡 💛 NEW LANDMARK added: ${landmark.landmarkName} - updated routePoint, to do same on local database');
       routeLandmarks.add(result);
       _routeLandmarksController.sink.add(_routeLandmarks);
-      await getRouteByIDAndCacheLocally(
-          landmark.routeDetails.elementAt(0).routeID);
-      //
+
+      var localRoute = await LocalDBAPI.getRoute(routeID: point.routeID);
+      var mList = List<RoutePoint>();
+      localRoute.routePoints.forEach((p) {
+        if (p.index == point.index) {
+          mList.add(point);
+        } else {
+          mList.add(p);
+        }
+      });
+      localRoute.routePoints = mList;
+      await updateLocalRoute(localRoute);
     } catch (e) {
-      print('🌶 🌶 🌶  ${e.toString()}  🌶 🌶 🌶 ');
+      print('🌶 🌶 🌶  $e  🌶 🌶 🌶 ');
       throw e;
     }
     return result;
@@ -425,22 +440,16 @@ class RouteBuilderBloc {
     return landmark;
   }
 
-  Future updateRoute(ar.Route route) async {
+  Future updateLocalRoute(ar.Route route) async {
     myDebugPrint(
-        '### 📍 📍 📍  update route:  ${route.name} routePoints: ${route.routePoints} ..........\n');
+        '### 📍📍📍  updateLocalRoute:  ${route.name} routePoints: ${route.routePoints} ..........\n');
     _appModel.routes.remove(route);
 
     route.created = DateTime.now().toUtc().toIso8601String();
     await LocalDBAPI.deleteRoute(route.routeID);
     await LocalDBAPI.addRoute(route: route, listener: null);
     myDebugPrint(
-        'Route has been updated on the local database, need to do the same on remote mongodb ........🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
-    await DancerDataAPI.addRoutePoints(
-        routeId: route.routeID, routePoints: route.routePoints, clear: true);
-
-    myDebugPrint(
-        '🔆 🔆 🔆 🔆 🔆 🔆 🔆 adding route, after local and remote update, to model and stream sink ...');
-
+        '🔆 🔆 Route has been updated on the local database, need to do the same on remote mongodb ........🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
     _appModel.routes.add(route);
     _appModelController.sink.add(_appModel);
     return null;
@@ -548,7 +557,6 @@ class RouteBuilderBloc {
     myDebugPrint(
         '👌 👌 👌 done adding route to landmark ... 👌 calling  getRouteLandmarks  ...');
 
-    await getRouteByIDAndCacheLocally(route.routeID);
     await getRouteLandmarks(route);
     return m;
   }
@@ -578,12 +586,7 @@ class RouteBuilderBloc {
 
     _rawRoutePoints =
         await LocalDBAPI.getRawRoutePoints(routeID: route.routeID);
-    if (_rawRoutePoints.isEmpty) {
-      print(
-          '\n🚨 🚨 🚨 🚨  rawRoutePoints NOT found on LocalDB; callng DancerListAPI.getRouteByID');
-      ar.Route mRoute = await getRouteByIDAndCacheLocally(route.routeID);
-      _rawRoutePoints = mRoute.rawRoutePoints;
-    }
+
     print(
         '\n🚨 🚨 🚨 🚨  rawRoutePoints found : 🍀️🍀️ ${_rawRoutePoints.length}  🍀️🍀️  for route  ✳️  ${route.routeID} - ${route.name}\n\n');
     _rawRoutePointController.sink.add(_rawRoutePoints);
@@ -615,40 +618,40 @@ class RouteBuilderBloc {
     return _routePoints;
   }
 
-  Future<ar.Route> getRouteByIDAndCacheLocally(String routeID) async {
-    assert(routeID != null);
-    var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
-    if (mRoute != null) {
-      await LocalDBAPI.addRoute(route: mRoute);
-      if (mRoute.routePoints.isNotEmpty) {
-        await LocalDBAPI.deleteRoutePoints(routeID);
-        await LocalDBAPI.addRoutePoints(
-            routeID: routeID, routePoints: mRoute.routePoints);
-      }
-      if (mRoute.rawRoutePoints.isNotEmpty) {
-        await LocalDBAPI.deleteRawRoutePoints(routeID);
-        mRoute.rawRoutePoints.forEach((m) async {
-          await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: m);
-        });
-      }
-    }
-    List<ar.Route> routes = List();
-    _routes.forEach((m) {
-      if (routeID != m.routeID) {
-        routes.add(m);
-      }
-    });
-    _routes = routes;
-    _routes.add(mRoute);
-    _routes.sort((a, b) => a.name.compareTo(b.name));
-    _routeController.sink.add(_routes);
-    myDebugPrint(
-        'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ 👌👌👌 👌👌👌 👌👌👌️  getRouteByIDAndCacheLocally: DONE for  💙 ${mRoute.name}  💙 👌👌👌 👌👌👌  ..........');
-    //refresh association
-//    var association = await Prefs.getAssociation();
-//    await getRoutesByAssociation(association.associationID, false);
-    return mRoute;
-  }
+//  Future<ar.Route> getRouteByIDAndCacheLocally(String routeID) async {
+//    assert(routeID != null);
+//    var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
+//    if (mRoute != null) {
+//      await LocalDBAPI.addRoute(route: mRoute);
+//      if (mRoute.routePoints.isNotEmpty) {
+//        await LocalDBAPI.deleteRoutePoints(routeID);
+//        await LocalDBAPI.addRoutePoints(
+//            routeID: routeID, routePoints: mRoute.routePoints);
+//      }
+//      if (mRoute.rawRoutePoints.isNotEmpty) {
+//        await LocalDBAPI.deleteRawRoutePoints(routeID);
+//        mRoute.rawRoutePoints.forEach((m) async {
+//          await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: m);
+//        });
+//      }
+//    }
+//    List<ar.Route> routes = List();
+//    _routes.forEach((m) {
+//      if (routeID != m.routeID) {
+//        routes.add(m);
+//      }
+//    });
+//    _routes = routes;
+//    _routes.add(mRoute);
+//    _routes.sort((a, b) => a.name.compareTo(b.name));
+//    _routeController.sink.add(_routes);
+//    myDebugPrint(
+//        'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ 👌👌👌 👌👌👌 👌👌👌️  getRouteByIDAndCacheLocally: DONE for  💙 ${mRoute.name}  💙 👌👌👌 👌👌👌  ..........');
+//    //refresh association
+////    var association = await Prefs.getAssociation();
+////    await getRoutesByAssociation(association.associationID, false);
+//    return mRoute;
+//  }
 
   Timer timer;
   int timerDuration = 10;

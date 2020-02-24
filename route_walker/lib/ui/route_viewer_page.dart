@@ -740,7 +740,7 @@ class _RouteCardState extends State<RouteCard>
 
     widget.route.name = routeName;
     try {
-      await routeBuilderBloc.updateRoute(widget.route);
+      await routeBuilderBloc.updateLocalRoute(widget.route);
 
       widget.routeCardListener.onMessage(widget.route, 'Route name updated',
           Colors.white, Colors.teal[800], false);

@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
-import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
 import 'package:aftarobotlibrary4/data/route_point.dart';
-import 'package:aftarobotlibrary4/maps/route_distance_calculator.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
@@ -12,12 +11,13 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:route_walker/bloc/route_builder_bloc.dart';
 
 import 'cards.dart';
 import 'flag_routepoint_landmarks.dart';
 import 'landmark_city_page.dart';
 
+/// This widget displays all the route points and allows you to tap one of the routePoint markers to create a LANDMARK.
+/// This is the only way a landmark can be created.
 class LandmarksManagerPage extends StatefulWidget {
   final aftarobot.Route route;
 
@@ -102,23 +102,6 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   Set<Marker> _markers = Set();
 
-  void _checkPoints() {
-    var fList = _route.routePoints.getRange(0, 1);
-    var gList = _route.routePoints
-        .getRange(_route.routePoints.length - 1, _route.routePoints.length - 0);
-    myDebugPrint(
-        '\n\n\n\n💦 💦 💦 💦  total points: ${_route.routePoints.length} 🔴 route points at each end 🔆 🔆 🔆 🔆 \n\n');
-
-    fList.forEach((f) {
-      prettyPrint(f.toJson(), '💦 💦 💦 💦 💦 💦 💦 💦  FIRST ///');
-    });
-    gList.forEach((f) {
-      prettyPrint(f.toJson(), '🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  LAST ///');
-    });
-    myDebugPrint(
-        '\n\n\n\n💦 💦 💦 💦  end of route points at each end 🔆 🔆 🔆 🔆 \n\n');
-  }
-
   void _setRouteMarkers() async {
     print(
         '🔵 set markers ... 🔵 ...🔵 ...🔵 ... 🔵 ... points: ${_route.routePoints.length} 🍀️🍀️🍀️');
@@ -190,14 +173,15 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
             '👿 👿 👿 👿 👿 👿  Houston, we have a fucking problem! setting up LatLng in list 👿 👿 👿 👿 👿 👿 👿 👿');
       }
       myDebugPrint(
-          '📌 📌 📌 create polyline 🔵 🔵 🔵 🔵 latLngs:🍀️🍀️ ${latLngs.length} 🍀️🍀️\n');
+          '📌 📌 📌 LandmarksManagerPage: create polyline 🔵 🔵 🔵 🔵 latLngs:🍀️🍀️ ${latLngs.length} 🍀️🍀️\n');
       var polyLine = Polyline(
           polylineId: PolylineId('${DateTime.now().toIso8601String()}'),
           color: Colors.white,
           width: 12,
           consumeTapEvents: true,
           onTap: () {
-            print('🥩 🥩 polyline tapped, 🥩 now what??? - .....');
+            print(
+                '🥩 🥩 LandmarksManagerPage: polyline tapped, 🥩 now what??? - .....');
           },
           geodesic: true,
           points: latLngs);
@@ -215,8 +199,10 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   bool showLandmarkEditor = false, showButton = false;
   List<DropdownMenuItem<Landmark>> _items = List();
 
+  ///Start the Landmark editor on marker tap
   _onMarkerTapped(RoutePoint routePoint) async {
-    myDebugPrint('Marker tapped: route: ${routePoint.toJson()}');
+    myDebugPrint(
+        'LandmarksManagerPage: 📌 📌 📌 📌 📌 📌 Marker tapped: routePOINT: ${routePoint.toJson()}');
     if ((routePoint.landmarkID != null)) {
       myDebugPrint('Marker tapped: route point is already a landmark');
       return;
@@ -225,7 +211,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         CameraPosition(
             target: LatLng(routePoint.latitude, routePoint.longitude),
             zoom: 16.0)));
-    var update = await Navigator.push(
+    var landmark = await Navigator.push(
         context,
         SlideRightRoute(
             widget: LandmarkEditor(
@@ -233,14 +219,14 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                 route: _route,
                 withScaffold: true,
                 listener: this)));
-    if (update != null) {
-      if (update is aftarobot.Route) {
+    if (landmark != null) {
+      if (landmark is Landmark) {
         myDebugPrint(
-            '🐥 🐥 🐥  Route state refresh required, points: ${update.routePoints.length}');
-        setState(() {
-          _route = update;
-          _routePoints = _route.routePoints;
-        });
+            '🐥 🐥 🐥  LandmarksManagerPage: landmark from editor ... need map to reflect new landmark ....');
+        _route = await LocalDBAPI.getRoute(routeID: _route.routeID);
+        Navigator.pop(context);
+        Navigator.push(
+            context, SlideRightRoute(widget: LandmarksManagerPage(_route)));
       }
     }
   }
@@ -267,13 +253,6 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
               },
             ),
           ),
-//          Padding(
-//            padding: const EdgeInsets.all(8.0),
-//            child: IconButton(
-//              icon: Icon(Icons.refresh),
-//              onPressed: _getRoutePoints,
-//            ),
-//          ),
         ],
       ),
       body: Stack(
@@ -289,7 +268,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
             rotateGesturesEnabled: true,
             scrollGesturesEnabled: true,
             tiltGesturesEnabled: true,
-            onLongPress: _onLongPress,
+//            onLongPress: _onLongPress,
             onMapCreated: (mapController) {
               if (!_completer.isCompleted) {
                 _completer.complete(mapController);
@@ -444,113 +423,11 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   TextEditingController controller = TextEditingController();
   LatLng pressedLatLng;
 
-  void _onLongPress(LatLng latLng) {
-    myDebugPrint('🧩🧩🧩  map has been long pressed, 🧩 $latLng');
-    pressedLatLng = latLng;
-    showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-              title: new Text(
-                "Add Landmark",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor),
-              ),
-              content: Container(
-                height: 160.0,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            'New Landmark Name',
-                            style: Styles.blackBoldSmall,
-                          ),
-                          SizedBox(
-                            height: 12,
-                          ),
-                          TextField(
-                            controller: controller,
-                            onChanged: _onNameChanged,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(hintText: 'Enter Name'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(
-                    'NO',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: RaisedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _saveLandmark();
-                    },
-                    elevation: 4.0,
-                    color: Colors.blue.shade700,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Add Landmark',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ));
-  }
-
   String name;
 
   void _onNameChanged(String value) async {
     print(value);
     name = value;
-  }
-
-  _saveLandmark() async {
-    if (name == null || name.isEmpty) {
-      AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key, message: 'Enter landmark name');
-      return;
-    }
-    //todo - route point must be updated
-    var m = Landmark(
-      landmarkName: name,
-      latitude: pressedLatLng.latitude,
-      longitude: pressedLatLng.longitude,
-      position: Position(
-          type: 'Point',
-          coordinates: [pressedLatLng.longitude, pressedLatLng.latitude]),
-      routeDetails: [
-        RouteInfo(
-          name: _route.name,
-          routeID: _route.routeID,
-        )
-      ],
-    );
-    await routeBuilderBloc.addLandmark(m);
-    myDebugPrint(
-        '️♻️ ♻️♻️ ♻️   🐸 New landmark added : 🍎 ${m.landmarkName} 🍎 ');
-    List<CalculatedDistance> list =
-        await RouteDistanceCalculator.calculate(route: _route);
-    list.forEach((cd) {
-      print('Calculated Distance: 🍎 🍎 ${cd.toJson()}');
-    });
   }
 
   @override

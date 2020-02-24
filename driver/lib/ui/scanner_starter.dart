@@ -18,12 +18,26 @@ class ScannerStarter extends StatefulWidget {
 }
 
 class _ScannerStarterState extends State<ScannerStarter>
+    with SingleTickerProviderStateMixin
     implements ScannerListener {
   List<CommuterRequest> _requests = List();
+  AnimationController animationController;
+  Animation<double> animation;
   @override
   void initState() {
     super.initState();
     _checkUser();
+    animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    )..addListener(() => setState(() {}));
+
+    animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(animationController);
+
+    animationController.forward();
   }
 
   void _checkUser() async {
@@ -90,14 +104,17 @@ class _ScannerStarterState extends State<ScannerStarter>
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(left: 20, right: 20, top: 120),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/ty1.png"),
-                  fit: BoxFit.contain,
+            child: FadeTransition(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/ty1.png"),
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
+              opacity: animation,
             ),
           ),
           Positioned(
@@ -111,6 +128,7 @@ class _ScannerStarterState extends State<ScannerStarter>
                   }
                   return Card(
                     elevation: 16,
+                    color: Colors.brown[50],
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(

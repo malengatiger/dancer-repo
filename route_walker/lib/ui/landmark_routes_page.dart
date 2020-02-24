@@ -1,9 +1,9 @@
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:flutter/material.dart';
-import 'package:route_walker/bloc/route_builder_bloc.dart';
 
 class LandmarkRoutesPage extends StatelessWidget {
   final Landmark landmark;
@@ -75,9 +75,8 @@ class LandmarkRoutesPage extends StatelessWidget {
                   left: 12.0, right: 12, top: 4, bottom: 0),
               child: GestureDetector(
                 onTap: () async {
-                  var route =
-                      await routeBuilderBloc.getRouteByIDAndCacheLocally(
-                          landmark.routeDetails.elementAt(index).routeID);
+                  var route = await LocalDBAPI.getRoute(
+                      routeID: landmark.routeDetails.elementAt(index).routeID);
                   Navigator.push(
                       context,
                       SlideRightRoute(
@@ -86,6 +85,7 @@ class LandmarkRoutesPage extends StatelessWidget {
                         hideAppBar: false,
                         landmarkIconColor: RouteMap.colorRed,
                       )));
+                  myDebugPrint("SHould be going to map .....");
                 },
                 child: Card(
                   elevation: 4,
