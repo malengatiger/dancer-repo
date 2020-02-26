@@ -208,10 +208,6 @@ class RouteBuilderBloc {
   }
 
   Future getRoutesByAssociation(String associationID, bool forceRefresh) async {
-    myDebugPrint(
-        '\n### ℹ️  getRoutes: getting association routes 🚨 $associationID  forceRefresh: 🍏 🍎 $forceRefresh 🍏 🍎 ..\n');
-    myDebugPrint(
-        '### ℹ️  getRoutes: ${forceRefresh ? '🍎 🍎 🍎 🍎 REMOTE REFRESH 🍎 🍎 🍎 🍎 ' : '🍏 🍏 🍏 🍏 LOCAL REFRESH, 👌👌👌 Yebo!'} 🍏 🍏 🍏 🍏 ..\n');
     try {
       _busyController.sink.add(true);
       var origin = 'LOCAL';
@@ -223,18 +219,9 @@ class RouteBuilderBloc {
         origin = 'REMOTE';
         await _cacheRoutes();
       }
-      if (_routes.isNotEmpty) {
-        myDebugPrint(
-            '🌿 🌿 🌿 🌿   ${_routes.length} routes from $origin db: 🌿 ');
-        _routes.forEach(((r) {
-          myDebugPrint('🌿 🌿 🌿 🌿  route from $origin db: 🌿  ${r.name}');
-        }));
-      }
-      myDebugPrint(
-          ' 📍📍📍📍 adding ${_routes.length} sorted routes to  📎 model and stream sink ...');
+
       _routes.sort((a, b) => a.name.compareTo(b.name));
       _routeController.sink.add(_routes);
-      myDebugPrint('++++ ✅  routes retrieved: ${_routes.length}\n');
       _busyController.sink.add(false);
     } catch (e) {
       print(e);
@@ -377,7 +364,7 @@ class RouteBuilderBloc {
 
   Future<Landmark> addLandmark(Landmark landmark, RoutePoint point) async {
     myDebugPrint(
-        '### ℹ️   📌 📌 📌 add new landmark ${landmark.landmarkName} : addLandmark and 🍏 update routePoint ..........ℹ️  ℹ️  ℹ️  ');
+        '### ℹ️  📌 📌 📌 add new landmark 🍏 ${landmark.landmarkName} : addLandmark and 🍏 update routePoint ..........ℹ️  ℹ️  ℹ️  ');
     assert(landmark.routeDetails.length == 1);
     Landmark result;
     List<Map> mapList = List();
@@ -476,8 +463,6 @@ class RouteBuilderBloc {
 
   Future<List<Landmark>> findLandmarksNearRoutePoint(
       RoutePoint routePoint, double radiusInKM) async {
-//    myDebugPrint(
-//        '\n\n♻️♻️♻️♻️♻️♻️♻️♻️ calling  LocationFinderBloc to find nearest landmarks ... result goes to _marksNearPointController.stream ... ♻️♻️');
     assert(routePoint != null);
     if (routePoint == null) {
       _marksNearPointController.sink.add(List());
@@ -485,12 +470,19 @@ class RouteBuilderBloc {
           routePoint.toJson(), '\n\n💀 💀 💀 BAD ROUTE POINT 💀 💀 💀 ');
       return List();
     }
-    List<Landmark> list = List();
-    list = await DancerListAPI.findLandmarksByLocation(
-      latitude: routePoint.latitude,
-      longitude: routePoint.longitude,
-      radiusInKM: radiusInKM,
-    );
+
+    List<Landmark> list = await LocalDBAPI.findLandmarksByLocation(
+        latitude: routePoint.latitude,
+        longitude: routePoint.longitude,
+        radiusInKM: radiusInKM);
+    if (list.isEmpty) {
+      list = await DancerListAPI.findLandmarksByLocation(
+        latitude: routePoint.latitude,
+        longitude: routePoint.longitude,
+        radiusInKM: radiusInKM,
+      );
+    }
+
     _marksNearPointController.sink.add(list);
     return list;
   }
@@ -547,35 +539,31 @@ class RouteBuilderBloc {
     assert(route != null);
     assert(landmark != null);
     assert(routePoint != null);
-    myDebugPrint(
-        '.... 🔴 routeBuilderBloc.addRouteToLandmark: adding .... 🔴  calling DancerDataAPI.addRouteToLandmark 🔴 ');
-    prettyPrint(routePoint.toJson(), 'route point 🔆 🔆 🔆 ');
+
+    prettyPrint(
+        routePoint.toJson(), 'addRouteToLandmark: route point 🔆 🔆 🔆 ');
+    prettyPrint(landmark.toJson(),
+        'addRouteToLandmark: LANDMARK - check routeDetails: must be > 1 🔆 🔆 🔆 ');
+    await DancerDataAPI.updateRoutePoint(routePoint: routePoint);
     var m = await DancerDataAPI.addRouteToLandmark(
         routeId: route.routeID,
         landmarkId: landmark.landmarkID,
         routePoint: routePoint);
-    myDebugPrint(
-        '👌 👌 👌 done adding route to landmark ... 👌 calling  getRouteLandmarks  ...');
+
+    await LocalDBAPI.updateLocalLandmark(landmark: m);
 
     await getRouteLandmarks(route);
     return m;
   }
 
   Future<List<Landmark>> getRouteLandmarks(ar.Route route) async {
-    myDebugPrint(
-        '\n\nrouteBuilderBloc ️ℹ️ℹ️ℹ️ℹ️  getRouteLandmarks: getting route landmarks from MongoDB ..........\n');
     var marks = await DancerListAPI.getRouteLandmarks(routeId: route.routeID);
 
-    myDebugPrint(
-        'routeBuilderBloc: 📍 adding model with landmarks to model and stream sink ...');
     _routeLandmarks.clear();
-//    marks.forEach((m) {
-//      DataAPI.filterRouteInfos(m, route);
-//    });
     _routeLandmarks.addAll(marks);
     _routeLandmarksController.sink.add(_routeLandmarks);
     myDebugPrint(
-        'routeBuilderBloc; ✅  route landmarks retrieved: ${_routeLandmarks.length}\n');
+        'routeBuilderBloc; ✅ route landmarks retrieved: ${_routeLandmarks.length}\n');
 
     return _routeLandmarks;
   }
@@ -617,41 +605,6 @@ class RouteBuilderBloc {
         '\n\n️ℹ️ ℹ️ ℹ️ ℹ️   🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
     return _routePoints;
   }
-
-//  Future<ar.Route> getRouteByIDAndCacheLocally(String routeID) async {
-//    assert(routeID != null);
-//    var mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
-//    if (mRoute != null) {
-//      await LocalDBAPI.addRoute(route: mRoute);
-//      if (mRoute.routePoints.isNotEmpty) {
-//        await LocalDBAPI.deleteRoutePoints(routeID);
-//        await LocalDBAPI.addRoutePoints(
-//            routeID: routeID, routePoints: mRoute.routePoints);
-//      }
-//      if (mRoute.rawRoutePoints.isNotEmpty) {
-//        await LocalDBAPI.deleteRawRoutePoints(routeID);
-//        mRoute.rawRoutePoints.forEach((m) async {
-//          await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: m);
-//        });
-//      }
-//    }
-//    List<ar.Route> routes = List();
-//    _routes.forEach((m) {
-//      if (routeID != m.routeID) {
-//        routes.add(m);
-//      }
-//    });
-//    _routes = routes;
-//    _routes.add(mRoute);
-//    _routes.sort((a, b) => a.name.compareTo(b.name));
-//    _routeController.sink.add(_routes);
-//    myDebugPrint(
-//        'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ 👌👌👌 👌👌👌 👌👌👌️  getRouteByIDAndCacheLocally: DONE for  💙 ${mRoute.name}  💙 👌👌👌 👌👌👌  ..........');
-//    //refresh association
-////    var association = await Prefs.getAssociation();
-////    await getRoutesByAssociation(association.associationID, false);
-//    return mRoute;
-//  }
 
   Timer timer;
   int timerDuration = 10;

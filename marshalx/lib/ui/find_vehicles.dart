@@ -16,9 +16,11 @@ class _FindVehiclesState extends State<FindVehicles> {
   List<VehicleLocation> _vehicleLocations = List();
   var _key = GlobalKey<ScaffoldState>();
   bool isBusy = false;
+  MarshalBloc marshalBloc;
   @override
   void initState() {
     super.initState();
+    marshalBloc = MarshalBloc(null);
     _subscribeToBusy();
     _subscribeToError();
     _subscribeToLocationStream();

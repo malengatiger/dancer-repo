@@ -7,6 +7,7 @@ import 'package:aftarobotlibrary4/data/user.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
+import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
@@ -27,9 +28,11 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> implements ScannerListener {
+class _DashboardState extends State<Dashboard>
+    implements ScannerListener, MarshalBlocListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   bool isBusy = false;
+  MarshalBloc marshalBloc;
   User user;
   Landmark landmark;
   List<Vehicle> _vehicles = List();
@@ -43,6 +46,7 @@ class _DashboardState extends State<Dashboard> implements ScannerListener {
   void initState() {
     super.initState();
     myDebugPrint('💜 💜 💜 💜  subscribing to streams ...');
+    marshalBloc = MarshalBloc(this);
     _subscribeToBusy();
     _subscribeToError();
     _listenToDataStreams();
@@ -508,5 +512,14 @@ class _DashboardState extends State<Dashboard> implements ScannerListener {
           scaffoldKey: _key, message: '💙 Passenger scanned 👌 OK  💙');
     }
     return null;
+  }
+
+  List<RouteDistanceEstimation> _routeDistanceEstimations = List();
+  @override
+  onRouteDistanceEstimationsArrived(
+      List<RouteDistanceEstimation> routeDistanceEstimations) {
+    _routeDistanceEstimations = routeDistanceEstimations;
+    //todo - filter older estimations ....
+    setState(() {});
   }
 }

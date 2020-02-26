@@ -21,6 +21,7 @@ class SelectVehicleForDispatch extends StatefulWidget {
 
 class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
+  MarshalBloc marshalBloc;
   List<VehicleArrival> vehicleArrivals = List();
   Landmark landmark;
   bool isBusy = false;
@@ -28,6 +29,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
   @override
   void initState() {
     super.initState();
+    marshalBloc = MarshalBloc(null);
     _subscribeToDispatchedStream();
     _getVehicleArrivals();
   }

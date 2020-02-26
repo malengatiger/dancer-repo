@@ -23,11 +23,13 @@ class Dispatch extends StatefulWidget {
 class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   Landmark landmark;
+  MarshalBloc marshalBloc;
   int number = 0;
 
   @override
   void initState() {
     super.initState();
+    marshalBloc = MarshalBloc(null);
     _getRoutes();
   }
 

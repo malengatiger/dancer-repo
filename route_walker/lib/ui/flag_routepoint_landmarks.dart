@@ -561,6 +561,9 @@ class _LandmarkEditorState extends State<LandmarkEditor>
   List<Landmark> landmarks;
   ar.Route _route;
   String routeID;
+  bool haveFoundLandmarkHere = false;
+  Landmark _landmarkDiscovered;
+  TextEditingController _editingController = TextEditingController();
 
   @override
   void initState() {
@@ -578,8 +581,14 @@ class _LandmarkEditorState extends State<LandmarkEditor>
         widget.routePoint, 0.1);
     landmarks.forEach((m) {
       prettyPrint(m.toJson(),
-          'LANDMARK NEAREST this route point: ${widget.routePoint.index}🔆 🔆 🔆 🔆 ');
+          '_LandmarkEditorState: LANDMARK NEAREST this route point: ${widget.routePoint.index} 🔆 🔆 🔆 🔆 ');
     });
+    if (landmarks.isNotEmpty) {
+      _editingController.text = landmarks.first.landmarkName;
+      landmarkName = landmarks.first.landmarkName;
+      haveFoundLandmarkHere = true;
+      _landmarkDiscovered = landmarks.first;
+    }
     setState(() {});
   }
 
@@ -641,6 +650,48 @@ class _LandmarkEditorState extends State<LandmarkEditor>
   }
 
   Widget _getCard() {
+    if (haveFoundLandmarkHere) {
+      return Card(
+        elevation: 8,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'An existing Landmark has been discovered here',
+                style: Styles.pinkBoldSmall,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                  'This route passes starts or passes through this landmark. Please confirm that.'),
+              SizedBox(
+                height: 40,
+              ),
+              RaisedButton(
+                  color: Colors.pink[400],
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Confirm this Landmark',
+                      style: Styles.whiteSmall,
+                    ),
+                  ),
+                  onPressed: () {
+                    _setAsLandmark(_landmarkDiscovered);
+                  }),
+              SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return Card(
       elevation: 8,
       child: Padding(
@@ -721,6 +772,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     landmark.routeDetails
         .add(RouteInfo(name: widget.route.name, routeID: widget.route.routeID));
 
+    FocusScope.of(context).unfocus();
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key, message: 'Adding new landmark ');
     try {
@@ -744,16 +796,14 @@ class _LandmarkEditorState extends State<LandmarkEditor>
         "Landmark Route Point 🔴 TODO 🔴  - has to be updated on MongoDB");
 
     AppSnackbar.showSnackbarWithProgressIndicator(
-        scaffoldKey: _key, message: 'Setting landmark route');
+        scaffoldKey: _key, message: 'Setting landmark route ...');
     try {
+      widget.routePoint.landmarkID = mark.landmarkID;
+      widget.routePoint.landmarkName = mark.landmarkName;
+
       await routeBuilderBloc.addRouteToLandmark(
           route: widget.route, landmark: mark, routePoint: widget.routePoint);
-      AppSnackbar.showSnackbarWithAction(
-          scaffoldKey: _key,
-          message: 'Route added to Landmark',
-          action: 1,
-          listener: this,
-          actionLabel: 'Done');
+      Navigator.pop(context);
     } catch (e) {
       print(e);
       widget.listener.onError('Failed');

@@ -12,12 +12,14 @@ class ConfirmLandmark extends StatefulWidget {
 class _ConfirmLandmarkState extends State<ConfirmLandmark> {
   List<Landmark> _landmarks = List();
   var _key = GlobalKey<ScaffoldState>();
+  MarshalBloc marshalBloc;
   @override
   initState() {
     super.initState();
     _subscribeToError();
     _subscribeToBusy();
     _getNearestLandmarks();
+    marshalBloc = MarshalBloc(null);
   }
 
   void _subscribeToBusy() {

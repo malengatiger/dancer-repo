@@ -28,8 +28,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-MarshalBloc marshalBloc = MarshalBloc();
-
 class MarshalBloc implements GeofencerListener {
   StreamController<List<CommuterFenceDwellEvent>>
       _commuterDwellEventsController = StreamController.broadcast();
@@ -47,13 +45,14 @@ class MarshalBloc implements GeofencerListener {
       StreamController.broadcast();
   StreamController<List<CommuterRequest>> _commuterRequestsController =
       StreamController.broadcast();
-
   StreamController<List<Landmark>> _landmarksController =
       StreamController.broadcast();
   StreamController<List<Vehicle>> _vehiclesController =
       StreamController.broadcast();
   StreamController<VehicleArrival> _vehicleArrivalDispatchedController =
       StreamController.broadcast();
+  StreamController<List<RouteDistanceEstimation>>
+      _routeDistanceEstimationController = StreamController.broadcast();
 
   StreamController<String> _errorController = StreamController.broadcast();
   StreamController<bool> _busyController = StreamController.broadcast();
@@ -87,6 +86,7 @@ class MarshalBloc implements GeofencerListener {
   User get user => _user;
   Landmark _landmark;
   Landmark get marshalLandmark => _landmark;
+  List<RouteDistanceEstimation> _routeDistanceEstimations = List();
   List<VehicleArrival> _vehicleArrivals = List();
   List<CommuterFenceDwellEvent> _dwellEvents = List();
   List<VehicleDeparture> _vehicleDepartures = List();
@@ -153,7 +153,7 @@ class MarshalBloc implements GeofencerListener {
     await getAssociationRoutes(forceRefresh: forceRefresh);
     _busyController.sink.add(false);
     myDebugPrint(
-        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData:  🔴 🔴 DONE Loading data into streams');
+        '🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData:  🔴 🔴 DONE Loading data into streams');
   }
 
   Future refreshMarshalLandmark(Landmark landmark) async {
@@ -450,6 +450,7 @@ class MarshalBloc implements GeofencerListener {
     _commuterRequestsController.close();
     _vehicleArrivalDispatchedController.close();
     _vehicleLocationController.close();
+    _routeDistanceEstimationController.close();
   }
 
   final FirebaseMessaging fcm = FirebaseMessaging();
@@ -466,7 +467,6 @@ class MarshalBloc implements GeofencerListener {
         .add('${Constants.COMMUTER_FENCE_DWELL_EVENTS}_${landmark.landmarkID}');
     topics
         .add('${Constants.COMMUTER_FENCE_EXIT_EVENTS}_${landmark.landmarkID}');
-
     topics.add('${Constants.COMMUTER_REQUESTS}_${landmark.landmarkID}');
 
     if (landmarksSubscribedMap.containsKey(landmark.landmarkID)) {
@@ -474,8 +474,7 @@ class MarshalBloc implements GeofencerListener {
           '🍏 Landmark ${landmark.landmarkName} has already subscribed to FCM');
     } else {
       await _subscribe(topics, landmark);
-      myDebugPrint(
-          'MarshalBloc:: 🧩 🧩 🧩 ... Subscribed to ${topics.length} FCM topics'
+      myDebugPrint('MarshalBloc:: 🧩 Subscribed to ${topics.length} FCM topics'
           ' for landmark: 🍎 ${landmark.landmarkName} 🍎 ');
     }
 
@@ -488,7 +487,7 @@ class MarshalBloc implements GeofencerListener {
     for (var t in topics) {
       await fcm.subscribeToTopic(t);
       myDebugPrint(
-          'MarshalBloc:... 💜 💜 Subscribed to FCM topic: 🍎  $t ✳️ at ${landmark.landmarkName}');
+          'MarshalBloc: 💜 💜 Subscribed to FCM topic: 🍎  $t ✳️ at ${landmark.landmarkName}');
     }
     landmarksSubscribedMap[landmark.landmarkID] = landmark;
     return;
@@ -540,6 +539,11 @@ class MarshalBloc implements GeofencerListener {
                 "✳️ ✳️ FCM onMessage messageType: 🍎 💛️💛️💛️💛️💛️ COMMUTER_REQUESTS 💛️  arrived, calling _processCommuterRequests 🍎");
             _processCommuterRequests(message);
             break;
+          case Constants.ROUTE_DISTANCE_ESTIMATIONS:
+            myDebugPrint(
+                "✳️ ✳️ FCM onMessage messageType: 🍎 💛️💛️💛️💛️💛️ ROUTE_DISTANCE_ESTIMATIONS 💛️  arrived, calling _processCommuterRequests 🍎");
+            _processRouteDistanceEstimations(message);
+            break;
         }
       },
       onLaunch: (Map<String, dynamic> message) async {
@@ -567,6 +571,16 @@ class MarshalBloc implements GeofencerListener {
       _subscribeToArrivalsFCM(mark);
     }
     return null;
+  }
+
+  void _processRouteDistanceEstimations(Map<String, dynamic> message) {
+    var data = RouteDistanceEstimation.fromJson(message['data']);
+    _routeDistanceEstimations.add(data);
+    _routeDistanceEstimationController.sink.add(_routeDistanceEstimations);
+    if (marshalBlocListener != null) {
+      marshalBlocListener
+          .onRouteDistanceEstimationsArrived(_routeDistanceEstimations);
+    }
   }
 
   void _processCommuterFenceExitEvent(Map<String, dynamic> message) {
@@ -618,7 +632,9 @@ class MarshalBloc implements GeofencerListener {
   final Map<String, Landmark> landmarksSubscribed = Map();
   static const MAX_NUMBER_GEOFENCES = 30;
 
-  MarshalBloc() {
+  MarshalBlocListener marshalBlocListener;
+  MarshalBloc(MarshalBlocListener listener) {
+    marshalBlocListener = listener;
     _init();
   }
 
@@ -648,8 +664,9 @@ class MarshalBloc implements GeofencerListener {
 
   @override
   onDynamicDistanceCalculated(List<RouteDistanceEstimation> estimations) {
-    // TODO: implement onDynamicDistanceCalculated
-    return null;
+    if (marshalBlocListener != null) {
+      marshalBlocListener.onRouteDistanceEstimationsArrived(estimations);
+    }
   }
 
   @override
@@ -693,4 +710,9 @@ class MarshalBloc implements GeofencerListener {
     // TODO: implement onVehicleDeparture
     return null;
   }
+}
+
+abstract class MarshalBlocListener {
+  onRouteDistanceEstimationsArrived(
+      List<RouteDistanceEstimation> routeDistanceEstimations);
 }

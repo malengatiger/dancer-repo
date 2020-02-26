@@ -133,8 +133,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   }
 
   Future _refresh(bool forceRefresh) async {
-    print(
-        '🧩🧩 RouteViewerPage refresh routes and landmarks .................');
     if (association == null) {
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key, message: 'Please select association');
@@ -335,7 +333,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
                                     height: 4,
                                   ),
                                   Text(
-                                    '${user.userType}',
+                                    'Route Builder',
                                     style: Styles.blackSmall,
                                   ),
                                 ],
@@ -444,9 +442,6 @@ class _RouteCardState extends State<RouteCard>
       throw Exception('🍎 🍎 🍎 Route in RouteCard is NULL 🍎');
     } else {
       route = widget.route;
-      myDebugPrint(
-          '\n\n🌿 🌿 🌿 🌿  _RouteCardState: ❤️ 🧡 CHECKING ROUTE points :: 🧩🧩🧩 rawRoutePoints: ${route.rawRoutePoints.length}  '
-          '🧩🧩🧩  routePoints: ${route.routePoints.length} at 🍎 ${route.name} 🌿 🌿 🌿 🌿 ');
     }
     _buildMenuItems();
   }
