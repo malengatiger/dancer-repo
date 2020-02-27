@@ -99,10 +99,9 @@ export class RouteController {
             console.log(req.body);
             try {
                 //TODO - should this go to DB????? or just to messaging?
-                //const estimation: any = new RouteDistanceEstimation (req.body);
-                //estimation.created = new Date().toISOString();
-                // const result = await estimation.save();
-                // log(`result ${result}`);
+                const estimation: any = new RouteDistanceEstimation (req.body);
+                estimation.created = new Date().toISOString();
+                await estimation.save();
                 await Messaging.sendRouteDistanceEstimation(req.body);
                 res.status(200).json({
                     message: `Route Distance Estimation FCM message sent`
@@ -123,13 +122,13 @@ export class RouteController {
             console.log(req.body);
             try {
                 //TODO - should this go to DB????? or just to messaging?
-                //const estimation: any = new RouteDistanceEstimation (req.body);
-                //estimation.created = new Date().toISOString();
-                // const result = await estimation.save();
-                // log(`result ${result}`);
+        
                 const list: any[] = req.body.estimations
                 let cnt = 0;
                 for (const estimate of list) {
+                    const estimation: any = new RouteDistanceEstimation (req.body);
+                    estimation.created = new Date().toISOString();
+                    await estimation.save();
                     await Messaging.sendRouteDistanceEstimation(estimate);
                     cnt++
                 }
