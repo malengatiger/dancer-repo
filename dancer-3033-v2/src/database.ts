@@ -1,6 +1,6 @@
 import mongoose, { Connection } from "mongoose";
 import { Db } from "mongodb";
-import log from './log';
+import {log} from './log';
 import MongoListeners from './helpers/listeners';
 import Messaging from "./helpers/messaging";
 import MongooseDebugSetting from './helpers/mongoose_debug'

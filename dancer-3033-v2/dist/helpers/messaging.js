@@ -21,24 +21,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const admin = __importStar(require("firebase-admin"));
 const landmark_1 = __importDefault(require("../models/landmark"));
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const constants_1 = __importDefault(require("./constants"));
 const StringBuffer = require("stringbuffer");
 // create a string buffer that simply concatenates strings
-log_1.default(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
+log_1.log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
 const ssa1 = JSON.parse(sa1);
-log_1.default(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
+log_1.log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
 exports.appTo = admin.initializeApp({
     credential: admin.credential.cert(ssa1),
     databaseURL: "https://dancer26983.firebaseio.com",
 }, "appTo");
-log_1.default(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
+log_1.log(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
 const fba = exports.appTo.messaging();
-log_1.default(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
+log_1.log(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
 class Messaging {
     static init() {
-        log_1.default(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);
+        log_1.log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);
+    }
+    static sendVehicleCommuterNearby(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const options = {
+                priority: "high",
+                timeToLive: 60 * 60,
+            };
+            const payload = {
+                notification: {
+                    title: "Commuter Nearby",
+                    body: data.date,
+                },
+                data: {
+                    commuterNearby: JSON.stringify(data)
+                },
+            };
+            const topic = constants_1.default.VEHICLE_COMMUTER_NEARBY + '_' + data.vehicleID;
+            const result = yield fba.sendToTopic(topic, payload, options);
+            log_1.log(`😍 sendVehicleCommuterNearby: FCM message sent: 😍 ${data.vehicleReg} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+        });
     }
     static sendRouteDistanceEstimation(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,7 +77,7 @@ class Messaging {
             };
             const topic = constants_1.default.ROUTE_DISTANCE_ESTIMATION + '_' + data.routeID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendRouteDistanceEstimation: FCM message sent: 😍 ${data.vehicle.vehicleReg} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendRouteDistanceEstimation: FCM message sent: 😍 ${data.vehicle.vehicleReg} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendVehicleArrival(data) {
@@ -83,7 +103,7 @@ class Messaging {
             };
             const topic = constants_1.default.VEHICLE_ARRIVALS + '_' + data.landmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendVehicleArrival: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendVehicleArrival: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             console.log(payload.data);
         });
     }
@@ -107,7 +127,7 @@ class Messaging {
             };
             const topic = constants_1.default.ROUTES;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendRoute: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendRoute: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             fba;
         });
     }
@@ -132,7 +152,7 @@ class Messaging {
             };
             const topic = constants_1.default.COMMUTER_FENCE_DWELL_EVENTS + '_' + data.landmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendFenceDwellEvent: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendFenceDwellEvent: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             fba;
         });
     }
@@ -157,7 +177,7 @@ class Messaging {
             };
             const topic = constants_1.default.COMMUTER_FENCE_EXIT_EVENTS + '_' + data.landmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendFenceExitEvent: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendFenceExitEvent: FCM message sent: 😍 ${data.name} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             fba;
         });
     }
@@ -181,7 +201,7 @@ class Messaging {
             };
             const topic = constants_1.default.LANDMARKS;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendLandmark: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendLandmark: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendVehicleDeparture(data) {
@@ -207,7 +227,7 @@ class Messaging {
             };
             const topic = constants_1.default.VEHICLE_DEPARTURES + '_' + data.landmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendVehicleDeparture: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendVehicleDeparture: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendCommuterPickupLandmark(data) {
@@ -238,7 +258,7 @@ class Messaging {
             };
             const topic = constants_1.default.COMMUTER_PICKUP_LANDMARKS + '_' + data.fromLandmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendCommuterRequest(data) {
@@ -278,7 +298,7 @@ class Messaging {
             console.log(payload);
             const topic = constants_1.default.COMMUTER_REQUESTS + '_' + data.fromLandmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterRequest: FCM message sent: 😍 ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendCommuterRequest: FCM message sent: 😍 ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendPayment(data) {
@@ -314,17 +334,17 @@ class Messaging {
             if (data.driverID) {
                 const topic = constants_1.default.PAYMENTS + '_' + data.driverID;
                 const result = yield fba.sendToTopic(topic, payload, options);
-                log_1.default(`😍 sendPayment: FCM message sent to Driver: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+                log_1.log(`😍 sendPayment: FCM message sent to Driver: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             }
             if (data.ownerID) {
                 const topic = constants_1.default.PAYMENTS + '_' + data.ownerID;
                 const result = yield fba.sendToTopic(topic, payload, options);
-                log_1.default(`😍 sendPayment: FCM message sent to Owner: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+                log_1.log(`😍 sendPayment: FCM message sent to Owner: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             }
             if (data.marshalID) {
                 const topic = constants_1.default.PAYMENTS + '_' + data.marshalID;
                 const result = yield fba.sendToTopic(topic, payload, options);
-                log_1.default(`😍 sendPayment: FCM message sent to Marshal: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+                log_1.log(`😍 sendPayment: FCM message sent to Marshal: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
             }
         });
     }
@@ -351,11 +371,11 @@ class Messaging {
                 },
             };
             const body = data.fullDocument;
-            log_1.default(`userID: ${data.userID}`);
-            log_1.default(body);
+            log_1.log(`userID: ${data.userID}`);
+            log_1.log(body);
             const topic = constants_1.default.COMMUTER_ARRIVAL_LANDMARKS + '_' + data.fromLandmarkID;
             const result = yield fba.sendToTopic(topic, payload, options);
-            log_1.default(`😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendDispatchRecord(data) {
@@ -390,13 +410,13 @@ class Messaging {
             const result = yield landmark_1.default.find({
                 'routeDetails.routeID': data.routeID
             });
-            log_1.default(`☘️☘️☘️send dispatch record to all ${result.length} landmarks in route: 🍎${data.routeID} 🍎 ${data.routeName}`);
+            log_1.log(`☘️☘️☘️send dispatch record to all ${result.length} landmarks in route: 🍎${data.routeID} 🍎 ${data.routeName}`);
             let cnt = 0;
             for (const m of result) {
                 const topic = constants_1.default.DISPATCH_RECORDS + '_' + m.landmarkID;
                 const result = yield fba.sendToTopic(topic, payload, options);
                 cnt++;
-                log_1.default(`😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${data.landmarkID} ${data.created} topic: 🍎 ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 🍎`);
+                log_1.log(`😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${data.landmarkID} ${data.created} topic: 🍎 ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎 🍎`);
             }
         });
     }
@@ -421,7 +441,7 @@ class Messaging {
             };
             const topic1 = constants_1.default.USERS;
             const result = yield fba.sendToTopic(topic1, payload, options);
-            log_1.default(`😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
+            log_1.log(`😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${data.lastName} 👽👽👽 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`);
         });
     }
     static sendCommuterPanic(data) {
@@ -430,7 +450,7 @@ class Messaging {
                 priority: "high",
                 timeToLive: 60 * 60,
             };
-            log_1.default('Sending commute panic message');
+            log_1.log('Sending commute panic message');
             console.log(data.commuterPanicID);
             const longitude = '' + data.position.coordinates[0];
             const latitude = '' + data.position.coordinates[1];
@@ -446,7 +466,7 @@ class Messaging {
                     },
                 },
             });
-            log_1.default(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
+            log_1.log(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
             // Define a condition which will send to devices which are subscribed
             // to either the Google stock or the tech industry topics.
             const payload = {

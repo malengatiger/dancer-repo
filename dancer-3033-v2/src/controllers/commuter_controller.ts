@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import CommuterRequest from "../models/commuter_request";
-import log from '../log';
+import {log} from '../log';
 import moment from 'moment';
 import CommuterArrivalLandmark from "../models/commuter_arrival_landmark";
 import CommuterPickupLandmark from "../models/commuter_pickup_landmark";
@@ -20,6 +20,7 @@ import CommuterFenceEvent from "../models/commuter_fence_dwell_event";
 import CommuterFenceDwellEvent from "../models/commuter_fence_dwell_event";
 import CommuterFenceExitEvent from "../models/commuter_fence_exit_event";
 import Payment from "../models/payment";
+import CommuterVehicleNearby from "../models/commuter_vehicle_nearby";
 
 export class CommuterController {
 
@@ -630,6 +631,24 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addCommuterFenceExitEvent failed'
+          }
+        )
+      }
+    });
+    app.route("/addCommuterVehicleNearby").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addCommuterVehicleNearby requested `;
+      console.log(msg);
+      console.log(req.body);
+      try {
+        const event: any = new CommuterVehicleNearby(req.body);
+        event.created = new Date().toISOString();
+        const result = await event.save();
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addCommuterVehicleNearby failed'
           }
         )
       }

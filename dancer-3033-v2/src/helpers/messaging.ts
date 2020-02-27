@@ -1,7 +1,7 @@
 
 import * as admin from "firebase-admin";
 import Landmark from "../models/landmark";
-import log from '../log';
+import {log} from '../log';
 import Constants from "./constants";
 const StringBuffer = require("stringbuffer");
 
@@ -27,6 +27,28 @@ log(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
 class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);
+    }
+    public static async sendVehicleCommuterNearby(data: any, ): Promise<any> {
+        const options: any = {
+            priority: "high",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "Commuter Nearby",
+                body: data.date,
+            },
+            data: {
+                commuterNearby: JSON.stringify(data)
+            },
+        };
+        const topic = Constants.VEHICLE_COMMUTER_NEARBY + '_' + data.vehicleID;
+        const result = await fba.sendToTopic(topic, payload, options);
+        log(
+            `😍 sendVehicleCommuterNearby: FCM message sent: 😍 ${
+            data.vehicleReg
+            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+        );
     }
     public static async sendRouteDistanceEstimation(data: any, ): Promise<any> {
         const options: any = {

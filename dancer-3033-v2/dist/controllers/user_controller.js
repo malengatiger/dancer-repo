@@ -13,17 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = __importDefault(require("crypto"));
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const user_1 = __importDefault(require("../models/user"));
 const uuid = require("uuid");
 const notification_1 = __importDefault(require("../models/notification"));
 const userTypes = ['Staff', 'Owner', 'Administrator', 'Driver', 'Marshal', 'Patroller'];
 class UserController {
     routes(app) {
-        log_1.default(`🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
+        log_1.log(`🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
         /////////
         app.route("/getUsers").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getUsers requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getUsers requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const users = yield user_1.default.find();
@@ -37,13 +37,13 @@ class UserController {
             }
         }));
         app.route("/findUserByEmail").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /findUserByEmail requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /findUserByEmail requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const user = yield user_1.default.findOne({
                     email: req.body.email,
                 });
-                log_1.default(user);
+                log_1.log(user);
                 res.status(200).json(user);
             }
             catch (err) {
@@ -54,7 +54,7 @@ class UserController {
             }
         }));
         app.route("/getUsersByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getUsersByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getUsersByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const users = yield user_1.default.find({
@@ -89,7 +89,7 @@ class UserController {
             }
         }));
         app.route("/userLogin").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /userLogin requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /userLogin requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const { email, password } = req.body;
@@ -117,7 +117,7 @@ class UserController {
             }
         }));
         app.route("/addUser").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const user = new user_1.default(req.body);
@@ -140,7 +140,7 @@ class UserController {
             }
         }));
         app.route("/updateUser").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /updateUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /updateUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const userToUpdate = req.body;

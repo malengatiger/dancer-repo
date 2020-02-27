@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const log_1 = __importDefault(require("./log"));
+const log_1 = require("./log");
 const listeners_1 = __importDefault(require("./helpers/listeners"));
 const messaging_1 = __importDefault(require("./helpers/messaging"));
 const mongoose_debug_1 = __importDefault(require("./helpers/mongoose_debug"));
@@ -28,9 +28,9 @@ mongoose_1.default
     useNewUrlParser: true,
 })
     .then((client) => {
-    log_1.default(`\n🔆🔆🔆🔆🔆🔆  Mongo connected ... 🔆🔆🔆  💛  ${new Date()}  💛 💛`);
-    log_1.default(`\n🍎🍎  ${appName} :: database:  ☘️  Mongo Client version: 💙${client.version} 💙 model names: ${JSON.stringify(client.modelNames())}  ☘️  is OK   🍎🍎 `);
-    log_1.default(`🍎🍎🍎  MongoDB config ...${JSON.stringify(mongoose_1.default.connection.config)}`);
+    log_1.log(`\n🔆🔆🔆🔆🔆🔆  Mongo connected ... 🔆🔆🔆  💛  ${new Date()}  💛 💛`);
+    log_1.log(`\n🍎🍎  ${appName} :: database:  ☘️  Mongo Client version: 💙${client.version} 💙 model names: ${JSON.stringify(client.modelNames())}  ☘️  is OK   🍎🍎 `);
+    log_1.log(`🍎🍎🍎  MongoDB config ...${JSON.stringify(mongoose_1.default.connection.config)}`);
     mongoose_debug_1.default.setDebug();
     messaging_1.default.init();
     listeners_1.default.listen(client);
@@ -44,7 +44,7 @@ class Database {
     static get() {
         return __awaiter(this, void 0, void 0, function* () {
             const db = mongoose_1.default.connection.db;
-            log_1.default(`Database returned: ${db.databaseName}`);
+            log_1.log(`Database returned: ${db.databaseName}`);
             return db;
         });
     }

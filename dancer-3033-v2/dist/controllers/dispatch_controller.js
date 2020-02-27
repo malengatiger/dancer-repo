@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dispatch_record_1 = __importDefault(require("../models/dispatch_record"));
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const moment_1 = __importDefault(require("moment"));
 const uuid = require("uuid");
 const marshal_fence_dwell_event_1 = __importDefault(require("../models/marshal_fence_dwell_event"));
@@ -42,7 +42,7 @@ class DispatchController {
         }));
         app.route("/findDispatchRecordsByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 findDispatchRecordsByLocation requested `;
-            log_1.default(msg);
+            log_1.log(msg);
             try {
                 const now = new Date().getTime();
                 const minutes = parseInt(req.body.minutes);
@@ -64,13 +64,13 @@ class DispatchController {
                 });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
-                log_1.default(result);
+                log_1.log(result);
                 res.status(200).json(result);
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 console.log(err);
                 res.status(400).json({
                     error: err,
@@ -154,7 +154,7 @@ class DispatchController {
                 event.created = new Date().toISOString();
                 event.marshalFenceEventID = uuid();
                 const result = yield event.save();
-                log_1.default(result);
+                log_1.log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -172,7 +172,7 @@ class DispatchController {
                 event.created = new Date().toISOString();
                 event.marshalFenceEventID = uuid();
                 const result = yield event.save();
-                log_1.default(result);
+                log_1.log(result);
                 res.status(200).json(result);
             }
             catch (err) {

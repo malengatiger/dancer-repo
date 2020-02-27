@@ -14,16 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const landmark_1 = __importDefault(require("../models/landmark"));
 const database_1 = __importDefault(require("../database"));
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const route_1 = __importDefault(require("../models/route"));
 const uuid = require("uuid");
 const mongoose_1 = require("mongoose");
 class LandmarkController {
     routes(app) {
-        log_1.default(`🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
+        log_1.log(`🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
         /////////
         app.route("/addRouteToLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addRouteToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addRouteToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -55,13 +55,13 @@ class LandmarkController {
                     name: route.name,
                 });
                 const result = yield landmark.save();
-                log_1.default(`🔆🔆🔆 💙 landmark ${landmark.landmarkName} updated. Will update route point ....`);
+                log_1.log(`🔆🔆🔆 💙 landmark ${landmark.landmarkName} updated. Will update route point ....`);
                 // TODO - update routePount
                 const mRes = yield route_1.default.updateOne({ "_id": new mongoose_1.Types.ObjectId(route.id), "routePoints.index": routePoint.index }, { $set: { "routePoints.$.landmarkID": landmark.landmarkID, "routePoints.$.landmarkName": landmark.landmarkName } });
-                log_1.default(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 `);
+                log_1.log(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 `);
                 console.log(mRes);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -73,7 +73,7 @@ class LandmarkController {
             }
         }));
         app.route("/findLandmarksByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /findLandmarksByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /findLandmarksByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -93,7 +93,7 @@ class LandmarkController {
                 });
                 //// log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -104,16 +104,16 @@ class LandmarkController {
             }
         }));
         app.route("/getLandmarksByRoute").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getLandmarksByRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getLandmarksByRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
-                log_1.default(`💦 💦 💦 💦 💦 💦 routeID: ☘️☘️ ${req.body.routeID} ☘️☘️`);
+                log_1.log(`💦 💦 💦 💦 💦 💦 routeID: ☘️☘️ ${req.body.routeID} ☘️☘️`);
                 const result = yield landmark_1.default.find({
                     'routeDetails.routeID': req.body.routeID
                 });
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 getLandmarksByRoute: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`);
+                log_1.log(`🔆🔆🔆 getLandmarksByRoute: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -124,13 +124,13 @@ class LandmarkController {
             }
         }));
         app.route("/getLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
                 const result = yield landmark_1.default.find();
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 getLandmarks: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`);
+                log_1.log(`🔆🔆🔆 getLandmarks: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -141,42 +141,14 @@ class LandmarkController {
             }
         }));
         app.route("/addLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const landmark = new landmark_1.default(req.body);
                 landmark.landmarkID = uuid();
                 landmark.created = new Date().toISOString();
-                // //update route point in route
-                // const routeID = landmark.routeDetails[0].routeID;
-                // const latitude = landmark.latitude
-                // const longitude = landmark.longitude
-                // const route: any = await Route.findOne({ routeID: routeID })
-                // if (!route) {
-                //     throw new Error('Route in routeDetails does not exist')
-                // }
-                // console.log(route)
                 const result = yield landmark.save();
-                log_1.default(`🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️landmark saved ${landmark.landmarkName}`);
-                // const mList: any[]  = []
-                // if (route) {
-                //     route.routePoints.forEach((point: any) => {
-                //         if (point.position.coordinates[1] == latitude && point.position.coordinates[0] == longitude) {
-                //             point.landmarkID = landmark.landmarkID
-                //             point.landmarkName = landmark.landmarkName
-                //             mList.push(point);
-                //             log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route point updated ${point}`)
-                //         } else {
-                //             mList.push(point);
-                //         }
-                //     })
-                // }
-                // route.routePoints = []
-                // await route.save();
-                // log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route points to be refreshed ${mList.length}`)
-                // route.routePoints = mList;
-                // await route.save();
-                // log(`️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️ route ${route.name} updated with landmark route point`)
+                log_1.log(`🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️landmark saved ${landmark.landmarkName}`);
                 res.status(200).json(result);
             }
             catch (err) {

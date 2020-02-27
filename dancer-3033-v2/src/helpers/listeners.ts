@@ -1,7 +1,7 @@
 
 import Constants from '../helpers/constants';
 import Messaging from './messaging';
-import log from '../log';
+import {log} from '../log';
 
 
 class MongoListeners {
@@ -12,7 +12,6 @@ class MongoListeners {
     );
 
     const users = client.connection.collection(Constants.USERS);
-    const userFenceEvents = client.connection.collection(Constants.COMMUTER_FENCE_EVENTS);
     const associations = client.connection.collection(Constants.ASSOCIATIONS);
     const routes = client.connection.collection(Constants.ROUTES);
     const landmarks = client.connection.collection(Constants.LANDMARKS);
@@ -21,6 +20,7 @@ class MongoListeners {
 
     const vehicleArrivals = client.connection.collection(Constants.VEHICLE_ARRIVALS);
     const vehicleDepartures = client.connection.collection(Constants.VEHICLE_DEPARTURES);
+    const vehicleCommuterNearby = client.connection.collection(Constants.VEHICLE_COMMUTER_NEARBY);
 
     const commuterPickups = client.connection.collection(Constants.COMMUTER_PICKUP_LANDMARKS);
     const commuterArrivalLandmarks = client.connection.collection(Constants.COMMUTER_ARRIVAL_LANDMARKS);
@@ -48,8 +48,16 @@ class MongoListeners {
 
     const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
     const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
+    const vehicleCommuterNearbyStream = vehicleCommuterNearby.watch({ fullDocument: 'updateLookup' });
    
 
+    vehicleCommuterNearbyStream.on("change", (event: any) => {
+      log(
+        `\n🔆🔆🔆🔆   🍎  vehicleCommuterNearbyStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+      );
+      log(event);
+      Messaging.sendVehicleCommuterNearby(event.fullDocument);
+    });
     dwellStream.on("change", (event: any) => {
       log(
         `\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,

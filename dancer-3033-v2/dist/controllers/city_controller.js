@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const city_1 = __importDefault(require("../models/city"));
 const country_1 = __importDefault(require("../models/country"));
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const v1_1 = __importDefault(require("uuid/v1"));
 class CityController {
     routes(app) {
@@ -57,7 +57,7 @@ class CityController {
         });
         app.route("/findCitiesByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 findCitiesByLocation requested `;
-            log_1.default(msg);
+            log_1.log(msg);
             try {
                 const now = new Date().getTime();
                 const latitude = parseFloat(req.body.latitude);
@@ -76,7 +76,7 @@ class CityController {
                 });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -88,13 +88,13 @@ class CityController {
         }));
         app.route("/getCitiesByCountry").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 getCitiesByCountry requested `;
-            log_1.default(msg);
+            log_1.log(msg);
             try {
                 const now = new Date().getTime();
                 const result = yield city_1.default.find({ countryID: req.body.countryID });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -106,13 +106,13 @@ class CityController {
         }));
         app.route("/getCitiesByProvinceName").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 getCitiesByProvinceName requested `;
-            log_1.default(msg);
+            log_1.log(msg);
             try {
                 const now = new Date().getTime();
                 const result = yield city_1.default.find({ provinceName: req.body.provinceName });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -124,13 +124,13 @@ class CityController {
         }));
         app.route("/getCountries").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 getCountries requested `;
-            log_1.default(msg);
+            log_1.log(msg);
             try {
                 const now = new Date().getTime();
                 const result = yield country_1.default.find();
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
             }
             catch (err) {

@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const commuter_request_1 = __importDefault(require("../models/commuter_request"));
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const moment_1 = __importDefault(require("moment"));
 const commuter_arrival_landmark_1 = __importDefault(require("../models/commuter_arrival_landmark"));
 const commuter_pickup_landmark_1 = __importDefault(require("../models/commuter_pickup_landmark"));
@@ -31,6 +31,7 @@ const commuter_incentive_1 = __importDefault(require("../models/commuter_incenti
 const commuter_fence_dwell_event_1 = __importDefault(require("../models/commuter_fence_dwell_event"));
 const commuter_fence_exit_event_1 = __importDefault(require("../models/commuter_fence_exit_event"));
 const payment_1 = __importDefault(require("../models/payment"));
+const commuter_vehicle_nearby_1 = __importDefault(require("../models/commuter_vehicle_nearby"));
 class CommuterController {
     routes(app) {
         console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -82,7 +83,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 updateCommuterRequestScanned failed'
@@ -100,7 +101,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addPayment failed'
@@ -186,7 +187,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 res.status(400).json({
                     error: JSON.stringify(err),
                     message: ' 🍎🍎🍎🍎 addCommuterArrivalLandmark failed'
@@ -235,7 +236,7 @@ class CommuterController {
         app.route("/getCommuterArrivalLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalLandmarks requested `;
             console.log(msg);
-            log_1.default(req.body);
+            log_1.log(req.body);
             try {
                 const minutes = parseInt(req.body.minutes);
                 const landmarkID = req.body.landmarkID;
@@ -246,10 +247,10 @@ class CommuterController {
                 });
                 // log(result);
                 res.status(200).json(result);
-                log_1.default(`🍎 getCommuterArrivalLandmarks: found : 🍎 ${result.length} 🍎`);
+                log_1.log(`🍎 getCommuterArrivalLandmarks: found : 🍎 ${result.length} 🍎`);
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterArrivalLandmarks failed'
@@ -299,7 +300,7 @@ class CommuterController {
         app.route("/addCommuterStartingLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
             console.log(msg);
-            log_1.default(req.body);
+            log_1.log(req.body);
             try {
                 const c = new commuter_starting_landmark_1.default(req.body);
                 c.commuterStartingLandmarkID = v1_1.default();
@@ -311,7 +312,7 @@ class CommuterController {
                 });
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addCommuterStartingLandmark failed'
@@ -522,7 +523,7 @@ class CommuterController {
                 panic.updated = new Date().toISOString();
                 panic.commuterPanicID = v1_1.default();
                 const result = yield panic.save();
-                log_1.default(result);
+                log_1.log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -540,7 +541,7 @@ class CommuterController {
                 event.created = new Date().toISOString();
                 event.commuterFenceEventID = v1_1.default();
                 const result = yield event.save();
-                log_1.default(result);
+                log_1.log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -558,13 +559,30 @@ class CommuterController {
                 event.created = new Date().toISOString();
                 event.commuterFenceEventID = v1_1.default();
                 const result = yield event.save();
-                log_1.default(result);
+                log_1.log(result);
                 res.status(200).json(result);
             }
             catch (err) {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addCommuterFenceExitEvent failed'
+                });
+            }
+        }));
+        app.route("/addCommuterVehicleNearby").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addCommuterVehicleNearby requested `;
+            console.log(msg);
+            console.log(req.body);
+            try {
+                const event = new commuter_vehicle_nearby_1.default(req.body);
+                event.created = new Date().toISOString();
+                const result = yield event.save();
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addCommuterVehicleNearby failed'
                 });
             }
         }));
@@ -725,7 +743,7 @@ class CommuterController {
                 res.status(200).json(result);
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterRequestsByFromLandmark failed'

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Route from "../models/route";
 import db from '../database';
-import log from '../log';
+import {log} from '../log';
 import Association from "../models/association";
 import uuid = require("uuid");
 import Database from '../database';

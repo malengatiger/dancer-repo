@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const bodyParser = __importStar(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
-const log_1 = __importDefault(require("./log"));
+const log_1 = require("./log");
 const assoc_controller_1 = __importDefault(require("./controllers/assoc_controller"));
 const route_controller_1 = __importDefault(require("./controllers/route_controller"));
 const app_controller_1 = require("./controllers/app_controller");
@@ -39,7 +39,7 @@ class AftaRobotApp {
         this.dispatchController = new dispatch_controller_1.DispatchController();
         this.cityController = new city_controller_1.CityController();
         this.bgController = new bg_controller_1.BGController();
-        log_1.default(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
+        log_1.log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
         this.app = app_1.app;
         this.port = port;
         this.initializeMiddleware();
@@ -60,7 +60,7 @@ class AftaRobotApp {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors_1.default());
-        log_1.default(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛\n\n`);
+        log_1.log(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛\n\n`);
     }
 }
 exports.default = AftaRobotApp;

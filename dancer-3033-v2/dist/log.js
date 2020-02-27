@@ -1,8 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const chalk = require("chalk");
 function log(msg) {
-    // this function can be accessed from outside the module
     console.log(msg);
 }
-exports.default = log;
+exports.log = log;
+function logBlue(msg) {
+    console.log(chalk.blue(msg));
+}
+exports.logBlue = logBlue;
+function logGreen(msg) {
+    console.log(chalk.green(msg));
+}
+exports.logGreen = logGreen;
 //# sourceMappingURL=log.js.map

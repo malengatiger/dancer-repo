@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import City from "../models/city";
 import Country from "../models/country";
-import log from '../log';
+import {log} from '../log';
 import uuid from 'uuid/v1';
 
 export class CityController {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import uuid from 'uuid/v1';
-import log from '../log';
 import Association from "../models/association";
+import { log } from "../log";
 export class AssociationController {
     public routes(app: any): void {
         log(

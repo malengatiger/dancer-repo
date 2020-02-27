@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const vehicle_1 = __importDefault(require("../models/vehicle"));
 const vehicle_location_1 = __importDefault(require("../models/vehicle_location"));
 const vehicle_arrival_1 = __importDefault(require("../models/vehicle_arrival"));
@@ -21,11 +21,29 @@ const moment_1 = __importDefault(require("moment"));
 const vehicle_type_1 = __importDefault(require("../models/vehicle_type"));
 const uuid = require("uuid");
 const vehicle_route_assignment_1 = __importDefault(require("../models/vehicle_route_assignment"));
+const vehicle_commuter_nearby_1 = __importDefault(require("../models/vehicle_commuter_nearby"));
 class VehicleController {
     routes(app) {
         console.log(`🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`);
+        app.route("/addVehicleCommuterNearby").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 addVehicleCommuterNearby requested `;
+            console.log(msg);
+            console.log(req.body);
+            try {
+                const event = new vehicle_commuter_nearby_1.default(req.body);
+                event.created = new Date().toISOString();
+                const result = yield event.save();
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 addVehicleCommuterNearby failed'
+                });
+            }
+        }));
         app.route("/findVehiclesByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /findVehiclesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /findVehiclesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -34,7 +52,7 @@ class VehicleController {
                 const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
                 const minutes = parseInt(req.body.minutes);
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
-                log_1.default(`🔆🔆🔆 cutoff time: 💙 ${cutOff} 💙`);
+                log_1.log(`🔆🔆🔆 cutoff time: 💙 ${cutOff} 💙`);
                 const result = yield vehicle_location_1.default.find({
                     created: { $gt: cutOff },
                     position: {
@@ -48,11 +66,11 @@ class VehicleController {
                     },
                 });
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. found 💙 ${result.length}`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for findVehiclesByLocation query. found 💙 ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {
-                log_1.default(err);
+                log_1.log(err);
                 res.status(400).json({
                     error: err.message,
                     message: ' 🍎🍎🍎🍎 findVehiclesByLocation failed'
@@ -60,7 +78,7 @@ class VehicleController {
             }
         }));
         app.route("/findVehicleArrivalsByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /findVehicleArrivalsByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /findVehicleArrivalsByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -83,7 +101,7 @@ class VehicleController {
                 });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -94,7 +112,7 @@ class VehicleController {
             }
         }));
         app.route("/getVehicleArrivalsByLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getVehicleArrivalsByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getVehicleArrivalsByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -103,7 +121,7 @@ class VehicleController {
                 const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
                 const result = yield vehicle_arrival_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -114,7 +132,7 @@ class VehicleController {
             }
         }));
         app.route("/getVehicleArrivalsByVehicle").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getVehicleArrivalsByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getVehicleArrivalsByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -124,7 +142,7 @@ class VehicleController {
                 const result = yield vehicle_arrival_1.default.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -135,7 +153,7 @@ class VehicleController {
             }
         }));
         app.route("/getVehicleDeparturesByVehicle").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getVehicleDeparturesByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getVehicleDeparturesByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -145,7 +163,7 @@ class VehicleController {
                 const result = yield vehicle_departure_1.default.find({ vehicleID: vehicleID, created: { $gt: cutOff } });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. departures found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. departures found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -156,7 +174,7 @@ class VehicleController {
             }
         }));
         app.route("/getVehicleDeparturesByLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getVehicleDeparturesByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getVehicleDeparturesByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -166,7 +184,7 @@ class VehicleController {
                 const result = yield vehicle_departure_1.default.find({ landmarkID: landmarkID, created: { $gt: cutOff } });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -177,7 +195,7 @@ class VehicleController {
             }
         }));
         app.route("/findVehicleDeparturesByLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /findVehicleDeparturesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /findVehicleDeparturesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -200,7 +218,7 @@ class VehicleController {
                 });
                 // log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -402,7 +420,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_type_1.default.find();
-                log_1.default(`🌽🌽🌽 getVehicleTypes  found: ${result.length}`);
+                log_1.log(`🌽🌽🌽 getVehicleTypes  found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -417,7 +435,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_1.default.find();
-                log_1.default(`🌽🌽🌽 getVehicles  found: ${result.length}`);
+                log_1.log(`🌽🌽🌽 getVehicles  found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -432,7 +450,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_1.default.find({ ownerID: req.body.ownerID });
-                log_1.default(`🌽🌽🌽 getVehiclesByOwner vehicles found: ${result.length}`);
+                log_1.log(`🌽🌽🌽 getVehiclesByOwner vehicles found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -447,7 +465,7 @@ class VehicleController {
             console.log(msg);
             try {
                 const result = yield vehicle_1.default.find({ associationID: req.body.associationID });
-                log_1.default(`🌽🌽🌽 getVehiclesByAssociation vehicles found: ${result.length}`);
+                log_1.log(`🌽🌽🌽 getVehiclesByAssociation vehicles found: ${result.length}`);
                 res.status(200).json(result);
             }
             catch (err) {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import crypto from 'crypto'
 import db from '../database';
-import log from '../log';
+import {log} from '../log';
 import User, { IUser } from "../models/user";
 import uuid = require("uuid");
 import Notification from "../models/notification";

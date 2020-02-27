@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import express = require("express");
-import mlog from "../log"
 import { appTo } from "../helpers/messaging";
-
+import {log } from "../log";
 export class BGController {
 
   public routes(app: express.Application): void {
@@ -11,14 +10,14 @@ export class BGController {
     );
     app.route("/locations").post((req: Request, res: Response) => {
       const msg = `🍏 BGController/locations: Adding background location: 💙💙💙💙💙💙 ${req.body}`;
-      mlog(msg);
+      log(msg);
       try {
         if (req.body) {
           let firestore = appTo.firestore()
           firestore.collection('locations').add(req.body)
-          mlog('🍏 Background location added to  😍 Firestore')
+          log('🍏 Background location added to  😍 Firestore')
         } else {
-          mlog(' 😍 😍 😍 Background location is null. 🥦🥦 ignore! ')
+          log(' 😍 😍 😍 Background location is null. 🥦🥦 ignore! ')
         }
        
       } catch (e) {
@@ -30,14 +29,14 @@ export class BGController {
     });
     app.route("/geofences").post((req: Request, res: Response) => {
       const msg = `🍎  BGController/geofences: Adding geofence action: 💙💙💙💙💙💙 ${req.body}`;
-      mlog(msg);
+      log(msg);
       try {
         if (req.body) {
           let firestore = appTo.firestore()
           firestore.collection('geofences').add(req.body)
-          mlog('🍎  Background geofence added to  😍 Firestore')
+          log('🍎  Background geofence added to  😍 Firestore')
         } else {
-          mlog(' 😍 😍 😍 Background location is null. 🥦🥦 ignore! ')
+          log(' 😍 😍 😍 Background location is null. 🥦🥦 ignore! ')
         }
        
       } catch (e) {
@@ -49,14 +48,14 @@ export class BGController {
     });
     app.route("/heartbeats").post((req: Request, res: Response) => {
       const msg = `🧡 BGController/heartbeats: Adding heartbeat : 💙💙💙💙💙💙 ${req.body}`;
-      mlog(msg);
+      log(msg);
       try {
         if (req.body) {
           let firestore = appTo.firestore()
           firestore.collection('heartbeats').add(req.body)
-          mlog('🧡 Background heartbeat added to  😍 Firestore')
+          log('🧡 Background heartbeat added to  😍 Firestore')
         } else {
-          mlog(' 😍 😍 😍 Background heartbeat is null. 🥦🥦 ignore! ')
+          log(' 😍 😍 😍 Background heartbeat is null. 🥦🥦 ignore! ')
         }
        
       } catch (e) {
@@ -68,14 +67,14 @@ export class BGController {
     });
     app.route("/activityChanges").post((req: Request, res: Response) => {
       const msg = `🧡 BGController/activityChanges: Adding activityChanges : 💙💙💙💙💙💙 ${req.body}`;
-      mlog(msg);
+      log(msg);
       try {
         if (req.body) {
           let firestore = appTo.firestore()
           firestore.collection('activityChanges').add(req.body)
-          mlog('🧡 Background activityChanges added to  😍 Firestore')
+          log('🧡 Background activityChanges added to  😍 Firestore')
         } else {
-          mlog(' 😍 😍 😍 Background activityChanges is null. 🥦🥦 ignore! ')
+          log(' 😍 😍 😍 Background activityChanges is null. 🥦🥦 ignore! ')
         }
        
       } catch (e) {

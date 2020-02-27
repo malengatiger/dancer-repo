@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import DispatchRecord from "../models/dispatch_record";
-import log from '../log';
+import {log} from '../log';
 import moment from "moment";
 import uuid = require("uuid");
 import MarshalFenceDwellEvent from "../models/marshal_fence_dwell_event";

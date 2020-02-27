@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import log from '../log';
+import {log} from '../log';
 import Vehicle from "../models/vehicle";
 import VehicleLocation from "../models/vehicle_location";
 import VehicleArrival from "../models/vehicle_arrival";
@@ -8,6 +8,7 @@ import moment from "moment";
 import VehicleType from "../models/vehicle_type";
 import uuid = require("uuid");
 import VehicleRouteAssignment from "../models/vehicle_route_assignment";
+import VehicleCommuterNearby from "../models/vehicle_commuter_nearby";
 
 export class VehicleController {
 
@@ -15,6 +16,24 @@ export class VehicleController {
     console.log(
       `🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`,
     );
+    app.route("/addVehicleCommuterNearby").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 addVehicleCommuterNearby requested `;
+      console.log(msg);
+      console.log(req.body);
+      try {
+        const event: any = new VehicleCommuterNearby(req.body);
+        event.created = new Date().toISOString();
+        const result = await event.save();
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addVehicleCommuterNearby failed'
+          }
+        )
+      }
+    });
     app.route("/findVehiclesByLocation").post(async (req: Request, res: Response) => {
       log(
         `\n\n💦  POST: /findVehiclesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
@@ -43,7 +62,7 @@ export class VehicleController {
           },
         });
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query. found 💙 ${result.length}`)
+        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for findVehiclesByLocation query. found 💙 ${result.length}`)
         res.status(200).json(result);
       } catch (err) {
         log(err);

@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema(
         lastName: {type: String, required: true},
         email: {type: String, unique: true, required: true, index: true},
         fcmToken: {type: String, required: false},
-        cellphone: {type: String, required: false, unique: true,},
+        cellphone: {type: String, required: false},
         userID: {type: String, required: true, index: true, unique: true},
         associationID: {type: String, required: false,  index: true},
         associationName: {type: String, required: false},

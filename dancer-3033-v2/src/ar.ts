@@ -2,7 +2,7 @@ import { app } from "./app";
 import express from "express";
 import * as bodyParser from "body-parser";
 import cors from "cors";
-import l from './log';
+import {log} from './log';
 import RouteController from './controllers/assoc_controller';
 import AssociationController from './controllers/route_controller';
 import { AppController } from "./controllers/app_controller";
@@ -35,7 +35,7 @@ class AftaRobotApp {
     public bgController: BGController = new BGController();
 
     constructor() {
-        l(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
+        log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
         this.app = app;
         this.port = port;
         this.initializeMiddleware();
@@ -61,7 +61,7 @@ class AftaRobotApp {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors());
-        l(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛\n\n`);
+        log(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛\n\n`);
         
     }
 }

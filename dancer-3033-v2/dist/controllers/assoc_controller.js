@@ -13,14 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const v1_1 = __importDefault(require("uuid/v1"));
-const log_1 = __importDefault(require("../log"));
 const association_1 = __importDefault(require("../models/association"));
+const log_1 = require("../log");
 class AssociationController {
     routes(app) {
-        log_1.default(`🏓🏓🏓    AssociationController: 💙  setting up default Association routes ... `);
+        log_1.log(`🏓🏓🏓    AssociationController: 💙  setting up default Association routes ... `);
         /////////
         app.route("/getAssociations").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getAssociations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /getAssociations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const asses = yield association_1.default.find();
@@ -34,7 +34,7 @@ class AssociationController {
             }
         }));
         app.route("/addAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const association = new association_1.default(req.body);

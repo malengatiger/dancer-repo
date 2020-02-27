@@ -13,31 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const route_1 = __importDefault(require("../models/route"));
-const log_1 = __importDefault(require("../log"));
+const log_1 = require("../log");
 const uuid = require("uuid");
 const mongoose_1 = require("mongoose");
 const messaging_1 = __importDefault(require("../helpers/messaging"));
 class RouteController {
     routes(app) {
-        log_1.default(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
+        log_1.log(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
         /////////
         app.route("/getRoutesByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦💦 💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦💦 💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const assID = req.body.associationID;
                 const now = new Date().getTime();
-                log_1.default(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
+                log_1.log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
                 const result = yield route_1.default.find({ associationID: assID });
-                log_1.default(result);
+                log_1.log(result);
                 result.forEach((m) => {
                     if (m.associationID === assID) {
-                        log_1.default(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎rawRoutePoints: ${m.rawRoutePoints.length} `);
-                        log_1.default(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎routePoints: ${m.routePoints.length} \n\n`);
+                        log_1.log(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎rawRoutePoints: ${m.rawRoutePoints.length} `);
+                        log_1.log(`😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎routePoints: ${m.routePoints.length} \n\n`);
                     }
                 });
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍 ${result.length} routes`);
+                log_1.log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍 ${result.length} routes`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -49,17 +49,17 @@ class RouteController {
             }
         }));
         app.route("/getRouteById").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
-            log_1.default(`🧩 🧩 🧩 🧩 🧩 🧩 🍎🍎 EXPENSIVE CALL! 🍎🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `);
+            log_1.log(`\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`🧩 🧩 🧩 🧩 🧩 🧩 🍎🍎 EXPENSIVE CALL! 🍎🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `);
             console.log(req.body);
             try {
                 const routeID = req.body.routeID;
                 const now = new Date().getTime();
-                log_1.default(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${routeID} ☘️☘️`);
+                log_1.log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${routeID} ☘️☘️`);
                 const result = yield route_1.default.findOne({ routeID: routeID });
-                log_1.default(result);
+                log_1.log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍route`);
+                log_1.log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍route`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -71,14 +71,14 @@ class RouteController {
             }
         }));
         app.route("/addRoute").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const route = new route_1.default(req.body);
                 route.routeID = uuid();
                 route.created = new Date().toISOString();
                 const result = yield route.save();
-                log_1.default(`result ${result}`);
+                log_1.log(`result ${result}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -89,7 +89,7 @@ class RouteController {
             }
         }));
         app.route("/addRouteDistanceEstimation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addRouteDistanceEstimation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addRouteDistanceEstimation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 //TODO - should this go to DB????? or just to messaging?
@@ -110,7 +110,7 @@ class RouteController {
             }
         }));
         app.route("/addRouteDistanceEstimations").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addRouteDistanceEstimations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addRouteDistanceEstimations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 //TODO - should this go to DB????? or just to messaging?
@@ -136,13 +136,13 @@ class RouteController {
             }
         }));
         app.route("/addCalculatedDistances").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addCalculatedDistances requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addCalculatedDistances requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const route = yield route_1.default.findOne({ routeID: req.body.routeID });
                 route.calculatedDistances = req.body.calculatedDistances;
                 const result = yield route.save();
-                log_1.default(`💙💙 Distances added to route. ${route.calculatedDistances.length} - 🧡💛 ${route.name}`);
+                log_1.log(`💙💙 Distances added to route. ${route.calculatedDistances.length} - 🧡💛 ${route.name}`);
                 // log(result);
                 res.status(200).json(result);
             }
@@ -154,7 +154,7 @@ class RouteController {
             }
         }));
         app.route("/addRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const route = yield route_1.default.findOne({ routeID: req.body.routeID });
@@ -167,7 +167,7 @@ class RouteController {
                     route.routePoints.push(p);
                 });
                 const result = yield route.save();
-                log_1.default(`💙💙 Points added to route: ${route.routePoints.length} - 🧡💛 ${route.name}`);
+                log_1.log(`💙💙 Points added to route: ${route.routePoints.length} - 🧡💛 ${route.name}`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -178,7 +178,7 @@ class RouteController {
             }
         }));
         app.route("/addRawRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const route = yield route_1.default.findOne({ routeID: req.body.routeID });
@@ -190,7 +190,7 @@ class RouteController {
                     route.rawRoutePoints.push(p);
                 });
                 const result = yield route.save();
-                log_1.default(`💙💙 Raw Route Points added to route: ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
+                log_1.log(`💙💙 Raw Route Points added to route: ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`);
                 // log(result);
                 res.status(200).json(result);
             }
@@ -203,7 +203,7 @@ class RouteController {
             }
         }));
         app.route("/updateLandmarkRoutePoints").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /updateLandmarkRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /updateLandmarkRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const routeID = req.body.routeID;
@@ -212,7 +212,7 @@ class RouteController {
                 if (!route) {
                     throw new Error('Route not found');
                 }
-                log_1.default(`🔆🔆🔆 💙 ROUTE: ${route.name} updated. Will update route points ....`);
+                log_1.log(`🔆🔆🔆 💙 ROUTE: ${route.name} updated. Will update route points ....`);
                 for (const routePoint of routePoints) {
                     const mRes = yield route_1.default.updateOne({ "_id": new mongoose_1.Types.ObjectId(route.id), "routePoints.index": routePoint.index }, {
                         $set: {
@@ -220,7 +220,7 @@ class RouteController {
                             "routePoints.$.landmarkName": routePoint.landmarkName
                         }
                     });
-                    log_1.default(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 ${routePoint.landmarkName}`);
+                    log_1.log(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 ${routePoint.landmarkName}`);
                     console.log(mRes);
                 }
                 res.status(200).json({
@@ -236,7 +236,7 @@ class RouteController {
             }
         }));
         app.route("/findNearestRoutePoint").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /findNearestRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /findNearestRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -257,7 +257,7 @@ class RouteController {
                 });
                 //// log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -268,7 +268,7 @@ class RouteController {
             }
         }));
         app.route("/findNearestRoutes").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /findNearestRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /findNearestRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const now = new Date().getTime();
@@ -286,10 +286,10 @@ class RouteController {
                         }
                     }
                 });
-                log_1.default(` 🍎🍎🍎🍎 🍎🍎🍎🍎 ROUTES FOUND  🍎🍎🍎🍎 ${result.length}`);
+                log_1.log(` 🍎🍎🍎🍎 🍎🍎🍎🍎 ROUTES FOUND  🍎🍎🍎🍎 ${result.length}`);
                 console.log(result);
                 const end = new Date().getTime();
-                log_1.default(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: routes found: 🍎 ${result.length} 🍎`);
+                log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: routes found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -314,7 +314,7 @@ class RouteController {
 )
         */
         app.route("/updateRoutePoint").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            log_1.default(`\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            log_1.log(`\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
             try {
                 const routePoint = req.body;
@@ -339,7 +339,7 @@ class RouteController {
                 });
                 route.routePoints = list;
                 yield route.save();
-                log_1.default(`💙💙 💙💙 💙💙 RoutePoint index: ${routePoint.index} updated on route: 🧡💛 ${route.name}`);
+                log_1.log(`💙💙 💙💙 💙💙 RoutePoint index: ${routePoint.index} updated on route: 🧡💛 ${route.name}`);
                 res.status(200).json({ status: 'OK', message: `RoutePoint index ${routePoint.index} updated route: 🧡💛 ${route.name} - landmark: ${routePoint.landmarkName}` });
             }
             catch (err) {
@@ -361,7 +361,7 @@ class RouteController {
                 m.associationName = m.associationDetails[0].associationName;
                 yield m.save();
                 cnt++;
-                log_1.default(`❇️❇️❇️ Route #${cnt} updated 🍎 ${m.associationName} 🍎 ${m.name}`);
+                log_1.log(`❇️❇️❇️ Route #${cnt} updated 🍎 ${m.associationName} 🍎 ${m.name}`);
             }
             return {
                 message: `${cnt} routes have been updated`,

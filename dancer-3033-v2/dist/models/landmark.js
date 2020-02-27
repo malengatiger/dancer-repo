@@ -17,7 +17,6 @@ const LandmarkSchema = new mongoose_1.default.Schema({
 });
 LandmarkSchema.plugin(mongoose_unique_validator_1.default);
 LandmarkSchema.indexes().push({ position: '2dsphere' });
-LandmarkSchema.indexes().push({ landmarkName: 1 }, { unique: true });
 const Landmark = mongoose_1.default.model('Landmark', LandmarkSchema);
 exports.default = Landmark;
 //# sourceMappingURL=landmark.js.map
