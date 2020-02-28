@@ -235,6 +235,9 @@ class VehicleController {
                 const c = new vehicle_1.default(req.body);
                 c.vehicleID = uuid();
                 c.created = new Date().toISOString();
+                if (!req.body.assignments) {
+                    c.assignments = [];
+                }
                 const result = yield c.save();
                 // log(result);
                 res.status(200).json(result);
@@ -354,6 +357,22 @@ class VehicleController {
                 c.routeAssignmentID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
+                console.log(`🌸🌸🌸 addVehicleRouteAssignment OK`);
+                const vehicle = yield vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
+                const assignments = [];
+                if (vehicle) {
+                    vehicle.assignments.forEach((a) => {
+                        if (a.routeID == c.routeID) {
+                            log_1.log('Route already assigned to vehicle');
+                        }
+                        else {
+                            assignments.push(a);
+                        }
+                    });
+                    vehicle.assignments = assignments;
+                    yield vehicle.save();
+                    console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
+                }
                 res.status(200).json(result);
             }
             catch (err) {

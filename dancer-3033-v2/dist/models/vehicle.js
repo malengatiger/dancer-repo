@@ -7,7 +7,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 const VehicleSchema = new mongoose_1.default.Schema({
     vehicleReg: { type: String, required: true, trim: true, unique: true },
-    vehicleID: { type: String, required: true, trim: true },
+    vehicleID: { type: String, required: true, trim: true, unique: true, index: true },
     associationID: { type: String, required: true, trim: true },
     associationName: { type: String, required: true },
     ownerID: { type: String, required: false, trim: true },
@@ -15,10 +15,13 @@ const VehicleSchema = new mongoose_1.default.Schema({
     vehicleType: { type: Map, required: true },
     photos: { type: Array, required: true, default: [] },
     videos: { type: Array, required: true, default: [] },
+    assignments: { type: Array, required: true, default: [] },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 VehicleSchema.plugin(mongoose_unique_validator_1.default);
-VehicleSchema.index({ vehicleReg: 1 }, { unique: true });
+VehicleSchema.index({ vehicleID: 1 }, { unique: true });
+VehicleSchema.index({ associationID: 1 }, { unique: false });
+VehicleSchema.index({ ownerID: 1 }, { unique: false });
 const Vehicle = mongoose_1.default.model('Vehicle', VehicleSchema);
 exports.default = Vehicle;
 //# sourceMappingURL=vehicle.js.map

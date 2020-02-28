@@ -251,6 +251,9 @@ export class VehicleController {
         const c: any = new Vehicle(req.body);
         c.vehicleID = uuid();
         c.created = new Date().toISOString();
+        if (!req.body.assignments) {
+          c.assignments = []
+        }
         const result = await c.save();
         // log(result);
         res.status(200).json(result);
@@ -386,6 +389,24 @@ export class VehicleController {
         c.routeAssignmentID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
+        console.log(`🌸🌸🌸 addVehicleRouteAssignment OK`);
+        const vehicle: any = await Vehicle.findOne({vehicleID: req.body.vehicleID})
+        const assignments: any[] = []
+        if (vehicle) {
+          vehicle.assignments.forEach((a: any) => {
+            if (a.routeID == c.routeID) {
+              log('Route already assigned to vehicle')
+            } else {
+              assignments.push(a)
+            }
+          })
+          vehicle.assignments = assignments
+          await vehicle.save();
+          console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
+        }
+        
+      
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(

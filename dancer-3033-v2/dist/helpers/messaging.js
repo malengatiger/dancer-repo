@@ -23,8 +23,7 @@ const admin = __importStar(require("firebase-admin"));
 const landmark_1 = __importDefault(require("../models/landmark"));
 const log_1 = require("../log");
 const constants_1 = __importDefault(require("./constants"));
-const StringBuffer = require("stringbuffer");
-// create a string buffer that simply concatenates strings
+// const StringBuffer = require("stringbuffer");
 log_1.log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
 const ssa1 = JSON.parse(sa1);
@@ -429,14 +428,11 @@ class Messaging {
             const payload = {
                 notification: {
                     title: "User Added",
-                    body: data.firstName + " " + data.lastName + " created:" + data.created,
+                    body: JSON.stringify(data),
                 },
                 data: {
                     type: constants_1.default.USERS,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    email: data.email,
-                    created: data.created
+                    user: JSON.stringify(data)
                 },
             };
             const topic1 = constants_1.default.USERS;

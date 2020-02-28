@@ -46,6 +46,29 @@ export class RouteController {
                 )
             }
         });
+        app.route("/getRouteIDsByAssociation").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦💦 💦  POST: /getRouteIDsByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                const assID: any = req.body.associationID;
+                const now = new Date().getTime();
+                log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`)
+                const result = await (await Route.find({associationID:assID }, {routeID: 1, name: 2}));
+                log(result);
+
+                res.status(200).json(result);
+            } catch (err) {
+                console.error(err);
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 getRoutes failed'
+                    }
+                )
+            }
+        });
         app.route("/getRouteById").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
@@ -100,9 +123,13 @@ export class RouteController {
             try {
                 //TODO - should this go to DB????? or just to messaging?
                 const estimation: any = new RouteDistanceEstimation (req.body);
+                if (!estimation.vehicle) {
+                    throw new Error(`Vehicle missing from estimation`)
+                }
                 estimation.created = new Date().toISOString();
                 await estimation.save();
                 await Messaging.sendRouteDistanceEstimation(req.body);
+                log(`addRouteDistanceEstimations added  🍎 1 🍎 to database & messaging service`)
                 res.status(200).json({
                     message: `Route Distance Estimation FCM message sent`
                 });
@@ -110,7 +137,7 @@ export class RouteController {
                 res.status(400).json(
                     {
                         error: err,
-                        message: ' 🍎🍎🍎🍎 addRouteDistanceEstimation failed'
+                        message: '🍎🍎 addRouteDistanceEstimation failed'
                     }
                 )
             }
@@ -127,12 +154,15 @@ export class RouteController {
                 let cnt = 0;
                 for (const estimate of list) {
                     const estimation: any = new RouteDistanceEstimation (req.body);
+                    if (!estimation.vehicle) {
+                        throw new Error(`Vehicle missing from estimation`)
+                    }
                     estimation.created = new Date().toISOString();
                     await estimation.save();
                     await Messaging.sendRouteDistanceEstimation(estimate);
                     cnt++
                 }
-                
+                log(`addRouteDistanceEstimations added  🍎 ${cnt} 🍎 to database & messaging service`)
                 res.status(200).json({
                     message: `Route Distance Estimations: ${cnt} FCM messages sent`
                 });
@@ -335,19 +365,7 @@ export class RouteController {
                 )
             }
         });
-        /*
-        db.students.update(
-   { _id: 1 },
-   {
-     $push: {
-        scores: {
-           $each: [ 20, 30 ],
-           $position: 2
-        }
-     }
-   }
-)
-        */
+
         app.route("/updateRoutePoint").post(async (req: Request, res: Response) => {
             log(
                 `\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,

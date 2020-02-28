@@ -4,8 +4,11 @@ import db from '../database';
 import {log} from '../log';
 import User, { IUser } from "../models/user";
 import uuid = require("uuid");
+import * as admin from "firebase-admin";
 import Notification from "../models/notification";
-const userTypes = ['Staff', 'Owner', 'Administrator', 'Driver', 'Marshal', 'Patroller'];
+import UserHelper from "../helpers/user_helper"
+
+
 export class UserController {
     public routes(app: any): void {
         log(
@@ -125,17 +128,19 @@ export class UserController {
             console.log(req.body);
             try {
                 const user: IUser = new User(req.body);
-                if (req.body.userID) {
-                    user.userID = req.body.userID;
-                } else {
+                if (!req.body.userID) {
                     user.userID = uuid();
                 }
                 
                 user.created = new Date().toISOString();
                 const result = await user.save();
-                // log(result);
+                console.log('😍😍😍😍 Successfully created new user on MongoDB:')
+                //create user on firebase auth ....
+                await UserHelper.addUser(user);
+                
                 res.status(200).json(result);
             } catch (err) {
+                console.error('addUser failed', err)
                 res.status(400).json(
                     {
                         error: err,
@@ -174,6 +179,28 @@ export class UserController {
                     {
                         error: err,
                         message: ' 🍎🍎🍎🍎 updateUser failed'
+                    }
+                )
+            }
+        });
+        app.route("/deleteUser").post(async (req: Request, res: Response) => {
+            log(
+                `\n\n💦  POST: /deleteUser requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+            );
+            console.log(req.body);
+            try {
+                await User.deleteOne({userID: req.body.userID})
+                await UserHelper.deleteUser(req.body.userID);
+                res.status(200).json({
+                    message:`User deleted from both mongo & firebase auth: ${req.body.userID}`
+                });
+                
+            } catch (err) {
+                console.log(err, 'deleteUser failed')
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 deleteUser failed'
                     }
                 )
             }

@@ -3,9 +3,7 @@ import * as admin from "firebase-admin";
 import Landmark from "../models/landmark";
 import {log} from '../log';
 import Constants from "./constants";
-const StringBuffer = require("stringbuffer");
-
-// create a string buffer that simply concatenates strings
+// const StringBuffer = require("stringbuffer");
 
 log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
@@ -470,14 +468,11 @@ class Messaging {
         const payload: any = {
             notification: {
                 title: "User Added",
-                body: data.firstName + " " + data.lastName + " created:" + data.created,
+                body: JSON.stringify(data),
             },
             data: {
                 type: Constants.USERS,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                created: data.created
+                user: JSON.stringify(data)
             },
         };
         const topic1 = Constants.USERS;

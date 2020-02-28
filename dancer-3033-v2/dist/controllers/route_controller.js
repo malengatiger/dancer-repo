@@ -16,6 +16,7 @@ const route_1 = __importDefault(require("../models/route"));
 const log_1 = require("../log");
 const uuid = require("uuid");
 const mongoose_1 = require("mongoose");
+const route_distance_1 = __importDefault(require("../models/route_distance"));
 const messaging_1 = __importDefault(require("../helpers/messaging"));
 class RouteController {
     routes(app) {
@@ -38,6 +39,25 @@ class RouteController {
                 });
                 const end = new Date().getTime();
                 log_1.log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍 ${result.length} routes`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                console.error(err);
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getRoutes failed'
+                });
+            }
+        }));
+        app.route("/getRouteIDsByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.log(`\n\n💦💦 💦  POST: /getRouteIDsByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const assID = req.body.associationID;
+                const now = new Date().getTime();
+                log_1.log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
+                const result = yield (yield route_1.default.find({ associationID: assID }, { routeID: 1, name: 2 }));
+                log_1.log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -93,11 +113,14 @@ class RouteController {
             console.log(req.body);
             try {
                 //TODO - should this go to DB????? or just to messaging?
-                //const estimation: any = new RouteDistanceEstimation (req.body);
-                //estimation.created = new Date().toISOString();
-                // const result = await estimation.save();
-                // log(`result ${result}`);
+                const estimation = new route_distance_1.default(req.body);
+                if (!estimation.vehicle) {
+                    throw new Error(`Vehicle missing from estimation`);
+                }
+                estimation.created = new Date().toISOString();
+                yield estimation.save();
                 yield messaging_1.default.sendRouteDistanceEstimation(req.body);
+                log_1.log(`addRouteDistanceEstimations added  🍎 1 🍎 to database & messaging service`);
                 res.status(200).json({
                     message: `Route Distance Estimation FCM message sent`
                 });
@@ -105,7 +128,7 @@ class RouteController {
             catch (err) {
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 addRouteDistanceEstimation failed'
+                    message: '🍎🍎 addRouteDistanceEstimation failed'
                 });
             }
         }));
@@ -114,16 +137,19 @@ class RouteController {
             console.log(req.body);
             try {
                 //TODO - should this go to DB????? or just to messaging?
-                //const estimation: any = new RouteDistanceEstimation (req.body);
-                //estimation.created = new Date().toISOString();
-                // const result = await estimation.save();
-                // log(`result ${result}`);
                 const list = req.body.estimations;
                 let cnt = 0;
                 for (const estimate of list) {
+                    const estimation = new route_distance_1.default(req.body);
+                    if (!estimation.vehicle) {
+                        throw new Error(`Vehicle missing from estimation`);
+                    }
+                    estimation.created = new Date().toISOString();
+                    yield estimation.save();
                     yield messaging_1.default.sendRouteDistanceEstimation(estimate);
                     cnt++;
                 }
+                log_1.log(`addRouteDistanceEstimations added  🍎 ${cnt} 🍎 to database & messaging service`);
                 res.status(200).json({
                     message: `Route Distance Estimations: ${cnt} FCM messages sent`
                 });
@@ -300,19 +326,6 @@ class RouteController {
                 });
             }
         }));
-        /*
-        db.students.update(
-   { _id: 1 },
-   {
-     $push: {
-        scores: {
-           $each: [ 20, 30 ],
-           $position: 2
-        }
-     }
-   }
-)
-        */
         app.route("/updateRoutePoint").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.log(`\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
