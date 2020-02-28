@@ -1,8 +1,10 @@
+import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
+import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
@@ -10,6 +12,7 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
+import 'package:marshalx/ui/confirm_landmark.dart';
 import 'package:marshalx/ui/dispatch.dart';
 import 'package:marshalx/ui/wifi.dart';
 
@@ -19,7 +22,8 @@ class SelectVehicleForDispatch extends StatefulWidget {
       _SelectVehicleForDispatchState();
 }
 
-class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
+class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
+    implements MarshalBlocListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   MarshalBloc marshalBloc;
   List<VehicleArrival> vehicleArrivals = List();
@@ -29,7 +33,32 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
   @override
   void initState() {
     super.initState();
-    marshalBloc = MarshalBloc(null);
+    _checkMarshalLandmark();
+  }
+
+  _checkMarshalLandmark() async {
+    myDebugPrint('.......................... _checkMarshalLandmark .......');
+    landmark = await Prefs.getLandmark();
+    if (landmark == null) {
+      var result = await Navigator.push(
+          context,
+          SlideRightRoute(
+            widget: ConfirmLandmark(),
+          ));
+      if (result != null && result is Landmark) {
+        setState(() {
+          landmark = result;
+        });
+      }
+    }
+    if (landmark == null) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key,
+          message: 'Please select Landmark',
+          actionLabel: '');
+      return;
+    }
+    marshalBloc = MarshalBloc(this);
     _subscribeToDispatchedStream();
     _getVehicleArrivals();
   }
@@ -56,15 +85,26 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
     setState(() {
       isBusy = true;
     });
-    landmark = marshalBloc.marshalLandmark;
-    prettyPrint(landmark.toJson(), 'LANDMARK for dispatching');
-    vehicleArrivals = await marshalBloc.getVehicleArrivals(
-        landmarkID: landmark.landmarkID, minutes: 5);
-    _removeDuplicates();
-    setState(() {
-      isBusy = false;
-      showAllAssocVehicles = false;
-    });
+    try {
+      landmark = await Prefs.getLandmark();
+      if (landmark == null) {
+        return;
+      }
+      prettyPrint(landmark.toJson(), 'LANDMARK for dispatching');
+      vehicleArrivals = await marshalBloc.getVehicleArrivals(
+          landmarkID: landmark.landmarkID, minutes: 5);
+      _removeDuplicates();
+      setState(() {
+        isBusy = false;
+        showAllAssocVehicles = false;
+      });
+    } catch (e) {
+      print(e);
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key,
+          message: 'Failed to get other vehicle arrivals',
+          actionLabel: '');
+    }
   }
 
   void _removeDuplicates() {
@@ -82,17 +122,36 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
     setState(() {
       isBusy = true;
     });
-    landmark = marshalBloc.marshalLandmark;
-    prettyPrint(landmark.toJson(), 'LANDMARK for dispatching');
-    _vehicles = await marshalBloc.getAssociationVehicles();
-    setState(() {
-      isBusy = false;
-      showAllAssocVehicles = true;
-    });
+    try {
+      _vehicles = await marshalBloc.getAssociationVehicles(forceRefresh: false);
+      setState(() {
+        isBusy = false;
+        showAllAssocVehicles = true;
+      });
+    } catch (e) {
+      print(e);
+      if (mounted) {
+        AppSnackbar.showErrorSnackbar(
+            scaffoldKey: _key,
+            message: 'Vehicle loading failed',
+            actionLabel: '');
+      }
+    }
+  }
+
+  _startLandmarkConfirm() async {
+    var result = await Navigator.push(
+        context, SlideRightRoute(widget: ConfirmLandmark()));
+    if (result != null && result is Landmark) {
+      setState(() {
+        landmark = result;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    myDebugPrint('build .......');
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -139,7 +198,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
                     height: 20,
                   ),
                   Text(
-                    '${landmark.landmarkName}',
+                    landmark == null ? '' : '${landmark.landmarkName}',
                     style: Styles.whiteBoldMedium,
                   ),
                   SizedBox(
@@ -192,6 +251,10 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
                               var myVehicle = _vehicles.elementAt(index);
                               return GestureDetector(
                                 onTap: () {
+                                  if (landmark == null) {
+                                    _startLandmarkConfirm;
+                                    return;
+                                  }
                                   var vehArrival = VehicleArrival(
                                       vehicleID: myVehicle.vehicleID,
                                       vehicleReg: myVehicle.vehicleReg,
@@ -303,5 +366,21 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch> {
           message: '${mm.vehicleReg} '
               'has been dispached with  🌺 ${mm.passengers} passengers');
     }
+  }
+
+  @override
+  onError(String message) {
+    if (mounted) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: message, actionLabel: '');
+    }
+    return null;
+  }
+
+  @override
+  onRouteDistanceEstimationsArrived(
+      List<RouteDistanceEstimation> routeDistanceEstimations) {
+    // TODO: implement onRouteDistanceEstimationsArrived
+    return null;
   }
 }

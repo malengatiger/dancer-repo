@@ -1,15 +1,21 @@
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
+import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
+import 'package:aftarobotlibrary4/data/vehicle_route_assignment.dart';
+import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
+import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
+
+import 'confirm_landmark.dart';
 
 class Dispatch extends StatefulWidget {
   final VehicleArrival vehicleArrival;
@@ -20,7 +26,8 @@ class Dispatch extends StatefulWidget {
   _DispatchState createState() => _DispatchState();
 }
 
-class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
+class _DispatchState extends State<Dispatch>
+    implements NumberDropDownListener, MarshalBlocListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   Landmark landmark;
   MarshalBloc marshalBloc;
@@ -29,14 +36,35 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
   @override
   void initState() {
     super.initState();
-    marshalBloc = MarshalBloc(null);
-    _getRoutes();
+    marshalBloc = MarshalBloc(this);
+    _checkLandmark();
   }
 
-  _getRoutes() async {
-    landmark = marshalBloc.marshalLandmark;
+  _checkLandmark() async {
     if (landmark == null) {
-      throw Exception('No marshal landmark found');
+      landmark = await Prefs.getLandmark();
+      if (landmark == null) {
+        var result = await Navigator.push(
+            context,
+            SlideRightRoute(
+              widget: ConfirmLandmark(),
+            ));
+        if (result != null && result is Landmark) {
+          setState(() {
+            landmark = result;
+          });
+        }
+      } else {
+        prettyPrint(landmark.toJson(),
+            'Marshal Landmark from cache,  🌸  🌸  🌸 routeDetails: ${landmark.routeDetails.length}');
+      }
+      if (landmark == null) {
+        AppSnackbar.showErrorSnackbar(
+            scaffoldKey: _key,
+            message: 'Please select Landmark',
+            actionLabel: '');
+        return;
+      }
     }
   }
 
@@ -83,7 +111,7 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      Text('Number Selected'),
+                      Text('Passengers to be Dispatched'),
                       SizedBox(
                         width: 12,
                       ),
@@ -94,40 +122,50 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
                     ],
                   ),
                   SizedBox(
-                    height: 8,
+                    height: 20,
                   )
                 ],
               ),
             ),
-            preferredSize: Size.fromHeight(180)),
+            preferredSize: Size.fromHeight(200)),
       ),
       backgroundColor: Colors.brown[100],
-      body: ListView.builder(
-          itemCount: landmark.routeDetails.length,
-          itemBuilder: (context, index) {
-            RouteInfo detail = landmark.routeDetails.elementAt(index);
-            return Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
-              child: GestureDetector(
-                onTap: () {
-                  _confirmDispatchCar(detail);
-                },
-                child: Card(
-                  elevation: 2,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.my_location,
-                      color: getRandomColor(),
-                    ),
-                    title: Text(
-                      detail.name,
-                      style: Styles.blackBoldSmall,
-                    ),
-                  ),
+      body: isBusy
+          ? Center(
+              child: Container(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
                 ),
               ),
-            );
-          }),
+            )
+          : ListView.builder(
+              itemCount: landmark == null ? 0 : landmark.routeDetails.length,
+              itemBuilder: (context, index) {
+                RouteInfo detail = landmark.routeDetails.elementAt(index);
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
+                  child: GestureDetector(
+                    onTap: () {
+                      _confirmDispatchCar(detail);
+                    },
+                    child: Card(
+                      elevation: 2,
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.my_location,
+                          color: getRandomColor(),
+                        ),
+                        title: Text(
+                          detail.name,
+                          style: Styles.blackBoldSmall,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
     );
   }
 
@@ -190,9 +228,9 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
   }
 
   bool isBusy = false;
-  _dispatchVehicle(RouteInfo detail) async {
+  _dispatchVehicle(RouteInfo routeInfo) async {
     myDebugPrint(
-        '🌺 🌺 🌺 🌺 🌺 Ready to dispatch car to  💀 ${detail.name}  💀 ');
+        '🌺 🌺 🌺 🌺 🌺 Ready to dispatch car to  💀 ${routeInfo.name}  💀 ');
     setState(() {
       isBusy = true;
     });
@@ -200,7 +238,31 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
       var user = marshalBloc.user;
       var veh =
           await LocalDBAPI.getVehicleByID(widget.vehicleArrival.vehicleID);
-      var dr = DispatchRecord(
+      if (veh.assignments == null) {
+        veh.assignments = [];
+      }
+      bool isFound = false;
+      veh.assignments.forEach((a) {
+        if (a.routeID == routeInfo.routeID) {
+          isFound = true;
+        }
+      });
+      if (!isFound) {
+        var assignment = VehicleRouteAssignment(
+          vehicleID: veh.vehicleID,
+          vehicleReg: veh.vehicleReg,
+          routeID: routeInfo.routeID,
+          routeName: routeInfo.name,
+          associationID: veh.associationID,
+          activeFlag: true,
+          created: DateTime.now().toUtc().toIso8601String(),
+        );
+        veh.assignments.add(assignment);
+        await LocalDBAPI.addVehicles(vehicles: [veh]);
+        await DancerDataAPI.addVehicleRouteAssignment(assignment: assignment);
+      }
+
+      var dispatchRecord = DispatchRecord(
           landmarkID: landmark.landmarkID,
           landmarkName: landmark.landmarkName,
           associationD: user.associationID,
@@ -211,32 +273,37 @@ class _DispatchState extends State<Dispatch> implements NumberDropDownListener {
           dispatched: true,
           marshalID: user.userID,
           marshalName: '${user.firstName} ${user.lastName}',
-          routeID: detail.routeID,
-          routeName: detail.name,
+          routeID: routeInfo.routeID,
+          routeName: routeInfo.name,
           passengers: number,
           ownerID: veh.ownerID,
           position:
               Position(coordinates: [landmark.longitude, landmark.latitude]));
-      try {
-        AppSnackbar.showSnackbarWithProgressIndicator(
-            scaffoldKey: _key, message: ' 🌺  🌺  Dispatching taxi ..');
-      } catch (e, s) {
-        print(s);
-      }
-      var dispatchRecord =
-          await DancerDataAPI.addDispatchRecord(dispatchRecord: dr);
+
+      var result =
+          await DancerDataAPI.addDispatchRecord(dispatchRecord: dispatchRecord);
+
       marshalBloc.removeVehicleArrival(widget.vehicleArrival);
-      prettyPrint(dispatchRecord.toJson(),
+      prettyPrint(result.toJson(),
           '🎁 🎁 🎁 🎁 DISPATCH RECORD returned, about to pop!');
-      _key.currentState.removeCurrentSnackBar();
-      Navigator.pop(context, dispatchRecord);
+      Navigator.pop(context, result);
     } catch (e) {
       print(e);
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: e.toString());
     }
+  }
 
-    setState(() {
-      isBusy = false;
-    });
+  @override
+  onRouteDistanceEstimationsArrived(
+      List<RouteDistanceEstimation> routeDistanceEstimations) {
+    return null;
+  }
+
+  @override
+  onError(String message) {
+    if (mounted) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: message, actionLabel: '');
+    }
   }
 }

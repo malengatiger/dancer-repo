@@ -16,6 +16,7 @@ import 'package:aftarobotlibrary4/data/user.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicle_departure.dart';
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
+import 'package:aftarobotlibrary4/data/vehicle_route_assignment.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/geofencing/geofencer.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
@@ -54,14 +55,17 @@ class MarshalBloc implements GeofencerListener {
   StreamController<List<RouteDistanceEstimation>>
       _routeDistanceEstimationController = StreamController.broadcast();
 
-  StreamController<String> _errorController = StreamController.broadcast();
-  StreamController<bool> _busyController = StreamController.broadcast();
+  List<String> _errors = List();
+  List<bool> _busies = List();
+  StreamController<List<String>> _errorController =
+      StreamController.broadcast();
+  StreamController<List<bool>> _busyController = StreamController.broadcast();
   StreamController<List<VehicleLocation>> _vehicleLocationController =
       StreamController.broadcast();
   Stream<List<CommuterRequest>> get commuterRequestStream =>
       _commuterRequestsController.stream;
-  Stream<bool> get busyStream => _busyController.stream;
-  Stream<String> get errorStream => _errorController.stream;
+  Stream<List<bool>> get busyStream => _busyController.stream;
+  Stream<List<String>> get errorStream => _errorController.stream;
   Stream<List<Vehicle>> get vehicleStream => _vehiclesController.stream;
   Stream<List<VehicleLocation>> get vehicleLocationStream =>
       _vehicleLocationController.stream;
@@ -115,7 +119,8 @@ class MarshalBloc implements GeofencerListener {
     if (_user == null) {
       myDebugPrint(
           '🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  AftaRobot User is null.  👺  need to be created by portal 🔑 🔑 🔑');
-      _errorController.sink.add('AftaRobot user not found');
+      _errors.add('AftaRobot user not found');
+      _errorController.sink.add(_errors);
       return;
     }
     _configureFCM();
@@ -126,7 +131,8 @@ class MarshalBloc implements GeofencerListener {
   Future initializeData() async {
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 initializeData: Loading data into streams ....');
-    _busyController.sink.add(true);
+    _busies.add(true);
+    _busyController.sink.add(_busies);
     LocalDBAPI.setAppID();
     _user = await Prefs.getUser();
     _landmark = await Prefs.getLandmark();
@@ -136,13 +142,16 @@ class MarshalBloc implements GeofencerListener {
     await getAssociationRoutes(forceRefresh: true);
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 initializeData:  🔴 🔴 DONE Loading data into streams');
-    _busyController.sink.add(false);
+    _busies.add(false);
+    _busyController.sink.add(_busies);
   }
 
   Future refreshDashboardData(bool forceRefresh) async {
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData: Loading data into streams ...');
-    _busyController.sink.add(true);
+
+    _busies.add(true);
+    _busyController.sink.add(_busies);
     _landmark = await Prefs.getLandmark();
     await getAssociationVehicles(forceRefresh: forceRefresh);
     await findLandmarksByLocation(
@@ -151,7 +160,8 @@ class MarshalBloc implements GeofencerListener {
     await getCommuterFenceDwellEvents();
     await getVehicleArrivals();
     await getAssociationRoutes(forceRefresh: forceRefresh);
-    _busyController.sink.add(false);
+    _busies.add(false);
+    _busyController.sink.add(_busies);
     myDebugPrint(
         '🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData:  🔴 🔴 DONE Loading data into streams');
   }
@@ -169,10 +179,14 @@ class MarshalBloc implements GeofencerListener {
 
   Future<List<VehicleLocation>> findVehiclesByLocation(
       {int minutes, double radiusInKM}) async {
-    myDebugPrint('\n\n💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation .....');
-    _busyController.sink.add(true);
+    myDebugPrint('💙 💙 💙 💙 💙 💙 💙 findVehiclesByLocation .....');
+    _busies.add(true);
+    _busyController.sink.add(_busies);
     var loc = await LocationUtil.getCurrentLocation();
-    print(loc);
+    if (loc == null) {
+      throw Exception('Location cannot be calculated');
+    }
+
     _vehicleLocations = await DancerListAPI.findVehiclesByLocation(
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
@@ -180,8 +194,8 @@ class MarshalBloc implements GeofencerListener {
             ? SettingsModel().vehicleGeoQueryRadius
             : radiusInKM,
         minutes: minutes == null ? 5 : minutes);
-    myDebugPrint('💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation ..... '
-        'found  🔴 🔴 ${_vehicleLocations.length} vehicles 🧡 before filter by association');
+    myDebugPrint('💙 💙 💙 💙 💙 💙 💙  findVehiclesByLocation ..... '
+        'found  🔴 🔴 ${_vehicleLocations.length} vehicles 🧡 before filtering by association');
 
     //remove duplicate vehicles
     prettyPrint(_user.toJson(),
@@ -196,9 +210,10 @@ class MarshalBloc implements GeofencerListener {
     _vehicleLocations = map.values.toList();
     _vehicleLocationController.sink.add(_vehicleLocations);
     myDebugPrint(
-        '💙  💙  💙  💙  💙  💙  💙 findVehiclesByLocation ..... found  '
+        '💙 💙 💙 💙 💙 💙 💙  findVehiclesByLocation ..... found & filtered by association:  '
         '🔴 🔴 ${_vehicleLocations.length} UNIQUE vehicles 🍎 🍎  after filtering');
-    _busyController.sink.add(false);
+    _busies.add(false);
+    _busyController.sink.add(_busies);
     return _vehicleLocations;
   }
 
@@ -243,6 +258,9 @@ class MarshalBloc implements GeofencerListener {
 
   removeVehicleArrival(VehicleArrival vehicleArrival) {
     List<VehicleArrival> temp = List();
+    if (vehicleArrivals == null || vehicleArrivals.isEmpty) {
+      return;
+    }
     vehicleArrivals.forEach((m) {
       if (m.vehicleID != vehicleArrival.vehicleID) {
         temp.add(m);
@@ -267,12 +285,16 @@ class MarshalBloc implements GeofencerListener {
     } else {
       markID = landmarkID;
     }
+    _busies.add(true);
+    _busyController.sink.add(_busies);
     try {
       commuterRequests = await DancerListAPI.getCommuterRequests(
           landmarkID: markID, minutes: 30);
       myDebugPrint(
           " 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 30 minutes");
       _commuterRequestsController.sink.add(commuterRequests);
+      _busies.add(false);
+      _busyController.sink.add(_busies);
     } catch (e) {
       dealWithError(e);
     }
@@ -282,14 +304,21 @@ class MarshalBloc implements GeofencerListener {
   void dealWithError(e) {
     if (e is TimeoutException) {
       myDebugPrint('Call has 🔆 🔆 🔆 timed out 🔆 🔆 🔆');
-      _errorController.sink.add('Network TimeOut');
+      _errors.add('Network TimeOut');
+      _errorController.sink.add(_errors);
+      marshalBlocListener.onError("Network Timeout");
     }
     if (e is SocketException) {
       myDebugPrint(
           'Call has run into  🔴  🔴  🔴 SocketException  🔴  🔴  🔴 ');
-      _errorController.sink.add('Network SocketException');
+      _errors.add('Network SocketException');
+      _errorController.sink.add(_errors);
+      marshalBlocListener.onError("Network SocketException");
     }
-    _errorController.sink.add(e == null ? 'Unknown Network Error' : e.message);
+    _errors.add(e == null ? 'Unknown Network Error' : e.message);
+    _errorController.sink.add(_errors);
+    marshalBlocListener
+        .onError(e == null ? 'Unknown Network Error' : e.message);
     print(e);
   }
 
@@ -348,9 +377,9 @@ class MarshalBloc implements GeofencerListener {
       return landmarks;
     } catch (e) {
       print(e);
-      _errorController.sink
-          .add('findLandmarksByLocation failed: ${e.toString()}');
-      dealWithError(e);
+      _errors.add('findLandmarksByLocation failed: ${e.toString()}');
+      _errorController.sink.add(_errors);
+      marshalBlocListener.onError('findLandmarksByLocation failed');
     }
 
     return null;
@@ -375,7 +404,10 @@ class MarshalBloc implements GeofencerListener {
       return mList;
     } catch (e) {
       print(e);
-      _errorController.sink.add('getAssociationRoutes failed: ${e.toString()}');
+      _errors.add('getAssociationRoutes failed: ${e.toString()}');
+      _errorController.sink.add(_errors);
+      marshalBlocListener
+          .onError('getAssociationRoutes failed: ${e.toString()}');
     }
 
     return null;
@@ -404,7 +436,8 @@ class MarshalBloc implements GeofencerListener {
       return mRoute;
     } catch (e) {
       print(e);
-      _errorController.sink.add('getRouteByID failed: ${e.toString()}');
+      _errorController.sink.add(_errors);
+      marshalBlocListener.onError('getRouteByID failed: ${e.toString()}');
     }
 
     return null;
@@ -429,7 +462,10 @@ class MarshalBloc implements GeofencerListener {
       return vehicles;
     } catch (e) {
       print(e);
-      _errorController.sink.add(e.toString());
+      _errorController.sink.add(_errors);
+      marshalBlocListener
+          .onError('getAssociationVehicles failed: ${e.toString()}');
+      _errorController.sink.add(_errors);
     }
 
     return null;
@@ -638,6 +674,10 @@ class MarshalBloc implements GeofencerListener {
     _init();
   }
 
+  Future addVehicleRouteAssignment(VehicleRouteAssignment assignment) async {
+    await DancerDataAPI.addVehicleRouteAssignment(assignment: assignment);
+  }
+
   @override
   onCommuterArrival(CommuterArrivalLandmark arrival) {
     // TODO: implement onCommuterArrival
@@ -715,4 +755,5 @@ class MarshalBloc implements GeofencerListener {
 abstract class MarshalBlocListener {
   onRouteDistanceEstimationsArrived(
       List<RouteDistanceEstimation> routeDistanceEstimations);
+  onError(String message);
 }

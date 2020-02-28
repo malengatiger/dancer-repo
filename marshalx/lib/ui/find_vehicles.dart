@@ -1,4 +1,5 @@
 import 'package:aftarobotlibrary4/data/vehicle_location.dart';
+import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/maps/vehicle_map.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
@@ -12,7 +13,8 @@ class FindVehicles extends StatefulWidget {
   _FindVehiclesState createState() => _FindVehiclesState();
 }
 
-class _FindVehiclesState extends State<FindVehicles> {
+class _FindVehiclesState extends State<FindVehicles>
+    implements MarshalBlocListener {
   List<VehicleLocation> _vehicleLocations = List();
   var _key = GlobalKey<ScaffoldState>();
   bool isBusy = false;
@@ -20,7 +22,7 @@ class _FindVehiclesState extends State<FindVehicles> {
   @override
   void initState() {
     super.initState();
-    marshalBloc = MarshalBloc(null);
+    marshalBloc = MarshalBloc(this);
     _subscribeToBusy();
     _subscribeToError();
     _subscribeToLocationStream();
@@ -34,7 +36,7 @@ class _FindVehiclesState extends State<FindVehicles> {
 //        _key.currentState.removeCurrentSnackBar();
 //      }
       setState(() {
-        isBusy = busy;
+        isBusy = busy.last;
       });
     });
   }
@@ -42,7 +44,7 @@ class _FindVehiclesState extends State<FindVehicles> {
   void _subscribeToError() {
     marshalBloc.errorStream.listen((err) {
       myDebugPrint('👿  👿  👿  Received error: $err');
-      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err);
+      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err.last);
     });
   }
 
@@ -57,8 +59,17 @@ class _FindVehiclesState extends State<FindVehicles> {
   }
 
   _findVehicles() async {
-    _vehicleLocations = await marshalBloc.findVehiclesByLocation();
-    setState(() {});
+    try {
+      _vehicleLocations = await marshalBloc.findVehiclesByLocation();
+      setState(() {});
+    } catch (e) {
+      print(e);
+      setState(() {
+        isBusy = false;
+      });
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'Failed to find taxis', actionLabel: '');
+    }
   }
 
   _startVehicleMap(VehicleLocation vehicleLocation) {
@@ -230,5 +241,20 @@ class _FindVehiclesState extends State<FindVehicles> {
                         });
               }),
     );
+  }
+
+  @override
+  onError(String message) {
+    if (mounted) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: message, actionLabel: '');
+    }
+  }
+
+  @override
+  onRouteDistanceEstimationsArrived(
+      List<RouteDistanceEstimation> routeDistanceEstimations) {
+    // TODO: implement onRouteDistanceEstimationsArrived
+    return null;
   }
 }

@@ -96,7 +96,7 @@ class _DashboardState extends State<Dashboard>
       myDebugPrint(
           '💙 💙 💙 _DashboardState: Received busy: $busy : will setState');
       setState(() {
-        isBusy = busy;
+        isBusy = busy.last;
       });
     });
   }
@@ -109,7 +109,7 @@ class _DashboardState extends State<Dashboard>
       myDebugPrint(
           '💙 💙 💙 _DashboardState: Received ERROR: 🔴  🔴  🔴 $message : will setState');
       setState(() {
-        _errorMessage = message;
+        _errorMessage = message.last;
         isBusy = false;
       });
       if (hasAlreadyShownWifi) {
@@ -521,5 +521,13 @@ class _DashboardState extends State<Dashboard>
     _routeDistanceEstimations = routeDistanceEstimations;
     //todo - filter older estimations ....
     setState(() {});
+  }
+
+  @override
+  onError(String message) {
+    if (mounted) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: message, actionLabel: '');
+    }
   }
 }

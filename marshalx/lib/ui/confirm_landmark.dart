@@ -1,4 +1,5 @@
 import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,8 @@ class ConfirmLandmark extends StatefulWidget {
   _ConfirmLandmarkState createState() => _ConfirmLandmarkState();
 }
 
-class _ConfirmLandmarkState extends State<ConfirmLandmark> {
+class _ConfirmLandmarkState extends State<ConfirmLandmark>
+    implements MarshalBlocListener {
   List<Landmark> _landmarks = List();
   var _key = GlobalKey<ScaffoldState>();
   MarshalBloc marshalBloc;
@@ -19,7 +21,7 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
     _subscribeToError();
     _subscribeToBusy();
     _getNearestLandmarks();
-    marshalBloc = MarshalBloc(null);
+    marshalBloc = MarshalBloc(this);
   }
 
   void _subscribeToBusy() {
@@ -31,7 +33,7 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
 //      }
       if ((mounted)) {
         setState(() {
-          isBusy = busy;
+          isBusy = busy.last;
         });
       }
     });
@@ -40,7 +42,7 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
   void _subscribeToError() {
     marshalBloc.errorStream.listen((err) {
       myDebugPrint('👿  👿  👿  Received error: $err');
-      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err);
+      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err.last);
     });
   }
 
@@ -112,7 +114,7 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
     prettyPrint(landmark.toJson(),
         '🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩 🧩  saving Marshal landmark ...  🔴 calling marshalBloc.refreshMarshalLandmark');
     await marshalBloc.refreshMarshalLandmark(landmark);
-    Navigator.pop(context);
+    Navigator.pop(context, landmark);
   }
 
   bool isBusy = false;
@@ -184,5 +186,20 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark> {
                 }),
       ),
     );
+  }
+
+  @override
+  onError(String message) {
+    if (mounted) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: message, actionLabel: '');
+    }
+  }
+
+  @override
+  onRouteDistanceEstimationsArrived(
+      List<RouteDistanceEstimation> routeDistanceEstimations) {
+    // TODO: implement onRouteDistanceEstimationsArrived
+    return null;
   }
 }
