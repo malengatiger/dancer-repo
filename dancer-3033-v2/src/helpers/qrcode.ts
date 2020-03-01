@@ -6,6 +6,7 @@ import fs from 'fs'
 import { appTo } from '../helpers/messaging'
 import { UploadResponse, Bucket } from '@google-cloud/storage';
 import {IQRRecord} from '../models/qrrecord'
+
 class QRCodeUtil {
 
     static async generateQRCode(vehicleID: String): Promise<any> {
@@ -27,8 +28,8 @@ class QRCodeUtil {
         for (let i = 0; i < capacity; i++) {
             const metadata = `${vehicle.associationID}@${vehicle.associationName}@${vehicle.vehicleID}@${i+1}@${vehicle.vehicleReg}@${JSON.stringify(vehicle.vehicleType)}`
             console.log(metadata);
-            const fileName = `qrcode_${new Date().toISOString()}_${vehicle.vehicleReg}_seat${i+1}.png`
-            QRCode.toFile(fileName, metadata)
+            const fileName = `qrcode_${new Date().getTime()}_${vehicle.vehicleReg}_seat${i+1}.png`
+            await QRCode.toFile(fileName, metadata)
                 .then(result => {
                     console.log(`🍏 🍏 🍏 🍏 QR code generated; file: ${fileName} 🍏 🍏 🍏 🍏 `);
                 })

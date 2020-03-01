@@ -35,9 +35,8 @@ class AppController {
             log_1.logGreen(`🧡💛🧡💛 generateQRCode requested`);
             console.log(req.body);
             var mRes = yield qrcode_1.default.generateQRCode(req.body.vehicleID);
-            res.status(200).json({
-                message: `🧡💛🧡💛 QR code generation complete 💙 ${mRes}  🔆 🔆 🔆 🔆 🔆 `,
-            });
+            log_1.logGreen(`🧡💛🧡💛 generateQRCode completed, sending responses to caller: ${mRes.length}`);
+            res.status(200).json(mRes);
         }));
     }
 }

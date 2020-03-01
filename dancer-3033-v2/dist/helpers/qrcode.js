@@ -37,8 +37,8 @@ class QRCodeUtil {
             for (let i = 0; i < capacity; i++) {
                 const metadata = `${vehicle.associationID}@${vehicle.associationName}@${vehicle.vehicleID}@${i + 1}@${vehicle.vehicleReg}@${JSON.stringify(vehicle.vehicleType)}`;
                 console.log(metadata);
-                const fileName = `qrcode_${new Date().toISOString()}_${vehicle.vehicleReg}_seat${i + 1}.png`;
-                qrcode_1.default.toFile(fileName, metadata)
+                const fileName = `qrcode_${new Date().getTime()}_${vehicle.vehicleReg}_seat${i + 1}.png`;
+                yield qrcode_1.default.toFile(fileName, metadata)
                     .then(result => {
                     console.log(`🍏 🍏 🍏 🍏 QR code generated; file: ${fileName} 🍏 🍏 🍏 🍏 `);
                 })

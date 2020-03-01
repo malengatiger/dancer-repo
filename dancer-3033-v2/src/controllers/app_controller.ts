@@ -33,9 +33,10 @@ export class AppController{
       );
       console.log(req.body);
       var mRes = await QRCodeUtil.generateQRCode(req.body.vehicleID)
-      res.status(200).json({
-        message: `🧡💛🧡💛 QR code generation complete 💙 ${mRes}  🔆 🔆 🔆 🔆 🔆 `,
-      });
+      logGreen(
+        `🧡💛🧡💛 generateQRCode completed, sending responses to caller: ${mRes.length}`,
+      );
+      res.status(200).json(mRes);
     });
     
     
