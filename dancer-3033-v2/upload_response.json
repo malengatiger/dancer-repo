@@ -1,0 +1,49 @@
+{
+    "kind": "storage#object",
+    "id": "dancer26983.appspot.com/qrcodes/2020-03-01T17:14:54.618Z.png/1583082896600825",
+    "selfLink": "https://www.googleapis.com/storage/v1/b/dancer26983.appspot.com/o/qrcodes%2F2020-03-01T17:14:54.618Z.png",
+    "mediaLink": "https://www.googleapis.com/download/storage/v1/b/dancer26983.appspot.com/o/qrcodes%2F2020-03-01T17:14:54.618Z.png?generation=1583082896600825&alt=media",
+    "name": "qrcodes/2020-03-01T17:14:54.618Z.png",
+    "bucket": "dancer26983.appspot.com",
+    "generation": "1583082896600825",
+    "metageneration": "1",
+    "contentType": "image/png",
+    "storageClass": "STANDARD",
+    "size": "1637",
+    "md5Hash": "M/Mh6AgCXxsvIfwsxnTpxQ==",
+    "cacheControl": "public, max-age=31536000",
+    "crc32c": "iSWy+g==",
+    "etag": "CPndzq3j+ecCEAE=",
+    "timeCreated": "2020-03-01T17:14:56.600Z",
+    "updated": "2020-03-01T17:14:56.600Z",
+    "timeStorageClassUpdated": "2020-03-01T17:14:56.600Z",
+    "acl": [
+        {
+            "kind": "storage#objectAccessControl",
+            "object": "qrcodes/2020-03-01T17:14:54.618Z.png",
+            "generation": "1583082896600825",
+            "id": "dancer26983.appspot.com/qrcodes/2020-03-01T17:14:54.618Z.png/1583082896600825/user-firebase-adminsdk-9867a@dancer26983.iam.gserviceaccount.com",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/dancer26983.appspot.com/o/qrcodes%2F2020-03-01T17:14:54.618Z.png/acl/user-firebase-adminsdk-9867a@dancer26983.iam.gserviceaccount.com",
+            "bucket": "dancer26983.appspot.com",
+            "entity": "user-firebase-adminsdk-9867a@dancer26983.iam.gserviceaccount.com",
+            "role": "OWNER",
+            "email": "firebase-adminsdk-9867a@dancer26983.iam.gserviceaccount.com",
+            "etag": "CPndzq3j+ecCEAE="
+        },
+        {
+            "kind": "storage#objectAccessControl",
+            "object": "qrcodes/2020-03-01T17:14:54.618Z.png",
+            "generation": "1583082896600825",
+            "id": "dancer26983.appspot.com/qrcodes/2020-03-01T17:14:54.618Z.png/1583082896600825/allUsers",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/dancer26983.appspot.com/o/qrcodes%2F2020-03-01T17:14:54.618Z.png/acl/allUsers",
+            "bucket": "dancer26983.appspot.com",
+            "entity": "allUsers",
+            "role": "READER",
+            "etag": "CPndzq3j+ecCEAE="
+        }
+    ],
+    "owner": {
+        "entity": "user-firebase-adminsdk-9867a@dancer26983.iam.gserviceaccount.com"
+    }
+}
+

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import express = require("express");
 import { logBlue, logGreen } from "../log";
+import QRCodeUtil from "../helpers/qrcode";
 
 export class AppController{
 
@@ -15,6 +16,7 @@ export class AppController{
         message: msg,
       });
     });
+
     app.route("/ping").get((req: Request, res: Response) => {
       logGreen(
         `\n\n💦 🧡💛🧡💛 Dancer has been pinged!! Azure 🏓 CONTAINER is UP!💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
@@ -24,6 +26,18 @@ export class AppController{
         message: `🧡💛🧡💛 MizDancer, aka AftaRobot Web API pinged! 💙💙💙💙💙💙 Azure 🏓 DOCKER CONTAINER is totally UP! 💙💙💙💙💙💙 ... and RUNNING!! 💙 ${new Date()}  💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
       });
     });
+
+    app.route("/generateQRCode").post(async (req: Request, res: Response) => {
+      logGreen(
+        `🧡💛🧡💛 generateQRCode requested`,
+      );
+      console.log(req.body);
+      var mRes = await QRCodeUtil.generateQRCode(req.body.vehicleID)
+      res.status(200).json({
+        message: `🧡💛🧡💛 QR code generation complete 💙 ${mRes}  🔆 🔆 🔆 🔆 🔆 `,
+      });
+    });
+    
     
   }
 }

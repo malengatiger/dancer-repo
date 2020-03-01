@@ -1,6 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const log_1 = require("../log");
+const qrcode_1 = __importDefault(require("../helpers/qrcode"));
 class AppController {
     routes(app) {
         log_1.logBlue(`🏓🏓🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`);
@@ -18,6 +31,14 @@ class AppController {
                 message: `🧡💛🧡💛 MizDancer, aka AftaRobot Web API pinged! 💙💙💙💙💙💙 Azure 🏓 DOCKER CONTAINER is totally UP! 💙💙💙💙💙💙 ... and RUNNING!! 💙 ${new Date()}  💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
             });
         });
+        app.route("/generateQRCode").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.logGreen(`🧡💛🧡💛 generateQRCode requested`);
+            console.log(req.body);
+            var mRes = yield qrcode_1.default.generateQRCode(req.body.vehicleID);
+            res.status(200).json({
+                message: `🧡💛🧡💛 QR code generation complete 💙 ${mRes}  🔆 🔆 🔆 🔆 🔆 `,
+            });
+        }));
     }
 }
 exports.AppController = AppController;

@@ -13,6 +13,7 @@ export const appTo: admin.app.App = admin.initializeApp(
     {
         credential: admin.credential.cert(ssa1),
         databaseURL: "https://dancer26983.firebaseio.com",
+        storageBucket: "dancer26983.appspot.com",
     },
     "appTo",
 );

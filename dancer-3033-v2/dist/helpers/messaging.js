@@ -31,6 +31,7 @@ log_1.log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
 exports.appTo = admin.initializeApp({
     credential: admin.credential.cert(ssa1),
     databaseURL: "https://dancer26983.firebaseio.com",
+    storageBucket: "dancer26983.appspot.com",
 }, "appTo");
 log_1.log(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
 const fba = exports.appTo.messaging();
