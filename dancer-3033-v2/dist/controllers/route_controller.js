@@ -18,6 +18,7 @@ const uuid = require("uuid");
 const mongoose_1 = require("mongoose");
 const route_distance_1 = __importDefault(require("../models/route_distance"));
 const messaging_1 = __importDefault(require("../helpers/messaging"));
+const route_fare_1 = __importDefault(require("../models/route_fare"));
 class RouteController {
     routes(app) {
         log_1.log(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
@@ -108,6 +109,83 @@ class RouteController {
                 });
             }
         }));
+        app.route("/addRouteFare").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.log(`\n\n💦  POST: /addRouteFare requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const routeFare = new route_fare_1.default(req.body);
+                routeFare.created = new Date().toISOString();
+                const result = yield routeFare.save();
+                log_1.log(`routeFare added to db: ${result}`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ` 🍎🍎🍎🍎 addRouteFare failed: ${err}`
+                });
+            }
+        }));
+        app.route("/addLandmarkFare").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.log(`\n\n💦  POST: /addLandmarkFare requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const routeFare = route_fare_1.default.find({ routeID: req.body.routeID });
+                if (!routeFare.landmarkFares) {
+                    routeFare.landmarkFares = [];
+                }
+                routeFare.landmarkFares.push(req.body);
+                const result = yield routeFare.save();
+                log_1.log(`landmarkFare added to db: ${result}`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                res.status(400).json({
+                    error: err,
+                    message: ` 🍎🍎🍎🍎 addLandmarkFare failed: ${err}`
+                });
+            }
+        }));
+        app.route("/getRouteFaresByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.log(`\n\n💦💦 💦  POST: /getRouteFaresByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const assID = req.body.associationID;
+                const now = new Date().getTime();
+                const result = yield route_fare_1.default.find({ associationID: assID });
+                log_1.log(result);
+                const end = new Date().getTime();
+                log_1.log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query. found 😍 ${result.length} routes`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                console.error(err);
+                res.status(400).json({
+                    error: err,
+                    message: ` 🍎🍎🍎🍎 getRouteFaresByAssociation failed: ${err}`
+                });
+            }
+        }));
+        app.route("/getRouteFares").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            log_1.log(`\n\n💦💦 💦  POST: /getRouteFare requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
+            console.log(req.body);
+            try {
+                const routeID = req.body.routeID;
+                const now = new Date().getTime();
+                const result = yield route_fare_1.default.find({ routeID: routeID });
+                log_1.log(result);
+                const end = new Date().getTime();
+                log_1.log(`🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query`);
+                res.status(200).json(result);
+            }
+            catch (err) {
+                console.error(err);
+                res.status(400).json({
+                    error: err,
+                    message: ` 🍎🍎🍎🍎 getRouteFare failed: ${err}`
+                });
+            }
+        }));
         app.route("/addRouteDistanceEstimation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.log(`\n\n💦  POST: /addRouteDistanceEstimation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);
             console.log(req.body);
@@ -155,9 +233,10 @@ class RouteController {
                 });
             }
             catch (err) {
+                console.error(err);
                 res.status(400).json({
                     error: err,
-                    message: ' 🍎🍎🍎🍎 addRouteDistanceEstimations failed'
+                    message: ` 🍎🍎🍎🍎 addRouteDistanceEstimations failed: ${err}`
                 });
             }
         }));
@@ -313,7 +392,6 @@ class RouteController {
                     }
                 });
                 log_1.log(` 🍎🍎🍎🍎 🍎🍎🍎🍎 ROUTES FOUND  🍎🍎🍎🍎 ${result.length}`);
-                console.log(result);
                 const end = new Date().getTime();
                 log_1.log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query: routes found: 🍎 ${result.length} 🍎`);
                 res.status(200).json(result);

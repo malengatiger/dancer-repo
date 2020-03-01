@@ -427,20 +427,7 @@ class Messaging {
             },
             data: {
                 type: Constants.DISPATCH_RECORDS,
-                dispatched: data.dispatched ? 'true' : 'false',
-                landmarkID: data.landmarkID,
-                marshalID: data.marshalID,
-                marshalName: data.marshalID,
-                landmarkName: data.landmarkName,
-                routeName: data.routeName,
-                routeID: data.routeID,
-                vehicleReg: data.vehicleReg,
-                vehicleID: data.vehicleID,
-                vehicleType: JSON.stringify(data.vehicleType),
-                ownerID: data.ownerID,
-                passengers: `${data.passengers}`,
-                dispatchRecordID: data.dispatchRecordID,
-                created: data.created
+                dispatched: JSON.stringify(data)
             },
         };
         const result: any[] = await Landmark.find({

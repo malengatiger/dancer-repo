@@ -16,8 +16,8 @@ const DispatchRecordSchema = new mongoose.Schema(
         ownerID: {type: String, required: false},
         passengers: {type: Number, required: true},
         dispatchRecordID: {type: String, required: true},
-        associationD: {type: String, required: false,trim: true, index: true},
-        associationName: {type: String, required: false,trim: true},
+        associationD: {type: String, required: true,trim: true, index: true},
+        associationName: {type: String, required: true,trim: true},
         
         created: {type: String, required: true, default: new Date().toISOString()},
 
