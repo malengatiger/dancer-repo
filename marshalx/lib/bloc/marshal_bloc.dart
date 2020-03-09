@@ -97,12 +97,12 @@ class MarshalBloc implements GeofencerListener {
   List<CommuterFenceExitEvent> _exitEvents = List();
   List<CommuterArrivalLandmark> _commuterArrivals = List();
   List<Vehicle> _vehicles = List();
+  List<Vehicle> get vehicles => _vehicles;
   List<CommuterRequest> _commuterRequests = List();
   GeoFencer _geoFencer;
 
   _init() async {
-    findLandmarksByLocation(
-        radiusInKM: Constants.settings.vehicleGeoQueryRadius);
+    findLandmarksByLocation(radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
     var fbUser = await _auth.currentUser();
     if (fbUser == null) {
       myDebugPrint(
@@ -122,40 +122,26 @@ class MarshalBloc implements GeofencerListener {
       _errors.add('AftaRobot user not found');
       _errorController.sink.add(_errors);
       return;
+    } else {
+      _vehicles = await getAssociationVehicles(forceRefresh: false);
+      _vehiclesController.sink.add(_vehicles);
     }
     _configureFCM();
     _geoFencer = GeoFencer(Constants.USER_MARSHAL, geofencerListener: this);
     _geoFencer.findLandmarksByLocation();
   }
 
-  Future initializeData() async {
-    myDebugPrint(
-        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 initializeData: Loading data into streams ....');
-    _busies.add(true);
-    _busyController.sink.add(_busies);
-    LocalDBAPI.setAppID();
-    _user = await Prefs.getUser();
-    _landmark = await Prefs.getLandmark();
-
-    await getAssociationVehicles(forceRefresh: true);
-    await findLandmarksByLocation();
-    await getAssociationRoutes(forceRefresh: true);
-    myDebugPrint(
-        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 initializeData:  🔴 🔴 DONE Loading data into streams');
-    _busies.add(false);
-    _busyController.sink.add(_busies);
-  }
-
-  Future refreshDashboardData(bool forceRefresh) async {
+  Future refreshDashboardData({bool forceRefresh}) async {
     myDebugPrint(
         '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData: Loading data into streams ...');
 
     _busies.add(true);
     _busyController.sink.add(_busies);
+
     _landmark = await Prefs.getLandmark();
-    await getAssociationVehicles(forceRefresh: forceRefresh);
-    await findLandmarksByLocation(
-        radiusInKM: Constants.settings.vehicleGeoQueryRadius);
+    _vehicles = await getAssociationVehicles(forceRefresh: forceRefresh);
+
+    await findLandmarksByLocation(radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
     await getCommuterRequests();
     await getCommuterFenceDwellEvents();
     await getVehicleArrivals();
@@ -170,8 +156,7 @@ class MarshalBloc implements GeofencerListener {
     myDebugPrint(
         '\n💙  💙  💙  💙  💙  💙  💙 refreshMarshalLandmark ..... ${landmark.landmarkName}');
     await Prefs.saveLandmark(landmark);
-    refreshDashboardData(false);
-    findLandmarksByLocation(radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
+    refreshDashboardData(forceRefresh: true);
     return null;
   }
 
@@ -379,7 +364,7 @@ class MarshalBloc implements GeofencerListener {
       print(e);
       _errors.add('findLandmarksByLocation failed: ${e.toString()}');
       _errorController.sink.add(_errors);
-      marshalBlocListener.onError('findLandmarksByLocation failed');
+      //marshalBlocListener.onError('findLandmarksByLocation failed');
     }
 
     return null;
@@ -443,22 +428,31 @@ class MarshalBloc implements GeofencerListener {
     return null;
   } //eagleworkshop@gmail.com 01019760657
 
-  List<Vehicle> vehicles;
   Future<List<Vehicle>> getAssociationVehicles(
       {bool forceRefresh = false}) async {
     myDebugPrint(
         '🦠 🦠 🦠 getAssociationVehicles....._user.associationID: ${_user.associationID}');
     try {
-      vehicles = await LocalDBAPI.getVehiclesByAssociation(_user.associationID);
-      if (vehicles.isEmpty || forceRefresh) {
-        vehicles = await DancerListAPI.getVehiclesByAssociation(
+      if (forceRefresh == true) {
+        _vehicles = await DancerListAPI.getVehiclesByAssociation(
             associationID: _user.associationID);
         myDebugPrint('🦠 🦠 🦠 Cache vehicles in local DB .....');
         await LocalDBAPI.addVehicles(vehicles: vehicles);
+      } else {
+        _vehicles = await LocalDBAPI.getAllVehicles();
+        if ((vehicles.isEmpty)) {
+          _vehicles = await DancerListAPI.getVehiclesByAssociation(
+              associationID: _user.associationID);
+        }
       }
+      _vehicles.forEach((v) {
+        if (v.assignments == null) {
+          v.assignments = List();
+        }
+      });
       myDebugPrint(
-          '🦠 🦠 🦠  ${vehicles.length} vehicles found. put on stream: 🌸 _vehiclesController.sink');
-      _vehiclesController.sink.add(vehicles);
+          '🦠 🦠 🦠  ${_vehicles.length} vehicles found. put on stream: 🌸 _vehiclesController.sink');
+      _vehiclesController.sink.add(_vehicles);
       return vehicles;
     } catch (e) {
       print(e);

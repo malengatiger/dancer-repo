@@ -1,3 +1,4 @@
+import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
@@ -33,9 +34,11 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
   @override
   void initState() {
     super.initState();
+    marshalBloc = MarshalBloc(this);
     _checkMarshalLandmark();
   }
 
+  test() async {}
   _checkMarshalLandmark() async {
     myDebugPrint('.......................... _checkMarshalLandmark .......');
     landmark = await Prefs.getLandmark();
@@ -123,7 +126,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
       isBusy = true;
     });
     try {
-      _vehicles = await marshalBloc.getAssociationVehicles(forceRefresh: false);
+      _vehicles = await marshalBloc.getAssociationVehicles(forceRefresh: true);
       setState(() {
         isBusy = false;
         showAllAssocVehicles = true;
@@ -149,6 +152,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
     }
   }
 
+  Vehicle selectedVehicle;
   @override
   Widget build(BuildContext context) {
     myDebugPrint('build .......');
@@ -252,9 +256,12 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                               return GestureDetector(
                                 onTap: () {
                                   if (landmark == null) {
-                                    _startLandmarkConfirm;
+                                    _startLandmarkConfirm();
                                     return;
                                   }
+                                  prettyPrint(myVehicle.toJson(),
+                                      'myVehicle, check registration .....');
+                                  selectedVehicle = myVehicle;
                                   var vehArrival = VehicleArrival(
                                       vehicleID: myVehicle.vehicleID,
                                       vehicleReg: myVehicle.vehicleReg,
@@ -287,11 +294,17 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                                         color: getRandomColor(),
                                       ),
                                       title: Text(
-                                        myVehicle.vehicleReg,
+                                        myVehicle == null
+                                            ? 'No Vehicle'
+                                            : myVehicle.vehicleReg == null
+                                                ? 'VehicleReg is NULL'
+                                                : myVehicle.vehicleReg,
                                         style: Styles.blueBoldMedium,
                                       ),
                                       subtitle: Text(
-                                        'Arrived: ${getFormattedDateHourMinSec(myVehicle.created)}',
+                                        myVehicle == null
+                                            ? ''
+                                            : 'Arrived: ${getFormattedDateHourMinSec(myVehicle.created)}',
                                         style: Styles.whiteSmall,
                                       ),
                                     ),
@@ -324,6 +337,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                                   vehicleArrivals.elementAt(index);
                               return GestureDetector(
                                 onTap: () {
+                                  selectedVehicle = null;
                                   _startDispatch(vehicleArrival);
                                 },
                                 child: Padding(
@@ -355,16 +369,36 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
   void _startDispatch(VehicleArrival vehicleArrival) async {
     myDebugPrint('Back in _startDispatch ...  💀  💀  💀  💀  receiving ???!');
     print(vehicleArrival);
-    var res = await Navigator.push(
-        context, SlideRightRoute(widget: Dispatch(vehicleArrival)));
-    if (res != null) {
-      DispatchRecord mm = res as DispatchRecord;
+    if (selectedVehicle == null) {
+      selectedVehicle =
+          await LocalDBAPI.getVehicleByID(vehicleArrival.vehicleID);
+    }
+    if (selectedVehicle == null) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'Unable to find vehicle data');
+      return;
+    }
+    var res = await Navigator.push(context,
+        SlideRightRoute(widget: Dispatch(vehicleArrival, selectedVehicle)));
+    if (res != null && res is DispatchRecord) {
+      DispatchRecord mm = res;
       myDebugPrint(
           '🥬🥬🥬 Back in _startDispatch ... 🥬🥬🥬 cool 🥬🥬🥬 ! : ${mm.toJson()}');
       AppSnackbar.showSnackbar(
           scaffoldKey: _key,
           message: '${mm.vehicleReg} '
               'has been dispached with  🌺 ${mm.passengers} passengers');
+      try {
+        _vehicles.remove(selectedVehicle);
+      } catch (e) {
+        print(e);
+        AppSnackbar.showErrorSnackbar(
+            scaffoldKey: _key, message: 'Unable to remove vehicle from list');
+        return;
+      }
+      setState(() {
+        selectedVehicle = null;
+      });
     }
   }
 

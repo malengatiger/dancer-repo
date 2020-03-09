@@ -35,7 +35,8 @@ class QRCodeUtil {
             }
             const responses = [];
             for (let i = 0; i < capacity; i++) {
-                const metadata = `${vehicle.associationID}@${vehicle.associationName}@${vehicle.vehicleID}@${i + 1}@${vehicle.vehicleReg}@${JSON.stringify(vehicle.vehicleType)}`;
+                const metadata = `${vehicle.associationID}@${vehicle.associationName}
+            @${vehicle.vehicleID}@${i + 1}@${vehicle.vehicleReg}@${JSON.stringify(vehicle.vehicleType)}`;
                 console.log(metadata);
                 const fileName = `qrcode_${new Date().getTime()}_${vehicle.vehicleReg}_seat${i + 1}.png`;
                 yield qrcode_1.default.toFile(fileName, metadata)
@@ -61,9 +62,6 @@ class QRCodeUtil {
                     url: urlFromStorageService,
                     seatNumber: i + 1
                 });
-                console.log(`🍏 🍏 🍏 🍏 mRecord anyone?? .... check url .......`);
-                console.log(mRecord);
-                console.log(`🍏 🍏 🍏 🍏 mRecord finished; anyone?? .... `);
                 const saved = yield mRecord.save();
                 console.log(`💙 💙 💙 💙 💙 qr record #${i + 1} saved on database. 🍎 Yup! 🍎 ${saved}`);
                 responses.push(saved);

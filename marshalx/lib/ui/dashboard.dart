@@ -1,3 +1,5 @@
+import 'package:aftarobotlibrary4/api/fare_bloc.dart';
+import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/commuter_arrival_landmark.dart';
 import 'package:aftarobotlibrary4/data/commuter_fence_event.dart';
 import 'package:aftarobotlibrary4/data/commuter_request.dart';
@@ -51,6 +53,14 @@ class _DashboardState extends State<Dashboard>
     _subscribeToError();
     _listenToDataStreams();
     _checkUser();
+    _testFareGeneration();
+  }
+
+  void _testFareGeneration() async {
+    var user = await Prefs.getUser();
+    if (user != null) {
+      FareBloc.createTestFares(user.associationID, user.associationName);
+    }
   }
 
   void _checkUser() async {
@@ -71,7 +81,7 @@ class _DashboardState extends State<Dashboard>
               backgroundColor: Colors.pink[600]);
           return;
         }
-        marshalBloc.initializeData();
+        marshalBloc.refreshDashboardData(forceRefresh: true);
       } catch (e) {
         AppSnackbar.showSnackbar(
             scaffoldKey: _key,
@@ -80,15 +90,13 @@ class _DashboardState extends State<Dashboard>
             backgroundColor: Colors.pink[600]);
       }
     } else {
-      myDebugPrint('💜 💜 💜 💜 calling marshalBloc.refreshDashboardData...');
-      await marshalBloc.refreshDashboardData(false);
-      marshalBloc.findLandmarksByLocation(
-          radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
+      myDebugPrint('💜 💜 💜  calling marshalBloc.refreshDashboardData...');
+      await marshalBloc.refreshDashboardData(forceRefresh: false);
     }
 
-    user = marshalBloc.user;
+    user = await Prefs.getUser();
     myDebugPrint('💜 💜 💜 💜  my Landmark ...');
-    landmark = marshalBloc.marshalLandmark;
+    landmark = await Prefs.getLandmark();
   }
 
   void _subscribeToBusy() {
@@ -112,13 +120,13 @@ class _DashboardState extends State<Dashboard>
         _errorMessage = message.last;
         isBusy = false;
       });
-      if (hasAlreadyShownWifi) {
-        myDebugPrint(
-            'ignoring this ....................hasAlreadyShownWifi: $hasAlreadyShownWifi');
-      } else {
-        Navigator.push(context, SlideRightRoute(widget: WifiError()));
-        hasAlreadyShownWifi = true;
-      }
+//      if (hasAlreadyShownWifi) {
+//        myDebugPrint(
+//            'ignoring this ....................hasAlreadyShownWifi: $hasAlreadyShownWifi');
+//      } else {
+//        Navigator.push(context, SlideRightRoute(widget: WifiError()));
+//        hasAlreadyShownWifi = true;
+//      }
     });
   }
 
@@ -178,11 +186,18 @@ class _DashboardState extends State<Dashboard>
       isBusy = true;
       hasAlreadyShownWifi = false;
     });
-    await marshalBloc.refreshDashboardData(true);
-    _key.currentState.removeCurrentSnackBar();
-    setState(() {
-      isBusy = false;
-    });
+    try {
+      await marshalBloc.refreshDashboardData(forceRefresh: true);
+      setState(() {
+        isBusy = false;
+      });
+    } catch (e) {
+      AppSnackbar.showSnackbar(
+          scaffoldKey: _key,
+          message: 'Problem refreshing data',
+          textColor: Colors.amber,
+          backgroundColor: Colors.pink[600]);
+    }
   }
 
   void _openConfirmLandmark() async {
@@ -193,9 +208,11 @@ class _DashboardState extends State<Dashboard>
           widget: ConfirmLandmark(),
         ));
     print(result);
-    setState(() {
-      landmark = marshalBloc.marshalLandmark;
-    });
+    if (result != null && result is Landmark) {
+      setState(() {
+        landmark = result;
+      });
+    }
   }
 
   void _tryAnimation() {

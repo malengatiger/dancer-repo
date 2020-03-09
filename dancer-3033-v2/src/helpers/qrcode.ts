@@ -26,7 +26,8 @@ class QRCodeUtil {
         } 
         const responses: IQRRecord[] = []
         for (let i = 0; i < capacity; i++) {
-            const metadata = `${vehicle.associationID}@${vehicle.associationName}@${vehicle.vehicleID}@${i+1}@${vehicle.vehicleReg}@${JSON.stringify(vehicle.vehicleType)}`
+            const metadata = `${vehicle.associationID}@${vehicle.associationName}
+            @${vehicle.vehicleID}@${i+1}@${vehicle.vehicleReg}@${JSON.stringify(vehicle.vehicleType)}`
             console.log(metadata);
             const fileName = `qrcode_${new Date().getTime()}_${vehicle.vehicleReg}_seat${i+1}.png`
             await QRCode.toFile(fileName, metadata)
@@ -53,10 +54,6 @@ class QRCodeUtil {
                 url: urlFromStorageService, 
                 seatNumber: i + 1
             })
-            console.log(`🍏 🍏 🍏 🍏 mRecord anyone?? .... check url .......`);
-            console.log(mRecord);
-            console.log(`🍏 🍏 🍏 🍏 mRecord finished; anyone?? .... `);
-            
             const saved = await mRecord.save()
             console.log(`💙 💙 💙 💙 💙 qr record #${i + 1} saved on database. 🍎 Yup! 🍎 ${saved}`)
             responses.push(saved);

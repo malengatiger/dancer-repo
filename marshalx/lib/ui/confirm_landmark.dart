@@ -13,24 +13,25 @@ class ConfirmLandmark extends StatefulWidget {
 class _ConfirmLandmarkState extends State<ConfirmLandmark>
     implements MarshalBlocListener {
   List<Landmark> _landmarks = List();
+  List<String> _errors = List();
+  List<bool> _busies = List();
   var _key = GlobalKey<ScaffoldState>();
   MarshalBloc marshalBloc;
   @override
   initState() {
     super.initState();
+
+    marshalBloc = MarshalBloc(this);
+    marshalBloc.refreshDashboardData(forceRefresh: false);
     _subscribeToError();
     _subscribeToBusy();
     _getNearestLandmarks();
-    marshalBloc = MarshalBloc(this);
   }
 
   void _subscribeToBusy() {
     marshalBloc.busyStream.listen((busy) {
       myDebugPrint('💙 💙 💙 Received busy: $busy : will setState');
-//      if (!busy) {
-//        _key.currentState.removeCurrentSnackBar();
-//        Navigator.pop(context, _landmark);
-//      }
+      _busies = busy;
       if ((mounted)) {
         setState(() {
           isBusy = busy.last;
@@ -42,7 +43,13 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark>
   void _subscribeToError() {
     marshalBloc.errorStream.listen((err) {
       myDebugPrint('👿  👿  👿  Received error: $err');
-      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err.last);
+
+      if ((mounted)) {
+        setState(() {
+          _errors = err;
+        });
+        AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err.last);
+      }
     });
   }
 
