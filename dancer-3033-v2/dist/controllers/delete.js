@@ -17,7 +17,7 @@ const landmark_1 = __importDefault(require("../models/landmark"));
 const old_landmark_1 = __importDefault(require("../models/old_landmark"));
 class DeleteController {
     routes(app) {
-        console.log(`🏓🏓🏓    DeleteController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`);
+        console.log(`🏓    DeleteController:  💙 setting up temporary fix routes ${app.name}`);
         app.route("/deleteRoute").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 ........... deleteRoute requested `;
             console.log(msg);

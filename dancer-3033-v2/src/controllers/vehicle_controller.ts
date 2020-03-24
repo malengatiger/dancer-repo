@@ -14,7 +14,7 @@ export class VehicleController {
 
   public routes(app: any): void {
     console.log(
-      `🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`,
+      `🏓    VehicleController:  💙  setting up default Vehicle routes ...`,
     );
     app.route("/addVehicleCommuterNearby").post(async(req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 addVehicleCommuterNearby requested `;

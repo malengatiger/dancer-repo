@@ -21,7 +21,7 @@ const messaging_1 = __importDefault(require("../helpers/messaging"));
 const route_fare_1 = __importDefault(require("../models/route_fare"));
 class RouteController {
     routes(app) {
-        log_1.log(`🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `);
+        log_1.log(`🏓    RouteController: 💙  setting up default Route routes ... `);
         /////////
         app.route("/getRoutesByAssociation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.log(`\n\n💦💦 💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);

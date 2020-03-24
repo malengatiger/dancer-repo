@@ -16,7 +16,7 @@ const log_1 = require("../log");
 const qrcode_1 = __importDefault(require("../helpers/qrcode"));
 class AppController {
     routes(app) {
-        log_1.logBlue(`🏓🏓🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`);
+        log_1.logBlue(`🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`);
         app.route("/").get((req, res) => {
             const msg = `🧡💛🧡💛  Hello World from MizDancer 💙💙💙💙💙💙 Azure 🏓 DOCKER CONTAINER  is UP!  💙💙💙💙💙💙 🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
             log_1.logBlue(msg);
@@ -37,6 +37,11 @@ class AppController {
             var mRes = yield qrcode_1.default.generateQRCode(req.body.vehicleID);
             log_1.logGreen(`🧡💛🧡💛 generateQRCode completed, sending responses to caller: ${mRes.length}`);
             res.status(200).json(mRes);
+        }));
+        app.route("/momo").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log(`🧡💛🧡💛 momo MTN Mobile Money Callback requested`);
+            console.log(JSON.stringify(req));
+            res.status(200).send(`💛OK, MTN Mobile Money Callback: 💛body: ${JSON.stringify(req.body)}`);
         }));
     }
 }

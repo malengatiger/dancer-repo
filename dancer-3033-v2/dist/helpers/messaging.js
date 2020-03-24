@@ -27,15 +27,15 @@ const constants_1 = __importDefault(require("./constants"));
 log_1.log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
 const ssa1 = JSON.parse(sa1);
-log_1.log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
+// log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
 exports.appTo = admin.initializeApp({
     credential: admin.credential.cert(ssa1),
     databaseURL: "https://dancer26983.firebaseio.com",
     storageBucket: "dancer26983.appspot.com",
 }, "appTo");
-log_1.log(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`);
+log_1.log(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION} \n`);
 const fba = exports.appTo.messaging();
-log_1.log(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
+log_1.log(`😍 😍 😍 FCM Messaging initialized. app: ${fba.app.name} `);
 class Messaging {
     static init() {
         log_1.log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);

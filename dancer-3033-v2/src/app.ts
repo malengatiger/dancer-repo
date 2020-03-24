@@ -5,9 +5,8 @@ import { Request, Response, NextFunction, Application } from "express";
 import bodyParser from "body-parser";
 // import AftaRobotApp from "../app";
 import http from "http";
-import {log} from './log';
+import { log } from './log';
 import AftaRobotApp from './ar';
-import initializeDatabase from "./database/initializeDatabase";
 const listEndpoints = require('express-list-endpoints')
 
 export const app: Application = express();
@@ -24,18 +23,18 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 8081;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
-log(`🥦🥦🥦 Dancer Web(aka ARWeb) Firebase service account : 🥦🥦🥦 ${dancer} \n🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦\n`);
+log(`🥦🥦🥦 Dancer Web(aka ARWeb) Firebase service account : 🥦🥦🥦 ${dancer === null? 'No Firebase Service Account':' Firebase Service Account found'}  🥦🥦🥦`);
 server.listen(port, () => {
   log(
-    `\n\n🔵🔵🔵  Dancer Web(aka ARWeb) API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n\n`,
+    `\n🔵🔵🔵  Dancer Web(aka ARWeb) API started and listening on port: 🧡💛 ${port}  🧡💛 ${new Date().toISOString()}  🍎🍎\n`,
   );
 
 });
 const ar = new AftaRobotApp();
 log(`\n🔆🔆 Dancer Web(aka ARWeb) API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
-log(`🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+// log(`🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆`);
 const list: any[] = listEndpoints(app);
 const stringList: string[] = [];
 list.forEach((m) => {
@@ -43,12 +42,12 @@ list.forEach((m) => {
 });
 stringList.sort();
 let cnt = 0;
-stringList.forEach((m) => {
-  cnt++;
-  log(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
-});
+// stringList.forEach((m) => {
+//   cnt++;
+//   log(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
+// });
 
-log(`🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of Dancer Web(aka ARWeb) endpoints available; total endpoints: 💛 ${cnt}  💛 \n\n`);
+log(`🥦🥦 Dancer Web(aka ARWeb) endpoints available: 💛 ${list.length}  💛`);
 // log(`🥦🥦🥦 initializing SQLite ...`)
 
 // log(`🔵🔵 SQLite  initialized  🔵🔵🔵🔵`)

@@ -17,7 +17,7 @@ const association_1 = __importDefault(require("../models/association"));
 const log_1 = require("../log");
 class AssociationController {
     routes(app) {
-        log_1.log(`🏓🏓🏓    AssociationController: 💙  setting up default Association routes ... `);
+        log_1.log(`🏓    AssociationController: 💙  setting up default Association routes ... `);
         /////////
         app.route("/getAssociations").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.log(`\n\n💦  POST: /getAssociations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);

@@ -4,7 +4,7 @@ const messaging_1 = require("../helpers/messaging");
 const log_1 = require("../log");
 class BGController {
     routes(app) {
-        console.log(`🏓🏓🏓    BGController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`);
+        console.log(`🏓    BGController:  💙 setting up background locations caching ... ${app.name}`);
         app.route("/locations").post((req, res) => {
             const msg = `🍏 BGController/locations: Adding background location: 💙💙💙💙💙💙 ${req.body}`;
             log_1.log(msg);

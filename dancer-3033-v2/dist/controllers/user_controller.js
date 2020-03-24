@@ -20,7 +20,7 @@ const notification_1 = __importDefault(require("../models/notification"));
 const user_helper_1 = __importDefault(require("../helpers/user_helper"));
 class UserController {
     routes(app) {
-        log_1.log(`🏓🏓🏓    UserController: 💙  setting up default User routes ... `);
+        log_1.log(`🏓    UserController: 💙  setting up default User routes ... `);
         /////////
         app.route("/getUsers").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.log(`\n\n💦  POST: /getUsers requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);

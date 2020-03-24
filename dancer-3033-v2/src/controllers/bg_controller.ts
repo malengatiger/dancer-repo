@@ -6,7 +6,7 @@ export class BGController {
 
   public routes(app: express.Application): void {
     console.log(
-      `🏓🏓🏓    BGController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`,
+      `🏓    BGController:  💙 setting up background locations caching ... ${app.name}`,
     );
     app.route("/locations").post((req: Request, res: Response) => {
       const msg = `🍏 BGController/locations: Adding background location: 💙💙💙💙💙💙 ${req.body}`;

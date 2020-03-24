@@ -8,7 +8,7 @@ import Constants from "./constants";
 log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || 'NOTFOUND';
 const ssa1 = JSON.parse(sa1);
-log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
+// log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
 export const appTo: admin.app.App = admin.initializeApp(
     {
         credential: admin.credential.cert(ssa1),
@@ -18,11 +18,11 @@ export const appTo: admin.app.App = admin.initializeApp(
     "appTo",
 );
 log(
-    `🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}\n`,
+    `🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION} \n`,
 );
 
 const fba: admin.messaging.Messaging = appTo.messaging();
-log(`😍 😍 😍 FCM Messaging app: ${fba.app}`);
+log(`😍 😍 😍 FCM Messaging initialized. app: ${fba.app.name} `);
 class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);

@@ -8,7 +8,7 @@ const messaging_1 = __importDefault(require("./messaging"));
 const log_1 = require("../log");
 class MongoListeners {
     static listen(client) {
-        log_1.log(`\n🔆🔆🔆  MongoListeners: 🧡🧡🧡  listening to changes in collections ... 👽👽👽\n`);
+        log_1.log(`\n🔆🔆🔆  MongoListeners: listening to changes in collections ... 👽👽👽\n`);
         const users = client.connection.collection(constants_1.default.USERS);
         const associations = client.connection.collection(constants_1.default.ASSOCIATIONS);
         const routes = client.connection.collection(constants_1.default.ROUTES);

@@ -10,7 +10,7 @@ import chalk = require('chalk')
 export class LandmarkController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${db.name} 🥦🥦🥦`,
+            `🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${db.name} 🥦🥦🥦`,
         );
         /////////
         app.route("/addRouteToLandmark").post(async (req: Request, res: Response) => {

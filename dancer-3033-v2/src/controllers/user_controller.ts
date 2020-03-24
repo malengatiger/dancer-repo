@@ -12,7 +12,7 @@ import UserHelper from "../helpers/user_helper"
 export class UserController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓    UserController: 💙  setting up default User routes ... `,
+            `🏓    UserController: 💙  setting up default User routes ... `,
         );
         /////////
         app.route("/getUsers").post(async (req: Request, res: Response) => {

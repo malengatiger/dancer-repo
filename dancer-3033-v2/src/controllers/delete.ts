@@ -8,7 +8,7 @@ export class DeleteController {
 
   public routes(app: express.Application): void {
     console.log(
-      `🏓🏓🏓    DeleteController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`,
+      `🏓    DeleteController:  💙 setting up temporary fix routes ${app.name}`,
     );
     app.route("/deleteRoute").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 ........... deleteRoute requested `;

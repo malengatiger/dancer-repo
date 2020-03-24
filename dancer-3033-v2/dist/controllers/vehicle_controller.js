@@ -24,7 +24,7 @@ const vehicle_route_assignment_1 = __importDefault(require("../models/vehicle_ro
 const vehicle_commuter_nearby_1 = __importDefault(require("../models/vehicle_commuter_nearby"));
 class VehicleController {
     routes(app) {
-        console.log(`🏓🏓🏓    VehicleController:  💙  setting up default Vehicle routes ...`);
+        console.log(`🏓    VehicleController:  💙  setting up default Vehicle routes ...`);
         app.route("/addVehicleCommuterNearby").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 addVehicleCommuterNearby requested `;
             console.log(msg);

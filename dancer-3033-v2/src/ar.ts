@@ -35,7 +35,7 @@ class AftaRobotApp {
     public bgController: BGController = new BGController();
 
     constructor() {
-        log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
+        // log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
         this.app = app;
         this.port = port;
         this.initializeMiddleware();
@@ -57,11 +57,11 @@ class AftaRobotApp {
        
     }
     private initializeMiddleware() {
-        console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
+        // console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors());
-        log(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛\n\n`);
+        log(`🥦🥦🥦 AftaRobotApp: initializeMiddleware: BodyParser, Cors initialized 🧡 OK 🧡.... \n`);
         
     }
 }

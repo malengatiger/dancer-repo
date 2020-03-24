@@ -20,7 +20,7 @@ const marshal_fence_dwell_event_1 = __importDefault(require("../models/marshal_f
 const marshal_fence_exit_event_1 = __importDefault(require("../models/marshal_fence_exit_event"));
 class DispatchController {
     routes(app) {
-        console.log(`🏓🏓🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
+        console.log(`🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
         app.route("/addDispatchRecord").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽🌽🌽 addDispatchRecord requested `;
             console.log(msg);

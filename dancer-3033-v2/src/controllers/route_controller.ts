@@ -13,7 +13,7 @@ import RouteFare from "../models/route_fare";
 export class RouteController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓    RouteController: 💙  setting up default Route routes ... `,
+            `🏓    RouteController: 💙  setting up default Route routes ... `,
         );
         /////////
         app.route("/getRoutesByAssociation").post(async (req: Request, res: Response) => {

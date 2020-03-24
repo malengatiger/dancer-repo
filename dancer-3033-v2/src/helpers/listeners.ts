@@ -1,14 +1,14 @@
 
 import Constants from '../helpers/constants';
 import Messaging from './messaging';
-import {log} from '../log';
+import { log } from '../log';
 
 
 class MongoListeners {
   public static listen(client: any) {
 
     log(
-      `\n🔆🔆🔆  MongoListeners: 🧡🧡🧡  listening to changes in collections ... 👽👽👽\n`,
+      `\n🔆🔆🔆  MongoListeners: listening to changes in collections ... 👽👽👽\n`,
     );
 
     const users = client.connection.collection(Constants.USERS);
@@ -49,123 +49,126 @@ class MongoListeners {
     const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
     const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
     const vehicleCommuterNearbyStream = vehicleCommuterNearby.watch({ fullDocument: 'updateLookup' });
-   
 
-    vehicleCommuterNearbyStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  vehicleCommuterNearbyStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendVehicleCommuterNearby(event.fullDocument);
-    });
-    dwellStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendFenceDwellEvent(event.fullDocument);
-    });
-  //
-    paymentStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  paymentStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendPayment(event.fullDocument);
-    });
-  //
-    exitStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  exitStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendFenceExitEvent(event.fullDocument);
-    });
-    //
-    vehicleArrivalsStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendVehicleArrival(event.fullDocument);
-    });
-    //
-    vehicleDeparturesStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendVehicleDeparture(event.fullDocument);
-    });
-    //
-    commuterPickupsStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendCommuterPickupLandmark(event.fullDocument);
-    });
-    //
-    panicStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendCommuterPanic(event.fullDocument);
-    });
-    //
-    usersStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      Messaging.sendUser(event.fullDocument);
-    });
-    //
-    assocStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
-      );
-      log(event);
-      // Messaging.se
-    });
-    //
-    routeStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  routeStream onChange fired!  🍎  🔆🔆🔆🔆 `,
-      );
-      Messaging.sendRoute(event.fullDocument);
-    });
-    //
-    landmarkStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  landmarkStream onChange fired!  🍎  🔆🔆🔆🔆 `,
-      );
-      Messaging.sendLandmark(event.fullDocument);
-    });
-    //
-    commuterArrivalStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  commuterArrivalStream onChange fired!  🍎  🔆🔆🔆🔆 `,
-      );
-      Messaging.sendCommuterArrivalLandmark(event.fullDocument);
-    });
-    //
-    commuterRequestsStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 `,
-      );
-      Messaging.sendCommuterRequest(event.fullDocument);
-    });
-    //
-    dispatchRecordsStream.on("change", (event: any) => {
-      log(
-        `\n🔆🔆🔆🔆   🍎  dispatchRecordsStream onChange fired!  🍎  🔆🔆🔆🔆 `,
-      );
-      Messaging.sendDispatchRecord(event.fullDocument);
-    });
+    try {
+      vehicleCommuterNearbyStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  vehicleCommuterNearbyStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendVehicleCommuterNearby(event.fullDocument);
+      });
+      dwellStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendFenceDwellEvent(event.fullDocument);
+      });
+      //
+      paymentStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  paymentStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendPayment(event.fullDocument);
+      });
+      //
+      exitStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  exitStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendFenceExitEvent(event.fullDocument);
+      });
+      //
+      vehicleArrivalsStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendVehicleArrival(event.fullDocument);
+      });
+      //
+      vehicleDeparturesStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendVehicleDeparture(event.fullDocument);
+      });
+      //
+      commuterPickupsStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendCommuterPickupLandmark(event.fullDocument);
+      });
+      //
+      panicStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendCommuterPanic(event.fullDocument);
+      });
+      //
+      usersStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendUser(event.fullDocument);
+      });
+      //
+      assocStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        // Messaging.se
+      });
+      //
+      routeStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  routeStream onChange fired!  🍎  🔆🔆🔆🔆 `,
+        );
+        Messaging.sendRoute(event.fullDocument);
+      });
+      //
+      landmarkStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  landmarkStream onChange fired!  🍎  🔆🔆🔆🔆 `,
+        );
+        Messaging.sendLandmark(event.fullDocument);
+      });
+      //
+      commuterArrivalStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  commuterArrivalStream onChange fired!  🍎  🔆🔆🔆🔆 `,
+        );
+        Messaging.sendCommuterArrivalLandmark(event.fullDocument);
+      });
+      //
+      commuterRequestsStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 `,
+        );
+        Messaging.sendCommuterRequest(event.fullDocument);
+      });
+      //
+      dispatchRecordsStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  dispatchRecordsStream onChange fired!  🍎  🔆🔆🔆🔆 `,
+        );
+        Messaging.sendDispatchRecord(event.fullDocument);
+      });
+    } catch (err) {
+      console.error(`Problem with MongoDB change listeners`, err)
+    }
   }
- 
+
 }
 
 

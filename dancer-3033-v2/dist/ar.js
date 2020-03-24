@@ -39,7 +39,7 @@ class AftaRobotApp {
         this.dispatchController = new dispatch_controller_1.DispatchController();
         this.cityController = new city_controller_1.CityController();
         this.bgController = new bg_controller_1.BGController();
-        log_1.log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
+        // log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
         this.app = app_1.app;
         this.port = port;
         this.initializeMiddleware();
@@ -56,11 +56,11 @@ class AftaRobotApp {
         this.deleteController.routes(this.app);
     }
     initializeMiddleware() {
-        console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
+        // console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors_1.default());
-        log_1.log(`🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛\n\n`);
+        log_1.log(`🥦🥦🥦 AftaRobotApp: initializeMiddleware: BodyParser, Cors initialized 🧡 OK 🧡.... \n`);
     }
 }
 exports.default = AftaRobotApp;

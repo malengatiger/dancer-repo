@@ -10,7 +10,7 @@ export class DispatchController {
 
   public routes(app: any): void {
     console.log(
-      `🏓🏓🏓    DispatchController:  💙  setting up default Dispatch routes ...`,
+      `🏓    DispatchController:  💙  setting up default Dispatch routes ...`,
     );
     app.route("/addDispatchRecord").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addDispatchRecord requested `;

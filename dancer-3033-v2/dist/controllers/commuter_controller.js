@@ -34,7 +34,7 @@ const payment_1 = __importDefault(require("../models/payment"));
 const commuter_vehicle_nearby_1 = __importDefault(require("../models/commuter_vehicle_nearby"));
 class CommuterController {
     routes(app) {
-        console.log(`🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`);
+        console.log(`🏓    CommuterController:  💙  setting up default Commuter routes ...`);
         app.route("/addCommuterRequest").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `🌽 POST 🌽🌽 addCommuterRequest requested `;
             console.log(msg);

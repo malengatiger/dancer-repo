@@ -1,5 +1,5 @@
-node_modules
 .env
 dancer.json
 package-lock.json
 qrcode_*
+node_modules

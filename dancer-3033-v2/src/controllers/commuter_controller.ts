@@ -26,7 +26,7 @@ export class CommuterController {
 
   public routes(app: any): void {
     console.log(
-      `🏓🏓🏓    CommuterController:  💙  setting up default Commuter routes ...`,
+      `🏓    CommuterController:  💙  setting up default Commuter routes ...`,
     );
     app.route("/addCommuterRequest").post(async (req: Request, res: Response) => {
       const msg = `🌽 POST 🌽🌽 addCommuterRequest requested `;

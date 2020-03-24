@@ -7,7 +7,7 @@ export class AppController{
 
   public routes(app: express.Application): void {
     logBlue(
-      `🏓🏓🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`,
+      `🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`,
     );
     app.route("/").get((req: Request, res: Response) => {
       const msg = `🧡💛🧡💛  Hello World from MizDancer 💙💙💙💙💙💙 Azure 🏓 DOCKER CONTAINER  is UP!  💙💙💙💙💙💙 🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
@@ -37,6 +37,15 @@ export class AppController{
         `🧡💛🧡💛 generateQRCode completed, sending responses to caller: ${mRes.length}`,
       );
       res.status(200).json(mRes);
+    });
+    
+    app.route("/momo").post(async (req: Request, res: Response) => {
+      console.log(
+        `🧡💛🧡💛 momo MTN Mobile Money Callback requested`,
+      );
+      console.log(JSON.stringify(req));
+  
+      res.status(200).send(`💛OK, MTN Mobile Money Callback: 💛body: ${JSON.stringify(req.body)}`);
     });
     
     

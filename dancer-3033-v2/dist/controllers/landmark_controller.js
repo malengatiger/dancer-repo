@@ -20,7 +20,7 @@ const uuid = require("uuid");
 const mongoose_1 = require("mongoose");
 class LandmarkController {
     routes(app) {
-        log_1.log(`🏓🏓🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
+        log_1.log(`🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${database_1.default.name} 🥦🥦🥦`);
         /////////
         app.route("/addRouteToLandmark").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             log_1.log(`\n\n💦  POST: /addRouteToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`);

@@ -8,7 +8,7 @@ export class CityController {
 
     public routes(app: any): void {
         console.log(
-            `🏓🏓🏓    CityController:  💙  setting up default City routes ...`,
+            `🏓    CityController:  💙  setting up default City routes ...`,
         );
         app.route("/addCity").post(async (req: Request, res: Response) => {
             const msg = `🌽🌽🌽 addCity requested `;
