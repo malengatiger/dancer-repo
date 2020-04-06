@@ -1,4 +1,4 @@
-import { app } from "./app";
+import { expressApp } from "./app";
 import express from "express";
 import * as bodyParser from "body-parser";
 import cors from "cors";
@@ -36,7 +36,7 @@ class AftaRobotApp {
 
     constructor() {
         // log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
-        this.app = app;
+        this.app = expressApp;
         this.port = port;
         this.initializeMiddleware();
 

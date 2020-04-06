@@ -23,6 +23,11 @@ log(
 
 const fba: admin.messaging.Messaging = appTo.messaging();
 log(`😍 😍 😍 FCM Messaging initialized. app: ${fba.app.name} `);
+appTo.firestore().collection('associations').get().then((snapshot) => {
+   snapshot.docs.forEach((doc) => {
+    log(`Association: 🥦🥦 ${doc.data}`)
+   })
+})
 class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);

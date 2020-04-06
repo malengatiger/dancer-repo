@@ -36,6 +36,11 @@ exports.appTo = admin.initializeApp({
 log_1.log(`🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION} \n`);
 const fba = exports.appTo.messaging();
 log_1.log(`😍 😍 😍 FCM Messaging initialized. app: ${fba.app.name} `);
+exports.appTo.firestore().collection('associations').get().then((snapshot) => {
+    snapshot.docs.forEach((doc) => {
+        log_1.log(`Association: 🥦🥦 ${doc.data}`);
+    });
+});
 class Messaging {
     static init() {
         log_1.log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);

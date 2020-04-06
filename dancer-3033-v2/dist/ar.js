@@ -40,7 +40,7 @@ class AftaRobotApp {
         this.cityController = new city_controller_1.CityController();
         this.bgController = new bg_controller_1.BGController();
         // log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
-        this.app = app_1.app;
+        this.app = app_1.expressApp;
         this.port = port;
         this.initializeMiddleware();
         this.appController.routes(this.app);

@@ -1,0 +1,1996 @@
+
+> dancer@1.0.0 start /app
+> node dist/app.js
+
+
+☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...
+☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...
+🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: 8.10.0
+
+😍 😍 😍 FCM Messaging app: [object Object]
+🥦🥦🥦 Dancer Web(aka ARWeb) Firebase service account : 🥦🥦🥦 {"type":"service_account","project_id":"dancer26983","private_key_id":"e66a4ad81aa49c494ba53f361067040286d20508","private_key":"-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC7hfdLr/5RVp2x\nR9T1KDshppQZBSxEMjVyTi+14p6bA6HEaPbqPqKx1CPfiRyqF+WTiHNhi4+BMkQT\nMKofJJqUfi5nr10qgj2lE4eXUP3OV8PLps9WSyEJU7Rk3PdShXV4qOPC5VQd9M/8\n42tQJUqy38e44h4+bzJ/i6KSIQ4QSxV7x1IKfRsPRP34Wo4r3v/v9wm/ob3q2ltu\nUTeOnp6mxaUcblxjqStQtMR8L5NoBsFzwcsFjD+GKgCXD04RfFKe8pRdjJ2ws8Aq\nrBIT1FrrMlnjMKz0GjoRmdJV0hddRxxpD4PSrJZRJ5VniRLB59Ntz6yMgQ4ZLdNj\nKvSH3HZdAgMBAAECggEACB2uHGC81fTfeid/eZp45VsyCtuCNQkOQ/OggCj+JSaK\nVwzq7ixGpYHRXqXuxL7S273arooC1zw0yDbW5LupvrZaWE2gROF3p7VuwiIKJhF+\n2B7QrO2vUO8bk4ehDaQt4h+/IcrZRzr2pdLgQgr8eWg9hYyFyL0jzJ40wPR8yRV/\no0pq9oYRcAKS5GO8s64xRPKLk11eZCQVT9OzxHaDKCpz3ePAv24Js+K1EVacen+s\nqbjgwp5OSbExfU5gyx8qQVOsn0M0gRQIk/qlZRbK3iDWCjW6Mj4JNrfxFGmUoHgz\nzfcEA/74URm3F04nzQYdHGo5zFLKSwOMnOnRKKVeaQKBgQD/cdsppmKUj56jxbik\nEXcW18pODH1mxlY7C67yEEQBkssVDzhb0jmUiUbS6E5wu0pe4Nafs6S0vNgF8u2e\nBHZsG2ATx9xiJ8obIK8Gos0uf2sjVniABfdZB1jfpjOF8b1C7BzahmBJ/VNKkMAR\nADVRCoBbpyL1taluwGU02A9yGQKBgQC77lCHOVPc+mkGit/4q/OAYuZa4S81QjZU\nyUhFfmONk2S8ptQnWJovTSZkE6JGRyAWPiaUuvKN3N6d/LiVqK23t7VQrDUfpKHs\nVtAGx5peKoFwQ3BGBhXfDdW2qD/KHjpofyND50BsisLscDA9vL2yPi9LQCfk8jlf\nWg5YPE9W5QKBgQDD0UT/jaPeXKZwxz4+z4CqSyuzXxG2em5Z/x/SQjPPvPbfIvbC\nNMqdGgrn3NtcwcZGKzd731twjZ9QGCSdULBzOR0SrNA9kmD1IL3raVu+vECmK0Be\na7RsVByF/cNbd6/tIFESF5aywXZbH9GMdstoX5N8Lwi2sNa8ptIuiz5z6QKBgQC7\nuLnH2YPj4F64olBHXbvGKwRfE0DMum77EnSWtkFLUkf2Cc8x3ldlmHMY1GPsP2/V\nyA9R0cwn2NCmj6LyG6QrN95tzxbhnNoB8lWp8AhKt7rEIRktWTbPsEoiQr41byx4\n5UactYqs4Y8EDqyhfr8eJO+pA1TWZP7aOGLL0LKP4QKBgCocawTR8oi8+bde3Edo\nuh+8Cm53EA8RPpWu5s8/vr5XRKheZ/IJ3PcuF2nMpS40aJ68BGQGGqmsMzZSzhN2\nhcdKOEKt1fQ87rYGv4OgXYIW7o67Tb78XTaJJp6z9CLBp9SskvgeUsMGYjDjeC7d\ny+JhhIHJViAeY4DlCd0cydgK\n-----END PRIVATE KEY-----\n","client_email":"firebase-adminsdk-9867a@dancer26983.iam.gserviceaccount.com","client_id":"115763471740118343705","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_x509_cert_url":"https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-9867a%40dancer26983.iam.gserviceaccount.com"} 
+🥦🥦🥦🥦 end of service account 🥦🥦🥦🥦🥦🥦
+
+🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...
+🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... 
+🥦🥦🥦🥦  AftaRobotApp: BodyParser, Cors initialized 🧡 OK 🧡.... 🧡💛🧡💛
+
+
+🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... app
+🏓    UserController: 💙  setting up default User routes ... 
+🏓    AssociationController: 💙  setting up default Association routes ... 
+🏓    RouteController: 💙  setting up default Route routes ... 
+🏓    CityController:  💙  setting up default City routes ...
+🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 Database 🥦🥦🥦
+🏓    CommuterController:  💙  setting up default Commuter routes ...
+🏓    VehicleController:  💙  setting up default Vehicle routes ...
+🏓    DispatchController:  💙  setting up default Dispatch routes ...
+🏓    BGController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... app
+🏓    DeleteController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... app
+
+🔆🔆 Dancer Web(aka ARWeb) API has been created and stood up! 🔆 🔆 🍎🍎 Sun, 15 Mar 2020 18:03:44 GMT 🍎🍎
+🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆
+🥦🥦🥦 🍎 #1 🍎 /
+🥦🥦🥦 🍎 #2 🍎 /activityChanges
+🥦🥦🥦 🍎 #3 🍎 /addAssociation
+🥦🥦🥦 🍎 #4 🍎 /addCalculatedDistances
+🥦🥦🥦 🍎 #5 🍎 /addCity
+🥦🥦🥦 🍎 #6 🍎 /addCommuterArrivalLandmark
+🥦🥦🥦 🍎 #7 🍎 /addCommuterFenceDwellEvent
+🥦🥦🥦 🍎 #8 🍎 /addCommuterFenceExitEvent
+🥦🥦🥦 🍎 #9 🍎 /addCommuterIncentive
+🥦🥦🥦 🍎 #10 🍎 /addCommuterIncentiveType
+🥦🥦🥦 🍎 #11 🍎 /addCommuterPanic
+🥦🥦🥦 🍎 #12 🍎 /addCommuterPanicLocation
+🥦🥦🥦 🍎 #13 🍎 /addCommuterPickupLandmark
+🥦🥦🥦 🍎 #14 🍎 /addCommuterRating
+🥦🥦🥦 🍎 #15 🍎 /addCommuterRatingsAggregate
+🥦🥦🥦 🍎 #16 🍎 /addCommuterRequest
+🥦🥦🥦 🍎 #17 🍎 /addCommuterStartingLandmark
+🥦🥦🥦 🍎 #18 🍎 /addCommuterVehicleNearby
+🥦🥦🥦 🍎 #19 🍎 /addCountry
+🥦🥦🥦 🍎 #20 🍎 /addDispatchRecord
+🥦🥦🥦 🍎 #21 🍎 /addLandmark
+🥦🥦🥦 🍎 #22 🍎 /addLandmarkFare
+🥦🥦🥦 🍎 #23 🍎 /addMarshalFenceDwellEvent
+🥦🥦🥦 🍎 #24 🍎 /addMarshalFenceExitEvent
+🥦🥦🥦 🍎 #25 🍎 /addNotification
+🥦🥦🥦 🍎 #26 🍎 /addPayment
+🥦🥦🥦 🍎 #27 🍎 /addRawRoutePoints
+🥦🥦🥦 🍎 #28 🍎 /addRoute
+🥦🥦🥦 🍎 #29 🍎 /addRouteDistanceEstimation
+🥦🥦🥦 🍎 #30 🍎 /addRouteDistanceEstimations
+🥦🥦🥦 🍎 #31 🍎 /addRouteFare
+🥦🥦🥦 🍎 #32 🍎 /addRoutePoints
+🥦🥦🥦 🍎 #33 🍎 /addRouteToLandmark
+🥦🥦🥦 🍎 #34 🍎 /addSafetyNetworkBuddy
+🥦🥦🥦 🍎 #35 🍎 /addUser
+🥦🥦🥦 🍎 #36 🍎 /addVehicle
+🥦🥦🥦 🍎 #37 🍎 /addVehicleArrival
+🥦🥦🥦 🍎 #38 🍎 /addVehicleCommuterNearby
+🥦🥦🥦 🍎 #39 🍎 /addVehicleDeparture
+🥦🥦🥦 🍎 #40 🍎 /addVehicleLocation
+🥦🥦🥦 🍎 #41 🍎 /addVehiclePhoto
+🥦🥦🥦 🍎 #42 🍎 /addVehicleRouteAssignment
+🥦🥦🥦 🍎 #43 🍎 /addVehicleType
+🥦🥦🥦 🍎 #44 🍎 /addVehicleVideo
+🥦🥦🥦 🍎 #45 🍎 /commuterClaimPrize
+🥦🥦🥦 🍎 #46 🍎 /copyLandmarks
+🥦🥦🥦 🍎 #47 🍎 /deleteRoute
+🥦🥦🥦 🍎 #48 🍎 /deleteUser
+🥦🥦🥦 🍎 #49 🍎 /findCitiesByLocation
+🥦🥦🥦 🍎 #50 🍎 /findCommuterRequestByID
+🥦🥦🥦 🍎 #51 🍎 /findCommuterRequestsByLocation
+🥦🥦🥦 🍎 #52 🍎 /findCommuterRequestsByUserID
+🥦🥦🥦 🍎 #53 🍎 /findDispatchRecordsByLocation
+🥦🥦🥦 🍎 #54 🍎 /findLandmarksByLocation
+🥦🥦🥦 🍎 #55 🍎 /findNearestRoutePoint
+🥦🥦🥦 🍎 #56 🍎 /findNearestRoutes
+🥦🥦🥦 🍎 #57 🍎 /findSafetyNetworkBuddiesByUserID
+🥦🥦🥦 🍎 #58 🍎 /findUserByEmail
+🥦🥦🥦 🍎 #59 🍎 /findVehicleArrivalsByLocation
+🥦🥦🥦 🍎 #60 🍎 /findVehicleDeparturesByLocation
+🥦🥦🥦 🍎 #61 🍎 /findVehiclesByLocation
+🥦🥦🥦 🍎 #62 🍎 /generateQRCode
+🥦🥦🥦 🍎 #63 🍎 /geofences
+🥦🥦🥦 🍎 #64 🍎 /getAssociations
+🥦🥦🥦 🍎 #65 🍎 /getCitiesByCountry
+🥦🥦🥦 🍎 #66 🍎 /getCitiesByProvinceName
+🥦🥦🥦 🍎 #67 🍎 /getCommuterArrivalLandmarks
+🥦🥦🥦 🍎 #68 🍎 /getCommuterFenceDwellEvents
+🥦🥦🥦 🍎 #69 🍎 /getCommuterFenceExitEvents
+🥦🥦🥦 🍎 #70 🍎 /getCommuterPanicsByUserID
+🥦🥦🥦 🍎 #71 🍎 /getCommuterPickupLandmarks
+🥦🥦🥦 🍎 #72 🍎 /getCommuterRequestsByFromLandmark
+🥦🥦🥦 🍎 #73 🍎 /getCommuterRequestsByID
+🥦🥦🥦 🍎 #74 🍎 /getCommuterRequestsByLandmark
+🥦🥦🥦 🍎 #75 🍎 /getCommuterRequestsByToLandmark
+🥦🥦🥦 🍎 #76 🍎 /getCommuterRequestsByUserID
+🥦🥦🥦 🍎 #77 🍎 /getCommuterStartingLandmarks
+🥦🥦🥦 🍎 #78 🍎 /getCountries
+🥦🥦🥦 🍎 #79 🍎 /getDispatchRecordsByLandmark
+🥦🥦🥦 🍎 #80 🍎 /getDispatchRecordsByOwner
+🥦🥦🥦 🍎 #81 🍎 /getDispatchRecordsByRoute
+🥦🥦🥦 🍎 #82 🍎 /getDispatchRecordsByVehicle
+🥦🥦🥦 🍎 #83 🍎 /getIncentiveTypeByAssociation
+🥦🥦🥦 🍎 #84 🍎 /getLandmarks
+🥦🥦🥦 🍎 #85 🍎 /getLandmarksByRoute
+🥦🥦🥦 🍎 #86 🍎 /getPanicLocations
+🥦🥦🥦 🍎 #87 🍎 /getRouteById
+🥦🥦🥦 🍎 #88 🍎 /getRouteFares
+🥦🥦🥦 🍎 #89 🍎 /getRouteFaresByAssociation
+🥦🥦🥦 🍎 #90 🍎 /getRouteIDsByAssociation
+🥦🥦🥦 🍎 #91 🍎 /getRoutesByAssociation
+🥦🥦🥦 🍎 #92 🍎 /getUsers
+🥦🥦🥦 🍎 #93 🍎 /getUsersByAssociation
+🥦🥦🥦 🍎 #94 🍎 /getVehicleArrivalsByLandmark
+🥦🥦🥦 🍎 #95 🍎 /getVehicleArrivalsByVehicle
+🥦🥦🥦 🍎 #96 🍎 /getVehicleDeparturesByLandmark
+🥦🥦🥦 🍎 #97 🍎 /getVehicleDeparturesByVehicle
+🥦🥦🥦 🍎 #98 🍎 /getVehicleRoutesByAssociation
+🥦🥦🥦 🍎 #99 🍎 /getVehicleRoutesByVehicle
+🥦🥦🥦 🍎 #100 🍎 /getVehicleTypes
+🥦🥦🥦 🍎 #101 🍎 /getVehicles
+🥦🥦🥦 🍎 #102 🍎 /getVehiclesByAssociation
+🥦🥦🥦 🍎 #103 🍎 /getVehiclesByOwner
+🥦🥦🥦 🍎 #104 🍎 /heartbeats
+🥦🥦🥦 🍎 #105 🍎 /locations
+🥦🥦🥦 🍎 #106 🍎 /notifications
+🥦🥦🥦 🍎 #107 🍎 /ping
+🥦🥦🥦 🍎 #108 🍎 /updateCommuterRequestAutoDetected
+🥦🥦🥦 🍎 #109 🍎 /updateCommuterRequestScanned
+🥦🥦🥦 🍎 #110 🍎 /updateCommuterRequestVehicle
+🥦🥦🥦 🍎 #111 🍎 /updateLandmarkRoutePoints
+🥦🥦🥦 🍎 #112 🍎 /updateRoutePoint
+🥦🥦🥦 🍎 #113 🍎 /updateUser
+🥦🥦🥦 🍎 #114 🍎 /updateVehicleOwner
+🥦🥦🥦 🍎 #115 🍎 /userLogin
+🥦🥦🥦 🥦🥦🥦 🥦🥦🥦 end of Dancer Web(aka ARWeb) endpoints available; total endpoints: 💛 115  💛 
+
+
+
+
+🔵🔵🔵  Dancer Web(aka ARWeb) API started and listening on port: 🧡💛 3000  🧡💛 2020-03-15T18:03:44.786Z  🍎🍎
+
+
+
+🔆🔆🔆🔆🔆🔆  Mongo connected ... 🔆🔆🔆  💛  Sun Mar 15 2020 18:03:47 GMT+0000 (Coordinated Universal Time)  💛 💛
+
+🍎🍎  AR MongoDB API :: database:  ☘️  Mongo Client version: 💙5.9.4 💙 model names: ["Association","Route","RouteDistanceEstimation","Landmark","RouteFare","Vehicle","QRRecord","OldLandmark","User","Notification","CommuterRequest","CommuterArrivalLandmark","CommuterPickupLandmark","CommuterStartingLandmark","CommuterRating","CommuterPanic","CommuterRatingsAggregate","CommuterPanicLocation","SafetyNetworkBuddy","CommuterPrize","CommuterIncentiveType","CommuterIncentive","CommuterFenceDwellEvent","CommuterFenceExitEvent","Payment","CommuterVehicleNearby","VehicleLocation","VehicleArrival","VehicleDeparture","VehicleType","VehicleRouteAssignment","VehicleCommuterNearby","DispatchRecord","MarshalFenceDwellEvent","MarshalFenceExitEvent","City","Country"]  ☘️  is OK   🍎🍎 
+🍎🍎🍎  MongoDB config ...{"autoIndex":true}
+15 Mar 18:03:47 - 
+
+🧡🧡🧡 MongooseDebugSetting 👽👽👽 set for Mongoose, we are in 🍎 DEBUG 🍎 mode 🧡🧡🧡
+
+😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config
+
+🔆🔆🔆  MongoListeners: 🧡🧡🧡  listening to changes in collections ... 👽👽👽
+
+[0;36mMongoose:[0m payments.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m associations.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m routes.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m landmarks.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m commuterfencedwellevents.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m commuterfenceexitevents.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m commuterarrivallandmarks.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m commuterrequests.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m commuterpickuplandmarks.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m dispatchrecords.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m users.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m commuterpanics.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m vehiclearrivals.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m vehicledepartures.watch({ fullDocument: [32m'updateLookup'[39m })
+[0;36mMongoose:[0m vehiclecommutersnearby.watch({ fullDocument: [32m'updateLookup'[39m })
+🍎🍎🍎  MongoDB collections available ...
+{
+  associations: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'associations',
+    collectionName: 'associations',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  routes: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'routes',
+    collectionName: 'routes',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  routedistanceestimations: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'routedistanceestimations',
+    collectionName: 'routedistanceestimations',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  landmarks: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'landmarks',
+    collectionName: 'landmarks',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  routefares: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'routefares',
+    collectionName: 'routefares',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehicles: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'vehicles',
+    collectionName: 'vehicles',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  qrrecords: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'qrrecords',
+    collectionName: 'qrrecords',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  oldlandmarks: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'oldlandmarks',
+    collectionName: 'oldlandmarks',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  users: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'users',
+    collectionName: 'users',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  notifications: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'notifications',
+    collectionName: 'notifications',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterrequests: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterrequests',
+    collectionName: 'commuterrequests',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterarrivallandmarks: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterarrivallandmarks',
+    collectionName: 'commuterarrivallandmarks',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterpickuplandmarks: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterpickuplandmarks',
+    collectionName: 'commuterpickuplandmarks',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterstartinglandmarks: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterstartinglandmarks',
+    collectionName: 'commuterstartinglandmarks',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterratings: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterratings',
+    collectionName: 'commuterratings',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterpanics: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterpanics',
+    collectionName: 'commuterpanics',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterratingsaggregates: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterratingsaggregates',
+    collectionName: 'commuterratingsaggregates',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterpaniclocations: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterpaniclocations',
+    collectionName: 'commuterpaniclocations',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  safetynetworkbuddies: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'safetynetworkbuddies',
+    collectionName: 'safetynetworkbuddies',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterprizes: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterprizes',
+    collectionName: 'commuterprizes',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterincentivetypes: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterincentivetypes',
+    collectionName: 'commuterincentivetypes',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterincentives: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterincentives',
+    collectionName: 'commuterincentives',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterfencedwellevents: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterfencedwellevents',
+    collectionName: 'commuterfencedwellevents',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commuterfenceexitevents: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commuterfenceexitevents',
+    collectionName: 'commuterfenceexitevents',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  payments: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'payments',
+    collectionName: 'payments',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  commutervehiclenearbies: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'commutervehiclenearbies',
+    collectionName: 'commutervehiclenearbies',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehiclelocations: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'vehiclelocations',
+    collectionName: 'vehiclelocations',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehiclearrivals: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'vehiclearrivals',
+    collectionName: 'vehiclearrivals',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehicledepartures: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'vehicledepartures',
+    collectionName: 'vehicledepartures',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehicletypes: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'vehicletypes',
+    collectionName: 'vehicletypes',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehiclerouteassignments: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'vehiclerouteassignments',
+    collectionName: 'vehiclerouteassignments',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehiclecommuternearbies: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'vehiclecommuternearbies',
+    collectionName: 'vehiclecommuternearbies',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  dispatchrecords: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'dispatchrecords',
+    collectionName: 'dispatchrecords',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  marshalfencedwellevents: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'marshalfencedwellevents',
+    collectionName: 'marshalfencedwellevents',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  marshalfenceexitevents: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'marshalfenceexitevents',
+    collectionName: 'marshalfenceexitevents',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  cities: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'cities',
+    collectionName: 'cities',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  countries: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: {
+      bufferCommands: true,
+      capped: false,
+      autoCreate: undefined,
+      Promise: [Function: Promise],
+      '$wasForceClosed': undefined
+    },
+    name: 'countries',
+    collectionName: 'countries',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  },
+  vehiclecommutersnearby: NativeCollection {
+    collection: Collection { s: [Object] },
+    Promise: [Function: Promise],
+    opts: { '$wasForceClosed': undefined, capped: {}, bufferCommands: true },
+    name: 'vehiclecommutersnearby',
+    collectionName: 'vehiclecommutersnearby',
+    conn: NativeConnection {
+      base: [Mongoose],
+      collections: [Circular],
+      models: [Object],
+      config: [Object],
+      replica: false,
+      options: null,
+      otherDbs: [],
+      relatedDbs: {},
+      states: [Object: null prototype],
+      _readyState: 1,
+      _closeCalled: false,
+      _hasOpened: true,
+      plugins: [],
+      id: 0,
+      _listening: false,
+      _connectionOptions: [Object],
+      client: [MongoClient],
+      '$initialConnection': [Promise],
+      name: 'ardb',
+      host: 'ar001-shard-00-02-1xhdt.mongodb.net',
+      port: 27017,
+      user: 'aubs',
+      pass: 'aubrey3',
+      db: [Db]
+    },
+    queue: [],
+    buffer: false,
+    emitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      [Symbol(kCapture)]: false
+    }
+  }
+}
+[0;36mMongoose:[0m associations.ensureIndex({ email: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m routefares.ensureIndex({ routeID: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehicles.ensureIndex({ vehicleID: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m qrrecords.ensureIndex({ associationD: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.ensureIndex({ userID: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m commuterrequests.ensureIndex({ associationD: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m commuterarrivallandmarks.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m commuterpickuplandmarks.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m commuterstartinglandmarks.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehiclearrivals.ensureIndex({ routeID: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehicledepartures.ensureIndex({ routeID: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m cities.ensureIndex({ provinceName: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m payments.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehiclecommuternearbies.ensureIndex({ milliseconds: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.ensureIndex({ associationID: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m commutervehiclenearbies.ensureIndex({ milliseconds: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m dispatchrecords.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m commuterrequests.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehiclelocations.ensureIndex({ created: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehicles.ensureIndex({ vehicleID: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m qrrecords.ensureIndex({ vehicleID: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehiclearrivals.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehicledepartures.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m cities.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m associations.ensureIndex({ cellphone: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m associations.ensureIndex({ associationID: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehiclelocations.ensureIndex({ position: [32m'2dsphere'[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m vehicles.ensureIndex({ associationID: [33m1[39m }, { unique: [33mfalse[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m associations.ensureIndex({ countryID: [33m1[39m, associationName: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m vehicles.ensureIndex({ ownerID: [33m1[39m }, { unique: [33mfalse[39m, background: [33mtrue[39m })
