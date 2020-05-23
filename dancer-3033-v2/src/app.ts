@@ -25,8 +25,8 @@ expressApp.use((req: Request, res: Response, next) => {
   next();
 });
 
-expressApp.use(cors);
-log(`🥦🥦🥦 CORS set up for app: ${cors.name}`);
+expressApp.use(cors());
+log(`🥦🥦🥦 CORS set up for app: ${cors().name}`);
 
 const port = process.env.PORT || 8081;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
@@ -53,8 +53,5 @@ let cnt = 0;
 // });
 
 log(`🥦🥦 Dancer Web(aka ARWeb) endpoints available: 💛 ${list.length}  💛`);
-// log(`🥦🥦🥦 initializing SQLite ...`)
-
-// log(`🔵🔵 SQLite  initialized  🔵🔵🔵🔵`)
 
 module.exports = server;

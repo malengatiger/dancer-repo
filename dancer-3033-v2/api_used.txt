@@ -1,0 +1,8 @@
+Within the existing TaxiYam platform implementation we make extensive use of various SDK's and API's and have build a high level of understanding in terms of the actual implementations.
+For example, some of the major SDKs and APIs we use:
+
+Firebase Authentication SDK - https://firebase.google.com/docs/auth
+MongoDB Node SDK - https://mongodb.github.io/node-mongodb-native/3.6/api/
+Transistorsoft Background Monitoring SDK - https://www.transistorsoft.com/shop/products/flutter-background-geolocation
+Firebase Cloud Messaging API - https://firebase.google.com/docs/cloud-messaging
+Estimote Proximity Beacons API - https://developer.estimote.com/

@@ -116,7 +116,7 @@ class MongoListeners {
             });
             //
             commuterRequestsStream.on("change", (event) => {
-                log_1.log(`\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 `);
+                log_1.log(`\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 event: check fullDocument is not null: ${event}`);
                 messaging_1.default.sendCommuterRequest(event.fullDocument);
             });
             //

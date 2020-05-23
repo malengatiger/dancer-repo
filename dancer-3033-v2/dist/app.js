@@ -22,8 +22,8 @@ exports.expressApp.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With-Content-Type, Accept");
     next();
 });
-exports.expressApp.use(cors_1.default);
-log_1.log(`🥦🥦🥦 CORS set up for app: ${cors_1.default.name}`);
+exports.expressApp.use(cors_1.default());
+log_1.log(`🥦🥦🥦 CORS set up for app: ${cors_1.default().name}`);
 const port = process.env.PORT || 8081;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
 log_1.log(`🥦🥦🥦 Dancer Web(aka ARWeb) Firebase service account : 🥦🥦🥦 ${dancer === null ? 'No Firebase Service Account' : ' Firebase Service Account found'}  🥦🥦🥦`);
@@ -45,7 +45,5 @@ let cnt = 0;
 //   log(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
 // });
 log_1.log(`🥦🥦 Dancer Web(aka ARWeb) endpoints available: 💛 ${list.length}  💛`);
-// log(`🥦🥦🥦 initializing SQLite ...`)
-// log(`🔵🔵 SQLite  initialized  🔵🔵🔵🔵`)
 module.exports = server;
 //# sourceMappingURL=app.js.map

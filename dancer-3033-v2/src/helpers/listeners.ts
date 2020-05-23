@@ -153,7 +153,7 @@ class MongoListeners {
       //
       commuterRequestsStream.on("change", (event: any) => {
         log(
-          `\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 `,
+          `\n🔆🔆🔆🔆   🍎  commuterRequestsStream onChange fired!  🍎  🔆🔆🔆🔆 event: check fullDocument is not null: ${event}`,
         );
         Messaging.sendCommuterRequest(event.fullDocument);
       });
