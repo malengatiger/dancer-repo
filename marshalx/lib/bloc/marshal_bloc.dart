@@ -668,6 +668,7 @@ class MarshalBloc implements GeofencerListener {
   void _processVehicleArrival(Map<String, dynamic> message) async {
     var data = VehicleArrival.fromJson(message['data']);
     _vehicleArrivals.add(data);
+    p('🅿️  🅿️ 🅿️  🅿️ MarshalBloc: Adding vehicle arrival from fcm message: stream has ${_vehicleArrivals.length}');
     _vehicleArrivalsController.sink.add(_vehicleArrivals);
   }
 

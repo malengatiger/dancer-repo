@@ -69,8 +69,12 @@ class _DispatchState extends State<Dispatch>
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        title: Text('Taxi Dispatch'),
-        backgroundColor: Colors.teal[300],
+        title: Text(
+          'Taxi Dispatch',
+          style: Styles.whiteSmall,
+        ),
+        elevation: 0,
+        backgroundColor: Colors.brown[100],
         bottom: PreferredSize(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -118,12 +122,19 @@ class _DispatchState extends State<Dispatch>
                     ],
                   ),
                   SizedBox(
-                    height: 20,
-                  )
+                    height: 40,
+                  ),
+                  Text(
+                    'Taxi Routes',
+                    style: Styles.blackMedium,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
                 ],
               ),
             ),
-            preferredSize: Size.fromHeight(200)),
+            preferredSize: Size.fromHeight(220)),
       ),
       backgroundColor: Colors.brown[100],
       body: isBusy
@@ -185,11 +196,25 @@ class _DispatchState extends State<Dispatch>
               title:
                   new Text("Confirm Dispatch", style: Styles.blackBoldMedium),
               content: Container(
-                height: 100.0,
+                height: 200.0,
                 child: Column(
                   children: <Widget>[
                     Text(
                         'Do you confirm that you are dispatching ${widget.vehicleArrival.vehicleReg} from ${landmark.landmarkName} with $number passengers?'),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      'Taxi Route',
+                      style: Styles.greyLabelMedium,
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      detail.name,
+                      style: Styles.blueBoldMedium,
+                    )
                   ],
                 ),
               ),

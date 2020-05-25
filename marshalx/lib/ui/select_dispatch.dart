@@ -141,6 +141,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
         _vehicles =
             await marshalBloc.getAssociationVehicles(forceRefresh: true);
       }
+      _vehicles.sort((a, b) => a.vehicleReg.compareTo(b.vehicleReg));
       setState(() {
         isBusy = false;
         showAllAssocVehicles = true;
@@ -169,7 +170,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
   Vehicle selectedVehicle;
   @override
   Widget build(BuildContext context) {
-    myDebugPrint('build .......');
+    myDebugPrint('SelectTaxi: ....... build .......');
     return Scaffold(
       key: _key,
       appBar: AppBar(

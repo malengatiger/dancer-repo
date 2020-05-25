@@ -245,12 +245,7 @@ class _DashboardState extends State<Dashboard>
     return Scaffold(
       key: _key,
       appBar: AppBar(
-//        title: Text(
-//          'Marshal Dashboard',
-//          style: Styles.blackSmall,
-//        ),
         elevation: 0,
-//        backgroundColor: Colors.black,
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -546,7 +541,8 @@ class _DashboardState extends State<Dashboard>
         Navigator.push(
             context,
             PageTransition(
-                type: PageTransitionType.leftToRightWithFade,
+                type: PageTransitionType.scale,
+                curve: Curves.easeInOut,
                 child: FindVehicles()));
         break;
       case 2:
@@ -554,6 +550,7 @@ class _DashboardState extends State<Dashboard>
             context,
             PageTransition(
                 type: PageTransitionType.scale,
+                curve: Curves.easeInOut,
                 child: SelectVehicleForDispatch()));
         break;
     }
@@ -571,12 +568,15 @@ class _DashboardState extends State<Dashboard>
     _key.currentState.removeCurrentSnackBar();
     Navigator.push(
         context,
-        SlideRightRoute(
-            widget: RouteMap(
-          hideAppBar: false,
-          landmarkIconColor: RouteMap.colorAzure,
-          routes: routes,
-        )));
+        PageTransition(
+            type: PageTransitionType.scale,
+            curve: Curves.easeInOut,
+            duration: Duration(seconds: 1),
+            child: RouteMap(
+              hideAppBar: false,
+              landmarkIconColor: RouteMap.colorRed,
+              routes: routes,
+            )));
   }
 
   @override
