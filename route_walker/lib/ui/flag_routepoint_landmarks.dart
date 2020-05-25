@@ -14,11 +14,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:latlong/latlong.dart' as mlb;
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 
 import 'landmark_city_page.dart';
 import 'landmark_routes_page.dart';
+import 'package:geolocator/geolocator.dart';
 
 /*
 This class looks for possible landmarks along a set of route points
@@ -385,6 +385,9 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     });
   }
 
+  var geoLocator = Geolocator();
+  var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
+
   Future _getNearestLandmarkPoints(List<RoutePoint> mList,
       Map<String, LandmarkAndRoutePoint> hashMap) async {
     for (var point in mList) {
@@ -396,9 +399,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
             route: widget.route, landmark: mark);
 
         if (nearestPoint != null) {
-          double distance = _distanceUtil.distance(
-              mlb.LatLng(mark.latitude, mark.longitude),
-              mlb.LatLng(nearestPoint.latitude, nearestPoint.longitude));
+          var distance = await geoLocator.distanceBetween(mark.latitude, mark.longitude, nearestPoint.latitude, nearestPoint.longitude);
           if (distance < 50) {
             //get real index from widget route
             widget.route.routePoints.forEach((p) {
@@ -421,7 +422,6 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     }
   }
 
-  mlb.Distance _distanceUtil = mlb.Distance();
   @override
   onLandmarkInfoWindowTapped(Landmark landmark) {
     if (landmark.routeDetails.isNotEmpty) {

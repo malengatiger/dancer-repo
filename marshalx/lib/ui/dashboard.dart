@@ -22,6 +22,7 @@ import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
 import 'package:marshalx/ui/select_dispatch.dart';
 import 'package:marshalx/ui/wifi.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'find_vehicles.dart';
 
@@ -53,7 +54,7 @@ class _DashboardState extends State<Dashboard>
     _subscribeToError();
     _listenToDataStreams();
     _checkUser();
-    _testFareGeneration();
+//    _testFareGeneration();
   }
 
   void _testFareGeneration() async {
@@ -63,16 +64,19 @@ class _DashboardState extends State<Dashboard>
     }
   }
 
+  void _checkMarshalLandmark() async {}
+
   void _checkUser() async {
     bool isSignedIn = await marshalBloc.checkUserLoggedIn();
     print(
         '🍎 🍎 🍎 _DashboardState: checkUser: is user signed in? 🔆🔆 isSignedIn: $isSignedIn  🔆🔆');
     if (!isSignedIn) {
       try {
-        bool isOK = await Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return SignIn();
-        }));
+        bool isOK = await Navigator.push(
+            context,
+            PageTransition(
+                type: PageTransitionType.leftToRightWithFade, child: SignIn()));
+
         if (!isOK) {
           AppSnackbar.showSnackbar(
               scaffoldKey: _key,
@@ -93,10 +97,21 @@ class _DashboardState extends State<Dashboard>
       myDebugPrint('💜 💜 💜  calling marshalBloc.refreshDashboardData...');
       await marshalBloc.refreshDashboardData(forceRefresh: false);
     }
-
     user = await Prefs.getUser();
-    myDebugPrint('💜 💜 💜 💜  my Landmark ...');
+    myDebugPrint('💜 💜 💜 💜  getting marshals cached Landmark ...');
     landmark = await Prefs.getLandmark();
+    if (landmark == null) {
+      myDebugPrint('💜 💜 💜 💜  starting marshals Landmark selection ...');
+      landmark = await Navigator.push(
+          context,
+          PageTransition(
+              type: PageTransitionType.downToUp, child: ConfirmLandmark()));
+      if (landmark != null) {
+        debugPrint(
+            '💜 💜 💜 💜  marshal landmark is ${landmark.landmarkName} 💜 💜 💜 💜 ');
+        setState(() {});
+      }
+    }
   }
 
   void _subscribeToBusy() {
@@ -204,9 +219,10 @@ class _DashboardState extends State<Dashboard>
     myDebugPrint('Dashboard: 🥬🥬🥬🥬🥬_openConfirmLandmark');
     var result = await Navigator.push(
         context,
-        SlideRightRoute(
-          widget: ConfirmLandmark(),
-        ));
+        PageTransition(
+            type: PageTransitionType.leftToRightWithFade,
+            child: ConfirmLandmark()));
+
     print(result);
     if (result != null && result is Landmark) {
       setState(() {
@@ -229,98 +245,142 @@ class _DashboardState extends State<Dashboard>
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        title: Text(
-          'Marshal Dashboard',
-          style: Styles.whiteSmall,
-        ),
+//        title: Text(
+//          'Marshal Dashboard',
+//          style: Styles.blackSmall,
+//        ),
         elevation: 0,
-        backgroundColor: Colors.black,
+//        backgroundColor: Colors.black,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.my_location),
+            icon: Icon(
+              Icons.my_location,
+              color: Colors.black,
+            ),
             onPressed: _openConfirmLandmark,
           ),
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: Icon(
+              Icons.refresh,
+              color: Colors.black,
+            ),
             onPressed: _refresh,
           ),
         ],
+        backgroundColor: Colors.brown[50],
         bottom: PreferredSize(
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 12,
-                    ),
-                    SizedBox(
-                      height: 120,
-                      width: 120,
-                      child: ARAnimations(
-                        type: 'ball',
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      SizedBox(
+                        width: 12,
                       ),
-                    ),
-                    SizedBox(
-                      width: 12,
-                    ),
-                    Text(
-                      landmark == null ? '' : landmark.landmarkName,
-                      style: Styles.whiteBoldMedium,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      landmark == null
-                          ? ''
-                          : landmark.routeDetails.isEmpty
-                              ? 'No Routes for Landmark'
-                              : landmark.routeDetails.length == 1
-                                  ? '1 Route from here'
-                                  : '${landmark.routeDetails.length} Routes from here',
-                      style: Styles.whiteSmall,
-                    ),
-                    SizedBox(
-                      width: 24,
-                    ),
-                    RaisedButton(
-                        elevation: 8,
-                        color: Colors.pink[400],
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            'Scan Passenger',
-                            style: Styles.whiteSmall,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                widget: Scanner(
-                                  type: Constants.SCAN_TYPE_REQUEST,
-                                  scannerListener: this,
-                                ),
-                              ));
-                        }),
-                    SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-              ],
+                      Text(
+                        landmark == null
+                            ? 'Marshal Landmark'
+                            : landmark.landmarkName,
+                        style: Styles.blackMedium,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                        width: 200,
+                        child: RaisedButton(
+                            elevation: 8,
+                            color: Colors.pink[400],
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                'Scan Passenger',
+                                style: Styles.whiteSmall,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType
+                                          .leftToRightWithFade,
+                                      child: Scanner(
+                                        type: Constants.SCAN_TYPE_REQUEST,
+                                        scannerListener: this,
+                                      )));
+                            }),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        width: 200,
+                        child: RaisedButton(
+                            elevation: 8,
+                            color: Colors.indigo[400],
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                'Dispatch Taxi',
+                                style: Styles.whiteSmall,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.scale,
+                                      child: SelectVehicleForDispatch()));
+                            }),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        landmark == null
+                            ? ''
+                            : landmark.routeDetails.isEmpty
+                                ? 'No Routes for Landmark'
+                                : landmark.routeDetails.length == 1
+                                    ? '1 Route from here'
+                                    : '${landmark.routeDetails.length} Routes from here',
+                        style: Styles.blackSmall,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                ],
+              ),
             ),
-            preferredSize: Size.fromHeight(180)),
+            preferredSize: Size.fromHeight(200)),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.brown[50],
       bottomNavigationBar: BottomNavigationBar(
         fixedColor: Colors.blue,
         items: [
@@ -336,11 +396,11 @@ class _DashboardState extends State<Dashboard>
           BottomNavigationBarItem(
               icon: Icon(
                 Icons.departure_board,
-                color: Colors.white,
+                color: Colors.black,
               ),
               title: Text(
                 'Find Taxis',
-                style: Styles.whiteSmall,
+                style: Styles.blackSmall,
               )),
           BottomNavigationBarItem(
               icon: Icon(
@@ -354,7 +414,7 @@ class _DashboardState extends State<Dashboard>
 //          BottomNavigationBarItem(
 //              icon: Icon(Icons.scanner), title: Text('Scan')),
         ],
-        backgroundColor: Colors.black,
+//        backgroundColor: Colors.black,
         onTap: _handleBottomNav,
       ),
       body: isBusy
@@ -374,13 +434,13 @@ class _DashboardState extends State<Dashboard>
                     child: CounterCard(
                       title: 'Vehicle Arrivals',
                       total: vehicleArrivals.length,
-                      titleStyle: Styles.whiteSmall,
-                      totalStyle: Styles.whiteBoldLarge,
-                      cardColor: Colors.pink[400],
+                      titleStyle: Styles.blackSmall,
+                      totalStyle: Styles.blackBoldLarge,
+//                      cardColor: Colors.pink[400],
                       elevation: 2.0,
                       icon: Icon(
                         Icons.airport_shuttle,
-                        color: Colors.white,
+                        color: Colors.grey[600],
                       ),
                     ),
                   ),
@@ -396,23 +456,23 @@ class _DashboardState extends State<Dashboard>
                       elevation: 4.0,
                       icon: Icon(
                         Icons.alarm,
-                        color: Colors.white,
+                        color: Colors.grey[600],
                       ),
-                      titleStyle: Styles.whiteSmall,
-                      totalStyle: Styles.whiteBoldLarge,
-                      cardColor: Colors.pink[400],
+                      titleStyle: Styles.blackSmall,
+                      totalStyle: Styles.blackBoldLarge,
+//                      cardColor: Colors.pink[400],
                     ),
                   ),
                   CounterCard(
                     title: 'Commuter Arrivals',
                     total: commuterArrivals.length,
                     elevation: 2.0,
-                    titleStyle: Styles.whiteSmall,
-                    totalStyle: Styles.whiteBoldLarge,
-                    cardColor: Colors.blue[800],
+                    titleStyle: Styles.blackSmall,
+                    totalStyle: Styles.blackBoldLarge,
+//                    cardColor: Colors.blue[800],
                     icon: Icon(
                       Icons.people,
-                      color: Colors.white,
+                      color: Colors.grey[600],
                     ),
                   ),
                   GestureDetector(
@@ -423,13 +483,13 @@ class _DashboardState extends State<Dashboard>
                     child: CounterCard(
                       title: 'Casual Commuters',
                       total: commuterFenceDwellEvents.length,
-                      titleStyle: Styles.whiteSmall,
-                      totalStyle: Styles.whiteBoldLarge,
-                      cardColor: Colors.blue[800],
+                      titleStyle: Styles.blackSmall,
+                      totalStyle: Styles.blackBoldLarge,
+//                      cardColor: Colors.blue[800],
                       elevation: 1.0,
                       icon: Icon(
                         Icons.people,
-                        color: Colors.white,
+                        color: Colors.grey[600],
                       ),
                     ),
                   ),
@@ -442,7 +502,7 @@ class _DashboardState extends State<Dashboard>
                       total: _vehicles.length,
                       titleStyle: Styles.greyLabelSmall,
                       totalStyle: Styles.greyLabelLarge,
-                      cardColor: Colors.black,
+//                      cardColor: Colors.black,
                       icon: Icon(
                         Icons.airport_shuttle,
                         color: Colors.pink,
@@ -458,7 +518,7 @@ class _DashboardState extends State<Dashboard>
                       total: landmarks.length,
                       titleStyle: Styles.greyLabelSmall,
                       totalStyle: Styles.greyLabelLarge,
-                      cardColor: Colors.grey[800],
+//                      cardColor: Colors.grey[800],
                       icon: Icon(
                         Icons.my_location,
                         color: Colors.lightBlue,
@@ -483,20 +543,18 @@ class _DashboardState extends State<Dashboard>
         _startRouteMap();
         break;
       case 1:
-        Navigator.push(context, SlideRightRoute(widget: FindVehicles()));
+        Navigator.push(
+            context,
+            PageTransition(
+                type: PageTransitionType.leftToRightWithFade,
+                child: FindVehicles()));
         break;
       case 2:
         Navigator.push(
-            context, SlideRightRoute(widget: SelectVehicleForDispatch()));
-        break;
-      case 3:
-        Navigator.push(
             context,
-            SlideRightRoute(
-                widget: Scanner(
-              type: Constants.SCAN_TYPE_REQUEST,
-              scannerListener: this,
-            )));
+            PageTransition(
+                type: PageTransitionType.scale,
+                child: SelectVehicleForDispatch()));
         break;
     }
   }

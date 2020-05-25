@@ -350,30 +350,37 @@ class VehicleController {
             }
         }));
         app.route("/addVehicleRouteAssignment").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addVehicleRouteAssignment requested `;
+            const msg = `🌽🌽🌽 VehicleController: .........  💦 POST: addVehicleRouteAssignment requested ....`;
             console.log(msg);
+            console.log(req.body);
             try {
                 const c = new vehicle_route_assignment_1.default(req.body);
                 c.routeAssignmentID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                console.log(`🌸🌸🌸 addVehicleRouteAssignment OK`);
+                console.log(`🌸🌸🌸 addVehicleRouteAssignment OK ........ 🌸🌸🌸 finding vehicle for update with route ...`);
                 const vehicle = yield vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
-                const assignments = [];
                 if (vehicle) {
+                    if (!vehicle.assignments) {
+                        vehicle.assignments = [];
+                    }
+                    var isFound = false;
                     vehicle.assignments.forEach((a) => {
                         if (a.routeID == c.routeID) {
-                            log_1.log('Route already assigned to vehicle');
-                        }
-                        else {
-                            assignments.push(a);
+                            isFound = true;
                         }
                     });
-                    vehicle.assignments = assignments;
-                    yield vehicle.save();
-                    console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
+                    if (!isFound) {
+                        vehicle.assignments.push(c);
+                        yield vehicle.update();
+                        console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
+                    }
+                    res.status(200).json(result);
                 }
-                res.status(200).json(result);
+                else {
+                    console.error(`******* 🌸 Vehicle to be updated not found, vehicleId : ${req.body.vehicleID} *****`);
+                    res.status(400).json({ message: 'Vehicle to be updated not found' });
+                }
             }
             catch (err) {
                 res.status(400).json({

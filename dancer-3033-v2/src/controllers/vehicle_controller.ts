@@ -381,33 +381,41 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleRouteAssignment").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addVehicleRouteAssignment requested `;
+      const msg = `🌽🌽🌽 VehicleController: .........  💦 POST: addVehicleRouteAssignment requested ....`;
       console.log(msg);
+      console.log(req.body)
 
       try {
         const c: any = new VehicleRouteAssignment(req.body);
         c.routeAssignmentID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        console.log(`🌸🌸🌸 addVehicleRouteAssignment OK`);
+        console.log(`🌸🌸🌸 addVehicleRouteAssignment OK ........ 🌸🌸🌸 finding vehicle for update with route ...`);
+
         const vehicle: any = await Vehicle.findOne({vehicleID: req.body.vehicleID})
-        const assignments: any[] = []
         if (vehicle) {
+          if (!vehicle.assignments) {
+            vehicle.assignments = []
+          }
+          var isFound = false;
           vehicle.assignments.forEach((a: any) => {
             if (a.routeID == c.routeID) {
-              log('Route already assigned to vehicle')
-            } else {
-              assignments.push(a)
+              isFound = true;
             }
           })
-          vehicle.assignments = assignments
-          await vehicle.save();
-          console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
+          if (!isFound) {
+            vehicle.assignments.push(c)
+            await vehicle.update();
+            console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
+          }
+         
+          res.status(200).json(result);
+        } else {
+          console.error(`******* 🌸 Vehicle to be updated not found, vehicleId : ${req.body.vehicleID} *****`)
+          res.status(400).json({message: 'Vehicle to be updated not found'});
         }
-        
       
         
-        res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
           {

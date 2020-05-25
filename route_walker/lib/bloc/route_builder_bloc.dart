@@ -8,20 +8,19 @@ import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/geofence_event.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
-import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/geofencing/locator.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
+import 'package:aftarobotlibrary4/data/position.dart' as pos;
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:latlong/latlong.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:geolocator/geolocator.dart';
 
 final RouteBuilderBloc routeBuilderBloc = RouteBuilderBloc();
 
@@ -237,7 +236,7 @@ class RouteBuilderBloc {
     routePoints.forEach((p) {
       p.index = index;
       p.position =
-          Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
+          pos.Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
       index++;
     });
     try {
@@ -293,7 +292,7 @@ class RouteBuilderBloc {
     routePoints.forEach((p) {
       p.index = index;
       p.position =
-          Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
+          pos.Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
       index++;
     });
     try {
@@ -512,18 +511,18 @@ class RouteBuilderBloc {
     return list;
   }
 
-  Distance _distanceUtil = Distance();
 
+  var geoLocator = Geolocator();
+  var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
   Future<RoutePoint> findRoutePointNearestLandmark(
       {ar.Route route, Landmark landmark}) async {
     assert(landmark != null);
     assert(route != null);
 
+
     Map<double, RoutePoint> distances = Map();
-    route.routePoints.forEach((p) {
-      double distance = _distanceUtil.distance(
-          LatLng(landmark.latitude, landmark.longitude),
-          LatLng(p.latitude, p.longitude));
+    route.routePoints.forEach((p) async {
+      var distance = await geoLocator.distanceBetween(landmark.latitude, landmark.longitude, p.latitude, p.longitude);
       distances[distance] = p;
     });
     List sortedKeys = distances.keys.toList()..sort();
@@ -703,7 +702,7 @@ class RouteBuilderBloc {
       created: DateTime.now().toUtc().toIso8601String(),
       index: index,
       routeID: routeID,
-      position: Position(type: 'Point', coordinates: [longitude, latitude]),
+      position: pos.Position(type: 'Point', coordinates: [longitude, latitude]),
     );
 
     try {

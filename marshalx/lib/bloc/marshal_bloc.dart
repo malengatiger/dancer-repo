@@ -26,8 +26,11 @@ import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+final MarshalBloc marshalBloc = MarshalBloc(null);
 
 class MarshalBloc implements GeofencerListener {
   StreamController<List<CommuterFenceDwellEvent>>
@@ -99,9 +102,11 @@ class MarshalBloc implements GeofencerListener {
   List<Vehicle> _vehicles = List();
   List<Vehicle> get vehicles => _vehicles;
   List<CommuterRequest> _commuterRequests = List();
+  List<DispatchRecord> _dispatchRecords = List();
   GeoFencer _geoFencer;
 
   _init() async {
+    debugPrint('🌸 🌸 🌸 🌸 ... MarshalBloc initializing .... 🌸 🌸 🌸 🌸 ...');
     findLandmarksByLocation(radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
     var fbUser = await _auth.currentUser();
     if (fbUser == null) {
@@ -216,6 +221,19 @@ class MarshalBloc implements GeofencerListener {
     return true;
   }
 
+  Future addDispatchRecord(DispatchRecord dispatchRecord) async {
+    var result =
+        await DancerDataAPI.addDispatchRecord(dispatchRecord: dispatchRecord);
+    p('........... Backend has added dispatch record OK ...');
+    _dispatchRecords.add(result);
+    p('There are ${_dispatchRecords.length} dispatch records in list, about to save last dispatch ...');
+    await Prefs.saveLastDispatch(result);
+    await LocalDBAPI.addDispatchRecord(record: result);
+    p('Put list of records in stream ...');
+    _dispatchController.sink.add(_dispatchRecords);
+    return result;
+  }
+
   List<VehicleArrival> vehicleArrivals;
   Future<List<VehicleArrival>> getVehicleArrivals(
       {String landmarkID, int minutes = 5}) async {
@@ -291,19 +309,19 @@ class MarshalBloc implements GeofencerListener {
       myDebugPrint('Call has 🔆 🔆 🔆 timed out 🔆 🔆 🔆');
       _errors.add('Network TimeOut');
       _errorController.sink.add(_errors);
-      marshalBlocListener.onError("Network Timeout");
+//      marshalBlocListener.onError("Network Timeout");
     }
     if (e is SocketException) {
       myDebugPrint(
           'Call has run into  🔴  🔴  🔴 SocketException  🔴  🔴  🔴 ');
       _errors.add('Network SocketException');
       _errorController.sink.add(_errors);
-      marshalBlocListener.onError("Network SocketException");
+//      marshalBlocListener.onError("Network SocketException");
     }
     _errors.add(e == null ? 'Unknown Network Error' : e.message);
     _errorController.sink.add(_errors);
-    marshalBlocListener
-        .onError(e == null ? 'Unknown Network Error' : e.message);
+//    marshalBlocListener
+//        .onError(e == null ? 'Unknown Network Error' : e.message);
     print(e);
   }
 
@@ -391,8 +409,8 @@ class MarshalBloc implements GeofencerListener {
       print(e);
       _errors.add('getAssociationRoutes failed: ${e.toString()}');
       _errorController.sink.add(_errors);
-      marshalBlocListener
-          .onError('getAssociationRoutes failed: ${e.toString()}');
+//      marshalBlocListener
+//          .onError('getAssociationRoutes failed: ${e.toString()}');
     }
 
     return null;
@@ -422,7 +440,7 @@ class MarshalBloc implements GeofencerListener {
     } catch (e) {
       print(e);
       _errorController.sink.add(_errors);
-      marshalBlocListener.onError('getRouteByID failed: ${e.toString()}');
+//      marshalBlocListener.onError('getRouteByID failed: ${e.toString()}');
     }
 
     return null;
@@ -431,12 +449,18 @@ class MarshalBloc implements GeofencerListener {
   Future<List<Vehicle>> getAssociationVehicles(
       {bool forceRefresh = false}) async {
     myDebugPrint(
-        '🦠 🦠 🦠 getAssociationVehicles....._user.associationID: ${_user.associationID}');
+        '🦠 🦠 🦠 MarshalBloc: getAssociationVehicles ..... forceRefresh: $forceRefresh');
+    if (_user == null) {
+      _user = await Prefs.getUser();
+    }
+    if (user == null) {
+      throw Exception('User not cached');
+    }
     try {
       if (forceRefresh == true) {
         _vehicles = await DancerListAPI.getVehiclesByAssociation(
             associationID: _user.associationID);
-        myDebugPrint('🦠 🦠 🦠 Cache vehicles in local DB .....');
+        myDebugPrint('🦠 🦠 🦠 MarshalBloc: Cache vehicles in local DB .....');
         await LocalDBAPI.addVehicles(vehicles: vehicles);
       } else {
         _vehicles = await LocalDBAPI.getAllVehicles();
@@ -457,8 +481,8 @@ class MarshalBloc implements GeofencerListener {
     } catch (e) {
       print(e);
       _errorController.sink.add(_errors);
-      marshalBlocListener
-          .onError('getAssociationVehicles failed: ${e.toString()}');
+//      marshalBlocListener
+//          .onError('getAssociationVehicles failed: ${e.toString()}');
       _errorController.sink.add(_errors);
     }
 
@@ -607,10 +631,10 @@ class MarshalBloc implements GeofencerListener {
     var data = RouteDistanceEstimation.fromJson(message['data']);
     _routeDistanceEstimations.add(data);
     _routeDistanceEstimationController.sink.add(_routeDistanceEstimations);
-    if (marshalBlocListener != null) {
-      marshalBlocListener
-          .onRouteDistanceEstimationsArrived(_routeDistanceEstimations);
-    }
+//    if (marshalBlocListener != null) {
+//      marshalBlocListener
+//          .onRouteDistanceEstimationsArrived(_routeDistanceEstimations);
+//    }
   }
 
   void _processCommuterFenceExitEvent(Map<String, dynamic> message) {
@@ -662,9 +686,9 @@ class MarshalBloc implements GeofencerListener {
   final Map<String, Landmark> landmarksSubscribed = Map();
   static const MAX_NUMBER_GEOFENCES = 30;
 
-  MarshalBlocListener marshalBlocListener;
+//  MarshalBlocListener marshalBlocListener;
   MarshalBloc(MarshalBlocListener listener) {
-    marshalBlocListener = listener;
+    //marshalBlocListener = listener;
     _init();
   }
 
@@ -698,9 +722,9 @@ class MarshalBloc implements GeofencerListener {
 
   @override
   onDynamicDistanceCalculated(List<RouteDistanceEstimation> estimations) {
-    if (marshalBlocListener != null) {
-      marshalBlocListener.onRouteDistanceEstimationsArrived(estimations);
-    }
+//    if (marshalBlocListener != null) {
+//      marshalBlocListener.onRouteDistanceEstimationsArrived(estimations);
+//    }
   }
 
   @override

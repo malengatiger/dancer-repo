@@ -1,18 +1,14 @@
-import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
-import 'package:aftarobotlibrary4/dancer/dancer_data_api.dart';
 import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
-import 'package:aftarobotlibrary4/data/vehicle_route_assignment.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 
@@ -32,13 +28,11 @@ class _DispatchState extends State<Dispatch>
     implements NumberDropDownListener, MarshalBlocListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   Landmark landmark;
-  MarshalBloc marshalBloc;
   int number = 0;
 
   @override
   void initState() {
     super.initState();
-    marshalBloc = MarshalBloc(this);
     _checkLandmark();
   }
 
@@ -150,6 +144,8 @@ class _DispatchState extends State<Dispatch>
                   padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
                   child: GestureDetector(
                     onTap: () {
+                      debugPrint(
+                          '............... About to dispatch, routeInfo is: ${detail.toJson()} - check routeId and name ....');
                       _confirmDispatchCar(detail);
                     },
                     child: Card(
@@ -181,7 +177,7 @@ class _DispatchState extends State<Dispatch>
 
   _confirmDispatchCar(RouteInfo detail) {
     myDebugPrint(
-        ' 🐳  🐳  🐳  🐳  🐳 Ready to CONFIRM : dispatch car to  💀 ${detail.name}  💀 ');
+        ' 🐳  🐳  🐳  🐳  🐳 Ready to CONFIRM : dispatch car to  routeID: 💀 ${detail.routeID} name: ${detail.name}  💀 ');
     assert(landmark != null);
     showDialog(
         context: context,
@@ -230,7 +226,24 @@ class _DispatchState extends State<Dispatch>
   }
 
   bool isBusy = false;
-  _dispatchVehicle(RouteInfo routeInfo) async {
+  void _dispatchVehicle(RouteInfo routeInfo) async {
+    var rec = await Prefs.getDispatchRecord();
+    if (rec != null) {
+      var id = widget.vehicle.vehicleID == null
+          ? widget.vehicleArrival.vehicleID
+          : widget.vehicle.vehicleID;
+      if (rec.vehicleID == id) {
+        var then = DateTime.parse(rec.created);
+        if (DateTime.now().millisecondsSinceEpoch -
+                then.millisecondsSinceEpoch <
+            (1000 * 60 * 5)) {
+          AppSnackbar.showErrorSnackbar(
+              scaffoldKey: _key,
+              message: '${rec.vehicleReg} : taxi has already been dispatched');
+          return;
+        }
+      }
+    }
     myDebugPrint(
         '🌺 🌺 🌺 🌺 🌺 Ready to dispatch car to  💀 ${routeInfo.name}  💀 ');
     prettyPrint(widget.vehicleArrival.toJson(),
@@ -244,29 +257,6 @@ class _DispatchState extends State<Dispatch>
         AppSnackbar.showErrorSnackbar(
             scaffoldKey: _key, message: "User cache problem found");
         return;
-      }
-      if (widget.vehicle.assignments == null) {
-        widget.vehicle.assignments = [];
-      }
-      bool isFound = false;
-      widget.vehicle.assignments.forEach((a) {
-        if (a.routeID == routeInfo.routeID) {
-          isFound = true;
-        }
-      });
-      if (!isFound) {
-        var assignment = VehicleRouteAssignment(
-          vehicleID: widget.vehicle.vehicleID,
-          vehicleReg: widget.vehicle.vehicleReg,
-          routeID: routeInfo.routeID,
-          routeName: routeInfo.name,
-          associationID: widget.vehicle.associationID,
-          activeFlag: true,
-          created: DateTime.now().toUtc().toIso8601String(),
-        );
-        widget.vehicle.assignments.add(assignment);
-        await LocalDBAPI.addVehicle(vehicle: widget.vehicle);
-        await DancerDataAPI.addVehicleRouteAssignment(assignment: assignment);
       }
 
       var dispatchRecord = DispatchRecord(
@@ -284,20 +274,26 @@ class _DispatchState extends State<Dispatch>
           routeName: routeInfo.name,
           passengers: number,
           ownerID: widget.vehicle.ownerID,
+          dispatchRecordID: DateTime.now().toIso8601String(),
+          created: DateTime.now().toIso8601String(),
           position:
               Position(coordinates: [landmark.longitude, landmark.latitude]));
-      prettyPrint(dispatchRecord.toJson(),
-          '🎁 🎁 🎁 🎁 DISPATCH RECORD about to be sent, 👽  👽  👽 check associationID from user record');
-      var result =
-          await DancerDataAPI.addDispatchRecord(dispatchRecord: dispatchRecord);
 
+      prettyPrint(dispatchRecord.toJson(),
+          '🎁 🎁 🎁 🎁 DISPATCH RECORD about to be sent, 👽  👽  👽 check associationID and created ... from user record');
+      var result = await marshalBloc.addDispatchRecord(dispatchRecord);
       //marshalBloc.removeVehicleArrival(widget.vehicleArrival);
       prettyPrint(result.toJson(),
-          '🎁 🎁 🎁 🎁 DISPATCH RECORD returned, about to pop!');
+          '🎁 🎁 🎁 🎁 DISPATCH RECORD returned, about to pop! WTF?? routeId and routeName missing ??????  🍎  🍎  🍎  🍎 ');
       Navigator.pop(context, result);
     } catch (e) {
+      debugPrint(' 🍎  🍎  🍎  🍎  🍎  🍎  We done fucked up, Boss!');
       print(e);
-      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: e.toString());
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'Dispatch failed');
+      setState(() {
+        isBusy = false;
+      });
     }
   }
 

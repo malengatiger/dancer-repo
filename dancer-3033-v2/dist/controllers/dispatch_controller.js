@@ -22,18 +22,44 @@ class DispatchController {
     routes(app) {
         console.log(`🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
         app.route("/addDispatchRecord").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addDispatchRecord requested `;
+            const msg = `🌽🌽🌽 DispatchController: ...........  💦  💦  💦  addDispatchRecord requested ........ `;
             console.log(msg);
             console.log(req.body);
             try {
+                if (!req.body.routeID) {
+                    const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing route info';
+                    console.error(msg);
+                    res.status(400).json({
+                        message: msg
+                    });
+                    return;
+                }
+                if (!req.body.vehicleID) {
+                    const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing vehicle info';
+                    console.error(msg);
+                    res.status(400).json({
+                        message: msg
+                    });
+                    return;
+                }
+                if (!req.body.landmarkID) {
+                    const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing landmark info';
+                    console.error(msg);
+                    res.status(400).json({
+                        message: msg
+                    });
+                    return;
+                }
                 const c = new dispatch_record_1.default(req.body);
                 c.dispatchRecordID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
+                console.log('💦💦 DispatchController: 💦 Result of addDispatchRecord save operation ...... : ');
+                console.log(result);
                 res.status(200).json(result);
             }
             catch (err) {
+                console.error('DispatchController: 💦 Dispatch recording failed', err);
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 addDispatchRecord failed'

@@ -10,12 +10,12 @@ import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
 import 'package:marshalx/ui/dispatch.dart';
 import 'package:marshalx/ui/wifi.dart';
+import 'package:page_transition/page_transition.dart';
 
 class SelectVehicleForDispatch extends StatefulWidget {
   @override
@@ -26,7 +26,6 @@ class SelectVehicleForDispatch extends StatefulWidget {
 class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
     implements MarshalBlocListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
-  MarshalBloc marshalBloc;
   List<VehicleArrival> vehicleArrivals = List();
   Landmark landmark;
   bool isBusy = false;
@@ -34,13 +33,12 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
   @override
   void initState() {
     super.initState();
-    marshalBloc = MarshalBloc(this);
     _checkMarshalLandmark();
+    _getCachedDispatches();
   }
 
   test() async {}
   _checkMarshalLandmark() async {
-    myDebugPrint('.......................... _checkMarshalLandmark .......');
     landmark = await Prefs.getLandmark();
     if (landmark == null) {
       var result = await Navigator.push(
@@ -61,7 +59,6 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
           actionLabel: '');
       return;
     }
-    marshalBloc = MarshalBloc(this);
     _subscribeToDispatchedStream();
     _getVehicleArrivals();
   }
@@ -121,12 +118,29 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
     vehicleArrivals.sort((a, b) => a.created.compareTo(b.created));
   }
 
+  List<DispatchRecord> _records = [];
+  void _getCachedDispatches() async {
+    _records = await LocalDBAPI.getDispatchRecordsFromLast24Hours();
+    setState(() {});
+
+    marshalBloc.dispatchStream.listen((List<DispatchRecord> list) {
+      p('🧩🧩🧩🧩🧩 Stream returned records 🧩 ${list.length}');
+      setState(() {
+        _records = list;
+      });
+    });
+  }
+
   Future<void> _getVehicles() async {
     setState(() {
       isBusy = true;
     });
     try {
-      _vehicles = await marshalBloc.getAssociationVehicles(forceRefresh: true);
+      _vehicles = await marshalBloc.getAssociationVehicles(forceRefresh: false);
+      if (_vehicles.isEmpty) {
+        _vehicles =
+            await marshalBloc.getAssociationVehicles(forceRefresh: true);
+      }
       setState(() {
         isBusy = false;
         showAllAssocVehicles = true;
@@ -159,19 +173,24 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        title: Text('Taxi Select'),
         elevation: 0,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
             onPressed: _getVehicleArrivals,
           ),
           IconButton(
-            icon: Icon(Icons.list),
+            icon: Icon(
+              Icons.list,
+              color: Colors.black,
+            ),
             onPressed: _getVehicles,
           )
         ],
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.brown[50],
         bottom: PreferredSize(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -185,17 +204,24 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                         width: 60,
                       ),
                       SizedBox(
-                        width: 12,
+                        width: 60,
                       ),
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        children: <Widget>[
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: _getCachedDispatches,
+                            child: Text(
+                              'Dispatched Today',
+                              style: Styles.blackSmall,
+                            ),
+                          ),
                           Text(
-                            'Tap the taxi you want to dispatch',
-                            style: Styles.whiteSmall,
+                            '${_records.length}',
+                            style: Styles.tealBoldLarge,
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                   SizedBox(
@@ -203,7 +229,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                   ),
                   Text(
                     landmark == null ? '' : '${landmark.landmarkName}',
-                    style: Styles.whiteBoldMedium,
+                    style: Styles.blackBoldMedium,
                   ),
                   SizedBox(
                     height: 20,
@@ -212,8 +238,8 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        'Number of Taxis found',
-                        style: Styles.whiteSmall,
+                        'Number of Association Taxis',
+                        style: Styles.blackSmall,
                       ),
                       SizedBox(
                         width: 20,
@@ -231,7 +257,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
             ),
             preferredSize: Size.fromHeight(180)),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.brown[50],
       body: showAllAssocVehicles
           ? StreamBuilder<List<Vehicle>>(
               stream: marshalBloc.vehicleStream,
@@ -240,6 +266,8 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                   myDebugPrint(
                       ' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving ${snapshot.data.length} arrivals');
                   _vehicles = snapshot.data;
+                  _vehicles
+                      .sort((a, b) => a.vehicleReg.compareTo(b.vehicleReg));
                 }
                 return isBusy
                     ? ARAnimations(
@@ -259,39 +287,18 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                                     _startLandmarkConfirm();
                                     return;
                                   }
-                                  prettyPrint(myVehicle.toJson(),
-                                      'myVehicle, check registration .....');
-                                  selectedVehicle = myVehicle;
-                                  var vehArrival = VehicleArrival(
-                                      vehicleID: myVehicle.vehicleID,
-                                      vehicleReg: myVehicle.vehicleReg,
-                                      associationID: myVehicle.associationID,
-                                      associationName:
-                                          myVehicle.associationName,
-                                      landmarkID: landmark.landmarkID,
-                                      landmarkName: landmark.landmarkName,
-                                      vehicleType: myVehicle.vehicleType,
-                                      position: Position(
-                                          type: 'Point',
-                                          coordinates: [
-                                            landmark.longitude,
-                                            landmark.latitude
-                                          ]),
-                                      created: DateTime.now()
-                                          .toUtc()
-                                          .toIso8601String());
-                                  _startDispatch(vehArrival);
+                                  _createVehicleArrival(myVehicle);
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       top: 2, left: 12, right: 12),
                                   child: Card(
-                                    color: Colors.black,
+                                    color: Colors.grey[300],
                                     elevation: 2,
                                     child: ListTile(
                                       leading: Icon(
                                         Icons.local_taxi,
-                                        color: getRandomColor(),
+                                        color: Colors.grey[400],
                                       ),
                                       title: Text(
                                         myVehicle == null
@@ -299,13 +306,13 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                                             : myVehicle.vehicleReg == null
                                                 ? 'VehicleReg is NULL'
                                                 : myVehicle.vehicleReg,
-                                        style: Styles.blueBoldMedium,
+                                        style: Styles.blackBoldMedium,
                                       ),
                                       subtitle: Text(
                                         myVehicle == null
                                             ? ''
-                                            : 'Arrived: ${getFormattedDateHourMinSec(myVehicle.created)}',
-                                        style: Styles.whiteSmall,
+                                            : 'Arrived: ${getFormattedDateHourMinSec(DateTime.now().toLocal().toIso8601String())}',
+                                        style: Styles.greyLabelSmall,
                                       ),
                                     ),
                                   ),
@@ -362,6 +369,24 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
     );
   }
 
+  void _createVehicleArrival(Vehicle myVehicle) {
+    prettyPrint(myVehicle.toJson(), 'myVehicle, check registration .....');
+    selectedVehicle = myVehicle;
+    var vehArrival = VehicleArrival(
+        vehicleID: myVehicle.vehicleID,
+        vehicleReg: myVehicle.vehicleReg,
+        associationID: myVehicle.associationID,
+        associationName: myVehicle.associationName,
+        landmarkID: landmark.landmarkID,
+        landmarkName: landmark.landmarkName,
+        vehicleType: myVehicle.vehicleType,
+        position: Position(
+            type: 'Point',
+            coordinates: [landmark.longitude, landmark.latitude]),
+        created: DateTime.now().toUtc().toIso8601String());
+    _startDispatch(vehArrival);
+  }
+
   var _vehicles = List<Vehicle>();
 
   bool showAllAssocVehicles = false;
@@ -378,8 +403,19 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
           scaffoldKey: _key, message: 'Unable to find vehicle data');
       return;
     }
-    var res = await Navigator.push(context,
-        SlideRightRoute(widget: Dispatch(vehicleArrival, selectedVehicle)));
+//    var res = await Navigator.push(
+//        context,
+//        PageTransition(
+//            type: PageTransitionType.leftToRightWithFade,
+//            child: Dispatch(vehicleArrival, selectedVehicle)));
+
+    var res = await Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.scale,
+            alignment: Alignment.bottomCenter,
+            child: Dispatch(vehicleArrival, selectedVehicle)));
+
     if (res != null && res is DispatchRecord) {
       DispatchRecord mm = res;
       myDebugPrint(

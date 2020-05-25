@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import DispatchRecord from "../models/dispatch_record";
-import {log} from '../log';
+import { log } from '../log';
 import moment from "moment";
 import uuid = require("uuid");
 import MarshalFenceDwellEvent from "../models/marshal_fence_dwell_event";
@@ -13,17 +13,50 @@ export class DispatchController {
       `🏓    DispatchController:  💙  setting up default Dispatch routes ...`,
     );
     app.route("/addDispatchRecord").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addDispatchRecord requested `;
+      const msg = `🌽🌽🌽 DispatchController: ...........  💦  💦  💦  addDispatchRecord requested ........ `;
       console.log(msg);
       console.log(req.body);
       try {
+        if (!req.body.routeID) {
+          const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing route info'
+          console.error(msg)
+          res.status(400).json(
+            {
+              message: msg
+            }
+          )
+          return
+        }
+        if (!req.body.vehicleID) {
+          const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing vehicle info'
+          console.error(msg)
+          res.status(400).json(
+            {
+              message: msg
+            }
+          )
+          return
+        }
+        if (!req.body.landmarkID) {
+          const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing landmark info'
+          console.error(msg)
+          res.status(400).json(
+            {
+              message: msg
+            }
+          )
+          return
+        }
         const c: any = new DispatchRecord(req.body);
         c.dispatchRecordID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+        console.log('💦💦 DispatchController: 💦 Result of addDispatchRecord save operation ...... : ')
+        console.log(result);
+        
         res.status(200).json(result);
       } catch (err) {
+        console.error('DispatchController: 💦 Dispatch recording failed', err)
         res.status(400).json(
           {
             error: err,
@@ -149,7 +182,7 @@ export class DispatchController {
       }
     });
 
-    app.route("/addMarshalFenceDwellEvent").post(async(req: Request, res: Response) => {
+    app.route("/addMarshalFenceDwellEvent").post(async (req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceDwellEvent requested `;
       console.log(msg);
 
@@ -170,7 +203,7 @@ export class DispatchController {
         )
       }
     });
-    app.route("/addMarshalFenceExitEvent").post(async(req: Request, res: Response) => {
+    app.route("/addMarshalFenceExitEvent").post(async (req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceExitEvent requested `;
       console.log(msg);
 
