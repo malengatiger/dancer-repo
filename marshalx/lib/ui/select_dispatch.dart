@@ -6,7 +6,6 @@ import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
-import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
@@ -66,8 +65,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
 
   _subscribeToDispatchedStream() {
     marshalBloc.vehicleArrivalDispatchedStream.listen((arrival) {
-      myDebugPrint(
-          'SelectVehicleForDispatch: 🥬🥬🥬🥬🥬 Dispatched message from 🌺 ${arrival.vehicleReg} 🌺 ');
+      mp('SelectTaxiFromArrivals: 🥬🥬🥬🥬🥬 Dispatched message from 🌺 ${arrival.vehicleReg} 🌺 ');
       List<VehicleArrival> temp = List();
       vehicleArrivals.forEach((m) {
         if (m.vehicleID != arrival.vehicleID) {
@@ -109,6 +107,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
 
   void _removeDuplicates() {
     //deduplicate
+    p('... _removeDuplicates .... vehicleArrivals: ${vehicleArrivals.length}');
     Map<String, VehicleArrival> vMap = Map();
     vehicleArrivals.sort((a, b) => a.created.compareTo(b.created));
     vehicleArrivals.forEach((v) {
@@ -116,6 +115,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
     });
     vehicleArrivals = vMap.values.toList();
     vehicleArrivals.sort((a, b) => a.created.compareTo(b.created));
+    p('... _removeDuplicates .... vehicleArrivals: ${vehicleArrivals.length}');
   }
 
   List<DispatchRecord> _records = [];
@@ -131,21 +131,11 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
             type: PageTransitionType.scale,
             curve: Curves.easeInOut,
             duration: Duration(milliseconds: 1000),
-            alignment: Alignment.bottomLeft,
+            alignment: Alignment.topLeft,
             child: SelectTaxiFromVehicles()));
 
     if (result != null && result == true) {
       Navigator.pop(context);
-    }
-  }
-
-  _startLandmarkConfirm() async {
-    var result = await Navigator.push(
-        context, SlideRightRoute(widget: ConfirmLandmark()));
-    if (result != null && result is Landmark) {
-      setState(() {
-        landmark = result;
-      });
     }
   }
 
@@ -164,15 +154,8 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
             ),
             onPressed: _getVehicleArrivals,
           ),
-          IconButton(
-            icon: Icon(
-              Icons.list,
-              color: Colors.black,
-            ),
-            onPressed: _startSelectTaxiFromVehicles,
-          )
         ],
-        backgroundColor: Colors.brown[50],
+        backgroundColor: Colors.brown[100],
         bottom: PreferredSize(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -202,7 +185,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
                           GestureDetector(
                             onTap: _getCachedDispatches,
                             child: Text(
-                              'Dispatched Today',
+                              'Dispatches Today',
                               style: Styles.blackSmall,
                             ),
                           ),
@@ -228,18 +211,19 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        'Number of Taxis',
+                        'Number of Taxis Arrived',
                         style: Styles.blackSmall,
                       ),
                       SizedBox(
                         width: 20,
                       ),
                       Text(
-                        _vehicles.length == 0
-                            ? '${vehicleArrivals.length}'
-                            : '${_vehicles.length}',
+                        '${vehicleArrivals.length}',
                         style: Styles.blueBoldMedium,
-                      )
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
                     ],
                   )
                 ],
@@ -247,14 +231,14 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
             ),
             preferredSize: Size.fromHeight(180)),
       ),
-      backgroundColor: Colors.brown[70],
+      backgroundColor: Colors.brown[100],
       body: StreamBuilder<List<VehicleArrival>>(
           stream: marshalBloc.vehicleArrivalStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              myDebugPrint(
-                  ' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving ${snapshot.data.length} arrivals');
-              vehicleArrivals = snapshot.data;
+              mp(' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving '
+                  '${marshalBloc.vehicleArrivals.length} arrivals');
+              vehicleArrivals = marshalBloc.vehicleArrivals;
               _removeDuplicates();
             }
             return isBusy
@@ -331,11 +315,8 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
     );
   }
 
-  var _vehicles = List<Vehicle>();
-
   void _startDispatch(VehicleArrival vehicleArrival, int index) async {
-    myDebugPrint(
-        'SelectTaxi: _startDispatch ...  💀  💀  💀  💀  vehicleArrival::: ');
+    mp('SelectTaxi: _startDispatch ...  💀  💀  💀  💀  vehicleArrival::: ');
     print(vehicleArrival.toJson());
     if (selectedVehicle == null) {
       selectedVehicle =
@@ -357,9 +338,9 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
             child: Dispatch(vehicleArrival, selectedVehicle)));
 
     if (res != null && res == true) {
-      myDebugPrint(
-          '🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
+      mp('🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
           'vehicleArrivals: ${vehicleArrivals.length} remove record at index: $index');
+      vehicleArrival.dispatched = true;
       AppSnackbar.showSnackbar(
           scaffoldKey: _key,
           message: '${selectedVehicle.vehicleReg} '
@@ -368,11 +349,9 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
       setState(() {
         vehicleArrivals.removeAt(index);
       });
-      myDebugPrint(
-          '🥬🥬🥬 Back in _startDispatch: remove dispatched vehicle ??? vehicleArrivals: ${vehicleArrivals.length}');
+      mp('🥬🥬🥬 Back in _startDispatch: remove dispatched vehicle ??? vehicleArrivals: ${vehicleArrivals.length}');
     } else {
-      myDebugPrint(
-          '🥬🥬🥬  🍎 🍎 Back in _startDispatch: DISPATCH cancelled 🍎 ');
+      mp('🥬🥬🥬  🍎 🍎 Back in _startDispatch: DISPATCH cancelled 🍎 ');
     }
   }
 

@@ -239,8 +239,7 @@ class _SelectTaxiFromVehiclesState extends State<SelectTaxiFromVehicles>
   }
 
   void _startDispatch(VehicleArrival vehicleArrival, int index) async {
-    myDebugPrint(
-        'SelectTaxiFromVehicles: _startDispatch ...  💀  💀  💀  💀  vehicleArrival::: ');
+    mp('SelectTaxiFromVehicles: _startDispatch ...  💀  💀  💀  💀  vehicleArrival::: ');
     print(vehicleArrival.toJson());
 
     var res = await Navigator.push(
@@ -253,22 +252,21 @@ class _SelectTaxiFromVehiclesState extends State<SelectTaxiFromVehicles>
             child: Dispatch(vehicleArrival, selectedVehicle)));
 
     if (res != null && res == true) {
-      myDebugPrint(
-          '🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
+      mp('🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
           '_vehicles: ${_vehicles.length} remove record at index: $index');
+
       AppSnackbar.showSnackbar(
           scaffoldKey: _key,
           message: '${selectedVehicle.vehicleReg} '
               'has been dispatched  🌺 ');
       selectedVehicle = null;
+      _controller.text = '';
+      _getCachedDispatches();
       setState(() {
-        _vehicles.removeAt(index);
+        _filtered.clear();
       });
-      myDebugPrint(
-          '🥬🥬🥬 Back in _startDispatch: remove dispatched vehicle ??? _vehicles: ${_vehicles.length}');
     } else {
-      myDebugPrint(
-          '🥬🥬🥬  🍎 🍎 Back in _startDispatch: DISPATCH cancelled 🍎 ');
+      mp('🥬🥬🥬  🍎 🍎 Back in _startDispatch: DISPATCH cancelled 🍎 ');
     }
   }
 

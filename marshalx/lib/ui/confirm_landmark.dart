@@ -30,7 +30,7 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark>
 
   void _subscribeToBusy() {
     marshalBloc.busyStream.listen((busy) {
-      myDebugPrint('💙 💙 💙 Received busy: $busy : will setState');
+      mp('💙 💙 💙 Received busy: $busy : will setState');
       _busies = busy;
       if ((mounted)) {
         setState(() {
@@ -42,7 +42,7 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark>
 
   void _subscribeToError() {
     marshalBloc.errorStream.listen((err) {
-      myDebugPrint('👿  👿  👿  Received error: $err');
+      mp('👿  👿  👿  Received error: $err');
 
       if ((mounted)) {
         setState(() {

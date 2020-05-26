@@ -180,15 +180,14 @@ class _DispatchState extends State<Dispatch>
 
   @override
   onNumberSelected(int num) {
-    myDebugPrint('🍏 🍏 🍏 🍏 🍏 🍏 OnNumberChanged: $num');
+    mp('🍏 🍏 🍏 🍏 🍏 🍏 OnNumberChanged: $num');
     setState(() {
       number = num;
     });
   }
 
   _confirmDispatchCar(RouteInfo detail) {
-    myDebugPrint(
-        ' 🐳  🐳  🐳  🐳  🐳 Ready to CONFIRM : dispatch car to  routeID: 💀 ${detail.routeID} name: ${detail.name}  💀 ');
+    mp(' 🐳  🐳  🐳  🐳  🐳 Ready to CONFIRM : dispatch car to  routeID: 💀 ${detail.routeID} name: ${detail.name}  💀 ');
     assert(landmark != null);
     showDialog(
         context: context,
@@ -269,8 +268,7 @@ class _DispatchState extends State<Dispatch>
         }
       }
     }
-    myDebugPrint(
-        '🌺 🌺 🌺 🌺 🌺 Ready to dispatch car to  💀 ${routeInfo.name}  💀 ');
+    mp('🌺 🌺 🌺 🌺 🌺 Ready to dispatch car to  💀 ${routeInfo.name}  💀 ');
     prettyPrint(widget.vehicleArrival.toJson(),
         '🐳  🐳 widget.vehicleArrival  🐳 check vehicleID');
     setState(() {

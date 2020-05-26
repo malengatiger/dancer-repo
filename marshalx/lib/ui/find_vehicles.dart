@@ -31,7 +31,7 @@ class _FindVehiclesState extends State<FindVehicles>
 
   void _subscribeToBusy() {
     marshalBloc.busyStream.listen((busy) {
-      myDebugPrint('💙 💙 💙 Received busy: $busy : will setState');
+      mp('💙 💙 💙 Received busy: $busy : will setState');
 //      if (!busy) {
 //        _key.currentState.removeCurrentSnackBar();
 //      }
@@ -43,15 +43,14 @@ class _FindVehiclesState extends State<FindVehicles>
 
   void _subscribeToError() {
     marshalBloc.errorStream.listen((err) {
-      myDebugPrint('👿  👿  👿  Received error: $err');
+      mp('👿  👿  👿  Received error: $err');
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: err.last);
     });
   }
 
   void _subscribeToLocationStream() {
     marshalBloc.vehicleLocationStream.listen((vehicleLocations) {
-      myDebugPrint(
-          '🏀  🏀  🏀  _subscribeToLocationStream: 🧩 Received ${vehicleLocations.length} vehicleLocations: ');
+      mp('🏀  🏀  🏀  _subscribeToLocationStream: 🧩 Received ${vehicleLocations.length} vehicleLocations: ');
       setState(() {
         _vehicleLocations = vehicleLocations;
       });
@@ -73,8 +72,7 @@ class _FindVehiclesState extends State<FindVehicles>
   }
 
   _startVehicleMap(VehicleLocation vehicleLocation) {
-    myDebugPrint(
-        '🍏 🍏 🍏 🍏 🍏 🍏 Start map for single vehicle :  🔴 🔴 ${vehicleLocation.vehicleReg}');
+    mp('🍏 🍏 🍏 🍏 🍏 🍏 Start map for single vehicle :  🔴 🔴 ${vehicleLocation.vehicleReg}');
     prettyPrint(vehicleLocation.toJson(),
         '🍏 🍏 🍏 🍏 🍏 🍏 VEHICLE to send to VehicleMap');
     List<VehicleLocation> locs = List();
@@ -83,8 +81,7 @@ class _FindVehiclesState extends State<FindVehicles>
   }
 
   _startVehiclesMap() {
-    myDebugPrint(
-        '🍏 🍏 🍏 🍏 🍏 🍏 Start map for all vehicles found :  🔴 🔴 ${_vehicleLocations.length}');
+    mp('🍏 🍏 🍏 🍏 🍏 🍏 Start map for all vehicles found :  🔴 🔴 ${_vehicleLocations.length}');
     if (_vehicleLocations.isEmpty) {
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key, message: 'No taxis available for map');
@@ -160,8 +157,7 @@ class _FindVehiclesState extends State<FindVehicles>
               stream: marshalBloc.vehicleLocationStream,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  myDebugPrint(
-                      '🔱 🔱 🔱 🔱 StreamBuilder: Vehicle locations received:  🌀 ${snapshot.data.length}');
+                  mp('🔱 🔱 🔱 🔱 StreamBuilder: Vehicle locations received:  🌀 ${snapshot.data.length}');
                   _vehicleLocations = snapshot.data;
                 }
                 return _vehicleLocations.isEmpty

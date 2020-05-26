@@ -110,26 +110,22 @@ class MarshalBloc implements GeofencerListener {
     findLandmarksByLocation(radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
     var fbUser = await _auth.currentUser();
     if (fbUser == null) {
-      myDebugPrint(
-          '🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  Firebase fbUser is null.  👺  need to 🔑 🔑 🔑');
+      mp('🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  Firebase fbUser is null.  👺  need to 🔑 🔑 🔑');
       return;
     }
     await DotEnv().load('.env');
     String status = DotEnv().env['status'];
     var devURL = DotEnv().env['devURL'];
     var prodURL = DotEnv().env['prodURL'];
-    myDebugPrint(
-        '🌸 🌸 🌸 🌸 ... MarshalBloc initializing: App status: 🔑 $status devURL: 🔑 $devURL prodURL: 🔑 $prodURL');
+    mp('🌸 🌸 🌸 🌸 ... MarshalBloc initializing: App status: 🔑 $status devURL: 🔑 $devURL prodURL: 🔑 $prodURL');
     _user = await Prefs.getUser();
     if (_user == null) {
-      myDebugPrint(
-          '🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  AftaRobot User is null.  👺  need to be created by portal 🔑 🔑 🔑');
+      mp('🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  AftaRobot User is null.  👺  need to be created by portal 🔑 🔑 🔑');
       _errors.add('AftaRobot user not found');
       _errorController.sink.add(_errors);
       return;
     } else {
-      myDebugPrint(
-          '🌸 🌸 🌸 🌸 ... MarshalBloc initializing: getAssociationVehicles forceRefresh: true');
+      mp('🌸 🌸 🌸 🌸 ... MarshalBloc initializing: getAssociationVehicles forceRefresh: true');
       _vehicles = await getAssociationVehicles(forceRefresh: false);
       _vehiclesController.sink.add(_vehicles);
     }
@@ -139,8 +135,7 @@ class MarshalBloc implements GeofencerListener {
   }
 
   Future refreshDashboardData({bool forceRefresh}) async {
-    myDebugPrint(
-        '\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData: Loading data into streams ...');
+    mp('\n\n 🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData: Loading data into streams ...');
 
     _busies.add(true);
     _busyController.sink.add(_busies);
@@ -155,13 +150,11 @@ class MarshalBloc implements GeofencerListener {
     await getAssociationRoutes(forceRefresh: forceRefresh);
     _busies.add(false);
     _busyController.sink.add(_busies);
-    myDebugPrint(
-        '🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData:  🔴 🔴 DONE Loading data into streams');
+    mp('🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬  🥬 refreshDashboardData:  🔴 🔴 DONE Loading data into streams');
   }
 
   Future refreshMarshalLandmark(Landmark landmark) async {
-    myDebugPrint(
-        '\n💙  💙  💙  💙  💙  💙  💙 refreshMarshalLandmark ..... ${landmark.landmarkName}');
+    mp('\n💙  💙  💙  💙  💙  💙  💙 refreshMarshalLandmark ..... ${landmark.landmarkName}');
     await Prefs.saveLandmark(landmark);
     refreshDashboardData(forceRefresh: true);
     return null;
@@ -171,7 +164,7 @@ class MarshalBloc implements GeofencerListener {
 
   Future<List<VehicleLocation>> findVehiclesByLocation(
       {int minutes, double radiusInKM}) async {
-    myDebugPrint('💙 💙 💙 💙 💙 💙 💙 findVehiclesByLocation .....');
+    mp('💙 💙 💙 💙 💙 💙 💙 findVehiclesByLocation .....');
     _busies.add(true);
     _busyController.sink.add(_busies);
     var loc = await LocationUtil.getCurrentLocation();
@@ -186,7 +179,7 @@ class MarshalBloc implements GeofencerListener {
             ? SettingsModel().vehicleGeoQueryRadius
             : radiusInKM,
         minutes: minutes == null ? 5 : minutes);
-    myDebugPrint('💙 💙 💙 💙 💙 💙 💙  findVehiclesByLocation ..... '
+    mp('💙 💙 💙 💙 💙 💙 💙  findVehiclesByLocation ..... '
         'found  🔴 🔴 ${_vehicleLocations.length} vehicles 🧡 before filtering by association');
 
     //remove duplicate vehicles
@@ -201,8 +194,7 @@ class MarshalBloc implements GeofencerListener {
     });
     _vehicleLocations = map.values.toList();
     _vehicleLocationController.sink.add(_vehicleLocations);
-    myDebugPrint(
-        '💙 💙 💙 💙 💙 💙 💙  findVehiclesByLocation ..... found & filtered by association:  '
+    mp('💙 💙 💙 💙 💙 💙 💙  findVehiclesByLocation ..... found & filtered by association:  '
         '🔴 🔴 ${_vehicleLocations.length} UNIQUE vehicles 🍎 🍎  after filtering');
     _busies.add(false);
     _busyController.sink.add(_busies);
@@ -212,8 +204,7 @@ class MarshalBloc implements GeofencerListener {
   Future<bool> checkUserLoggedIn() async {
     var fbUser = await _auth.currentUser();
     if (fbUser == null) {
-      myDebugPrint(
-          '🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  Firebase fbUser is null.  👺  need to 🔑 🔑 🔑');
+      mp('🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  Firebase fbUser is null.  👺  need to 🔑 🔑 🔑');
       return false;
     }
     _user = await Prefs.getUser();
@@ -252,8 +243,7 @@ class MarshalBloc implements GeofencerListener {
     try {
       vehicleArrivals = await DancerListAPI.getVehicleArrivalsByLandmark(
           landmarkID: markID, minutes: minutes);
-      myDebugPrint(
-          " 🌸  🌸  🌸  ${vehicleArrivals.length} vehicle arrivals found within  🌸 15 minutes");
+      mp(" 🌸  🌸  🌸  ${vehicleArrivals.length} vehicle arrivals found within  🌸 15 minutes");
       _vehicleArrivalsController.sink.add(vehicleArrivals);
     } catch (e) {
       dealWithError(e);
@@ -272,8 +262,7 @@ class MarshalBloc implements GeofencerListener {
       }
     });
     vehicleArrivals = temp;
-    myDebugPrint(
-        " 🌸  🌸  🌸  ${vehicleArrival.vehicleReg} removed from arrivals. 🌺 updating stream");
+    mp(" 🌸  🌸  🌸  ${vehicleArrival.vehicleReg} removed from arrivals. 🌺 updating stream");
     _vehicleArrivalsController.sink.add(vehicleArrivals);
     _vehicleArrivalDispatchedController.sink.add(vehicleArrival);
   }
@@ -295,8 +284,7 @@ class MarshalBloc implements GeofencerListener {
     try {
       commuterRequests = await DancerListAPI.getCommuterRequests(
           landmarkID: markID, minutes: 30);
-      myDebugPrint(
-          " 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 30 minutes");
+      mp(" 🌸  🌸  🌸  ${commuterRequests.length} getCommuterRequests found within  🌸 30 minutes");
       _commuterRequestsController.sink.add(commuterRequests);
       _busies.add(false);
       _busyController.sink.add(_busies);
@@ -308,14 +296,13 @@ class MarshalBloc implements GeofencerListener {
 
   void dealWithError(e) {
     if (e is TimeoutException) {
-      myDebugPrint('Call has 🔆 🔆 🔆 timed out 🔆 🔆 🔆');
+      mp('Call has 🔆 🔆 🔆 timed out 🔆 🔆 🔆');
       _errors.add('Network TimeOut');
       _errorController.sink.add(_errors);
 //      marshalBlocListener.onError("Network Timeout");
     }
     if (e is SocketException) {
-      myDebugPrint(
-          'Call has run into  🔴  🔴  🔴 SocketException  🔴  🔴  🔴 ');
+      mp('Call has run into  🔴  🔴  🔴 SocketException  🔴  🔴  🔴 ');
       _errors.add('Network SocketException');
       _errorController.sink.add(_errors);
 //      marshalBlocListener.onError("Network SocketException");
@@ -344,8 +331,7 @@ class MarshalBloc implements GeofencerListener {
       commuterFenceDwellEvents =
           await DancerListAPI.getCommuterFenceDwellEvents(
               landmarkID: markID, minutes: 30);
-      myDebugPrint(
-          " 👽  👽  👽  👽  ${commuterFenceDwellEvents.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
+      mp(" 👽  👽  👽  👽  ${commuterFenceDwellEvents.length} getCommuterFenceDwellEvents found within  👽 15 minutes");
       _commuterDwellEventsController.sink.add(commuterFenceDwellEvents);
     } catch (e) {
       dealWithError(e);
@@ -356,7 +342,7 @@ class MarshalBloc implements GeofencerListener {
   List<Landmark> landmarks;
   Future<List<Landmark>> findLandmarksByLocation(
       {bool forceRefresh = false, double radiusInKM}) async {
-    myDebugPrint('🌸 🌸 findLandmarksByLocation.....');
+    mp('🌸 🌸 findLandmarksByLocation.....');
     try {
       var loc = await LocationUtil.getCurrentLocation();
       landmarks = await LocalDBAPI.findLandmarksByLocation(
@@ -369,12 +355,11 @@ class MarshalBloc implements GeofencerListener {
             latitude: loc.coords.latitude,
             longitude: loc.coords.longitude,
             radiusInKM: SettingsModel().vehicleGeoQueryRadius);
-        myDebugPrint('🌸 🌸 Cache landmarks in local DB .....');
+        mp('🌸 🌸 Cache landmarks in local DB .....');
         await LocalDBAPI.addLandmarks(landmarks: landmarks);
       }
 
-      myDebugPrint(
-          '🌸 🌸  ${landmarks.length} landmarks found, adding to _landmarksController.sink ');
+      mp('🌸 🌸  ${landmarks.length} landmarks found, adding to _landmarksController.sink ');
       _landmarksController.sink.add(landmarks);
       for (var landmark in landmarks) {
         _geoFencer.addLandmarkGeoFence(landmark);
@@ -392,19 +377,18 @@ class MarshalBloc implements GeofencerListener {
 
   Future<List<ar.Route>> getAssociationRoutes(
       {bool forceRefresh = false}) async {
-    myDebugPrint(
-        '🧩 🧩 🧩 getAssociationRoutes....._user.associationID: ${_user.associationID}');
+    mp('🧩 🧩 🧩 getAssociationRoutes....._user.associationID: ${_user.associationID}');
     try {
       var mList = await LocalDBAPI.getRoutesByAssociation(_user.associationID);
       if (mList.isEmpty || forceRefresh) {
         mList = await DancerListAPI.getRoutesByAssociation(
             associationID: _user.associationID);
-        myDebugPrint('🧩 🧩 🧩 Cache routes in local DB .....');
+        mp('🧩 🧩 🧩 Cache routes in local DB .....');
         for (var r in mList) {
           await LocalDBAPI.addRoute(route: r);
         }
       }
-      myDebugPrint('🧩 🧩 🧩  ${mList.length} routes found');
+      mp('🧩 🧩 🧩  ${mList.length} routes found');
       _routesController.sink.add(mList);
       return mList;
     } catch (e) {
@@ -429,12 +413,12 @@ class MarshalBloc implements GeofencerListener {
   }
 
   Future<ar.Route> getRouteByID(String routeID) async {
-    myDebugPrint('🧩 🧩 🧩 getRouteByID.....RouteID: $routeID');
+    mp('🧩 🧩 🧩 getRouteByID.....RouteID: $routeID');
     try {
       var mRoute = await LocalDBAPI.getRoute(routeID: routeID);
       if (mRoute == null) {
         mRoute = await DancerListAPI.getRouteByID(routeID: routeID);
-        myDebugPrint('🧩 🧩 🧩 Cache route in local DB .....${mRoute.name}');
+        mp('🧩 🧩 🧩 Cache route in local DB .....${mRoute.name}');
         await LocalDBAPI.addRoute(route: mRoute);
       }
 
@@ -450,8 +434,7 @@ class MarshalBloc implements GeofencerListener {
 
   Future<List<Vehicle>> getAssociationVehicles(
       {bool forceRefresh = false}) async {
-    myDebugPrint(
-        '🦠 🦠 🦠 MarshalBloc: getAssociationVehicles ..... 🦠 🦠 🦠 forceRefresh: 🔵 🔵 🔵 $forceRefresh');
+    mp('🦠 🦠 🦠 MarshalBloc: getAssociationVehicles ..... 🦠 🦠 🦠 forceRefresh: 🔵 🔵 🔵 $forceRefresh');
     if (_user == null) {
       _user = await Prefs.getUser();
     }
@@ -462,7 +445,7 @@ class MarshalBloc implements GeofencerListener {
       if (forceRefresh == true) {
         _vehicles = await DancerListAPI.getVehiclesByAssociation(
             associationID: _user.associationID);
-        myDebugPrint('🦠 🦠 🦠 MarshalBloc: Cache vehicles in local DB .....');
+        mp('🦠 🦠 🦠 MarshalBloc: Cache vehicles in local DB .....');
         await LocalDBAPI.addVehicles(vehicles: vehicles);
       } else {
         _vehicles = await LocalDBAPI.getAllVehicles();
@@ -476,8 +459,7 @@ class MarshalBloc implements GeofencerListener {
           v.assignments = List();
         }
       });
-      myDebugPrint(
-          '🦠 🦠 🦠 🦠 🦠 🦠  ${_vehicles.length} ASSOCIATION vehicles found. put on stream: 🌸 _vehiclesController.sink 🦠🦠🦠');
+      mp('🦠 🦠 🦠 🦠 🦠 🦠  ${_vehicles.length} ASSOCIATION vehicles found. put on stream: 🌸 _vehiclesController.sink 🦠🦠🦠');
       _vehiclesController.sink.add(_vehicles);
       return vehicles;
     } catch (e) {
@@ -523,24 +505,21 @@ class MarshalBloc implements GeofencerListener {
     topics.add('${Constants.COMMUTER_REQUESTS}_${landmark.landmarkID}');
 
     if (landmarksSubscribedMap.containsKey(landmark.landmarkID)) {
-      myDebugPrint(
-          '🍏 Landmark ${landmark.landmarkName} has already subscribed to FCM');
+      mp('🍏 Landmark ${landmark.landmarkName} has already subscribed to FCM');
     } else {
       await _subscribe(topics, landmark);
-      myDebugPrint('MarshalBloc:: 🧩 Subscribed to ${topics.length} FCM topics'
+      mp('MarshalBloc:: 🧩 Subscribed to ${topics.length} FCM topics'
           ' for landmark: 🍎 ${landmark.landmarkName} 🍎 ');
     }
 
-    myDebugPrint(
-        'MarshalBloc:... 💜 💜 Subscribed to FCM ${landmarksSubscribedMap.length} topics for '
+    mp('MarshalBloc:... 💜 💜 Subscribed to FCM ${landmarksSubscribedMap.length} topics for '
         'landmark ✳️ ${_landmark == null ? 'unknown' : _landmark.landmarkName}\n');
   }
 
   _subscribe(List<String> topics, Landmark landmark) async {
     for (var t in topics) {
       await fcm.subscribeToTopic(t);
-      myDebugPrint(
-          'MarshalBloc: 💜 💜 Subscribed to FCM topic: 🍎  $t ✳️ at ${landmark.landmarkName}');
+      mp('MarshalBloc: 💜 💜 Subscribed to FCM topic: 🍎  $t ✳️ at ${landmark.landmarkName}');
     }
     landmarksSubscribedMap[landmark.landmarkID] = landmark;
     return;
@@ -550,73 +529,61 @@ class MarshalBloc implements GeofencerListener {
 
   Future _configureFCM() async {
     if (_listenerSetupAlready) {
-      myDebugPrint('MarshalBloc:FCM already configured, ignoring');
+      mp('MarshalBloc:FCM already configured, ignoring');
       return null;
     }
-    myDebugPrint(
-        '✳️ ✳️ ✳️ ✳️ MarshalBloc:_configureFCM: CONFIGURE FCM: ✳️ ✳️ ✳️ ✳️  ${_landmark == null ? '' : _landmark.landmarkName}');
+    mp('✳️ ✳️ ✳️ ✳️ MarshalBloc:_configureFCM: CONFIGURE FCM: ✳️ ✳️ ✳️ ✳️  ${_landmark == null ? '' : _landmark.landmarkName}');
     fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         String messageType = message['data']['type'];
-        myDebugPrint(
-            "\n\n️♻️♻️♻️️♻️♻️♻️  ✳️ ✳️ ✳️ ✳️ MarshalBloc:FCM onMessage messageType: 🍎 $messageType arrived 🍎 \n\n");
+        mp("\n\n️♻️♻️♻️️♻️♻️♻️  ✳️ ✳️ ✳️ ✳️ MarshalBloc:FCM onMessage messageType: 🍎 $messageType arrived 🍎 \n\n");
         switch (messageType) {
           case Constants.VEHICLE_ARRIVALS:
-            myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 VEHICLE_ARRIVALS arrived 🍎");
+            mp("✳️ ✳️ FCM onMessage messageType: 🍎 VEHICLE_ARRIVALS arrived 🍎");
             _processVehicleArrival(message);
             break;
           case Constants.VEHICLE_DEPARTURES:
-            myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 VEHICLE_DEPARTURES arrived 🍎");
+            mp("✳️ ✳️ FCM onMessage messageType: 🍎 VEHICLE_DEPARTURES arrived 🍎");
             _processVehicleDeparture(message);
             break;
 
           case Constants.COMMUTER_ARRIVALS:
-            myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_ARRIVALS arrived 🍎");
+            mp("✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_ARRIVALS arrived 🍎");
             _processCommuterArrivals(message);
             break;
           case Constants.COMMUTER_FENCE_DWELL_EVENTS:
-            myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_FENCE_DWELL_EVENTS arrived 🍎");
+            mp("✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_FENCE_DWELL_EVENTS arrived 🍎");
             _processCommuterFenceDwellEvent(message);
             break;
           case Constants.COMMUTER_FENCE_EXIT_EVENTS:
-            myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_FENCE_EXIT_EVENTS arrived 🍎");
+            mp("✳️ ✳️ FCM onMessage messageType: 🍎 COMMUTER_FENCE_EXIT_EVENTS arrived 🍎");
             _processCommuterFenceExitEvent(message);
             break;
           case Constants.COMMUTER_REQUESTS:
-            myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 💛️💛️💛️💛️💛️ COMMUTER_REQUESTS 💛️  arrived, calling _processCommuterRequests 🍎");
+            mp("✳️ ✳️ FCM onMessage messageType: 🍎 💛️💛️💛️💛️💛️ COMMUTER_REQUESTS 💛️  arrived, calling _processCommuterRequests 🍎");
             _processCommuterRequests(message);
             break;
           case Constants.ROUTE_DISTANCE_ESTIMATIONS:
-            myDebugPrint(
-                "✳️ ✳️ FCM onMessage messageType: 🍎 💛️💛️💛️💛️💛️ ROUTE_DISTANCE_ESTIMATIONS 💛️  arrived, calling _processCommuterRequests 🍎");
+            mp("✳️ ✳️ FCM onMessage messageType: 🍎 💛️💛️💛️💛️💛️ ROUTE_DISTANCE_ESTIMATIONS 💛️  arrived, calling _processCommuterRequests 🍎");
             _processRouteDistanceEstimations(message);
             break;
         }
       },
       onLaunch: (Map<String, dynamic> message) async {
-        myDebugPrint(
-            "️♻️♻️♻️️♻️♻️♻️ onLaunch:  🧩 triggered by FCM message: $message  🧩 ");
+        mp("️♻️♻️♻️️♻️♻️♻️ onLaunch:  🧩 triggered by FCM message: $message  🧩 ");
       },
       onResume: (Map<String, dynamic> message) async {
-        myDebugPrint(
-            "️♻️♻️♻️️♻️♻️♻️ App onResume  🧩 triggered by FCM message: $message  🧩 ");
+        mp("️♻️♻️♻️️♻️♻️♻️ App onResume  🧩 triggered by FCM message: $message  🧩 ");
       },
     );
     fcm.requestNotificationPermissions(
         const IosNotificationSettings(sound: true, badge: true, alert: true));
     fcm.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
-      myDebugPrint("IosNotificationSettings Settings registered: $settings");
+      mp("IosNotificationSettings Settings registered: $settings");
     });
     fcm.getToken().then((String token) {
       assert(token != null);
-      myDebugPrint(
-          '♻️♻️♻️️♻️♻️️ MarshalBloc:FCM token  ❤️ 🧡 💛️ $token ❤️ 🧡 💛');
+      mp('♻️♻️♻️️♻️♻️️ MarshalBloc:FCM token  ❤️ 🧡 💛️ $token ❤️ 🧡 💛');
     });
     _listenerSetupAlready = true;
     var mark = await Prefs.getLandmark();
@@ -649,17 +616,15 @@ class MarshalBloc implements GeofencerListener {
   }
 
   void _processCommuterRequests(Map<String, dynamic> message) {
-    myDebugPrint('💜 💜 💜 💜  _processCommuterRequests ... 🥬🥬🥬🥬🥬');
+    mp('💜 💜 💜 💜  _processCommuterRequests ... 🥬🥬🥬🥬🥬');
     try {
       var data = CommuterRequest.fromJson(message['data']);
       _commuterRequests.add(data);
-      myDebugPrint(
-          'MarshalBoc: ❤️ 🧡 💛️ commuter request added to _commuterRequests: ❤️ '
+      mp('MarshalBoc: ❤️ 🧡 💛️ commuter request added to _commuterRequests: ❤️ '
           '${_commuterRequests.length} 💛️ 💛️  ${data.fromLandmarkName} 💛️ 💛️ ');
       _commuterRequestsController.sink.add(_commuterRequests);
     } catch (e) {
-      myDebugPrint(
-          '😈😈😈😈_processCommuterRequests fell down: ${e.toString()}');
+      mp('😈😈😈😈_processCommuterRequests fell down: ${e.toString()}');
       print(e);
     }
   }
@@ -667,8 +632,31 @@ class MarshalBloc implements GeofencerListener {
   void _processVehicleArrival(Map<String, dynamic> message) async {
     var data = VehicleArrival.fromJson(message['data']);
     _vehicleArrivals.add(data);
+    //todo - filter by vehicle - take latest arrival;
+    //todo - check against local dispatch records
+    //todo - remove unneeded records
+
     p('🅿️  🅿️ 🅿️  🅿️ MarshalBloc: Adding vehicle arrival from fcm message: stream has ${_vehicleArrivals.length}');
+    _removeDuplicates();
     _vehicleArrivalsController.sink.add(_vehicleArrivals);
+  }
+
+  void _removeDuplicates() async {
+    List<DispatchRecord> mList =
+        await LocalDBAPI.getDispatchRecordsFromLastHour();
+    List<VehicleArrival> temp = [];
+    _vehicleArrivals.forEach((arr) {
+      var isFound = false;
+      mList.forEach((dispatchRecord) {
+        if (dispatchRecord.vehicleID == arr.vehicleID) {
+          isFound = true;
+        }
+      });
+      if (!isFound) {
+        temp.add(arr);
+      }
+    });
+    _vehicleArrivals = temp;
   }
 
   void _processVehicleDeparture(Map<String, dynamic> message) async {

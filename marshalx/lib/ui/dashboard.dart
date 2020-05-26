@@ -47,7 +47,7 @@ class _DashboardState extends State<Dashboard>
   @override
   void initState() {
     super.initState();
-    myDebugPrint('💜 💜 💜 💜  subscribing to streams ...');
+    mp('💜 💜 💜 💜  subscribing to streams ...');
     marshalBloc = MarshalBloc(this);
     _subscribeToBusy();
     _subscribeToError();
@@ -97,14 +97,14 @@ class _DashboardState extends State<Dashboard>
             backgroundColor: Colors.pink[600]);
       }
     } else {
-      myDebugPrint('💜 💜 💜  calling marshalBloc.refreshDashboardData...');
+      mp('💜 💜 💜  calling marshalBloc.refreshDashboardData...');
       await marshalBloc.refreshDashboardData(forceRefresh: false);
     }
     user = await Prefs.getUser();
-    myDebugPrint('💜 💜 💜 💜  getting marshals cached Landmark ...');
+    mp('💜 💜 💜 💜  getting marshals cached Landmark ...');
     landmark = await Prefs.getLandmark();
     if (landmark == null) {
-      myDebugPrint('💜 💜 💜 💜  starting marshals Landmark selection ...');
+      mp('💜 💜 💜 💜  starting marshals Landmark selection ...');
       landmark = await Navigator.push(
           context,
           PageTransition(
@@ -123,8 +123,7 @@ class _DashboardState extends State<Dashboard>
 
   void _subscribeToBusy() {
     marshalBloc.busyStream.listen((busy) {
-      myDebugPrint(
-          '💙 💙 💙 _DashboardState: Received busy: $busy : will setState');
+      mp('💙 💙 💙 _DashboardState: Received busy: $busy : will setState');
       setState(() {
         isBusy = busy.last;
       });
@@ -136,8 +135,7 @@ class _DashboardState extends State<Dashboard>
   void _subscribeToError() {
     hasAlreadyShownWifi = false;
     marshalBloc.errorStream.listen((message) {
-      myDebugPrint(
-          '💙 💙 💙 _DashboardState: Received ERROR: 🔴  🔴  🔴 $message : will setState');
+      mp('💙 💙 💙 _DashboardState: Received ERROR: 🔴  🔴  🔴 $message : will setState');
       setState(() {
         _errorMessage = message.last;
         isBusy = false;
@@ -146,26 +144,22 @@ class _DashboardState extends State<Dashboard>
   }
 
   void _listenToDataStreams() {
-    myDebugPrint(
-        '💜 💜 💜 💜 Dashboard: _listenToDataStreams 💜 💜 💜 💜 _listenToDataStreams 💜 💜 💜 💜');
+    mp('💜 💜 💜 💜 Dashboard: _listenToDataStreams 💜 💜 💜 💜 _listenToDataStreams 💜 💜 💜 💜');
     marshalBloc.vehicleStream.listen((cars) {
-      myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
+      mp('💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received vehicles: 🦠 ${cars.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         _vehicles = cars;
       });
     });
     marshalBloc.landmarkStream.listen((marks) {
-      myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received landmarks: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+      mp('💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received landmarks: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         landmarks = marks;
       });
     });
     try {
       marshalBloc.vehicleArrivalStream.listen((arrivals) {
-        myDebugPrint(
-            '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received vehicleArrivals: 🦠 ${arrivals.length} 🦠 💜 💜 💜 💜 ');
+        mp('💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received vehicleArrivals: 🦠 ${arrivals.length} 🦠 💜 💜 💜 💜 ');
         setState(() {
           vehicleArrivals = arrivals;
         });
@@ -174,22 +168,19 @@ class _DashboardState extends State<Dashboard>
       print(s);
     }
     marshalBloc.commuterDwellStream.listen((dwells) {
-      myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterDwells: 🦠 ${dwells.length} 🦠 💜 💜 💜 💜 ');
+      mp('💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterDwells: 🦠 ${dwells.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterFenceDwellEvents = dwells;
       });
     });
     marshalBloc.commuterArrivalsStream.listen((marks) {
-      myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterArrivals: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
+      mp('💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterArrivals: 🦠 ${marks.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterArrivals = marks;
       });
     });
     marshalBloc.commuterRequestStream.listen((requests) {
-      myDebugPrint(
-          '💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterRequests: 🦠 ${requests.length} 🦠 💜 💜 💜 💜 ');
+      mp('💜 💜 💜 💜 Dashboard: _listenToDataStreams: 👌👌 Received commuterRequests: 🦠 ${requests.length} 🦠 💜 💜 💜 💜 ');
       setState(() {
         commuterRequests = requests;
       });
@@ -216,7 +207,7 @@ class _DashboardState extends State<Dashboard>
   }
 
   void _openConfirmLandmark() async {
-    myDebugPrint('Dashboard: 🥬🥬🥬🥬🥬_openConfirmLandmark');
+    mp('Dashboard: 🥬🥬🥬🥬🥬_openConfirmLandmark');
     var result = await Navigator.push(
         context,
         PageTransition(
@@ -421,7 +412,7 @@ class _DashboardState extends State<Dashboard>
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      myDebugPrint('GestureDetector onTap 🌺 🌺 🌺 🌺 🌺 🌺 ');
+                      mp('GestureDetector onTap 🌺 🌺 🌺 🌺 🌺 🌺 ');
                       marshalBloc.getVehicleArrivals(
                           landmarkID: landmark.landmarkID, minutes: 10);
                     },
@@ -612,7 +603,7 @@ class _DashboardState extends State<Dashboard>
 
   @override
   onScan(String commuterRequestID) {
-    myDebugPrint('Dashboard: 👌👌👌 received onScan: $commuterRequestID');
+    mp('Dashboard: 👌👌👌 received onScan: $commuterRequestID');
     if (mounted) {
       AppSnackbar.showSnackbar(
           scaffoldKey: _key, message: '💙 Passenger scanned 👌 OK  💙');
