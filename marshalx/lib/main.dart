@@ -15,3 +15,11 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+/*
+decoration: BoxDecoration(
+                      boxShadow: customShadow,
+                      color: secondaryColor,
+                      shape: BoxShape.circle),
+                ),
+ */

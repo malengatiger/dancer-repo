@@ -15,7 +15,6 @@ import 'package:aftarobotlibrary4/signin/sign_in.dart';
 import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/scanner.dart';
-import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
@@ -75,7 +74,11 @@ class _DashboardState extends State<Dashboard>
         bool isOK = await Navigator.push(
             context,
             PageTransition(
-                type: PageTransitionType.leftToRightWithFade, child: SignIn()));
+                curve: Curves.easeInOut,
+                duration: Duration(milliseconds: 1000),
+                alignment: Alignment.bottomLeft,
+                type: PageTransitionType.leftToRightWithFade,
+                child: SignIn()));
 
         if (!isOK) {
           AppSnackbar.showSnackbar(
@@ -105,7 +108,11 @@ class _DashboardState extends State<Dashboard>
       landmark = await Navigator.push(
           context,
           PageTransition(
-              type: PageTransitionType.downToUp, child: ConfirmLandmark()));
+              curve: Curves.easeInOut,
+              duration: Duration(milliseconds: 1000),
+              alignment: Alignment.bottomLeft,
+              type: PageTransitionType.downToUp,
+              child: ConfirmLandmark()));
       if (landmark != null) {
         debugPrint(
             '💜 💜 💜 💜  marshal landmark is ${landmark.landmarkName} 💜 💜 💜 💜 ');
@@ -135,13 +142,6 @@ class _DashboardState extends State<Dashboard>
         _errorMessage = message.last;
         isBusy = false;
       });
-//      if (hasAlreadyShownWifi) {
-//        myDebugPrint(
-//            'ignoring this ....................hasAlreadyShownWifi: $hasAlreadyShownWifi');
-//      } else {
-//        Navigator.push(context, SlideRightRoute(widget: WifiError()));
-//        hasAlreadyShownWifi = true;
-//      }
     });
   }
 
@@ -220,6 +220,9 @@ class _DashboardState extends State<Dashboard>
     var result = await Navigator.push(
         context,
         PageTransition(
+            curve: Curves.easeInOut,
+            duration: Duration(milliseconds: 1000),
+            alignment: Alignment.bottomLeft,
             type: PageTransitionType.leftToRightWithFade,
             child: ConfirmLandmark()));
 
@@ -229,15 +232,6 @@ class _DashboardState extends State<Dashboard>
         landmark = result;
       });
     }
-  }
-
-  void _tryAnimation() {
-    Navigator.push(
-        context,
-        SlideRightRoute(
-            widget: ARAnimations(
-          type: 'ball',
-        )));
   }
 
   @override
@@ -306,8 +300,10 @@ class _DashboardState extends State<Dashboard>
                               Navigator.push(
                                   context,
                                   PageTransition(
-                                      type: PageTransitionType
-                                          .leftToRightWithFade,
+                                      type: PageTransitionType.scale,
+                                      curve: Curves.easeInOut,
+                                      duration: Duration(milliseconds: 1000),
+                                      alignment: Alignment.bottomLeft,
                                       child: Scanner(
                                         type: Constants.SCAN_TYPE_REQUEST,
                                         scannerListener: this,
@@ -342,7 +338,10 @@ class _DashboardState extends State<Dashboard>
                                   context,
                                   PageTransition(
                                       type: PageTransitionType.scale,
-                                      child: SelectVehicleForDispatch()));
+                                      curve: Curves.easeInOut,
+                                      duration: Duration(milliseconds: 1000),
+                                      alignment: Alignment.topLeft,
+                                      child: SelectTaxiFromArrivals()));
                             }),
                       ),
                       SizedBox(
@@ -426,18 +425,25 @@ class _DashboardState extends State<Dashboard>
                       marshalBloc.getVehicleArrivals(
                           landmarkID: landmark.landmarkID, minutes: 10);
                     },
-                    child: CounterCard(
-                      title: 'Vehicle Arrivals',
-                      total: vehicleArrivals.length,
-                      titleStyle: Styles.blackSmall,
-                      totalStyle: Styles.blackBoldLarge,
+                    child: StreamBuilder<List<VehicleArrival>>(
+                        stream: marshalBloc.vehicleArrivalStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            vehicleArrivals = snapshot.data;
+                          }
+                          return CounterCard(
+                            title: 'Vehicle Arrivals',
+                            total: vehicleArrivals.length,
+                            titleStyle: Styles.blackSmall,
+                            totalStyle: Styles.blackBoldLarge,
 //                      cardColor: Colors.pink[400],
-                      elevation: 2.0,
-                      icon: Icon(
-                        Icons.airport_shuttle,
-                        color: Colors.grey[600],
-                      ),
-                    ),
+                            elevation: 2.0,
+                            icon: Icon(
+                              Icons.airport_shuttle,
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        }),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -445,48 +451,69 @@ class _DashboardState extends State<Dashboard>
                         landmarkID: landmark.landmarkID,
                       );
                     },
-                    child: CounterCard(
-                      title: 'Commuter Requests',
-                      total: commuterRequests.length,
-                      elevation: 4.0,
-                      icon: Icon(
-                        Icons.alarm,
-                        color: Colors.grey[600],
-                      ),
-                      titleStyle: Styles.blackSmall,
-                      totalStyle: Styles.blackBoldLarge,
+                    child: StreamBuilder<List<CommuterRequest>>(
+                        stream: marshalBloc.commuterRequestStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            commuterRequests = snapshot.data;
+                          }
+                          return CounterCard(
+                            title: 'Commuter Requests',
+                            total: commuterRequests.length,
+                            elevation: 4.0,
+                            icon: Icon(
+                              Icons.alarm,
+                              color: Colors.grey[600],
+                            ),
+                            titleStyle: Styles.blackSmall,
+                            totalStyle: Styles.blackBoldLarge,
 //                      cardColor: Colors.pink[400],
-                    ),
+                          );
+                        }),
                   ),
-                  CounterCard(
-                    title: 'Commuter Arrivals',
-                    total: commuterArrivals.length,
-                    elevation: 2.0,
-                    titleStyle: Styles.blackSmall,
-                    totalStyle: Styles.blackBoldLarge,
+                  StreamBuilder<List<CommuterArrivalLandmark>>(
+                      stream: marshalBloc.commuterArrivalsStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          commuterArrivals = snapshot.data;
+                        }
+                        return CounterCard(
+                          title: 'Commuter Arrivals',
+                          total: commuterArrivals.length,
+                          elevation: 2.0,
+                          titleStyle: Styles.blackSmall,
+                          totalStyle: Styles.blackBoldLarge,
 //                    cardColor: Colors.blue[800],
-                    icon: Icon(
-                      Icons.people,
-                      color: Colors.grey[600],
-                    ),
-                  ),
+                          icon: Icon(
+                            Icons.people,
+                            color: Colors.grey[600],
+                          ),
+                        );
+                      }),
                   GestureDetector(
                     onTap: () {
                       marshalBloc.getCommuterFenceDwellEvents(
                           landmarkID: landmark.landmarkID);
                     },
-                    child: CounterCard(
-                      title: 'Casual Commuters',
-                      total: commuterFenceDwellEvents.length,
-                      titleStyle: Styles.blackSmall,
-                      totalStyle: Styles.blackBoldLarge,
+                    child: StreamBuilder<List<CommuterFenceDwellEvent>>(
+                        stream: marshalBloc.commuterDwellStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            commuterFenceDwellEvents = snapshot.data;
+                          }
+                          return CounterCard(
+                            title: 'Casual Commuters',
+                            total: commuterFenceDwellEvents.length,
+                            titleStyle: Styles.blackSmall,
+                            totalStyle: Styles.blackBoldLarge,
 //                      cardColor: Colors.blue[800],
-                      elevation: 1.0,
-                      icon: Icon(
-                        Icons.people,
-                        color: Colors.grey[600],
-                      ),
-                    ),
+                            elevation: 1.0,
+                            icon: Icon(
+                              Icons.people,
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        }),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -543,6 +570,8 @@ class _DashboardState extends State<Dashboard>
             PageTransition(
                 type: PageTransitionType.scale,
                 curve: Curves.easeInOut,
+                duration: Duration(milliseconds: 1000),
+                alignment: Alignment.bottomLeft,
                 child: FindVehicles()));
         break;
       case 2:
@@ -551,7 +580,9 @@ class _DashboardState extends State<Dashboard>
             PageTransition(
                 type: PageTransitionType.scale,
                 curve: Curves.easeInOut,
-                child: SelectVehicleForDispatch()));
+                duration: Duration(milliseconds: 1000),
+                alignment: Alignment.bottomLeft,
+                child: SelectTaxiFromArrivals()));
         break;
     }
   }

@@ -119,7 +119,7 @@ class MarshalBloc implements GeofencerListener {
     var devURL = DotEnv().env['devURL'];
     var prodURL = DotEnv().env['prodURL'];
     myDebugPrint(
-        'App status: 🔑 $status devURL: 🔑 $devURL prodURL: 🔑 $prodURL');
+        '🌸 🌸 🌸 🌸 ... MarshalBloc initializing: App status: 🔑 $status devURL: 🔑 $devURL prodURL: 🔑 $prodURL');
     _user = await Prefs.getUser();
     if (_user == null) {
       myDebugPrint(
@@ -128,6 +128,8 @@ class MarshalBloc implements GeofencerListener {
       _errorController.sink.add(_errors);
       return;
     } else {
+      myDebugPrint(
+          '🌸 🌸 🌸 🌸 ... MarshalBloc initializing: getAssociationVehicles forceRefresh: true');
       _vehicles = await getAssociationVehicles(forceRefresh: false);
       _vehiclesController.sink.add(_vehicles);
     }
@@ -449,7 +451,7 @@ class MarshalBloc implements GeofencerListener {
   Future<List<Vehicle>> getAssociationVehicles(
       {bool forceRefresh = false}) async {
     myDebugPrint(
-        '🦠 🦠 🦠 MarshalBloc: getAssociationVehicles ..... forceRefresh: $forceRefresh');
+        '🦠 🦠 🦠 MarshalBloc: getAssociationVehicles ..... 🦠 🦠 🦠 forceRefresh: 🔵 🔵 🔵 $forceRefresh');
     if (_user == null) {
       _user = await Prefs.getUser();
     }
@@ -475,14 +477,11 @@ class MarshalBloc implements GeofencerListener {
         }
       });
       myDebugPrint(
-          '🦠 🦠 🦠  ${_vehicles.length} vehicles found. put on stream: 🌸 _vehiclesController.sink');
+          '🦠 🦠 🦠 🦠 🦠 🦠  ${_vehicles.length} ASSOCIATION vehicles found. put on stream: 🌸 _vehiclesController.sink 🦠🦠🦠');
       _vehiclesController.sink.add(_vehicles);
       return vehicles;
     } catch (e) {
       print(e);
-      _errorController.sink.add(_errors);
-//      marshalBlocListener
-//          .onError('getAssociationVehicles failed: ${e.toString()}');
       _errorController.sink.add(_errors);
     }
 

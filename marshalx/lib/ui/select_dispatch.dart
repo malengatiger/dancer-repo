@@ -2,11 +2,9 @@ import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
 import 'package:aftarobotlibrary4/data/dispatch_record.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
-import 'package:aftarobotlibrary4/data/position.dart';
 import 'package:aftarobotlibrary4/data/vehicle_arrival.dart';
 import 'package:aftarobotlibrary4/data/vehicledto.dart';
 import 'package:aftarobotlibrary4/maps/estimator_bloc.dart';
-import 'package:aftarobotlibrary4/util/busy.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
@@ -14,16 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
 import 'package:marshalx/ui/dispatch.dart';
+import 'package:marshalx/ui/select_dispatch_vehicles.dart';
 import 'package:marshalx/ui/wifi.dart';
 import 'package:page_transition/page_transition.dart';
 
-class SelectVehicleForDispatch extends StatefulWidget {
+class SelectTaxiFromArrivals extends StatefulWidget {
   @override
-  _SelectVehicleForDispatchState createState() =>
-      _SelectVehicleForDispatchState();
+  _SelectTaxiFromArrivalsState createState() => _SelectTaxiFromArrivalsState();
 }
 
-class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
+class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
     implements MarshalBlocListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   List<VehicleArrival> vehicleArrivals = List();
@@ -43,9 +41,12 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
     if (landmark == null) {
       var result = await Navigator.push(
           context,
-          SlideRightRoute(
-            widget: ConfirmLandmark(),
-          ));
+          PageTransition(
+              type: PageTransitionType.scale,
+              curve: Curves.easeInOut,
+              duration: Duration(milliseconds: 1000),
+              alignment: Alignment.topLeft,
+              child: ConfirmLandmark()));
       if (result != null && result is Landmark) {
         setState(() {
           landmark = result;
@@ -96,7 +97,6 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
       _removeDuplicates();
       setState(() {
         isBusy = false;
-        showAllAssocVehicles = false;
       });
     } catch (e) {
       print(e);
@@ -122,38 +122,20 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
   void _getCachedDispatches() async {
     _records = await LocalDBAPI.getDispatchRecordsFromLast24Hours();
     setState(() {});
-
-    marshalBloc.dispatchStream.listen((List<DispatchRecord> list) {
-      p('🧩🧩🧩🧩🧩 Stream returned records 🧩 ${list.length}');
-      setState(() {
-        _records = list;
-      });
-    });
   }
 
-  Future<void> _getVehicles() async {
-    setState(() {
-      isBusy = true;
-    });
-    try {
-      _vehicles = await marshalBloc.getAssociationVehicles(forceRefresh: false);
-      if (_vehicles.isEmpty) {
-        _vehicles =
-            await marshalBloc.getAssociationVehicles(forceRefresh: true);
-      }
-      _vehicles.sort((a, b) => a.vehicleReg.compareTo(b.vehicleReg));
-      setState(() {
-        isBusy = false;
-        showAllAssocVehicles = true;
-      });
-    } catch (e) {
-      print(e);
-      if (mounted) {
-        AppSnackbar.showErrorSnackbar(
-            scaffoldKey: _key,
-            message: 'Vehicle loading failed',
-            actionLabel: '');
-      }
+  Future<void> _startSelectTaxiFromVehicles() async {
+    var result = await Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.scale,
+            curve: Curves.easeInOut,
+            duration: Duration(milliseconds: 1000),
+            alignment: Alignment.bottomLeft,
+            child: SelectTaxiFromVehicles()));
+
+    if (result != null && result == true) {
+      Navigator.pop(context);
     }
   }
 
@@ -170,7 +152,6 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
   Vehicle selectedVehicle;
   @override
   Widget build(BuildContext context) {
-    myDebugPrint('SelectTaxi: ....... build .......');
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -188,7 +169,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
               Icons.list,
               color: Colors.black,
             ),
-            onPressed: _getVehicles,
+            onPressed: _startSelectTaxiFromVehicles,
           )
         ],
         backgroundColor: Colors.brown[50],
@@ -199,10 +180,18 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Image(
-                        image: AssetImage('assets/ty1.png'),
-                        height: 60,
-                        width: 60,
+                      Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                            boxShadow: customShadow,
+                            color: Colors.blue[400],
+                            shape: BoxShape.circle),
+                        child: Image(
+                          image: AssetImage('assets/ty1.png'),
+                          height: 32,
+                          width: 32,
+                        ),
                       ),
                       SizedBox(
                         width: 60,
@@ -219,7 +208,7 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                           ),
                           Text(
                             '${_records.length}',
-                            style: Styles.tealBoldLarge,
+                            style: Styles.pinkBoldLarge,
                           ),
                         ],
                       )
@@ -239,16 +228,16 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        'Number of Association Taxis',
+                        'Number of Taxis',
                         style: Styles.blackSmall,
                       ),
                       SizedBox(
                         width: 20,
                       ),
                       Text(
-                        showAllAssocVehicles
-                            ? '${_vehicles.length}'
-                            : '${vehicleArrivals.length}',
+                        _vehicles.length == 0
+                            ? '${vehicleArrivals.length}'
+                            : '${_vehicles.length}',
                         style: Styles.blueBoldMedium,
                       )
                     ],
@@ -258,184 +247,132 @@ class _SelectVehicleForDispatchState extends State<SelectVehicleForDispatch>
             ),
             preferredSize: Size.fromHeight(180)),
       ),
-      backgroundColor: Colors.brown[50],
-      body: showAllAssocVehicles
-          ? StreamBuilder<List<Vehicle>>(
-              stream: marshalBloc.vehicleStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  myDebugPrint(
-                      ' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving ${snapshot.data.length} arrivals');
-                  _vehicles = snapshot.data;
-                  _vehicles
-                      .sort((a, b) => a.vehicleReg.compareTo(b.vehicleReg));
-                }
-                return isBusy
-                    ? ARAnimations(
-                        type: 'loader',
-                      )
-                    : _vehicles.isEmpty
-                        ? NothingFound(
-                            message: 'No association taxis found',
-                          )
-                        : ListView.builder(
-                            itemCount: _vehicles.length,
-                            itemBuilder: (context, index) {
-                              var myVehicle = _vehicles.elementAt(index);
-                              return GestureDetector(
-                                onTap: () {
-                                  if (landmark == null) {
-                                    _startLandmarkConfirm();
-                                    return;
-                                  }
-                                  _createVehicleArrival(myVehicle);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 2, left: 12, right: 12),
-                                  child: Card(
-                                    color: Colors.grey[300],
-                                    elevation: 2,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        Icons.local_taxi,
-                                        color: Colors.grey[400],
-                                      ),
-                                      title: Text(
-                                        myVehicle == null
-                                            ? 'No Vehicle'
-                                            : myVehicle.vehicleReg == null
-                                                ? 'VehicleReg is NULL'
-                                                : myVehicle.vehicleReg,
-                                        style: Styles.blackBoldMedium,
-                                      ),
-                                      subtitle: Text(
-                                        myVehicle == null
-                                            ? ''
-                                            : 'Arrived: ${getFormattedDateHourMinSec(DateTime.now().toLocal().toIso8601String())}',
-                                        style: Styles.greyLabelSmall,
-                                      ),
-                                    ),
+      backgroundColor: Colors.brown[70],
+      body: StreamBuilder<List<VehicleArrival>>(
+          stream: marshalBloc.vehicleArrivalStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              myDebugPrint(
+                  ' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving ${snapshot.data.length} arrivals');
+              vehicleArrivals = snapshot.data;
+              _removeDuplicates();
+            }
+            return isBusy
+                ? ARAnimations(
+                    type: 'loader',
+                  )
+                : vehicleArrivals.isEmpty
+                    ? Center(
+                        child: Container(
+                          height: 200,
+                          width: 300,
+                          child: Card(
+                            elevation: 1,
+                            color: Colors.brown[80],
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
                                   ),
-                                ),
-                              );
-                            });
-              })
-          : StreamBuilder<List<VehicleArrival>>(
-              stream: marshalBloc.vehicleArrivalStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  myDebugPrint(
-                      ' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving ${snapshot.data.length} arrivals');
-                  vehicleArrivals = snapshot.data;
-                  _removeDuplicates();
-                }
-                return isBusy
-                    ? ARAnimations(
-                        type: 'loader',
-                      )
-                    : vehicleArrivals.isEmpty
-                        ? NothingFound(
-                            message: 'No taxis arrived yet',
-                          )
-                        : ListView.builder(
-                            itemCount: vehicleArrivals.length,
-                            itemBuilder: (context, index) {
-                              var vehicleArrival =
-                                  vehicleArrivals.elementAt(index);
-                              return GestureDetector(
-                                onTap: () {
-                                  selectedVehicle = null;
-                                  _startDispatch(vehicleArrival);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 8, left: 12, right: 12),
-                                  child: Card(
-                                    elevation: 2,
-                                    child: ListTile(
-                                      leading: Icon(Icons.local_taxi),
-                                      title: Text(
-                                        vehicleArrival.vehicleReg,
-                                        style: Styles.blackBoldMedium,
-                                      ),
-                                      subtitle: Text(
-                                          'Arrived: ${getFormattedDateHourMinSec(vehicleArrival.created)}'),
-                                    ),
+                                  Text(
+                                    'No taxis arrived yet',
+                                    style: Styles.blueBoldSmall,
                                   ),
+                                  SizedBox(
+                                    height: 40,
+                                  ),
+                                  RaisedButton(
+                                      onPressed: _startSelectTaxiFromVehicles,
+                                      elevation: 8,
+                                      color: Colors.indigo[300],
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'Use List For Now',
+                                          style: Styles.whiteSmall,
+                                        ),
+                                      ))
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: vehicleArrivals.length,
+                        itemBuilder: (context, index) {
+                          var vehicleArrival = vehicleArrivals.elementAt(index);
+                          return GestureDetector(
+                            onTap: () {
+                              selectedVehicle = null;
+                              _startDispatch(vehicleArrival, index);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8, left: 12, right: 12),
+                              child: Card(
+                                elevation: 2,
+                                child: ListTile(
+                                  leading: Icon(Icons.local_taxi),
+                                  title: Text(
+                                    vehicleArrival.vehicleReg,
+                                    style: Styles.blackBoldMedium,
+                                  ),
+                                  subtitle: Text(
+                                      'Arrived: ${getFormattedDateHourMinSec(vehicleArrival.created)}'),
                                 ),
-                              );
-                            });
-              }),
+                              ),
+                            ),
+                          );
+                        });
+          }),
     );
-  }
-
-  void _createVehicleArrival(Vehicle myVehicle) {
-    prettyPrint(myVehicle.toJson(), 'myVehicle, check registration .....');
-    selectedVehicle = myVehicle;
-    var vehArrival = VehicleArrival(
-        vehicleID: myVehicle.vehicleID,
-        vehicleReg: myVehicle.vehicleReg,
-        associationID: myVehicle.associationID,
-        associationName: myVehicle.associationName,
-        landmarkID: landmark.landmarkID,
-        landmarkName: landmark.landmarkName,
-        vehicleType: myVehicle.vehicleType,
-        position: Position(
-            type: 'Point',
-            coordinates: [landmark.longitude, landmark.latitude]),
-        created: DateTime.now().toUtc().toIso8601String());
-    _startDispatch(vehArrival);
   }
 
   var _vehicles = List<Vehicle>();
 
-  bool showAllAssocVehicles = false;
-
-  void _startDispatch(VehicleArrival vehicleArrival) async {
-    myDebugPrint('Back in _startDispatch ...  💀  💀  💀  💀  receiving ???!');
-    print(vehicleArrival);
+  void _startDispatch(VehicleArrival vehicleArrival, int index) async {
+    myDebugPrint(
+        'SelectTaxi: _startDispatch ...  💀  💀  💀  💀  vehicleArrival::: ');
+    print(vehicleArrival.toJson());
     if (selectedVehicle == null) {
       selectedVehicle =
           await LocalDBAPI.getVehicleByID(vehicleArrival.vehicleID);
+      if (selectedVehicle == null) {
+        AppSnackbar.showErrorSnackbar(
+            scaffoldKey: _key, message: 'Unable to find vehicle data');
+        return;
+      }
     }
-    if (selectedVehicle == null) {
-      AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key, message: 'Unable to find vehicle data');
-      return;
-    }
-//    var res = await Navigator.push(
-//        context,
-//        PageTransition(
-//            type: PageTransitionType.leftToRightWithFade,
-//            child: Dispatch(vehicleArrival, selectedVehicle)));
 
     var res = await Navigator.push(
         context,
         PageTransition(
             type: PageTransitionType.scale,
-            alignment: Alignment.bottomCenter,
+            curve: Curves.easeInOut,
+            duration: Duration(milliseconds: 2000),
+            alignment: Alignment.topLeft,
             child: Dispatch(vehicleArrival, selectedVehicle)));
 
-    if (res != null && res is DispatchRecord) {
-      DispatchRecord mm = res;
+    if (res != null && res == true) {
       myDebugPrint(
-          '🥬🥬🥬 Back in _startDispatch ... 🥬🥬🥬 cool 🥬🥬🥬 ! : ${mm.toJson()}');
+          '🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
+          'vehicleArrivals: ${vehicleArrivals.length} remove record at index: $index');
       AppSnackbar.showSnackbar(
           scaffoldKey: _key,
-          message: '${mm.vehicleReg} '
-              'has been dispached with  🌺 ${mm.passengers} passengers');
-      try {
-        _vehicles.remove(selectedVehicle);
-      } catch (e) {
-        print(e);
-        AppSnackbar.showErrorSnackbar(
-            scaffoldKey: _key, message: 'Unable to remove vehicle from list');
-        return;
-      }
+          message: '${selectedVehicle.vehicleReg} '
+              'has been dispatched  🌺 ');
+      selectedVehicle = null;
       setState(() {
-        selectedVehicle = null;
+        vehicleArrivals.removeAt(index);
       });
+      myDebugPrint(
+          '🥬🥬🥬 Back in _startDispatch: remove dispatched vehicle ??? vehicleArrivals: ${vehicleArrivals.length}');
+    } else {
+      myDebugPrint(
+          '🥬🥬🥬  🍎 🍎 Back in _startDispatch: DISPATCH cancelled 🍎 ');
     }
   }
 

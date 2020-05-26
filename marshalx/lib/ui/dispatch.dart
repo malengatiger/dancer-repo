@@ -277,6 +277,8 @@ class _DispatchState extends State<Dispatch>
       isBusy = true;
     });
     try {
+      //todo - optimistic return - SelectTaxi must listen for completeion or  possible error
+
       var user = await Prefs.getUser();
       if (user == null) {
         AppSnackbar.showErrorSnackbar(
@@ -306,11 +308,8 @@ class _DispatchState extends State<Dispatch>
 
       prettyPrint(dispatchRecord.toJson(),
           '🎁 🎁 🎁 🎁 DISPATCH RECORD about to be sent, 👽  👽  👽 check associationID and created ... from user record');
-      var result = await marshalBloc.addDispatchRecord(dispatchRecord);
-      //marshalBloc.removeVehicleArrival(widget.vehicleArrival);
-      prettyPrint(result.toJson(),
-          '🎁 🎁 🎁 🎁 DISPATCH RECORD returned, about to pop! WTF?? routeId and routeName missing ??????  🍎  🍎  🍎  🍎 ');
-      Navigator.pop(context, result);
+      marshalBloc.addDispatchRecord(dispatchRecord);
+      Navigator.pop(context, true);
     } catch (e) {
       debugPrint(' 🍎  🍎  🍎  🍎  🍎  🍎  We done fucked up, Boss!');
       print(e);
