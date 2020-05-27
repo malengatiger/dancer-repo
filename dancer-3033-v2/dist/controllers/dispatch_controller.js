@@ -27,6 +27,7 @@ class DispatchController {
             console.log(msg);
             console.log(req.body);
             try {
+                //validate main data elements
                 if (!req.body.routeID) {
                     const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing route info';
                     console.error(msg);
@@ -63,7 +64,7 @@ class DispatchController {
                     if (arrival) {
                         arrival.dispatched = true;
                         arrival.update();
-                        log_1.log(`🔆🔆🔆🔆 DispatchRecord has VehicleArrival updated 😍 dispatched = true 😍`);
+                        log_1.log(`🔆🔆 DispatchRecord has VehicleArrival updated 😍 dispatched = true 😍`);
                     }
                     else {
                         log_1.log(`VehicleArrival not found; 🍎🍎🍎 was expected. This is an ERROR`);

@@ -26,14 +26,14 @@ mongoose_1.default
     useNewUrlParser: true,
 })
     .then((client) => {
-    log_1.log(`\n🔆🔆🔆  Mongo connected ... 🔆 ${new Date()} `);
+    log_1.log(`\n🔆🔆  Mongo connected ... 🔆 ${new Date()} `);
     log_1.log(`\n🍎🍎  Mongo Client version: 💙${client.version} 💙 model names: ${JSON.stringify(client.modelNames())}  ☘️  is OK   🍎🍎 `);
     log_1.log(`🍎🍎🍎  MongoDB config ...${JSON.stringify(mongoose_1.default.connection.config)}`);
     mongoose_debug_1.default.setDebug();
     messaging_1.default.init();
     listeners_1.default.listen(client);
-    // console.log(`🍎🍎🍎  MongoDB collections available ...`);
-    // console.log(mongoose.connection.collections);
+    console.log(`🍎🍎🍎  MongoDB collections available ...`);
+    console.log(mongoose_1.default.connection.collections);
 })
     .catch((err) => {
     console.error(err);

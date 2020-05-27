@@ -288,7 +288,7 @@ class Messaging {
     public static async sendCommuterRequest(
         data: any,
     ): Promise<any> {
-        console.log(`Check below to see isWallet value... should be fucking true`);
+        console.log(`Check below to see isWallet value... should be fucking true; why???`);
         
         console.log(data);
         

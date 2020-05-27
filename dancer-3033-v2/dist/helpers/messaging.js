@@ -268,7 +268,7 @@ class Messaging {
     }
     static sendCommuterRequest(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`Check below to see isWallet value... should be fucking true`);
+            console.log(`Check below to see isWallet value... should be fucking true; why???`);
             console.log(data);
             const options = {
                 priority: "normal",

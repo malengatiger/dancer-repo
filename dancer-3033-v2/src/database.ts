@@ -4,9 +4,11 @@ import {log} from './log';
 import MongoListeners from './helpers/listeners';
 import MongooseDebugSetting from "./helpers/mongoose_debug";
 import Messaging from "./helpers/messaging";
+
 const password = process.env.MONGODB_PASSWORD || "xxxxx";
 const user = process.env.MONGODB_USER || "xxxx";
 const mongoConnectionString = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
+
 mongoose.Promise = global.Promise;
 mongoose
   .connect(mongoConnectionString, {
@@ -14,7 +16,7 @@ mongoose
   })
   .then((client) => {
     log(
-      `\n🔆🔆🔆  Mongo connected ... 🔆 ${new Date()} `,
+      `\n🔆🔆  Mongo connected ... 🔆 ${new Date()} `,
     );
     log(
       `\n🍎🍎  Mongo Client version: 💙${client.version} 💙 model names: ${
@@ -30,8 +32,8 @@ mongoose
     Messaging.init();
     
     MongoListeners.listen(client);
-    // console.log(`🍎🍎🍎  MongoDB collections available ...`);
-    // console.log(mongoose.connection.collections);
+    console.log(`🍎🍎🍎  MongoDB collections available ...`);
+    console.log(mongoose.connection.collections);
     
   })
   .catch((err) => {
