@@ -19,7 +19,7 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:marshalx/bloc/marshal_bloc.dart';
 import 'package:marshalx/ui/confirm_landmark.dart';
-import 'package:marshalx/ui/select_dispatch.dart';
+import 'package:marshalx/ui/select_dispatch_arrivals.dart';
 import 'package:marshalx/ui/wifi.dart';
 import 'package:page_transition/page_transition.dart';
 

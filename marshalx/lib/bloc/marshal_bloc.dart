@@ -227,9 +227,9 @@ class MarshalBloc implements GeofencerListener {
     return result;
   }
 
-  List<VehicleArrival> vehicleArrivals;
+  List<VehicleArrival> vehicleArrivals = [];
   Future<List<VehicleArrival>> getVehicleArrivals(
-      {String landmarkID, int minutes = 5}) async {
+      {String landmarkID, int minutes = 10}) async {
     var markID;
     if (landmarkID == null) {
       var mark = await Prefs.getLandmark();
@@ -241,14 +241,22 @@ class MarshalBloc implements GeofencerListener {
       markID = landmarkID;
     }
     try {
-      vehicleArrivals = await DancerListAPI.getVehicleArrivalsByLandmark(
+      var temp = await DancerListAPI.getVehicleArrivalsByLandmark(
           landmarkID: markID, minutes: minutes);
-      mp(" 🌸  🌸  🌸  ${vehicleArrivals.length} vehicle arrivals found within  🌸 15 minutes");
-      _vehicleArrivalsController.sink.add(vehicleArrivals);
+      mp("🌸 🌸 🌸  ${temp.length} vehicle arrivals found within  🌸 $minutes minutes; filtering by dispatched flag ... ");
+      vehicleArrivals.clear();
+      temp.forEach((element) {
+        if (element.dispatched == null || element.dispatched == false) {
+          vehicleArrivals.add(element);
+        }
+      });
+
+      mp("🌸 🌸 🌸  ${vehicleArrivals.length} vehicle arrivals filtered   🌸🌸🌸");
+      return vehicleArrivals;
     } catch (e) {
       dealWithError(e);
     }
-    return vehicleArrivals;
+    return _vehicleArrivals;
   }
 
   removeVehicleArrival(VehicleArrival vehicleArrival) {
@@ -263,8 +271,7 @@ class MarshalBloc implements GeofencerListener {
     });
     vehicleArrivals = temp;
     mp(" 🌸  🌸  🌸  ${vehicleArrival.vehicleReg} removed from arrivals. 🌺 updating stream");
-    _vehicleArrivalsController.sink.add(vehicleArrivals);
-    _vehicleArrivalDispatchedController.sink.add(vehicleArrival);
+    _removeVehiclesDispatchedWithinLastHour();
   }
 
   List<CommuterRequest> commuterRequests;
@@ -632,31 +639,45 @@ class MarshalBloc implements GeofencerListener {
   void _processVehicleArrival(Map<String, dynamic> message) async {
     var data = VehicleArrival.fromJson(message['data']);
     _vehicleArrivals.add(data);
-    //todo - filter by vehicle - take latest arrival;
-    //todo - check against local dispatch records
-    //todo - remove unneeded records
-
     p('🅿️  🅿️ 🅿️  🅿️ MarshalBloc: Adding vehicle arrival from fcm message: stream has ${_vehicleArrivals.length}');
-    _removeDuplicates();
-    _vehicleArrivalsController.sink.add(_vehicleArrivals);
+    _removeVehiclesDispatchedWithinLastHour();
   }
 
-  void _removeDuplicates() async {
+  Future<int> getMinutesForQuery() async {
+    await DotEnv().load('.env');
+    var min = DotEnv().env['minutesForQuery'];
+    if (min == null) {
+      min = '5';
+    }
+    int minutes = int.parse(min);
+    return minutes;
+  }
+
+  Future _removeVehiclesDispatchedWithinLastHour() async {
+    mp('MarshalBloc: _removeVehiclesDispatchedWithinLastHour: getDispatchRecordsFromLastHour .... 🧩 🧩 🧩 🧩 🧩 ... ');
     List<DispatchRecord> mList =
         await LocalDBAPI.getDispatchRecordsFromLastHour();
-    List<VehicleArrival> temp = [];
+    mp('MarshalBloc: _removeVehiclesDispatchedWithinLastHour .... 🧩 🧩 🧩 🧩 🧩 processed: ${mList.length}');
+    Map<String, VehicleArrival> tempVehicles = Map();
     _vehicleArrivals.forEach((arr) {
       var isFound = false;
       mList.forEach((dispatchRecord) {
-        if (dispatchRecord.vehicleID == arr.vehicleID) {
+        if (dispatchRecord.vehicleReg == arr.vehicleReg) {
           isFound = true;
         }
       });
+
       if (!isFound) {
-        temp.add(arr);
+        tempVehicles['${arr.vehicleID}'] = arr;
       }
     });
-    _vehicleArrivals = temp;
+    mp(' 🅿️ 🅿️ 🅿️ 🅿️ vehicles NOT dispatched within the last hour: ${tempVehicles.length}. 🍎 🍎 THIS SHOULD BE THE LIST ????');
+
+    _vehicleArrivals.clear();
+    _vehicleArrivals = tempVehicles.values.toList();
+    mp(' 🅿️ 🅿️ 🅿️ 🅿️ vehicles NOT dispatched within the last hour: ${_vehicleArrivals.length}. 🍎 🍎 THIS IS THE LIST going to the stream');
+    _vehicleArrivalsController.sink.add(_vehicleArrivals);
+    return _vehicleArrivals;
   }
 
   void _processVehicleDeparture(Map<String, dynamic> message) async {

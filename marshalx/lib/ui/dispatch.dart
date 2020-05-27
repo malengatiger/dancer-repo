@@ -275,7 +275,7 @@ class _DispatchState extends State<Dispatch>
       isBusy = true;
     });
     try {
-      //todo - optimistic return - SelectTaxi must listen for completeion or  possible error
+      //todo - optimistic return - SelectTaxi must listen for completion or  possible error
 
       var user = await Prefs.getUser();
       if (user == null) {
@@ -293,6 +293,7 @@ class _DispatchState extends State<Dispatch>
           vehicleReg: widget.vehicleArrival.vehicleReg,
           vehicleType: widget.vehicle.vehicleType,
           dispatched: true,
+          vehicleArrivalID: widget.vehicleArrival.vehicleArrivalID,
           marshalID: user.userID,
           marshalName: '${user.firstName} ${user.lastName}',
           routeID: routeInfo.routeID,

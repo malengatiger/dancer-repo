@@ -24,6 +24,8 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
     implements MarshalBlocListener {
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   List<VehicleArrival> vehicleArrivals = List();
+  List<VehicleArrival> vehicleArrivalsToProcess = List();
+  List<VehicleArrival> vehicleArrivalsNew = List();
   Landmark landmark;
   bool isBusy = false;
 
@@ -85,14 +87,22 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
       isBusy = true;
     });
     try {
-      landmark = await Prefs.getLandmark();
+      if (landmark == null) landmark = await Prefs.getLandmark();
       if (landmark == null) {
+        AppSnackbar.showErrorSnackbar(
+            scaffoldKey: _key,
+            message: 'Marshal Landmark is missing',
+            actionLabel: '');
         return;
       }
-      prettyPrint(landmark.toJson(), 'LANDMARK for dispatching');
+      prettyPrint(landmark.toJson(), '🦠🦠🦠🦠🦠 ... LANDMARK for dispatching');
+      var minutes = await marshalBloc.getMinutesForQuery();
       vehicleArrivals = await marshalBloc.getVehicleArrivals(
-          landmarkID: landmark.landmarkID, minutes: 5);
+          landmarkID: landmark.landmarkID, minutes: minutes);
       _removeDuplicates();
+      vehicleArrivals.forEach((element) {
+        vehicleArrivalsToProcess.add(element);
+      });
       setState(() {
         isBusy = false;
       });
@@ -113,6 +123,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
     vehicleArrivals.forEach((v) {
       vMap[v.vehicleID] = v;
     });
+    vehicleArrivals.clear();
     vehicleArrivals = vMap.values.toList();
     vehicleArrivals.sort((a, b) => a.created.compareTo(b.created));
     p('... _removeDuplicates .... vehicleArrivals: ${vehicleArrivals.length}');
@@ -218,7 +229,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
                         width: 20,
                       ),
                       Text(
-                        '${vehicleArrivals.length}',
+                        '${vehicleArrivalsToProcess.length}',
                         style: Styles.blueBoldMedium,
                       ),
                       SizedBox(
@@ -237,15 +248,15 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               mp(' 🅿️  🅿️  🅿️  🅿️  🅿️  🅿️ StreamBuilder receiving '
-                  '${marshalBloc.vehicleArrivals.length} arrivals');
-              vehicleArrivals = marshalBloc.vehicleArrivals;
+                  '${snapshot.data.length} arrivals');
+              vehicleArrivals = snapshot.data;
               _removeDuplicates();
             }
             return isBusy
                 ? ARAnimations(
                     type: 'loader',
                   )
-                : vehicleArrivals.isEmpty
+                : vehicleArrivalsToProcess.isEmpty
                     ? Center(
                         child: Container(
                           height: 200,
@@ -285,9 +296,10 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
                         ),
                       )
                     : ListView.builder(
-                        itemCount: vehicleArrivals.length,
+                        itemCount: vehicleArrivalsToProcess.length,
                         itemBuilder: (context, index) {
-                          var vehicleArrival = vehicleArrivals.elementAt(index);
+                          var vehicleArrival =
+                              vehicleArrivalsToProcess.elementAt(index);
                           return GestureDetector(
                             onTap: () {
                               selectedVehicle = null;
@@ -339,7 +351,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
 
     if (res != null && res == true) {
       mp('🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
-          'vehicleArrivals: ${vehicleArrivals.length} remove record at index: $index');
+          'vehicleArrivals: ${vehicleArrivalsToProcess.length} remove record at index: $index');
       vehicleArrival.dispatched = true;
       AppSnackbar.showSnackbar(
           scaffoldKey: _key,
@@ -347,9 +359,9 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
               'has been dispatched  🌺 ');
       selectedVehicle = null;
       setState(() {
-        vehicleArrivals.removeAt(index);
+        vehicleArrivalsToProcess.removeAt(index);
       });
-      mp('🥬🥬🥬 Back in _startDispatch: remove dispatched vehicle ??? vehicleArrivals: ${vehicleArrivals.length}');
+      mp('🥬🥬🥬 Back in _startDispatch: remove dispatched vehicle ??? vehicleArrivals: ${vehicleArrivalsToProcess.length}');
     } else {
       mp('🥬🥬🥬  🍎 🍎 Back in _startDispatch: DISPATCH cancelled 🍎 ');
     }
