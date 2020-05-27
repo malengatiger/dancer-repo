@@ -21,9 +21,11 @@ const DispatchRecordSchema = new mongoose_1.default.Schema({
     dispatchRecordID: { type: String, required: true },
     associationD: { type: String, required: true, trim: true, index: true },
     associationName: { type: String, required: true, trim: true },
+    vehicleArrivalID: { type: String, required: false, trim: true },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 DispatchRecordSchema.index({ position: "2dsphere" });
 const DispatchRecord = mongoose_1.default.model('DispatchRecord', DispatchRecordSchema);
 exports.default = DispatchRecord;
+//
 //# sourceMappingURL=dispatch_record.js.map

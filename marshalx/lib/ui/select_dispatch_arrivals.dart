@@ -175,16 +175,19 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
                   Row(
                     children: <Widget>[
                       Container(
-                        height: 40,
-                        width: 40,
+                        height: 64,
+                        width: 64,
                         decoration: BoxDecoration(
                             boxShadow: customShadow,
                             color: Colors.blue[400],
                             shape: BoxShape.circle),
-                        child: Image(
-                          image: AssetImage('assets/ty1.png'),
-                          height: 32,
-                          width: 32,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image(
+                            image: AssetImage('assets/ty1.png'),
+                            height: 52,
+                            width: 52,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -285,7 +288,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          'Use List For Now',
+                                          'Use Static List',
                                           style: Styles.whiteSmall,
                                         ),
                                       ))
@@ -353,6 +356,7 @@ class _SelectTaxiFromArrivalsState extends State<SelectTaxiFromArrivals>
       mp('🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
           'vehicleArrivals: ${vehicleArrivalsToProcess.length} remove record at index: $index');
       vehicleArrival.dispatched = true;
+      _getCachedDispatches();
       AppSnackbar.showSnackbar(
           scaffoldKey: _key,
           message: '${selectedVehicle.vehicleReg} '

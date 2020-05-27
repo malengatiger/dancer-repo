@@ -18,6 +18,7 @@ const moment_1 = __importDefault(require("moment"));
 const uuid = require("uuid");
 const marshal_fence_dwell_event_1 = __importDefault(require("../models/marshal_fence_dwell_event"));
 const marshal_fence_exit_event_1 = __importDefault(require("../models/marshal_fence_exit_event"));
+const vehicle_arrival_1 = __importDefault(require("../models/vehicle_arrival"));
 class DispatchController {
     routes(app) {
         console.log(`🏓    DispatchController:  💙  setting up default Dispatch routes ...`);
@@ -56,6 +57,21 @@ class DispatchController {
                 const result = yield c.save();
                 console.log('💦💦 DispatchController: 💦 Result of addDispatchRecord save operation ...... : ');
                 console.log(result);
+                // todo - use vehicleArrivalID to update the dispatched flag
+                if (req.body.vehicleArrivalID) {
+                    const arrival = yield vehicle_arrival_1.default.findOne({ vehicleArrivalID: req.body.vehicleArrivalID });
+                    if (arrival) {
+                        arrival.dispatched = true;
+                        arrival.update();
+                        log_1.log(`🔆🔆🔆🔆 DispatchRecord has VehicleArrival updated 😍 dispatched = true 😍`);
+                    }
+                    else {
+                        log_1.log(`VehicleArrival not found; 🍎🍎🍎 was expected. This is an ERROR`);
+                    }
+                }
+                else {
+                    log_1.log(`🔆🔆DispatchRecord has NO VehicleArrivalID, ....... no need to update`);
+                }
                 res.status(200).json(result);
             }
             catch (err) {

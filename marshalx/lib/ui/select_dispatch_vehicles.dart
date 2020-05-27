@@ -96,16 +96,19 @@ class _SelectTaxiFromVehiclesState extends State<SelectTaxiFromVehicles>
                   Row(
                     children: <Widget>[
                       Container(
-                        height: 40,
-                        width: 40,
+                        height: 64,
+                        width: 64,
                         decoration: BoxDecoration(
                             boxShadow: customShadow,
-                            color: Colors.blue[400],
+                            color: Colors.pink[400],
                             shape: BoxShape.circle),
-                        child: Image(
-                          image: AssetImage('assets/ty1.png'),
-                          height: 32,
-                          width: 32,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image(
+                            image: AssetImage('assets/ty1.png'),
+                            height: 52,
+                            width: 52,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -130,7 +133,7 @@ class _SelectTaxiFromVehiclesState extends State<SelectTaxiFromVehicles>
                     ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 40,
                   ),
                   GestureDetector(
                     onTap: _getCachedDispatches,
@@ -140,33 +143,14 @@ class _SelectTaxiFromVehiclesState extends State<SelectTaxiFromVehicles>
                     ),
                   ),
                   SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        'Number of Taxis',
-                        style: Styles.blackSmall,
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        '${_filtered.length}',
-                        style: Styles.blueBoldMedium,
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
+                    height: 40,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Text(
                         'Find taxi',
-                        style: Styles.blackSmall,
+                        style: Styles.blackBoldSmall,
                       ),
                       SizedBox(
                         width: 20,
@@ -184,17 +168,20 @@ class _SelectTaxiFromVehiclesState extends State<SelectTaxiFromVehicles>
                           ),
                         ),
                       ),
+                      SizedBox(
+                        width: 20,
+                      ),
                     ],
                   ),
                   SizedBox(
-                    height: 12,
+                    height: 40,
                   ),
                 ],
               ),
             ),
-            preferredSize: Size.fromHeight(220)),
+            preferredSize: Size.fromHeight(320)),
       ),
-      backgroundColor: Colors.brown[70],
+      backgroundColor: Colors.brown[50],
       body: isBusy
           ? ARAnimations(
               type: 'loader',
@@ -254,7 +241,6 @@ class _SelectTaxiFromVehiclesState extends State<SelectTaxiFromVehicles>
     if (res != null && res == true) {
       mp('🥬🥬🥬 .......... Back in _startDispatch ... 🥬🥬🥬 cool! 🥬🥬🥬  '
           '_vehicles: ${_vehicles.length} remove record at index: $index');
-
       AppSnackbar.showSnackbar(
           scaffoldKey: _key,
           message: '${selectedVehicle.vehicleReg} '

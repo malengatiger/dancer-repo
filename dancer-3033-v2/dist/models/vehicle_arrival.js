@@ -16,6 +16,7 @@ const VehicleArrivalSchema = new mongoose_1.default.Schema({
     associationName: { type: String, required: false, trim: true },
     routeID: { type: String, required: false, trim: true, index: true },
     routeName: { type: String, required: false, trim: true },
+    dispatched: { type: Boolean, required: true, default: false },
     created: { type: String, required: true, default: new Date().toISOString() },
 });
 VehicleArrivalSchema.index({ position: "2dsphere" });

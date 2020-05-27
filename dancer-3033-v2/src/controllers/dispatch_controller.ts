@@ -5,6 +5,7 @@ import moment from "moment";
 import uuid = require("uuid");
 import MarshalFenceDwellEvent from "../models/marshal_fence_dwell_event";
 import MarshalFenceExitEvent from "../models/marshal_fence_exit_event";
+import VehicleArrival from "../models/vehicle_arrival";
 
 export class DispatchController {
 
@@ -53,7 +54,20 @@ export class DispatchController {
         const result = await c.save();
         console.log('💦💦 DispatchController: 💦 Result of addDispatchRecord save operation ...... : ')
         console.log(result);
-        
+        // todo - use vehicleArrivalID to update the dispatched flag
+        if (req.body.vehicleArrivalID) {
+          const arrival: any = await VehicleArrival.findOne({ vehicleArrivalID: req.body.vehicleArrivalID })
+          if (arrival) {
+            arrival.dispatched = true;
+            arrival.update();
+            log(`🔆🔆🔆🔆 DispatchRecord has VehicleArrival updated 😍 dispatched = true 😍`)
+          } else {
+            log(`VehicleArrival not found; 🍎🍎🍎 was expected. This is an ERROR`)
+          }
+        } else {
+          log(`🔆🔆DispatchRecord has NO VehicleArrivalID, ....... no need to update`)
+        }
+
         res.status(200).json(result);
       } catch (err) {
         console.error('DispatchController: 💦 Dispatch recording failed', err)
