@@ -85,7 +85,6 @@ class LandmarkRoutesPage extends StatelessWidget {
                         hideAppBar: false,
                         landmarkIconColor: RouteMap.colorRed,
                       )));
-                  myDebugPrint("SHould be going to map .....");
                 },
                 child: Card(
                   elevation: 4,

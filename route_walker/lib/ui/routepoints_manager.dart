@@ -55,7 +55,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     _rawRoutePoints =
         await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
     assert(_rawRoutePoints.isNotEmpty);
-    myDebugPrint(
+    mp(
         '\n\n🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩 '
         ' snapped: ${_routePoints.length} 🧩\n\n');
     _rawRoutePoints.forEach((p) {
@@ -196,7 +196,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             tiltGesturesEnabled: true,
             onMapCreated: (mapController) {
               if (!_completer.isCompleted) {
-                myDebugPrint(
+                mp(
                     ' 🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  🍏 🍎  onMapCreated: !_completer.isCompleted');
                 _completer.complete(mapController);
                 _mapController = mapController;
@@ -340,7 +340,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                         color: Colors.blue.shade800,
                         elevation: 16,
                         onPressed: () {
-                          myDebugPrint(
+                          mp(
                               '🧩 🧩 🧩 🧩 Confirm Route button pressed  🧩 🧩 🧩 🧩 ');
                         },
                         child: Padding(
@@ -364,38 +364,38 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   @override
   onLandmarkInfoWindowTapped(Landmark landmark) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkInfoWindowTapped: 🧩🧩 ${landmark.landmarkName}  🍎 ');
     landmark.routeDetails.forEach((m) {
-      myDebugPrint(
+      mp(
           ' 🐸 🐸 🐸  You can get on route :  🍎 ${m.name} from 🧩🧩 ${landmark.landmarkName}');
     });
   }
 
   @override
   onLandmarkTapped(Landmark landmark) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkTapped: 🧩🧩 ${landmark.landmarkName}  🥬 ');
     // todo - show UPDATE landmark editor
   }
 
   @override
   onLongPress(LatLng latLng) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onLongPress: map pressed on latLng: 🧩🧩 $latLng  💛 ');
     // todo - show NEW landmark editor
   }
 
   @override
   onPointInfoWindowTapped(RoutePoint point) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointInfoWindowTapped: 🧩🧩 created: ${point.created}  🧡 index: ${point.index}');
     // todo - show NEW landmark editor
   }
 
   @override
   onPointTapped(RoutePoint point) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointTapped: 🧩🧩  created: ${point.created}  ❤️ index: ${point.index}');
     // todo - show NEW landmark editor
   }
@@ -476,7 +476,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
     assert(_rawRoutePoints.isNotEmpty);
 
     try {
-      myDebugPrint(
+      mp(
           '\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw route points: ${_rawRoutePoints.length}....');
       _routePoints = await SnapToRoads.getSnappedPoints(
           route: widget.route, routePoints: _rawRoutePoints);
@@ -488,11 +488,11 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
             Position(type: 'Point', coordinates: [p.longitude, p.latitude]);
         index++;
       });
-      myDebugPrint(
+      mp(
           '🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${widget.route.name} ...');
       await routeBuilderBloc.addRoutePointsToMongoDB(
           widget.route, _routePoints);
-      myDebugPrint(
+      mp(
           '\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length} to REMOTE db....');
       await routeBuilderBloc.addRawRoutePointsToMongoDB(
           widget.route, _rawRoutePoints);
@@ -514,7 +514,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
           listener: this);
     }
 
-    myDebugPrint(
+    mp(
         '\n\nManager: 🍏 🍎 route points added to database. Done  for ${widget.route.name}');
     setState(() {
       isBusy = false;

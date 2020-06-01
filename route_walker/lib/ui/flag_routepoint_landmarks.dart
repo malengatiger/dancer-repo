@@ -80,13 +80,13 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     if (_key.currentState != null) {
       _key.currentState.removeCurrentSnackBar();
     }
-    myDebugPrint(
+    mp(
         '\n\n💛 💛 💛 💛 💛 LandmarksPage: returned ${list.length} calculated distances');
     var tot = 0.0;
     list.forEach((d) {
       tot += d.distanceInMetres;
     });
-    myDebugPrint(
+    mp(
         '💛 💛 💛 💛 💛 LandmarksPage: total distance  🍎  $tot metres  🍎   \n\n');
 //    } else
 //      Navigator.push(context,
@@ -279,7 +279,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
   @override
   onNearbyLandmarkTapped(Landmark landmark) {
-    myDebugPrint('${landmark.landmarkName} received from tap');
+    mp('${landmark.landmarkName} received from tap');
     return null;
   }
 
@@ -301,7 +301,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
   @override
   onSuccess(Landmark landmark) {
-    myDebugPrint(
+    mp(
         '\n\nLandmarksPage: ️🍀️ landmark addition successful. ❤️ 🧡 💛 Did the magic happen? ${landmark.landmarkName}');
     setState(() {
       _isBackFromEditor = true;
@@ -321,25 +321,25 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
     List<RoutePoint> mList =
         widget.route.routePoints.take(1).toList(growable: true);
-    myDebugPrint(
+    mp(
         '🔵 🔵 🔵 Traversing 🧡 ${widget.route.routePoints.length} points looking for landmarks');
     _preparePoints(mList);
-    myDebugPrint(
+    mp(
         '🔴 🔴  using ${mList.length} points to search for landmarks ...');
     Map<String, LandmarkAndRoutePoint> hashMap = Map();
     await _getNearestLandmarkPoints(mList, hashMap);
-    myDebugPrint(
+    mp(
         '🔴 🔴   ${landmarkPoints.length} landmark points found ... 🔴 🔴 ');
 //    _splitExistingLandmarkPoints();
     _key.currentState.removeCurrentSnackBar();
 
-    myDebugPrint(
+    mp(
         '🔴 🔴 🔴 Landmarks possibly on route: 🧡 ${landmarkPoints.length} 🧡 \n\n');
     landmarkPoints.forEach((p) {
-      myDebugPrint(
+      mp(
           '🔴  routePointIndex : ${p.routePoint.index}  🧩 🧩 Landmark 🧩 ${p.distance} metres 🧩 from routePoint is possibly on route: 🧡 ${p.landmark.landmarkName} ');
     });
-    myDebugPrint(
+    mp(
         '\n🧡 🧡 🧡 🧡 landmarks found on route: ${landmarkPoints.length}');
     setState(() {
       showConnectButton = true;
@@ -428,28 +428,28 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
       Navigator.push(
           context, SlideRightRoute(widget: LandmarkRoutesPage(landmark)));
     }
-    myDebugPrint(
+    mp(
         'onLandmarkInfoWindowTapped: 🍀️🍀️ ${landmark.landmarkName} 🍀️');
   }
 
   @override
   onLandmarkTapped(Landmark landmark) {
-    myDebugPrint('onLandmarkTapped: 🍀️🍀️🍀️  ${landmark.landmarkName} ');
+    mp('onLandmarkTapped: 🍀️🍀️🍀️  ${landmark.landmarkName} ');
   }
 
   @override
   onLongPress(LatLng latLng) {
-    myDebugPrint('onLongPress $latLng: 🍀️🍀️  $latLng  🍀️');
+    mp('onLongPress $latLng: 🍀️🍀️  $latLng  🍀️');
   }
 
   @override
   onPointInfoWindowTapped(RoutePoint point) {
-    myDebugPrint('onPointInfoWindowTapped: 🍀️🍀️🍀️ $point');
+    mp('onPointInfoWindowTapped: 🍀️🍀️🍀️ $point');
   }
 
   @override
   onPointTapped(RoutePoint point) {
-    myDebugPrint('onPointTapped: 🍀️🍀️🍀️ $point');
+    mp('onPointTapped: 🍀️🍀️🍀️ $point');
   }
 
   void _onNavItemTapped(int value) {
@@ -467,7 +467,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
   }
 
   void _linkPlacesForAllLandmarks() async {
-    myDebugPrint('🔵🔵🔵 _linkPlacesForAllLandmarks. ');
+    mp('🔵🔵🔵 _linkPlacesForAllLandmarks. ');
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key,
         message: 'Linking places',
@@ -483,13 +483,13 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
   @override
   void onRoutePointsFound(String routeID, List<RoutePoint> routePoints) {
-    myDebugPrint(
+    mp(
         '♻️♻️♻️♻️♻️♻️ onRoutePointsFound $routeID -  💛 points ${routePoints.length}');
     //todo - this route point must be updated to contain landmark data
   }
 
   void _addRouteToLandmarks() async {
-    myDebugPrint(
+    mp(
         '\n\n_addRouteToLandmarks  🧩 🧩 🧩 ... ${landmarkPoints.length}');
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key,
@@ -504,7 +504,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
             '♻️♻️♻️ Landmark point to be added/updated: ${lp.landmark.landmarkName}');
       });
 
-      myDebugPrint(
+      mp(
           ' 🧩 🧩 🧩 ${routePointsForLandmarks.length} landmark points to be updated ...');
       await _updatePoints(routePointsForLandmarks);
       //todo - calculate distances
@@ -727,7 +727,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
                 FlatButton(
                   child: Text('Cancel'),
                   onPressed: () {
-                    myDebugPrint('Cancel new landmark creation');
+                    mp('Cancel new landmark creation');
                     widget.listener.onCancel();
                   },
                 ),
@@ -777,7 +777,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
         scaffoldKey: _key, message: 'Adding new landmark ');
     try {
       var m = await routeBuilderBloc.addLandmark(landmark, widget.routePoint);
-      myDebugPrint(
+      mp(
           '............Popping off ... 🍏 🍎 done with editor, caller must check if new landmark made');
       Navigator.pop(context, m);
     } catch (e) {

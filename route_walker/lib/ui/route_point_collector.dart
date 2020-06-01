@@ -195,7 +195,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
     assert(widget.route.routeID != null);
     if (_routePointsCollected.isEmpty) {
-      myDebugPrint(
+      mp(
           '🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
       _route = await DancerListAPI.getRouteByID(routeID: widget.route.routeID);
       await LocalDBAPI.addRoute(route: _route);
@@ -411,7 +411,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
       return;
     }
     if (_routePointsCollected.length == 0) {
-      myDebugPrint('🥏 🥏 🥏 🥏 🥏 🥏 Leaving  on pressing stop');
+      mp('🥏 🥏 🥏 🥏 🥏 🥏 Leaving  on pressing stop');
       Navigator.pop(context);
     } else {
       _handleNavItems(index);
@@ -542,7 +542,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
           textColor: Colors.pink,
           backgroundColor: Colors.black);
       //await routeBuilderBloc.deleteRoutePoints(routeID: _route.routeID);
-      myDebugPrint('_startFreshCollection: points deleted!');
+      mp('_startFreshCollection: points deleted!');
       if (_key.currentState != null) {
         _key.currentState.removeCurrentSnackBar();
       }

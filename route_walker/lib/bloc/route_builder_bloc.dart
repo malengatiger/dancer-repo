@@ -150,21 +150,7 @@ class RouteBuilderBloc {
   Future<bool> requestPermission() async {
     print('\n🔵 🔵 🔵 ######################### requestPermission ..');
     try {
-      Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler()
-              .requestPermissions([PermissionGroup.location]);
-      print(permissions);
-      permissions.values.forEach((perm) {
-        myDebugPrint('🔵 🔵 🔵 check for perm:: Permission status: $perm');
-      });
-      print(
-          "\n🔵 🔵 🔵  ########### permission request for location is:  ✅ ✅ ✅ ✅ ✅ ✅ ");
-//      associations = await LocalDBAPI.getAssociations();
-//      if (associations.isEmpty) {
-//        getAssociations();
-//      }
-
-      return true;
+      return await LocationUtil.checkLocationPermission();
     } catch (e) {
       print(e);
     }
@@ -175,17 +161,7 @@ class RouteBuilderBloc {
   Future<bool> checkPermission() async {
     print('\n🔵 🔵 🔵 ######################### 🔴 checkPermission ..');
     try {
-      PermissionStatus locationPermission = await PermissionHandler()
-          .checkPermissionStatus(PermissionGroup.location);
-
-      if (locationPermission == PermissionStatus.denied) {
-        return requestPermission();
-      } else {
-        print(
-            "\n ✅  ✅  location permission status is:  ✅  ✅ $locationPermission");
-        getAssociations();
-        return true;
-      }
+      return await LocationUtil.checkLocationPermission();
     } catch (e) {
       print(e);
       throw e;
@@ -193,16 +169,16 @@ class RouteBuilderBloc {
   }
 
   Future<List<Association>> getAssociations() async {
-    myDebugPrint(
+    mp(
         '### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
     var asses = await DancerListAPI.getAssociations();
     await LocalDBAPI.deleteAssociations();
     await LocalDBAPI.addAssociations(associations: asses);
 
-    myDebugPrint(
+    mp(
         ' 📍📍📍📍 adding ${asses.length} Associations to  📎 model and stream sink ...');
     _associationController.sink.add(asses);
-    myDebugPrint('++++ ✅  Associations retrieved: ${asses.length}\n');
+    mp('++++ ✅  Associations retrieved: ${asses.length}\n');
     return asses;
   }
 
@@ -244,7 +220,7 @@ class RouteBuilderBloc {
           routeID: route.routeID,
           routePoints: routePoints,
           routeName: route.name);
-      myDebugPrint(
+      mp(
           '\n\n🔵 🔵 🔵 🔵 🔵 Cached snapped route points: ${_routePoints.length} - ${route.name} ....');
       var batches = BatchUtil.makeBatches(routePoints, batchSize);
       if (routePoints.length < batchSize) {
@@ -334,7 +310,7 @@ class RouteBuilderBloc {
   }
 
   Future<ar.Route> addRoute(ar.Route route) async {
-    myDebugPrint('### ℹ️  ℹ️  ℹ️  add new route to database ..........☘\n');
+    mp('### ℹ️  ℹ️  ℹ️  add new route to database ..........☘\n');
     assert(route.name != null);
     if (route.color == null) {
       route.color = 'white';
@@ -346,11 +322,11 @@ class RouteBuilderBloc {
         associationName: route.associationName);
 
     if (result.routeID == null) {
-      myDebugPrint('\n\n\n🍎 🍎 RouteID of fresh route is 🍎 🍎 NULL 🍎 🍎 ');
+      mp('\n\n\n🍎 🍎 RouteID of fresh route is 🍎 🍎 NULL 🍎 🍎 ');
       throw Exception('RouteID of fresh route is NULL');
     }
     await LocalDBAPI.addRoute(route: result);
-    myDebugPrint(
+    mp(
         ' 📍📍📍📍📍📍 adding route ${result.name} to model and stream sink ...');
     prettyPrint(result.toJson(),
         'NEW route added to stream ... ♻️♻️♻️️♻️♻ check for routeID️');
@@ -362,7 +338,7 @@ class RouteBuilderBloc {
   }
 
   Future<Landmark> addLandmark(Landmark landmark, RoutePoint point) async {
-    myDebugPrint(
+    mp(
         '### ℹ️  📌 📌 📌 add new landmark 🍏 ${landmark.landmarkName} : addLandmark and 🍏 update routePoint ..........ℹ️  ℹ️  ℹ️  ');
     assert(landmark.routeDetails.length == 1);
     Landmark result;
@@ -408,7 +384,7 @@ class RouteBuilderBloc {
   }
 
   Future addCityToLandmark(Landmark landmark, CityDTO city) async {
-    myDebugPrint(
+    mp(
         '📍 📍 📍  update landmark ${landmark.landmarkName} on Firestore ..........\n');
 
     _appModel.landmarks.remove(landmark);
@@ -419,7 +395,7 @@ class RouteBuilderBloc {
         provinceName: city.provinceName));
     await DancerDataAPI.addCityToLandmark(
         cityId: city.cityID, landmarkId: landmark.landmarkID);
-    myDebugPrint(
+    mp(
         '❤️ 🧡 💛 ${landmark.landmarkName} updated;  🍀 add to model and stream sink ...');
     _appModel.landmarks.add(landmark);
     _appModelController.sink.add(_appModel);
@@ -427,14 +403,14 @@ class RouteBuilderBloc {
   }
 
   Future updateLocalRoute(ar.Route route) async {
-    myDebugPrint(
+    mp(
         '### 📍📍📍  updateLocalRoute:  ${route.name} routePoints: ${route.routePoints} ..........\n');
     _appModel.routes.remove(route);
 
     route.created = DateTime.now().toUtc().toIso8601String();
     await LocalDBAPI.deleteRoute(route.routeID);
     await LocalDBAPI.addRoute(route: route, listener: null);
-    myDebugPrint(
+    mp(
         '🔆 🔆 Route has been updated on the local database, need to do the same on remote mongodb ........🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
     _appModel.routes.add(route);
     _appModelController.sink.add(_appModel);
@@ -442,7 +418,7 @@ class RouteBuilderBloc {
   }
 
   Future<List<CityDTO>> getCities(String countryId) async {
-//    myDebugPrint('### ℹ️  getCities: getting cities in Firestore ..........\n');
+//    mp('### ℹ️  getCities: getting cities in Firestore ..........\n');
 //    var cities = await LocalDBAPI.getCities();
 //    if (cities == null || cities.isEmpty) {
 //      cities = await DancerListAPI.getCountryCities(countryId);
@@ -451,12 +427,12 @@ class RouteBuilderBloc {
 //      }
 //    }
 //
-//    myDebugPrint(
+//    mp(
 //        ' 📍 adding model with ${cities.length} cities to model and stream sink ...');
 //    _appModel.cities.clear();
 //    _appModel.cities.addAll(cities);
 //    _appModelController.sink.add(_appModel);
-//    myDebugPrint('++++ ✅  cities retrieved: ${cities.length}\n');
+//    mp('++++ ✅  cities retrieved: ${cities.length}\n');
     return _appModel.cities;
   }
 
@@ -561,14 +537,14 @@ class RouteBuilderBloc {
     _routeLandmarks.clear();
     _routeLandmarks.addAll(marks);
     _routeLandmarksController.sink.add(_routeLandmarks);
-    myDebugPrint(
+    mp(
         'routeBuilderBloc; ✅ route landmarks retrieved: ${_routeLandmarks.length}\n');
 
     return _routeLandmarks;
   }
 
   Future<List<RoutePoint>> getRawRoutePoints({ar.Route route}) async {
-    myDebugPrint(
+    mp(
         '\n🔵 🔵 🔵 🔵 🔵 ️ getRawRoutePoints: getting RAW route points : 🧩🧩  ${route.name}\n');
 
     _rawRoutePoints =
@@ -582,25 +558,25 @@ class RouteBuilderBloc {
   }
 
   Future<List<RoutePoint>> getRoutePoints({ar.Route route}) async {
-    myDebugPrint('ℹ️  getRoutePoints getting route points ..........');
+    mp('ℹ️  getRoutePoints getting route points ..........');
 //    var mRoute = await DancerListAPI.getRoute(routeId: route.routeID);
 //    _rawRoutePoints = mRoute.routePoints;
 //    _routePointController.sink.add(mRoute.routePoints);
-    myDebugPrint(
+    mp(
         'ℹ️  🍎 🍎 🍎 🍎  getRoutePoints found: 🍎 ${_routePoints.length}');
     return _routePoints;
   }
 
   Future _cacheRoutes() async {
-    myDebugPrint(
+    mp(
         'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  ..........');
 
     for (var route in _routes) {
-      myDebugPrint(
+      mp(
           'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  : 🍎  ${route.name} ..........');
       await LocalDBAPI.addRoute(route: route);
     }
-    myDebugPrint(
+    mp(
         '\n\n️ℹ️ ℹ️ ℹ️ ℹ️   🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
     return _routePoints;
   }
@@ -622,11 +598,11 @@ class RouteBuilderBloc {
     _collectRawRoutePoint();
     Timer.periodic(Duration(seconds: collectionSeconds), (mTimer) {
       timer = mTimer;
-      myDebugPrint(
+      mp(
           "🔆 🔆 🔆  timer triggered for  🌺  $collectionSeconds seconds  🌺  get GPS location and save");
       _collectRawRoutePoint();
     });
-    myDebugPrint(
+    mp(
         "\n\n🔆 🔆 🔆  timer set up to start point collection every  🌺  $collectionSeconds seconds  🌺 ");
   }
 
@@ -641,7 +617,7 @@ class RouteBuilderBloc {
     if (currentLocation == null) {
       return null;
     }
-    myDebugPrint(
+    mp(
         '🧩 🧩  🧩 🧩  🧩 🧩 _collectRawRoutePoint : add point for 🔆  routeID:  👌 $routeID.............');
     _addRawRoutePoint(
       latitude: currentLocation.coords.latitude,
@@ -690,7 +666,7 @@ class RouteBuilderBloc {
 
   Future _writeRawPoint({double latitude, double longitude}) async {
     var routeID = _route.routeID;
-    myDebugPrint(
+    mp(
         '🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint to LOCAL DB for 🔆  routeID:  👌 $routeID.............');
     assert(routeID != null);
     assert(latitude != null);
@@ -707,7 +683,7 @@ class RouteBuilderBloc {
 
     try {
       await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: point);
-      myDebugPrint(
+      mp(
           '🔴 🔴 🔴 🔴 🔴 🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
       _rawRoutePoints.add(point);
       _rawRoutePointController.sink.add(_rawRoutePoints);
@@ -724,7 +700,7 @@ class RouteBuilderBloc {
     if (timer != null) {
       timer.cancel();
       timer = null;
-      myDebugPrint('\n\n🧩🧩 🧩🧩 🧩🧩 Timer cancelled and 👿👿👿 nulled');
+      mp('\n\n🧩🧩 🧩🧩 🧩🧩 Timer cancelled and 👿👿👿 nulled');
     }
   }
 

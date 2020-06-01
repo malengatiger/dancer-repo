@@ -64,7 +64,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         landmarksOnRoute++;
       }
     });
-    myDebugPrint(
+    mp(
         '🔆🔆🔆 🔆🔆🔆 🔆🔆🔆 Landmarks on the route: $landmarksOnRoute');
     _buildItems();
     if (_mapController != null) {
@@ -94,7 +94,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     if (_route.routePoints.isNotEmpty) {
       showButton = false;
     }
-    myDebugPrint(
+    mp(
         '\n\n🍏 🍎 🍏 🍎  Route points:  🧩  snapped: ${_routePoints.length} 🧩\n\n');
     _setRouteMarkers();
     setState(() {});
@@ -146,7 +146,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
   void putMarkerOnMap(RoutePoint m, BitmapDescriptor icon) {
     _markers.add(Marker(
         onTap: () {
-          myDebugPrint(
+          mp(
               'LandmarkManager: 🔴 marker tapped!! ❤️ 🧡 💛   ${m.created}');
           _onMarkerTapped(m);
         },
@@ -169,10 +169,10 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
           latLngs.add(LatLng(m.latitude, m.longitude));
         });
       } catch (e) {
-        myDebugPrint(
+        mp(
             '👿 👿 👿 👿 👿 👿  Houston, we have a fucking problem! setting up LatLng in list 👿 👿 👿 👿 👿 👿 👿 👿');
       }
-      myDebugPrint(
+      mp(
           '📌 📌 📌 LandmarksManagerPage: create polyline 🔵 🔵 🔵 🔵 latLngs:🍀️🍀️ ${latLngs.length} 🍀️🍀️\n');
       var polyLine = Polyline(
           polylineId: PolylineId('${DateTime.now().toIso8601String()}'),
@@ -201,10 +201,10 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   ///Start the Landmark editor on marker tap
   _onMarkerTapped(RoutePoint routePoint) async {
-    myDebugPrint(
+    mp(
         'LandmarksManagerPage: 📌 📌 📌 📌 📌 📌 Marker tapped: routePOINT: ${routePoint.toJson()}');
     if ((routePoint.landmarkID != null)) {
-      myDebugPrint('Marker tapped: route point is already a landmark');
+      mp('Marker tapped: route point is already a landmark');
       return;
     }
     await _mapController.animateCamera(CameraUpdate.newCameraPosition(
@@ -221,7 +221,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                 listener: this)));
     if (landmark != null) {
       if (landmark is Landmark) {
-        myDebugPrint(
+        mp(
             '🐥 🐥 🐥  LandmarksManagerPage: landmark from editor ... need map to reflect new landmark ....');
         _route = await LocalDBAPI.getRoute(routeID: _route.routeID);
         Navigator.pop(context);
@@ -403,7 +403,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
                         color: Colors.blue.shade800,
                         elevation: 16,
                         onPressed: () {
-                          myDebugPrint(
+                          mp(
                               '🧩 🧩 🧩 🧩 Confirm Route button pressed  🧩 🧩 🧩 🧩 ');
                         },
                         child: Padding(
@@ -432,38 +432,38 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   @override
   onLandmarkInfoWindowTapped(Landmark landmark) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkInfoWindowTapped: 🧩🧩 ${landmark.landmarkName}  🍎 ');
     landmark.routeDetails.forEach((m) {
-      myDebugPrint(
+      mp(
           ' 🐸 🐸 🐸  You can get on route :  🍎 ${m.name} from 🧩🧩 ${landmark.landmarkName}');
     });
   }
 
   @override
   onLandmarkTapped(Landmark landmark) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onLandmarkTapped: 🧩🧩 ${landmark.landmarkName}  🥬 ');
     // todo - show UPDATE landmark editor
   }
 
   @override
   onLongPress(LatLng latLng) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onLongPress: map pressed on latLng: 🧩🧩 $latLng  💛 ');
     // todo - show NEW landmark editor
   }
 
   @override
   onPointInfoWindowTapped(RoutePoint point) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointInfoWindowTapped: 🧩🧩 created: ${point.created}  🧡 index: ${point.index}');
     // todo - show NEW landmark editor
   }
 
   @override
   onPointTapped(RoutePoint point) {
-    myDebugPrint(
+    mp(
         ' 🥬 CreateRoutePointsPage:  🐸 onPointTapped: 🧩🧩  created: ${point.created}  ❤️ index: ${point.index}');
     // todo - show NEW landmark editor
   }
@@ -522,7 +522,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
 
   List<RoutePoint> mList = List();
   _displayLandmarks() {
-    myDebugPrint(
+    mp(
         '_displayLandmarks: 🔆 🔆 🔆 🔆  showLandmarks: $showLandmarks');
     mList.clear();
     var mx = Map<String, RoutePoint>();
@@ -535,7 +535,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
       mList.add(value);
     });
     showLandmarks = !showLandmarks;
-    myDebugPrint(
+    mp(
         '_displayLadmarks  ❤️ 🧡 💛  mList: ${mList.length}: showLandmarks state: 🧡  $showLandmarks');
     setState(() {});
   }
@@ -574,7 +574,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
     );
     if (update != null) {
       if ((update is aftarobot.Route)) {
-        myDebugPrint(
+        mp(
             '🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 🐥 Route state refresh required: points: ${update.routePoints.length}');
         setState(() {
           _route = update;
@@ -582,7 +582,7 @@ class _LandmarksManagerPageState extends State<LandmarksManagerPage>
         });
       }
     } else {
-      myDebugPrint('🔆 🔆 🔆 🔆  Route update NOT required');
+      mp('🔆 🔆 🔆 🔆  Route update NOT required');
     }
   }
 }

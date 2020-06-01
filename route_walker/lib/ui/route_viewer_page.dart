@@ -88,7 +88,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     if (asses.isEmpty) {
       asses = await routeBuilderBloc.getAssociations();
     } else {
-      myDebugPrint('asssociations from local cache: ${asses.length}');
+      mp('asssociations from local cache: ${asses.length}');
     }
     _buildDropDownItems();
     LocalDBAPI.setAppID();
@@ -380,9 +380,9 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   @override
   onMessage(aftarobot.Route route, String message, Color textColor,
       Color backColor, bool isError) {
-    myDebugPrint(
+    mp(
         'onMessage: 🍏 🍏 🍏 🍏 ${route.rawRoutePoints.length} 🍎 in route ${route.name}');
-    myDebugPrint(
+    mp(
         'onMessage: 🍏 🍏 🍏 🍏 ${route.routePoints.length} 🍎 in route ${route.name}');
     if (isError) {
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: message);
@@ -598,7 +598,7 @@ class _RouteCardState extends State<RouteCard>
 
   aftarobot.Route route;
   _startNavigation() async {
-    myDebugPrint('_startNavigation........... : 🍎 🍎 🍎');
+    mp('_startNavigation........... : 🍎 🍎 🍎');
     await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
 
