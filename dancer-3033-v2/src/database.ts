@@ -8,12 +8,21 @@ import Messaging from "./helpers/messaging";
 const password = process.env.MONGODB_PASSWORD || "xxxxx";
 const user = process.env.MONGODB_USER || "xxxx";
 const mongoConnectionString = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
+/*
+const mongoose = require("mongoose");
+    const mongoDB = 'mongodb://localhost/playground';
+    mongoose.set('useNewUrlParser', true);
+    mongoose.set('useUnifiedTopology', true);
 
+    mongoose.connect(mongoDB).then(() => 
+    console.log("Connected to mongoDB..."))
+    .catch(err => console.error(err.message));;
+*/
 mongoose.Promise = global.Promise;
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useUnifiedTopology', true);
 mongoose
-  .connect(mongoConnectionString, {
-    useNewUrlParser: true,
-  })
+  .connect(mongoConnectionString)
   .then((client) => {
     log(
       `\n🔆🔆  Mongo connected ... 🔆 ${new Date()} `,
@@ -31,7 +40,7 @@ mongoose
     MongooseDebugSetting.setDebug();
     Messaging.init();
     
-    MongoListeners.listen(client);
+    //MongoListeners.listen(client);
     console.log(`🍎🍎🍎  MongoDB collections available ...`);
     console.log(mongoose.connection.collections);
     

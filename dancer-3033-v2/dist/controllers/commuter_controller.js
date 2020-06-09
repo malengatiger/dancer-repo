@@ -32,6 +32,7 @@ const commuter_fence_dwell_event_1 = __importDefault(require("../models/commuter
 const commuter_fence_exit_event_1 = __importDefault(require("../models/commuter_fence_exit_event"));
 const payment_1 = __importDefault(require("../models/payment"));
 const commuter_vehicle_nearby_1 = __importDefault(require("../models/commuter_vehicle_nearby"));
+const messaging_1 = __importDefault(require("../helpers/messaging"));
 class CommuterController {
     routes(app) {
         console.log(`🏓    CommuterController:  💙  setting up default Commuter routes ...`);
@@ -56,7 +57,7 @@ class CommuterController {
                 console.log(`stringWallet: ${walletFlag} .................... Check the incoming isWallet boolean below`);
                 console.log(comm);
                 const result = yield comm.save();
-                // log(result);
+                messaging_1.default.sendCommuterRequest(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -183,7 +184,7 @@ class CommuterController {
                 c.commuterArrivalLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
+                messaging_1.default.sendCommuterArrivalLandmark(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -202,7 +203,7 @@ class CommuterController {
                 c.commuterPickupLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
+                messaging_1.default.sendCommuterPickupLandmark(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -306,7 +307,6 @@ class CommuterController {
                 c.commuterStartingLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
                 res.status(200).json({
                     result
                 });
@@ -327,7 +327,7 @@ class CommuterController {
                 c.commuterArrivalLandmarkID = v1_1.default();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
+                messaging_1.default.sendCommuterArrivalLandmark(result);
                 res.status(200).json(result);
             }
             catch (err) {

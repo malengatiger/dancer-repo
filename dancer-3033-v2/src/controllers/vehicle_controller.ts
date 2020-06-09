@@ -9,6 +9,7 @@ import VehicleType from "../models/vehicle_type";
 import uuid = require("uuid");
 import VehicleRouteAssignment from "../models/vehicle_route_assignment";
 import VehicleCommuterNearby from "../models/vehicle_commuter_nearby";
+import Messaging from "../helpers/messaging";
 
 export class VehicleController {
 
@@ -362,7 +363,7 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleArrival").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addVehicleArrival requested `;
+      const msg = `🍏 🍏 🍏 🍏 addVehicleArrival; taxi: 🍎 ${req.body.vehicleReg} arrival recording at 🔵 ${new Date().toISOString()} 🔵`;
       console.log(msg);
 
       try {
@@ -370,6 +371,7 @@ export class VehicleController {
         c.vehicleArrivalID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
+        Messaging.sendVehicleArrival(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -381,40 +383,19 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleRouteAssignment").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 VehicleController: .........  💦 POST: addVehicleRouteAssignment requested ....`;
+      const msg = `🍎🍎🍎 VehicleController: .........  💦💦💦 POST: addVehicleRouteAssignment requested ....`;
       console.log(msg);
       console.log(req.body)
-
       try {
         const c: any = new VehicleRouteAssignment(req.body);
         c.routeAssignmentID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        console.log(`🌸🌸🌸 addVehicleRouteAssignment OK ........ 🌸🌸🌸 finding vehicle for update with route ...`);
-
-        const vehicle: any = await Vehicle.findOne({vehicleID: req.body.vehicleID})
-        if (vehicle) {
-          if (!vehicle.assignments) {
-            vehicle.assignments = []
-          }
-          var isFound = false;
-          vehicle.assignments.forEach((a: any) => {
-            if (a.routeID == c.routeID) {
-              isFound = true;
-            }
-          })
-          if (!isFound) {
-            vehicle.assignments.push(c)
-            await vehicle.update();
-            console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
-          }
-         
-          res.status(200).json(result);
-        } else {
-          console.error(`******* 🌸 Vehicle to be updated not found, vehicleId : ${req.body.vehicleID} *****`)
-          res.status(400).json({message: 'Vehicle to be updated not found'});
-        }
-      
+        console.log(`🌸🌸🌸 🍎 addVehicleRouteAssignment added OK, will get all vehicle assignments 🍎 ........ 🌸🌸🌸 ${result}`);
+        const assignments = await VehicleRouteAssignment.find(
+          { vehicleID: req.body.vehicleID });
+          console.log(`🌸🌸🌸 🍎 addVehicleRouteAssignment: returning list of assignments: ${assignments.length}`);
+        res.status(200).json(assignments);
         
       } catch (err) {
         res.status(400).json(
@@ -426,7 +407,7 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleDeparture").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addVehicleDeparture requested `;
+      const msg = `🍏 🍏 🍏 🍏 addVehicleDeparture; taxi: 🍎 ${req.body.vehicleReg} departure recording at 🔵 ${new Date().toISOString()} 🔵`;
       console.log(msg);
 
       try {
@@ -434,7 +415,7 @@ export class VehicleController {
         c.vehicleDepartureID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+        Messaging.sendVehicleDeparture(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -446,7 +427,7 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleLocation").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addVehicleLocation requested `;
+      const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; taxi: 🍎 ${req.body.vehicleReg} location recording at 🔵 ${new Date().toISOString()} 🔵`;
       console.log(msg);
 
       try {
@@ -454,7 +435,7 @@ export class VehicleController {
         const c: any = new VehicleLocation(req.body);
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+       
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -554,8 +535,7 @@ export class VehicleController {
         const days = parseInt(req.body.days);
         const cutOff: string = moment().subtract(days, "days").toISOString();
         const result = await VehicleRouteAssignment.find(
-          { associationID: req.body.associationID,
-            created: { $gt: cutOff } });
+          { associationID: req.body.associationID });
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(

@@ -21,6 +21,7 @@ import CommuterFenceDwellEvent from "../models/commuter_fence_dwell_event";
 import CommuterFenceExitEvent from "../models/commuter_fence_exit_event";
 import Payment from "../models/payment";
 import CommuterVehicleNearby from "../models/commuter_vehicle_nearby";
+import Messaging from "../helpers/messaging";
 
 export class CommuterController {
 
@@ -51,7 +52,7 @@ export class CommuterController {
         console.log(`stringWallet: ${walletFlag} .................... Check the incoming isWallet boolean below`);
         console.log(comm);
         const result = await comm.save();
-        // log(result);
+        Messaging.sendCommuterRequest(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -193,7 +194,7 @@ export class CommuterController {
         c.commuterArrivalLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+        Messaging.sendCommuterArrivalLandmark(result);
         res.status(200).json(result);
       } catch (err) {
         log(err);
@@ -214,7 +215,7 @@ export class CommuterController {
         c.commuterPickupLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+        Messaging.sendCommuterPickupLandmark(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -328,7 +329,7 @@ export class CommuterController {
         c.commuterStartingLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+        
         res.status(200).json({
           result
         });
@@ -351,7 +352,7 @@ export class CommuterController {
         c.commuterArrivalLandmarkID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+        Messaging.sendCommuterArrivalLandmark(result);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(

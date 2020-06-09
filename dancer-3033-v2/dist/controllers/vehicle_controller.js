@@ -22,6 +22,7 @@ const vehicle_type_1 = __importDefault(require("../models/vehicle_type"));
 const uuid = require("uuid");
 const vehicle_route_assignment_1 = __importDefault(require("../models/vehicle_route_assignment"));
 const vehicle_commuter_nearby_1 = __importDefault(require("../models/vehicle_commuter_nearby"));
+const messaging_1 = __importDefault(require("../helpers/messaging"));
 class VehicleController {
     routes(app) {
         console.log(`🏓    VehicleController:  💙  setting up default Vehicle routes ...`);
@@ -333,13 +334,14 @@ class VehicleController {
             }
         }));
         app.route("/addVehicleArrival").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addVehicleArrival requested `;
+            const msg = `🍏 🍏 🍏 🍏 addVehicleArrival; taxi: 🍎 ${req.body.vehicleReg} arrival recording at 🔵 ${new Date().toISOString()} 🔵`;
             console.log(msg);
             try {
                 const c = new vehicle_arrival_1.default(req.body);
                 c.vehicleArrivalID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
+                messaging_1.default.sendVehicleArrival(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -350,7 +352,7 @@ class VehicleController {
             }
         }));
         app.route("/addVehicleRouteAssignment").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 VehicleController: .........  💦 POST: addVehicleRouteAssignment requested ....`;
+            const msg = `🍎🍎🍎 VehicleController: .........  💦💦💦 POST: addVehicleRouteAssignment requested ....`;
             console.log(msg);
             console.log(req.body);
             try {
@@ -358,29 +360,10 @@ class VehicleController {
                 c.routeAssignmentID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                console.log(`🌸🌸🌸 addVehicleRouteAssignment OK ........ 🌸🌸🌸 finding vehicle for update with route ...`);
-                const vehicle = yield vehicle_1.default.findOne({ vehicleID: req.body.vehicleID });
-                if (vehicle) {
-                    if (!vehicle.assignments) {
-                        vehicle.assignments = [];
-                    }
-                    var isFound = false;
-                    vehicle.assignments.forEach((a) => {
-                        if (a.routeID == c.routeID) {
-                            isFound = true;
-                        }
-                    });
-                    if (!isFound) {
-                        vehicle.assignments.push(c);
-                        yield vehicle.update();
-                        console.log(`🌸🌸🌸 addVehicleRouteAssignment OK: 🧡vehicle updated: ${vehicle.vehicleReg} routes assigned: ${vehicle.assignments.length} 🧡`);
-                    }
-                    res.status(200).json(result);
-                }
-                else {
-                    console.error(`******* 🌸 Vehicle to be updated not found, vehicleId : ${req.body.vehicleID} *****`);
-                    res.status(400).json({ message: 'Vehicle to be updated not found' });
-                }
+                console.log(`🌸🌸🌸 🍎 addVehicleRouteAssignment added OK, will get all vehicle assignments 🍎 ........ 🌸🌸🌸 ${result}`);
+                const assignments = yield vehicle_route_assignment_1.default.find({ vehicleID: req.body.vehicleID });
+                console.log(`🌸🌸🌸 🍎 addVehicleRouteAssignment: returning list of assignments: ${assignments.length}`);
+                res.status(200).json(assignments);
             }
             catch (err) {
                 res.status(400).json({
@@ -390,14 +373,14 @@ class VehicleController {
             }
         }));
         app.route("/addVehicleDeparture").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addVehicleDeparture requested `;
+            const msg = `🍏 🍏 🍏 🍏 addVehicleDeparture; taxi: 🍎 ${req.body.vehicleReg} departure recording at 🔵 ${new Date().toISOString()} 🔵`;
             console.log(msg);
             try {
                 const c = new vehicle_departure_1.default(req.body);
                 c.vehicleDepartureID = uuid();
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
+                messaging_1.default.sendVehicleDeparture(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -408,13 +391,12 @@ class VehicleController {
             }
         }));
         app.route("/addVehicleLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🌽🌽🌽 addVehicleLocation requested `;
+            const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; taxi: 🍎 ${req.body.vehicleReg} location recording at 🔵 ${new Date().toISOString()} 🔵`;
             console.log(msg);
             try {
                 const c = new vehicle_location_1.default(req.body);
                 c.created = new Date().toISOString();
                 const result = yield c.save();
-                // log(result);
                 res.status(200).json(result);
             }
             catch (err) {
@@ -507,8 +489,7 @@ class VehicleController {
             try {
                 const days = parseInt(req.body.days);
                 const cutOff = moment_1.default().subtract(days, "days").toISOString();
-                const result = yield vehicle_route_assignment_1.default.find({ associationID: req.body.associationID,
-                    created: { $gt: cutOff } });
+                const result = yield vehicle_route_assignment_1.default.find({ associationID: req.body.associationID });
                 res.status(200).json(result);
             }
             catch (err) {
