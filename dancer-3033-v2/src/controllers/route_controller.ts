@@ -104,6 +104,9 @@ export class RouteController {
                 const route: any = new Route(req.body);
                 route.routeID = uuid();
                 route.created = new Date().toISOString();
+                if (!req.body.heading) {
+                    route.heading = 0.0
+                }
                 const result = await route.save();
                 log(`result ${result}`);
                 res.status(200).json(result);

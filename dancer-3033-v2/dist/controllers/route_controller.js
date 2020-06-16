@@ -98,6 +98,9 @@ class RouteController {
                 const route = new route_1.default(req.body);
                 route.routeID = uuid();
                 route.created = new Date().toISOString();
+                if (!req.body.heading) {
+                    route.heading = 0.0;
+                }
                 const result = yield route.save();
                 log_1.log(`result ${result}`);
                 res.status(200).json(result);
