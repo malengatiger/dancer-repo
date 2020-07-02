@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BGController = void 0;
 const messaging_1 = require("../helpers/messaging");
 const log_1 = require("../log");
 class BGController {

@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CommuterController = void 0;
 const commuter_request_1 = __importDefault(require("../models/commuter_request"));
 const log_1 = require("../log");
 const moment_1 = __importDefault(require("moment"));
@@ -234,6 +235,29 @@ class CommuterController {
                 });
             }
         }));
+        app.route("/getCommuterPickupByLandmarkIDs").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterPickupByLandmarkIDs requested `;
+            console.log(msg);
+            log_1.log(req.body);
+            try {
+                const minutes = parseInt(req.body.minutes);
+                const landmarkIDs = req.body.landmarkIDs;
+                const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
+                const result = yield commuter_pickup_landmark_1.default.find({
+                    fromLandmarkID: { $in: landmarkIDs }, created: { $gt: cutOff }
+                });
+                // log(result);
+                res.status(200).json(result);
+                log_1.log(`🍎 getCommuterPickupByLandmarkIDs: found : 🍎 ${result.length} 🍎`);
+            }
+            catch (err) {
+                log_1.log(err);
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getCommuterPickupByLandmarkIDs failed'
+                });
+            }
+        }));
         app.route("/getCommuterArrivalLandmarks").post((req, res) => __awaiter(this, void 0, void 0, function* () {
             const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalLandmarks requested `;
             console.log(msg);
@@ -255,6 +279,29 @@ class CommuterController {
                 res.status(400).json({
                     error: err,
                     message: ' 🍎🍎🍎🍎 getCommuterArrivalLandmarks failed'
+                });
+            }
+        }));
+        app.route("/getCommuterArrivalByLandmarkIDs").post((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalByLandmarkIDs requested `;
+            console.log(msg);
+            log_1.log(req.body);
+            try {
+                const minutes = parseInt(req.body.minutes);
+                const landmarkIDs = req.body.landmarkIDs;
+                const cutOff = moment_1.default().subtract(minutes, "minutes").toISOString();
+                const result = yield commuter_arrival_landmark_1.default.find({
+                    fromLandmarkID: { $in: landmarkIDs }, created: { $gt: cutOff }
+                });
+                // log(result);
+                res.status(200).json(result);
+                log_1.log(`🍎 getCommuterArrivalByLandamrkIDs: found : 🍎 ${result.length} 🍎`);
+            }
+            catch (err) {
+                log_1.log(err);
+                res.status(400).json({
+                    error: err,
+                    message: ' 🍎🍎🍎🍎 getCommuterArrivalByLandmarkIDs failed'
                 });
             }
         }));

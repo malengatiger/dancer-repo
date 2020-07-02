@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RouteController = void 0;
 const route_1 = __importDefault(require("../models/route"));
 const log_1 = require("../log");
 const uuid = require("uuid");

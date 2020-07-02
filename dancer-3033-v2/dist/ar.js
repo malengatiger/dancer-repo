@@ -1,9 +1,21 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
     return result;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -25,6 +37,8 @@ const vehicle_controller_1 = require("./controllers/vehicle_controller");
 const dispatch_controller_1 = require("./controllers/dispatch_controller");
 const city_controller_1 = require("./controllers/city_controller");
 const bg_controller_1 = require("./controllers/bg_controller");
+const chat_controller_1 = require("./controllers/chat_controller");
+const notifications_controller_1 = require("./controllers/notifications_controller");
 const port = process.env.PORT || "8083";
 class AftaRobotApp {
     constructor() {
@@ -33,6 +47,8 @@ class AftaRobotApp {
         this.routeController = new assoc_controller_1.default();
         this.assocController = new route_controller_1.default();
         this.userController = new user_controller_1.default();
+        this.chatController = new chat_controller_1.ChatController();
+        this.notificationsController = new notifications_controller_1.NotificationsController;
         this.landmarkController = new landmark_controller_1.default();
         this.commuterController = new commuter_controller_1.CommuterController();
         this.vehicleController = new vehicle_controller_1.VehicleController();
@@ -45,6 +61,8 @@ class AftaRobotApp {
         this.initializeMiddleware();
         this.appController.routes(this.app);
         this.userController.routes(this.app);
+        this.chatController.routes(this.app);
+        this.notificationsController.routes(this.app);
         this.routeController.routes(this.app);
         this.assocController.routes(this.app);
         this.cityController.routes(this.app);

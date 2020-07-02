@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RoutePoint = exports.Rating = exports.VehicleLog = exports.Video = exports.Photo = exports.RouteDetail = exports.Position = exports.AssociationDetail = void 0;
 class AssociationDetail {
 }
 exports.AssociationDetail = AssociationDetail;

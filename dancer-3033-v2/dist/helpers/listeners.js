@@ -15,6 +15,8 @@ class MongoListeners {
         const landmarks = client.connection.collection(constants_1.default.LANDMARKS);
         const dispatchRecords = client.connection.collection(constants_1.default.DISPATCH_RECORDS);
         const panics = client.connection.collection(constants_1.default.COMMUTER_PANICS);
+        const notifications = client.connection.collection(constants_1.default.NOTIFICATIONS);
+        const chat = client.connection.collection(constants_1.default.CHAT);
         const vehicleArrivals = client.connection.collection(constants_1.default.VEHICLE_ARRIVALS);
         const vehicleDepartures = client.connection.collection(constants_1.default.VEHICLE_DEPARTURES);
         const vehicleCommuterNearby = client.connection.collection(constants_1.default.VEHICLE_COMMUTER_NEARBY);
@@ -29,6 +31,8 @@ class MongoListeners {
         const assocStream = associations.watch({ fullDocument: 'updateLookup' });
         const routeStream = routes.watch({ fullDocument: 'updateLookup' });
         const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
+        const notificationsStream = notifications.watch({ fullDocument: 'updateLookup' });
+        const chatStream = chat.watch({ fullDocument: 'updateLookup' });
         const dwellStream = commuterDwellEvents.watch({ fullDocument: 'updateLookup' });
         const exitStream = commuterExitEvents.watch({ fullDocument: 'updateLookup' });
         const commuterArrivalStream = commuterArrivalLandmarks.watch({ fullDocument: 'updateLookup' });
@@ -57,7 +61,19 @@ class MongoListeners {
                 log_1.log(event);
                 messaging_1.default.sendPayment(event.fullDocument);
             });
+            // 
+            notificationsStream.on("change", (event) => {
+                log_1.log(`\n🔆🔆🔆🔆   🍎 notificationsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
+                log_1.log(event);
+                messaging_1.default.sendNotification(event.fullDocument);
+            });
             //
+            chatStream.on("change", (event) => {
+                log_1.log(`\n🔆🔆🔆🔆   🍎 chatStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
+                log_1.log(event);
+                messaging_1.default.sendChat(event.fullDocument);
+            });
+            //   
             exitStream.on("change", (event) => {
                 log_1.log(`\n🔆🔆🔆🔆   🍎  exitStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`);
                 log_1.log(event);

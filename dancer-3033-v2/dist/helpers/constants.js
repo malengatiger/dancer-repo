@@ -25,5 +25,7 @@ Constants.ROUTE_DISTANCE_ESTIMATION = 'routedistanceestimations';
 Constants.COMMUTER_PICKUP_LANDMARKS = 'commuterpickuplandmarks';
 Constants.COMMUTER_FENCE_DWELL_EVENTS = 'commuterfencedwellevents';
 Constants.COMMUTER_FENCE_EXIT_EVENTS = 'commuterfenceexitevents';
+Constants.NOTIFICATIONS = 'notifications';
+Constants.CHAT = 'chat';
 exports.default = Constants;
 //# sourceMappingURL=constants.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.logGreen = exports.logBlue = exports.log = void 0;
 const chalk = require("chalk");
 function log(msg) {
     console.log(msg);
