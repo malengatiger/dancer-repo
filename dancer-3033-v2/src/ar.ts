@@ -14,6 +14,8 @@ import { VehicleController } from "./controllers/vehicle_controller";
 import { DispatchController } from "./controllers/dispatch_controller";
 import { CityController } from "./controllers/city_controller";
 import { BGController } from "./controllers/bg_controller";
+import { ChatController } from "./controllers/chat_controller";
+import { NotificationsController } from "./controllers/notifications_controller";
 
 const port = process.env.PORT || "8083";
 
@@ -25,7 +27,10 @@ class AftaRobotApp {
     public routeController: RouteController = new RouteController();
     public assocController: AssociationController = new AssociationController();
     public userController: UserController = new UserController();
-    
+   
+    public chatController: ChatController = new ChatController();
+    public notificationsController: NotificationsController = new NotificationsController
+
     public landmarkController: LandmarkController = new LandmarkController();
     public commuterController: CommuterController = new CommuterController();
     public vehicleController: VehicleController = new VehicleController();
@@ -42,7 +47,10 @@ class AftaRobotApp {
 
         this.appController.routes(this.app);
         this.userController.routes(this.app);
-
+       
+        this.chatController.routes(this.app);
+        this.notificationsController.routes(this.app)
+        
         this.routeController.routes(this.app);
         this.assocController.routes(this.app);
         this.cityController.routes(this.app);

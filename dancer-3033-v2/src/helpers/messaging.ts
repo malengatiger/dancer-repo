@@ -76,6 +76,70 @@ class Messaging {
             } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
         );
     }
+    public static async sendNotification(data: any, ): Promise<any> {
+        const options: any = {
+            priority: "high",
+            timeToLive: 60 * 60,
+        };
+        const payload: any = {
+            notification: {
+                title: "notifications",
+                body: data.associationName,
+         },
+         data: {
+            type: Constants.NOTIFICATIONS,
+            associationName: data.associationName,
+            message: data.message,
+            created: data.created,
+            landmarkID: data.landmarkID,
+            platforms: data.platform,
+            email: data.email
+        },
+    };
+    const topic = Constants.NOTIFICATIONS + '_' + data.landmarkID;
+    const result = await fba.sendToTopic(topic, payload, options);
+    log(
+        `😍 sendNotification: FCM message sent: 😍 ${
+        data.landmarkID
+        } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+    );
+    console.log(payload.data);
+} 
+public static async sendChat(
+    data: any,
+): Promise<any> {
+    const options: any = {
+        priority: "normal",
+        timeToLive: 60 * 60,
+    };
+    const payload: any = {
+        notification: {
+            title: "chat support",
+            body: data.assocUserID + ' at ' + data.adminUserID,
+        },
+        data: {
+            associaionID: data.associationID,
+            associationName: data.associationName,
+            email: data.email,
+            assocUserID: data.assocUserID,
+            adminUserID: data.adminUserID,
+            fullName: data.fullName,
+            message: data.message,
+            messageType: data.messageType,
+            opened: data.opened,
+            created: data.created
+        },
+    };
+    const topic = Constants.CHAT + '_' + data.associationName;
+    const result = await fba.sendToTopic(topic, payload, options);
+    log(
+        `😍 sendChat: FCM message sent: 😍 ${
+        data.associationName
+        } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+    );
+    console.log(payload.data);
+}
+
     public static async sendVehicleArrival(data: any, ): Promise<any> {
         const options: any = {
             priority: "high",
@@ -273,7 +337,7 @@ class Messaging {
                 routeID: data.routeID,
                 vehicleID: data.vehicleID,
                 vehicleReg: data.vehicleReg,
-                departureID: data.departureID,
+               // departureID: data.departureID,
                 created: data.created
             },
         };

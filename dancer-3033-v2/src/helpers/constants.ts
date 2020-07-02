@@ -23,6 +23,9 @@ class Constants {
     public static COMMUTER_PICKUP_LANDMARKS = 'commuterpickuplandmarks';
     public static COMMUTER_FENCE_DWELL_EVENTS = 'commuterfencedwellevents';
     public static COMMUTER_FENCE_EXIT_EVENTS = 'commuterfenceexitevents';
+    public static NOTIFICATIONS = 'notifications';
+    public static CHAT = 'chat';
+
 }
 
 export default Constants;

@@ -17,6 +17,9 @@ class MongoListeners {
     const landmarks = client.connection.collection(Constants.LANDMARKS);
     const dispatchRecords = client.connection.collection(Constants.DISPATCH_RECORDS);
     const panics = client.connection.collection(Constants.COMMUTER_PANICS);
+    const notifications = client.connection.collection(Constants.NOTIFICATIONS)
+    const chat = client.connection.collection(Constants.CHAT);
+
 
     const vehicleArrivals = client.connection.collection(Constants.VEHICLE_ARRIVALS);
     const vehicleDepartures = client.connection.collection(Constants.VEHICLE_DEPARTURES);
@@ -33,6 +36,8 @@ class MongoListeners {
     const assocStream = associations.watch({ fullDocument: 'updateLookup' });
     const routeStream = routes.watch({ fullDocument: 'updateLookup' });
     const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
+    const notificationsStream = notifications.watch({fullDocument: 'updateLookup'})
+    const chatStream = chat.watch({ fullDocument: 'updateLookup' });
 
     const dwellStream = commuterDwellEvents.watch({ fullDocument: 'updateLookup' });
     const exitStream = commuterExitEvents.watch({ fullDocument: 'updateLookup' });
@@ -73,8 +78,24 @@ class MongoListeners {
         log(event);
         Messaging.sendPayment(event.fullDocument);
       });
-      //
-      exitStream.on("change", (event: any) => {
+      // 
+      notificationsStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎 notificationsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+         log(event)
+         Messaging.sendNotification(event.fullDocument)
+       });
+       //
+       chatStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎 chatStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+          );
+          log(event);
+            Messaging.sendChat(event.fullDocument);
+            });
+           //   
+    exitStream.on("change", (event: any) => {
         log(
           `\n🔆🔆🔆🔆   🍎  exitStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
