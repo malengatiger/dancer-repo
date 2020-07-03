@@ -409,7 +409,7 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleArrival").post(async (req: Request, res: Response) => {
-      const msg = `🍏 🍏 🍏 🍏 addVehicleArrival; taxi: 🍎 ${req.body.vehicleReg} arrival recording at 🔵 ${new Date().toISOString()} 🔵`;
+      const msg = `🍏 🍏 🍏 🍏 addVehicleArrival; taxi: 🍎 ${req.body.vehicleReg} arrival recording at 🔵 ${new Date().toISOString()} 🔵 🍏 🍏`;
       console.log(msg);
 
       try {
@@ -437,7 +437,7 @@ export class VehicleController {
         c.routeAssignmentID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        console.log(`🌸🌸🌸 🍎 addVehicleRouteAssignment added OK, will get all vehicle assignments 🍎 ........ 🌸🌸🌸 ${result}`);
+        console.log(`🌸🌸🌸 🍎 addVehicleRouteAssignment added OK, will get all vehicle assignments 🍎 ........ 🌸🌸🌸 ${JSON.stringify(result)}`);
         const assignments = await VehicleRouteAssignment.find(
           { vehicleID: req.body.vehicleID });
           console.log(`🌸🌸🌸 🍎 addVehicleRouteAssignment: returning list of assignments: ${assignments.length}`);
@@ -473,7 +473,8 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleLocation").post(async (req: Request, res: Response) => {
-      const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; request body: 🍎 ${JSON.stringify(req.body)} : vehicle location recording at 🔵 ${new Date().toISOString()} 🔵`;
+      const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; request body: 🍎 ${JSON.stringify(req.body.vehicleReg)} 
+      : vehicle location recording at 🔵 ${new Date().toISOString()} 🔵`;
       console.log(msg);
 
       try {
@@ -493,13 +494,13 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleType").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 addVehicleType requested `;
+      const msg = `🌽🌽🌽 addVehicleType requested ${JSON.stringify(req.body)}`;
       console.log(msg);
       try {
         const vehicleType: any = new VehicleType(req.body);
         vehicleType.vehicleTypeID = uuid();
         const result = await vehicleType.save();
-        // log(result);
+        log(`🍎🍎 vehicleType added: ${result}`);
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
