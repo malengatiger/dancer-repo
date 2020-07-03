@@ -427,7 +427,7 @@ export class VehicleController {
       }
     });
     app.route("/addVehicleLocation").post(async (req: Request, res: Response) => {
-      const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; taxi: 🍎 ${req.body.vehicleReg} location recording at 🔵 ${new Date().toISOString()} 🔵`;
+      const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; request body: 🍎 ${JSON.stringify(req.body)} : vehicle location recording at 🔵 ${new Date().toISOString()} 🔵`;
       console.log(msg);
 
       try {

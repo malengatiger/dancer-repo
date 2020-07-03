@@ -391,7 +391,7 @@ class VehicleController {
             }
         }));
         app.route("/addVehicleLocation").post((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; taxi: 🍎 ${req.body.vehicleReg} location recording at 🔵 ${new Date().toISOString()} 🔵`;
+            const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; request body: 🍎 ${JSON.stringify(req.body)} : vehicle location recording at 🔵 ${new Date().toISOString()} 🔵`;
             console.log(msg);
             try {
                 const c = new vehicle_location_1.default(req.body);
