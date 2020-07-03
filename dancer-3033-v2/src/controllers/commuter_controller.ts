@@ -249,6 +249,30 @@ export class CommuterController {
         )
       }
     });
+    app.route("/getCommuterPickupByLandmarkIDs").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPickupByLandmarkIDs requested `;
+      console.log(msg);
+      log(req.body);
+    
+      try {
+        const minutes = parseInt(req.body.minutes);
+        const landmarkIDs = req.body.landmarkIDs;
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await CommuterPickupLandmark.find({
+        fromLandmarkID: {$in: landmarkIDs}, created: {$gt: cutOff}});
+        // log(result);
+        res.status(200).json(result);
+        log(`🍎 getCommuterPickupByLandmarkIDs: found : 🍎 ${result.length} 🍎`)
+      } catch (err) {
+        log(err);
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterPickupByLandmarkIDs failed'
+          }
+        )
+      }
+    });
     app.route("/getCommuterArrivalLandmarks").post(async(req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalLandmarks requested `;
       console.log(msg);
@@ -271,6 +295,30 @@ export class CommuterController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 getCommuterArrivalLandmarks failed'
+          }
+        )
+      }
+    });
+    app.route("/getCommuterArrivalByLandmarkIDs").post(async(req: Request, res: Response) => {
+      const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalByLandmarkIDs requested `;
+      console.log(msg);
+      log(req.body);
+    
+      try {
+        const minutes = parseInt(req.body.minutes);
+        const landmarkIDs = req.body.landmarkIDs;
+        const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+        const result = await CommuterArrivalLandmark.find({
+        fromLandmarkID: {$in: landmarkIDs}, created: {$gt: cutOff}});
+        // log(result);
+        res.status(200).json(result);
+        log(`🍎 getCommuterArrivalByLandamrkIDs: found : 🍎 ${result.length} 🍎`)
+      } catch (err) {
+        log(err);
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getCommuterArrivalByLandmarkIDs failed'
           }
         )
       }

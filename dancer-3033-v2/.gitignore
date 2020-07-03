@@ -2,5 +2,5 @@
 dancer.json
 package-lock.json
 qrcode_*
-node_modules
-dist
+node_modules/
+dist/
