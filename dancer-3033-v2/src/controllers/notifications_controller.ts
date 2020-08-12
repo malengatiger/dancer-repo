@@ -15,20 +15,20 @@ export class NotificationsController {
 
         app.route("/addNotification").post(async (req: Request, res: Response) => {
             log(
-                `\n\n💦  POST: /sendNotification requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+                `\n\n💦  POST: /addNotification requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
             );
             console.log(req.body);
             try {
                 const user: any = new NotificationsObject(req.body);
                 user.created = new Date().toISOString();
                 const result = await user.save();
-                // log(result);
+                log(result);
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
                     {
                         error: err,
-                        message: ' 🍎🍎🍎🍎 addMessage failed'
+                        message: ' 🍎🍎🍎🍎 addNotification failed'
                     }
                 )
             }
