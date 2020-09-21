@@ -41,11 +41,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f09a295-6b8f-4077-aee9-7373c07ab601" name="Default Changelist" comment="🐢 commit after moving to new taxiyam gcp project">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../marshalz/lib/bloc/marshal_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../marshalz/lib/bloc/marshal_bloc.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +87,14 @@
       <option name="project" value="LOCAL" />
       <updated>1600725909814</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="🐢 commit after moving to new taxiyam gcp project">
+      <created>1600726230771</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1600726230771</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -107,5 +111,23 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value=" commit after moving to new taxiyam gcp project" />
     <option name="LAST_COMMIT_MESSAGE" value=" commit after moving to new taxiyam gcp project" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1007" y="469" width="1279" height="476" key="MultipleFileMergeDialog" timestamp="1600726116312">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1007" y="469" width="1279" height="476" key="MultipleFileMergeDialog/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600726116312" />
+    <state x="1409" y="443" key="Vcs.Push.Dialog.v2" timestamp="1600726235912">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1409" y="443" key="Vcs.Push.Dialog.v2/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600726235912" />
+    <state x="1457" y="328" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1600727048276">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1457" y="328" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600727048276" />
+    <state x="1511" y="453" width="596" height="508" key="find.popup" timestamp="1600726980025">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1511" y="453" width="596" height="508" key="find.popup/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600726980025" />
   </component>
 </project>

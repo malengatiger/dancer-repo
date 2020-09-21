@@ -117,6 +117,8 @@ class MarshalBloc implements GeofencerListener {
     var devURL = DotEnv().env['devURL'];
     var prodURL = DotEnv().env['prodURL'];
     mp('🌸 🌸 🌸 🌸 ... MarshalBloc initializing: App status: 🔑 $status devURL: 🔑 $devURL prodURL: 🔑 $prodURL');
+    _geoFencer =
+        GeoFencer(userType: Constants.USER_MARSHAL, geofencerListener: this);
     _user = await Prefs.getUser();
     if (_user == null) {
       mp('🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  AftaRobot User is null.  👺  need to be created by portal 🔑 🔑 🔑');
@@ -129,8 +131,7 @@ class MarshalBloc implements GeofencerListener {
       _vehiclesController.sink.add(_vehicles);
     }
     _configureFCM();
-    _geoFencer =
-        GeoFencer(userType: Constants.USER_MARSHAL, geofencerListener: this);
+
     // _geoFencer.findLandmarksByLocation();
   }
 
@@ -369,6 +370,10 @@ class MarshalBloc implements GeofencerListener {
 
       mp('🌸 🌸  ${landmarks.length} landmarks found, adding to _landmarksController.sink ');
       _landmarksController.sink.add(landmarks);
+      if (_geoFencer == null) {
+        _geoFencer = GeoFencer(
+            userType: Constants.USER_MARSHAL, geofencerListener: this);
+      }
       for (var landmark in landmarks) {
         _geoFencer.addLandmarkGeoFence(landmark: landmark);
       }
