@@ -1,0 +1,38 @@
+<component name="libraryTable">
+  <library name="Flutter Plugins" type="FlutterPluginsLibraryType">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.32" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.16" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-0.3.0+1" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/mobmongo-0.0.8+1" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_background_geolocation-1.10.0+1" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/permission_handler-5.0.1+1" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/qrscan-0.2.17" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_storage-4.0.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/background_fetch-0.6.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.8" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.9" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/location-3.0.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/location_web-1.0.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+4" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+3" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_web-0.1.2+7" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_messaging-7.0.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_linux-0.0.2+2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.5.10" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/android_intent-0.3.7+3" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/sensors-0.4.2+4" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-0.0.3" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.5.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/geolocation-1.1.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/streams_channel-0.3.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.18.0+1" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/nearby_connections-2.0.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-0.2.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/geolocator-6.0.0+4" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
