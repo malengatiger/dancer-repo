@@ -1,0 +1,7 @@
+gcloud builds submit --tag gcr.io/dancer26983/aftarobot
+gcloud run deploy --image gcr.io/dancer26983/aftarobot --platform managed
+
+
+Connect mongodb cli and delete 
+mongo "mongodb+srv://ar001-1xhdt.mongodb.net/ardb" --username aubs
+db.vehiclelocations.remove({});
