@@ -8,19 +8,18 @@ import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/geofence_event.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
+import 'package:aftarobotlibrary4/data/position.dart' as pos;
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
-import 'package:aftarobotlibrary4/geofencing/locator.dart';
+import 'package:aftarobotlibrary4/location_bloc.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
-import 'package:aftarobotlibrary4/data/position.dart' as pos;
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:meta/meta.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:meta/meta.dart';
 
 final RouteBuilderBloc routeBuilderBloc = RouteBuilderBloc();
 
@@ -147,36 +146,13 @@ class RouteBuilderBloc {
     }
   }
 
-  Future<bool> requestPermission() async {
-    print('\n🔵 🔵 🔵 ######################### requestPermission ..');
-    try {
-      return await LocationUtil.checkLocationPermission();
-    } catch (e) {
-      print(e);
-    }
-    return false;
-  }
-
-  List<Association> associations;
-  Future<bool> checkPermission() async {
-    print('\n🔵 🔵 🔵 ######################### 🔴 checkPermission ..');
-    try {
-      return await LocationUtil.checkLocationPermission();
-    } catch (e) {
-      print(e);
-      throw e;
-    }
-  }
-
   Future<List<Association>> getAssociations() async {
-    mp(
-        '### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
+    mp('### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
     var asses = await DancerListAPI.getAssociations();
     await LocalDBAPI.deleteAssociations();
     await LocalDBAPI.addAssociations(associations: asses);
 
-    mp(
-        ' 📍📍📍📍 adding ${asses.length} Associations to  📎 model and stream sink ...');
+    mp(' 📍📍📍📍 adding ${asses.length} Associations to  📎 model and stream sink ...');
     _associationController.sink.add(asses);
     mp('++++ ✅  Associations retrieved: ${asses.length}\n');
     return asses;
@@ -220,8 +196,7 @@ class RouteBuilderBloc {
           routeID: route.routeID,
           routePoints: routePoints,
           routeName: route.name);
-      mp(
-          '\n\n🔵 🔵 🔵 🔵 🔵 Cached snapped route points: ${_routePoints.length} - ${route.name} ....');
+      mp('\n\n🔵 🔵 🔵 🔵 🔵 Cached snapped route points: ${_routePoints.length} - ${route.name} ....');
       var batches = BatchUtil.makeBatches(routePoints, batchSize);
       if (routePoints.length < batchSize) {
         print(
@@ -326,8 +301,7 @@ class RouteBuilderBloc {
       throw Exception('RouteID of fresh route is NULL');
     }
     await LocalDBAPI.addRoute(route: result);
-    mp(
-        ' 📍📍📍📍📍📍 adding route ${result.name} to model and stream sink ...');
+    mp(' 📍📍📍📍📍📍 adding route ${result.name} to model and stream sink ...');
     prettyPrint(result.toJson(),
         'NEW route added to stream ... ♻️♻️♻️️♻️♻ check for routeID️');
 
@@ -338,8 +312,7 @@ class RouteBuilderBloc {
   }
 
   Future<Landmark> addLandmark(Landmark landmark, RoutePoint point) async {
-    mp(
-        '### ℹ️  📌 📌 📌 add new landmark 🍏 ${landmark.landmarkName} : addLandmark and 🍏 update routePoint ..........ℹ️  ℹ️  ℹ️  ');
+    mp('### ℹ️  📌 📌 📌 add new landmark 🍏 ${landmark.landmarkName} : addLandmark and 🍏 update routePoint ..........ℹ️  ℹ️  ℹ️  ');
     assert(landmark.routeDetails.length == 1);
     Landmark result;
     List<Map> mapList = List();
@@ -384,8 +357,7 @@ class RouteBuilderBloc {
   }
 
   Future addCityToLandmark(Landmark landmark, CityDTO city) async {
-    mp(
-        '📍 📍 📍  update landmark ${landmark.landmarkName} on Firestore ..........\n');
+    mp('📍 📍 📍  update landmark ${landmark.landmarkName} on Firestore ..........\n');
 
     _appModel.landmarks.remove(landmark);
     landmark.cities.add(BasicCity(
@@ -395,23 +367,20 @@ class RouteBuilderBloc {
         provinceName: city.provinceName));
     await DancerDataAPI.addCityToLandmark(
         cityId: city.cityID, landmarkId: landmark.landmarkID);
-    mp(
-        '❤️ 🧡 💛 ${landmark.landmarkName} updated;  🍀 add to model and stream sink ...');
+    mp('❤️ 🧡 💛 ${landmark.landmarkName} updated;  🍀 add to model and stream sink ...');
     _appModel.landmarks.add(landmark);
     _appModelController.sink.add(_appModel);
     return landmark;
   }
 
   Future updateLocalRoute(ar.Route route) async {
-    mp(
-        '### 📍📍📍  updateLocalRoute:  ${route.name} routePoints: ${route.routePoints} ..........\n');
+    mp('### 📍📍📍  updateLocalRoute:  ${route.name} routePoints: ${route.routePoints} ..........\n');
     _appModel.routes.remove(route);
 
     route.created = DateTime.now().toUtc().toIso8601String();
     await LocalDBAPI.deleteRoute(route.routeID);
     await LocalDBAPI.addRoute(route: route, listener: null);
-    mp(
-        '🔆 🔆 Route has been updated on the local database, need to do the same on remote mongodb ........🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
+    mp('🔆 🔆 Route has been updated on the local database, need to do the same on remote mongodb ........🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
     _appModel.routes.add(route);
     _appModelController.sink.add(_appModel);
     return null;
@@ -487,18 +456,20 @@ class RouteBuilderBloc {
     return list;
   }
 
-
-  var geoLocator = Geolocator();
-  var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
+  //var geoLocator = Geoloco;
+  var locationOptions =
+      LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
   Future<RoutePoint> findRoutePointNearestLandmark(
       {ar.Route route, Landmark landmark}) async {
     assert(landmark != null);
     assert(route != null);
 
-
     Map<double, RoutePoint> distances = Map();
+
     route.routePoints.forEach((p) async {
-      var distance = await geoLocator.distanceBetween(landmark.latitude, landmark.longitude, p.latitude, p.longitude);
+      var distance = distanceBetween(
+          landmark.latitude, landmark.longitude, p.latitude, p.longitude);
+
       distances[distance] = p;
     });
     List sortedKeys = distances.keys.toList()..sort();
@@ -537,15 +508,13 @@ class RouteBuilderBloc {
     _routeLandmarks.clear();
     _routeLandmarks.addAll(marks);
     _routeLandmarksController.sink.add(_routeLandmarks);
-    mp(
-        'routeBuilderBloc; ✅ route landmarks retrieved: ${_routeLandmarks.length}\n');
+    mp('routeBuilderBloc; ✅ route landmarks retrieved: ${_routeLandmarks.length}\n');
 
     return _routeLandmarks;
   }
 
   Future<List<RoutePoint>> getRawRoutePoints({ar.Route route}) async {
-    mp(
-        '\n🔵 🔵 🔵 🔵 🔵 ️ getRawRoutePoints: getting RAW route points : 🧩🧩  ${route.name}\n');
+    mp('\n🔵 🔵 🔵 🔵 🔵 ️ getRawRoutePoints: getting RAW route points : 🧩🧩  ${route.name}\n');
 
     _rawRoutePoints =
         await LocalDBAPI.getRawRoutePoints(routeID: route.routeID);
@@ -562,22 +531,18 @@ class RouteBuilderBloc {
 //    var mRoute = await DancerListAPI.getRoute(routeId: route.routeID);
 //    _rawRoutePoints = mRoute.routePoints;
 //    _routePointController.sink.add(mRoute.routePoints);
-    mp(
-        'ℹ️  🍎 🍎 🍎 🍎  getRoutePoints found: 🍎 ${_routePoints.length}');
+    mp('ℹ️  🍎 🍎 🍎 🍎  getRoutePoints found: 🍎 ${_routePoints.length}');
     return _routePoints;
   }
 
   Future _cacheRoutes() async {
-    mp(
-        'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  ..........');
+    mp('ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  ..........');
 
     for (var route in _routes) {
-      mp(
-          'ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  : 🍎  ${route.name} ..........');
+      mp('ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  : 🍎  ${route.name} ..........');
       await LocalDBAPI.addRoute(route: route);
     }
-    mp(
-        '\n\n️ℹ️ ℹ️ ℹ️ ℹ️   🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
+    mp('\n\n️ℹ️ ℹ️ ℹ️ ℹ️   🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
     return _routePoints;
   }
 
@@ -598,17 +563,16 @@ class RouteBuilderBloc {
     _collectRawRoutePoint();
     Timer.periodic(Duration(seconds: collectionSeconds), (mTimer) {
       timer = mTimer;
-      mp(
-          "🔆 🔆 🔆  timer triggered for  🌺  $collectionSeconds seconds  🌺  get GPS location and save");
+      mp("🔆 🔆 🔆  timer triggered for  🌺  $collectionSeconds seconds  🌺  get GPS location and save");
       _collectRawRoutePoint();
     });
-    mp(
-        "\n\n🔆 🔆 🔆  timer set up to start point collection every  🌺  $collectionSeconds seconds  🌺 ");
+    mp("\n\n🔆 🔆 🔆  timer set up to start point collection every  🌺  $collectionSeconds seconds  🌺 ");
   }
 
   double _prevLatitude, _prevLongitude;
+  LocationBloc locationBloc = LocationBloc();
   Future _collectRawRoutePoint() async {
-    var currentLocation = await LocationUtil.getCurrentLocation();
+    var currentLocation = await locationBloc.getCurrentLocation();
     //todo - get route from method .......
     var routeID = _route.routeID;
     if (routeID == null) {
@@ -617,11 +581,10 @@ class RouteBuilderBloc {
     if (currentLocation == null) {
       return null;
     }
-    mp(
-        '🧩 🧩  🧩 🧩  🧩 🧩 _collectRawRoutePoint : add point for 🔆  routeID:  👌 $routeID.............');
+    mp('🧩 🧩  🧩 🧩  🧩 🧩 _collectRawRoutePoint : add point for 🔆  routeID:  👌 $routeID.............');
     _addRawRoutePoint(
-      latitude: currentLocation.coords.latitude,
-      longitude: currentLocation.coords.longitude,
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
     );
 
     return currentLocation;
@@ -634,7 +597,7 @@ class RouteBuilderBloc {
     try {
       if (_prevLatitude != null) {
         var ld = LandmarkDistance();
-        ld.calculateDistance(
+        var distance = await ld.calculateDistance(
             fromLatitude: _prevLatitude,
             fromLongitude: _prevLongitude,
             toLatitude: latitude,
@@ -642,9 +605,9 @@ class RouteBuilderBloc {
 
         print(
             '🥦  🥦  Distance from previous point: ${ld.distanceMetre} : ${DateTime.now().toIso8601String()}');
-        if (ld.distanceMetre < 50.0) {
+        if (distance < 50.0) {
           print(
-              ' 🥦  🥦 🥦  🥦 Looks like we are NOT moving. Distance:  🚹 ${ld.distanceMetre} metres:  🍷 🍷 🍷 Ignoring location');
+              ' 🥦  🥦 🥦  🥦 Looks like we are NOT moving. Distance:  🚹 $distance metres:  🍷 🍷 🍷 Ignoring location');
           return;
         } else {
           await _writeRawPoint(latitude: latitude, longitude: longitude);
@@ -657,17 +620,15 @@ class RouteBuilderBloc {
         _prevLongitude = longitude;
       }
     } catch (e) {
-      //todo - error handling here
-      print('⚠️ ⚠️ ⚠️  $e');
-      _errorController.sink.add(
-          '_addRawRoutePoint: ⚠️ Problem adding route point to Local MongoDB');
+      print('🥦  🥦  🥦  🥦  🥦  🥦  🥦  🥦 ⚠️ ⚠️ ⚠️  $e');
+      _errorController.sink
+          .add('Problem adding raw route point to Local MongoDB');
     }
   }
 
   Future _writeRawPoint({double latitude, double longitude}) async {
     var routeID = _route.routeID;
-    mp(
-        '🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint to LOCAL DB for 🔆  routeID:  👌 $routeID.............');
+    mp('🧩 🧩  🧩 🧩  🧩 🧩 _writeRawPoint : add routePoint to LOCAL DB for 🔆  routeID:  👌 $routeID.............');
     assert(routeID != null);
     assert(latitude != null);
     assert(longitude != null);
@@ -683,8 +644,7 @@ class RouteBuilderBloc {
 
     try {
       await LocalDBAPI.addRawRoutePoint(routeID: routeID, routePoint: point);
-      mp(
-          '🔴 🔴 🔴 🔴 🔴 🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
+      mp('🔴 🔴 🔴 🔴 🔴 🔴  _writeRawPoint collected point written: to localDB 🧩🧩  point #$index  🧩🧩');
       _rawRoutePoints.add(point);
       _rawRoutePointController.sink.add(_rawRoutePoints);
     } catch (e) {

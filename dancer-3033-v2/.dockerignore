@@ -2,3 +2,6 @@ node_modules/
 node_modules_linux/
 npm-debug.log
 *.zip
+Dockerfile
+README.md
+npm-debug.log

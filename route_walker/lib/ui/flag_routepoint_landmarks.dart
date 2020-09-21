@@ -13,12 +13,12 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 
 import 'landmark_city_page.dart';
 import 'landmark_routes_page.dart';
-import 'package:geolocator/geolocator.dart';
 
 /*
 This class looks for possible landmarks along a set of route points
@@ -80,14 +80,12 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     if (_key.currentState != null) {
       _key.currentState.removeCurrentSnackBar();
     }
-    mp(
-        '\n\n💛 💛 💛 💛 💛 LandmarksPage: returned ${list.length} calculated distances');
+    mp('\n\n💛 💛 💛 💛 💛 LandmarksPage: returned ${list.length} calculated distances');
     var tot = 0.0;
     list.forEach((d) {
       tot += d.distanceInMetres;
     });
-    mp(
-        '💛 💛 💛 💛 💛 LandmarksPage: total distance  🍎  $tot metres  🍎   \n\n');
+    mp('💛 💛 💛 💛 💛 LandmarksPage: total distance  🍎  $tot metres  🍎   \n\n');
 //    } else
 //      Navigator.push(context,
 //          SlideRightRoute(widget: CalculatedDistancePage(widget.route)));
@@ -301,8 +299,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
   @override
   onSuccess(Landmark landmark) {
-    mp(
-        '\n\nLandmarksPage: ️🍀️ landmark addition successful. ❤️ 🧡 💛 Did the magic happen? ${landmark.landmarkName}');
+    mp('\n\nLandmarksPage: ️🍀️ landmark addition successful. ❤️ 🧡 💛 Did the magic happen? ${landmark.landmarkName}');
     setState(() {
       _isBackFromEditor = true;
     });
@@ -321,26 +318,20 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
     List<RoutePoint> mList =
         widget.route.routePoints.take(1).toList(growable: true);
-    mp(
-        '🔵 🔵 🔵 Traversing 🧡 ${widget.route.routePoints.length} points looking for landmarks');
+    mp('🔵 🔵 🔵 Traversing 🧡 ${widget.route.routePoints.length} points looking for landmarks');
     _preparePoints(mList);
-    mp(
-        '🔴 🔴  using ${mList.length} points to search for landmarks ...');
+    mp('🔴 🔴  using ${mList.length} points to search for landmarks ...');
     Map<String, LandmarkAndRoutePoint> hashMap = Map();
     await _getNearestLandmarkPoints(mList, hashMap);
-    mp(
-        '🔴 🔴   ${landmarkPoints.length} landmark points found ... 🔴 🔴 ');
+    mp('🔴 🔴   ${landmarkPoints.length} landmark points found ... 🔴 🔴 ');
 //    _splitExistingLandmarkPoints();
     _key.currentState.removeCurrentSnackBar();
 
-    mp(
-        '🔴 🔴 🔴 Landmarks possibly on route: 🧡 ${landmarkPoints.length} 🧡 \n\n');
+    mp('🔴 🔴 🔴 Landmarks possibly on route: 🧡 ${landmarkPoints.length} 🧡 \n\n');
     landmarkPoints.forEach((p) {
-      mp(
-          '🔴  routePointIndex : ${p.routePoint.index}  🧩 🧩 Landmark 🧩 ${p.distance} metres 🧩 from routePoint is possibly on route: 🧡 ${p.landmark.landmarkName} ');
+      mp('🔴  routePointIndex : ${p.routePoint.index}  🧩 🧩 Landmark 🧩 ${p.distance} metres 🧩 from routePoint is possibly on route: 🧡 ${p.landmark.landmarkName} ');
     });
-    mp(
-        '\n🧡 🧡 🧡 🧡 landmarks found on route: ${landmarkPoints.length}');
+    mp('\n🧡 🧡 🧡 🧡 landmarks found on route: ${landmarkPoints.length}');
     setState(() {
       showConnectButton = true;
     });
@@ -385,8 +376,8 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     });
   }
 
-  var geoLocator = Geolocator();
-  var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
+  var locationOptions =
+      LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
 
   Future _getNearestLandmarkPoints(List<RoutePoint> mList,
       Map<String, LandmarkAndRoutePoint> hashMap) async {
@@ -399,7 +390,9 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
             route: widget.route, landmark: mark);
 
         if (nearestPoint != null) {
-          var distance = await geoLocator.distanceBetween(mark.latitude, mark.longitude, nearestPoint.latitude, nearestPoint.longitude);
+          var distance = distanceBetween(mark.latitude, mark.longitude,
+              nearestPoint.latitude, nearestPoint.longitude);
+
           if (distance < 50) {
             //get real index from widget route
             widget.route.routePoints.forEach((p) {
@@ -428,8 +421,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
       Navigator.push(
           context, SlideRightRoute(widget: LandmarkRoutesPage(landmark)));
     }
-    mp(
-        'onLandmarkInfoWindowTapped: 🍀️🍀️ ${landmark.landmarkName} 🍀️');
+    mp('onLandmarkInfoWindowTapped: 🍀️🍀️ ${landmark.landmarkName} 🍀️');
   }
 
   @override
@@ -483,14 +475,12 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
   @override
   void onRoutePointsFound(String routeID, List<RoutePoint> routePoints) {
-    mp(
-        '♻️♻️♻️♻️♻️♻️ onRoutePointsFound $routeID -  💛 points ${routePoints.length}');
+    mp('♻️♻️♻️♻️♻️♻️ onRoutePointsFound $routeID -  💛 points ${routePoints.length}');
     //todo - this route point must be updated to contain landmark data
   }
 
   void _addRouteToLandmarks() async {
-    mp(
-        '\n\n_addRouteToLandmarks  🧩 🧩 🧩 ... ${landmarkPoints.length}');
+    mp('\n\n_addRouteToLandmarks  🧩 🧩 🧩 ... ${landmarkPoints.length}');
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key,
         message: 'Adding route to ${landmarkPoints.length} landmarks');
@@ -504,8 +494,7 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
             '♻️♻️♻️ Landmark point to be added/updated: ${lp.landmark.landmarkName}');
       });
 
-      mp(
-          ' 🧩 🧩 🧩 ${routePointsForLandmarks.length} landmark points to be updated ...');
+      mp(' 🧩 🧩 🧩 ${routePointsForLandmarks.length} landmark points to be updated ...');
       await _updatePoints(routePointsForLandmarks);
       //todo - calculate distances
       await RouteDistanceCalculator.calculate(route: _route);
@@ -777,8 +766,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
         scaffoldKey: _key, message: 'Adding new landmark ');
     try {
       var m = await routeBuilderBloc.addLandmark(landmark, widget.routePoint);
-      mp(
-          '............Popping off ... 🍏 🍎 done with editor, caller must check if new landmark made');
+      mp('............Popping off ... 🍏 🍎 done with editor, caller must check if new landmark made');
       Navigator.pop(context, m);
     } catch (e) {
       widget.listener.onError('Failed');
@@ -800,15 +788,19 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     try {
       widget.routePoint.landmarkID = mark.landmarkID;
       widget.routePoint.landmarkName = mark.landmarkName;
-
+      assert(widget.route != null);
+      assert(mark != null);
+      assert(widget.routePoint != null);
       await routeBuilderBloc.addRouteToLandmark(
           route: widget.route, landmark: mark, routePoint: widget.routePoint);
       Navigator.pop(context);
     } catch (e) {
       print(e);
-      widget.listener.onError('Failed');
+      widget.listener.onError('Failed: ${e.message == null ? '' : e.message}');
       AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key, message: 'Route linking failed');
+          scaffoldKey: _key,
+          message:
+              'Route linking failed ${e.message == null ? '' : e.message}');
     }
   }
 

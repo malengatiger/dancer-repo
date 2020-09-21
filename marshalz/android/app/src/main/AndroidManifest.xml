@@ -1,31 +1,33 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    package="com.aftarobot.marshalz">
 
-    package="com.dancer.routewalker">
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="RouteWalker"
+        android:label="ARMarshal"
         tools:replace="android:label"
         android:icon="@mipmap/ic_launcher"
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBvhKm4U0Blz70621ntH5ctw4XfUSuJUTc" />
-        <!-- flutter_background_geolocation licence -->
-        <meta-data android:name="com.transistorsoft.locationmanager.license"
-                   android:value="9c12af374fa51474f20329ae23938274fd975353f2b9455fcc4771a00eb1d87f" />
-<!--        <meta-data-->
-<!--            android:name="flutterEmbedding"-->
-<!--            android:value="2" />-->
+                android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyAZyHg_Z_CGZ-mCgTRuQpouY6jVwM3Mf-A" />
+        <meta-data
+                android:name="com.google.android.nearby.messages.API_KEY"
+                android:value="AIzaSyAZyHg_Z_CGZ-mCgTRuQpouY6jVwM3Mf-A" />
+        <meta-data
+                android:name="com.google.android.awareness.API_KEY"
+                android:value="AIzaSyAZyHg_Z_CGZ-mCgTRuQpouY6jVwM3Mf-A"/>
 
         <activity
             android:name=".MainActivity"
@@ -38,16 +40,12 @@
                  until Flutter renders its first frame. It can be removed if
                  there is no splash screen (such as the default splash screen
                  defined in @style/LaunchTheme). -->
-<!--            <meta-data-->
-<!--                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"-->
-<!--                android:value="true" />-->
+            <meta-data
+                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+                android:value="true" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
     </application>
