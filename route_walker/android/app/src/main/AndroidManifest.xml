@@ -27,6 +27,9 @@
 <!--            android:name="flutterEmbedding"-->
 <!--            android:value="2" />-->
 
+        <service android:name="com.transistorsoft.locationmanager.service.TrackingService" android:foregroundServiceType="location" />
+        <service android:name="com.transistorsoft.locationmanager.service.LocationRequestService" android:foregroundServiceType="location" />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
