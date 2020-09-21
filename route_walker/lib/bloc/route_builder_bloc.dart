@@ -73,7 +73,6 @@ class RouteBuilderBloc {
 
   List<RoutePoint> _routePoints = List();
   List<RoutePoint> _rawRoutePoints = List();
-  List<bg.GeofenceEvent> _geofenceEvents = List();
   List<Landmark> _routeLandmarks = List();
   List<ar.Route> _routes = List();
 
@@ -161,13 +160,11 @@ class RouteBuilderBloc {
   Future getRoutesByAssociation(String associationID, bool forceRefresh) async {
     try {
       _busyController.sink.add(true);
-      var origin = 'LOCAL';
       _routes = await LocalDBAPI.getRoutesByAssociation(associationID);
 
       if (forceRefresh || _routes.isEmpty) {
         _routes = await DancerListAPI.getRoutesByAssociation(
             associationID: associationID);
-        origin = 'REMOTE';
         await _cacheRoutes();
       }
 
@@ -456,7 +453,6 @@ class RouteBuilderBloc {
     return list;
   }
 
-  //var geoLocator = Geoloco;
   var locationOptions =
       LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
   Future<RoutePoint> findRoutePointNearestLandmark(

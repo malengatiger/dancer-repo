@@ -17,7 +17,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 
-import 'landmark_city_page.dart';
 import 'landmark_routes_page.dart';
 
 /*
@@ -48,17 +47,6 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
         LocationListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   bool showConnectButton = true;
-  List<BottomNavigationBarItem> _navItems = [
-    BottomNavigationBarItem(
-        icon: Icon(
-          Icons.cancel,
-          color: Colors.pink,
-        ),
-        title: Text('Delete Route')),
-    BottomNavigationBarItem(
-        icon: Icon(Icons.location_on), title: Text('Geo Locations')),
-    BottomNavigationBarItem(icon: Icon(Icons.map), title: Text('Route Map')),
-  ];
 
   ar.Route _route;
 
@@ -113,36 +101,21 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     );
   }
 
-  _startLandmarkCity(Landmark landmark) {
-    Landmark mark;
-    routeLandmarks.forEach((m) {
-      if (landmark.landmarkID == m.landmarkID) {
-        mark = m;
-      }
-    });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => LandmarkCityPage(
-                  landmark: mark,
-                )));
-  }
-
   List<LandmarkAndRoutePoint> possibleLandmarks = List(), marks = List();
   List<BottomNavigationBarItem> barItems = List();
 
   _buildNavItems() {
     barItems.add(BottomNavigationBarItem(
       icon: Icon(Icons.map),
-      title: Text('Route Map'),
+      label: 'Route Map',
     ));
     barItems.add(BottomNavigationBarItem(
       icon: Icon(Icons.my_location),
-      title: Text('Distances'),
+      label: 'Distances',
     ));
     barItems.add(BottomNavigationBarItem(
       icon: Icon(Icons.location_on),
-      title: Text('Link Places'),
+      label: 'Link Places',
     ));
   }
 
@@ -266,10 +239,6 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
   String landmarkName = '';
 
-  void _onNameChanged(String value) {
-    landmarkName = value;
-  }
-
   @override
   onActionPressed(int action) {
     Navigator.pop(context, true);
@@ -295,14 +264,10 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
         listener: this);
   }
 
-  bool _isBackFromEditor = false;
-
   @override
   onSuccess(Landmark landmark) {
     mp('\n\nLandmarksPage: ️🍀️ landmark addition successful. ❤️ 🧡 💛 Did the magic happen? ${landmark.landmarkName}');
-    setState(() {
-      _isBackFromEditor = true;
-    });
+    setState(() {});
   }
 
   var existing = Map<String, LandmarkAndRoutePoint>();

@@ -40,16 +40,16 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f09a295-6b8f-4077-aee9-7373c07ab601" name="Default Changelist" comment="🐢 commit after moving to new taxiyam gcp project">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../marshalz/lib/bloc/marshal_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../marshalz/lib/bloc/marshal_bloc.dart" afterDir="false" />
+    <list default="true" id="8f09a295-6b8f-4077-aee9-7373c07ab601" name="Default Changelist" comment="🐢 fixed geofencer issue">
+      <change beforePath="$PROJECT_DIR$/../marshalz/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../marshalz/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../route_walker/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/../route_walker/.flutter-plugins-dependencies" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="cfe0c29e7d43" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="HT79S1A03826" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
@@ -94,7 +94,14 @@
       <option name="project" value="LOCAL" />
       <updated>1600726230771</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="🐢 fixed geofencer issue">
+      <created>1600727151957</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1600727151957</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -110,17 +117,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value=" commit after moving to new taxiyam gcp project" />
-    <option name="LAST_COMMIT_MESSAGE" value=" commit after moving to new taxiyam gcp project" />
+    <MESSAGE value=" fixed geofencer issue" />
+    <option name="LAST_COMMIT_MESSAGE" value=" fixed geofencer issue" />
   </component>
   <component name="WindowStateProjectService">
     <state x="1007" y="469" width="1279" height="476" key="MultipleFileMergeDialog" timestamp="1600726116312">
       <screen x="0" y="23" width="2560" height="1377" />
     </state>
     <state x="1007" y="469" width="1279" height="476" key="MultipleFileMergeDialog/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600726116312" />
-    <state x="1409" y="443" key="Vcs.Push.Dialog.v2" timestamp="1600726235912">
+    <state x="1409" y="443" key="Vcs.Push.Dialog.v2" timestamp="1600727153872">
       <screen x="0" y="23" width="2560" height="1377" />
     </state>
-    <state x="1409" y="443" key="Vcs.Push.Dialog.v2/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600726235912" />
+    <state x="1409" y="443" key="Vcs.Push.Dialog.v2/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600727153872" />
     <state x="1457" y="328" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1600727048276">
       <screen x="0" y="23" width="2560" height="1377" />
     </state>

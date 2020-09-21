@@ -105,8 +105,22 @@ class MarshalBloc implements GeofencerListener {
   GeoFencer _geoFencer;
 
   _init() async {
-    debugPrint('🌸 🌸 🌸 🌸 ... MarshalBloc initializing .... 🌸 🌸 🌸 🌸 ...');
-    findLandmarksByLocation(radiusInKM: Constants.RADIUS_LANDMARK_SEARCH);
+    debugPrint(
+        '🌸 🌸 🌸 🌸 ... MarshalBloc initializing and faking cities search .... 🌸 🌸 🌸 🌸 ...');
+    Position position =
+        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    p(" 🍎 🍎 Finding cities within location ..............");
+    var cities = await DancerListAPI.findCitiesByLocation(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        radiusInKM: 2);
+    p("🔵 🔵 🔵 🔵 🔵 🔵 🔵 ....................... : Cities found: ${cities.length} ");
+    findLandmarksByLocation(
+        radiusInKM: Constants.RADIUS_LANDMARK_SEARCH, forceRefresh: true);
+    if (_auth == null) {
+      await initializeFirebase();
+      _auth = FirebaseAuth.instance;
+    }
     var fbUser = _auth.currentUser;
     if (fbUser == null) {
       mp('🌴 🌴 🌴 Brand new app - 🐢 🐢 🐢  Firebase fbUser is null.  👺  need to 🔑 🔑 🔑');
@@ -348,9 +362,10 @@ class MarshalBloc implements GeofencerListener {
   }
 
   List<Landmark> landmarks;
+  // ignore: missing_return
   Future<List<Landmark>> findLandmarksByLocation(
       {bool forceRefresh = false, double radiusInKM}) async {
-    mp('🌸 🌸 findLandmarksByLocation.....');
+    mp('🌸 🌸 MarshalBloc:................ findLandmarksByLocation.....');
     try {
       Position position =
           await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -368,7 +383,8 @@ class MarshalBloc implements GeofencerListener {
         await LocalDBAPI.addLandmarks(landmarks: landmarks);
       }
 
-      mp('🌸 🌸  ${landmarks.length} landmarks found, adding to _landmarksController.sink ');
+      mp('🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸'
+          '  ${landmarks.length} landmarks found, adding to _landmarksController.sink ');
       _landmarksController.sink.add(landmarks);
       if (_geoFencer == null) {
         _geoFencer = GeoFencer(
@@ -377,6 +393,7 @@ class MarshalBloc implements GeofencerListener {
       for (var landmark in landmarks) {
         _geoFencer.addLandmarkGeoFence(landmark: landmark);
       }
+      mp('🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 🌸 MarshalBloc: returning ${landmarks.length} landmarks ...');
       return landmarks;
     } catch (e) {
       print(e);
@@ -384,8 +401,6 @@ class MarshalBloc implements GeofencerListener {
       _errorController.sink.add(_errors);
       //marshalBlocListener.onError('findLandmarksByLocation failed');
     }
-
-    return null;
   }
 
   Future<List<ar.Route>> getAssociationRoutes(

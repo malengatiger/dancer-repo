@@ -20,12 +20,12 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark>
   @override
   initState() {
     super.initState();
-
+    p("🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎  setting up Bloc ");
     marshalBloc = MarshalBloc(this);
+    _getNearestLandmarks();
     marshalBloc.refreshDashboardData(forceRefresh: false);
     _subscribeToError();
     _subscribeToBusy();
-    _getNearestLandmarks();
   }
 
   void _subscribeToBusy() {
@@ -54,7 +54,9 @@ class _ConfirmLandmarkState extends State<ConfirmLandmark>
   }
 
   Future _getNearestLandmarks() async {
+    p('ConfirmLandmark: _getNearestLandmarks  🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎 starting search for landmarks .............');
     var mList = await marshalBloc.findLandmarksByLocation(radiusInKM: .5);
+    p("🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎 🍏 🍎  ......... ConfirmLandmark found ${mList.length} landmarks nearby ... 🍏 🍎 🍏 🍎 🍏 🍎");
     if (mList.length > 3) {
       _landmarks = mList.getRange(0, 3).toList();
     } else {
