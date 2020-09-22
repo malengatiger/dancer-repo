@@ -19,6 +19,7 @@ class MongoListeners {
     const panics = client.connection.collection(Constants.COMMUTER_PANICS);
     const notifications = client.connection.collection(Constants.NOTIFICATIONS)
     const chat = client.connection.collection(Constants.CHAT);
+    const vehicles = client.connection.collection(Constants.VEHICLES);
 
 
     const vehicleArrivals = client.connection.collection(Constants.VEHICLE_ARRIVALS);
@@ -38,6 +39,7 @@ class MongoListeners {
     const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
     const notificationsStream = notifications.watch({fullDocument: 'updateLookup'})
     const chatStream = chat.watch({ fullDocument: 'updateLookup' });
+    const vehiclesStream = vehicles.watch({ fullDocument: 'updateLookup' });
 
     const dwellStream = commuterDwellEvents.watch({ fullDocument: 'updateLookup' });
     const exitStream = commuterExitEvents.watch({ fullDocument: 'updateLookup' });
@@ -56,6 +58,13 @@ class MongoListeners {
     const vehicleCommuterNearbyStream = vehicleCommuterNearby.watch({ fullDocument: 'updateLookup' });
 
     try {
+      vehiclesStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆   🍎  vehiclesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
+        );
+        log(event);
+        Messaging.sendVehicleAdded(event.fullDocument);
+      });
       vehicleCommuterNearbyStream.on("change", (event: any) => {
         log(
           `\n🔆🔆🔆🔆   🍎  vehicleCommuterNearbyStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,

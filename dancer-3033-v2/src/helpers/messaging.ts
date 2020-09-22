@@ -140,6 +140,32 @@ public static async sendChat(
     console.log(payload.data);
 }
 
+public static async sendVehicleAdded(data: any, ): Promise<any> {
+    const options: any = {
+        priority: "high",
+        timeToLive: 60 * 60,
+    };
+    const payload: any = {
+        notification: {
+            title: "Vehicle Added",
+            body: data.vehicleReg + ' at ' + data.landmarkName,
+        },
+        data: {
+            type: Constants.VEHICLES,
+            vehicleID: data.vehicleID,
+            vehicleReg: data.vehicleReg,
+        },
+    };
+    const topic = Constants.VEHICLES + '_' + data.associationID;
+    const result = await fba.sendToTopic(topic, payload, options);
+    log(
+        `😍 sendVehicleAdded: FCM message sent: 😍 ${
+        data.vehicleReg
+        } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+    );
+    console.log(payload.data);
+
+}
     public static async sendVehicleArrival(data: any, ): Promise<any> {
         const options: any = {
             priority: "high",
