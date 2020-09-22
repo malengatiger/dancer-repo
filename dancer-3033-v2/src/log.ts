@@ -5,9 +5,12 @@ export function log(msg: any) {
 }
 
 export function logBlue(msg: any) {
+  //
   console.log(chalk.blue(msg))
 }
 
 export function logGreen(msg: any) {
+
+  //green log
   console.log(chalk.green(msg))
 }
