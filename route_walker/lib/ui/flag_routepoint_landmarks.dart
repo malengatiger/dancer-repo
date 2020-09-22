@@ -13,11 +13,10 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart' as geo;
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 
-import 'landmark_city_page.dart';
 import 'landmark_routes_page.dart';
 
 /*
@@ -48,17 +47,6 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
         LocationListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   bool showConnectButton = true;
-  List<BottomNavigationBarItem> _navItems = [
-    BottomNavigationBarItem(
-        icon: Icon(
-          Icons.cancel,
-          color: Colors.pink,
-        ),
-        title: Text('Delete Route')),
-    BottomNavigationBarItem(
-        icon: Icon(Icons.location_on), title: Text('Geo Locations')),
-    BottomNavigationBarItem(icon: Icon(Icons.map), title: Text('Route Map')),
-  ];
 
   ar.Route _route;
 
@@ -113,36 +101,21 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     );
   }
 
-  _startLandmarkCity(Landmark landmark) {
-    Landmark mark;
-    routeLandmarks.forEach((m) {
-      if (landmark.landmarkID == m.landmarkID) {
-        mark = m;
-      }
-    });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => LandmarkCityPage(
-                  landmark: mark,
-                )));
-  }
-
   List<LandmarkAndRoutePoint> possibleLandmarks = List(), marks = List();
   List<BottomNavigationBarItem> barItems = List();
 
   _buildNavItems() {
     barItems.add(BottomNavigationBarItem(
       icon: Icon(Icons.map),
-      title: Text('Route Map'),
+      label: 'Route Map',
     ));
     barItems.add(BottomNavigationBarItem(
       icon: Icon(Icons.my_location),
-      title: Text('Distances'),
+      label: 'Distances',
     ));
     barItems.add(BottomNavigationBarItem(
       icon: Icon(Icons.location_on),
-      title: Text('Link Places'),
+      label: 'Link Places',
     ));
   }
 
@@ -266,10 +239,6 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
 
   String landmarkName = '';
 
-  void _onNameChanged(String value) {
-    landmarkName = value;
-  }
-
   @override
   onActionPressed(int action) {
     Navigator.pop(context, true);
@@ -295,14 +264,10 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
         listener: this);
   }
 
-  bool _isBackFromEditor = false;
-
   @override
   onSuccess(Landmark landmark) {
     mp('\n\nLandmarksPage: ️🍀️ landmark addition successful. ❤️ 🧡 💛 Did the magic happen? ${landmark.landmarkName}');
-    setState(() {
-      _isBackFromEditor = true;
-    });
+    setState(() {});
   }
 
   var existing = Map<String, LandmarkAndRoutePoint>();
@@ -376,6 +341,9 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
     });
   }
 
+  var locationOptions =
+      LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
+
   Future _getNearestLandmarkPoints(List<RoutePoint> mList,
       Map<String, LandmarkAndRoutePoint> hashMap) async {
     for (var point in mList) {
@@ -387,11 +355,9 @@ class FlagRoutePointLandmarksState extends State<FlagRoutePointLandmarks>
             route: widget.route, landmark: mark);
 
         if (nearestPoint != null) {
-          var distance = geo.GeolocatorPlatform.instance.distanceBetween(
-              mark.latitude,
-              mark.longitude,
-              nearestPoint.latitude,
-              nearestPoint.longitude);
+          var distance = distanceBetween(mark.latitude, mark.longitude,
+              nearestPoint.latitude, nearestPoint.longitude);
+
           if (distance < 50) {
             //get real index from widget route
             widget.route.routePoints.forEach((p) {
@@ -787,15 +753,19 @@ class _LandmarkEditorState extends State<LandmarkEditor>
     try {
       widget.routePoint.landmarkID = mark.landmarkID;
       widget.routePoint.landmarkName = mark.landmarkName;
-
+      assert(widget.route != null);
+      assert(mark != null);
+      assert(widget.routePoint != null);
       await routeBuilderBloc.addRouteToLandmark(
           route: widget.route, landmark: mark, routePoint: widget.routePoint);
       Navigator.pop(context);
     } catch (e) {
       print(e);
-      widget.listener.onError('Failed');
+      widget.listener.onError('Failed: ${e.message == null ? '' : e.message}');
       AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key, message: 'Route linking failed');
+          scaffoldKey: _key,
+          message:
+              'Route linking failed ${e.message == null ? '' : e.message}');
     }
   }
 

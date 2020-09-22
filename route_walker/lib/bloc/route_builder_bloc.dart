@@ -11,13 +11,14 @@ import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/position.dart' as pos;
 import 'package:aftarobotlibrary4/data/route.dart' as ar;
 import 'package:aftarobotlibrary4/data/route_point.dart';
+import 'package:aftarobotlibrary4/location_bloc.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:geolocator/geolocator.dart' as geo;
+import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 
 final RouteBuilderBloc routeBuilderBloc = RouteBuilderBloc();
@@ -72,7 +73,6 @@ class RouteBuilderBloc {
 
   List<RoutePoint> _routePoints = List();
   List<RoutePoint> _rawRoutePoints = List();
-  List<bg.GeofenceEvent> _geofenceEvents = List();
   List<Landmark> _routeLandmarks = List();
   List<ar.Route> _routes = List();
 
@@ -145,28 +145,6 @@ class RouteBuilderBloc {
     }
   }
 
-  Future<bool> requestPermission() async {
-    print('\n🔵 🔵 🔵 ######################### requestPermission ..');
-    try {
-      var perm = await geo.GeolocatorPlatform.instance.requestPermission();
-      return perm.index == 0 ? true : false;
-    } catch (e) {
-      print(e);
-    }
-    return false;
-  }
-
-  List<Association> associations;
-  Future<bool> checkPermission() async {
-    print('\n🔵 🔵 🔵 ######################### 🔴 checkPermission ..');
-    try {
-      return await requestPermission();
-    } catch (e) {
-      print(e);
-      throw e;
-    }
-  }
-
   Future<List<Association>> getAssociations() async {
     mp('### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
     var asses = await DancerListAPI.getAssociations();
@@ -182,13 +160,11 @@ class RouteBuilderBloc {
   Future getRoutesByAssociation(String associationID, bool forceRefresh) async {
     try {
       _busyController.sink.add(true);
-      var origin = 'LOCAL';
       _routes = await LocalDBAPI.getRoutesByAssociation(associationID);
 
       if (forceRefresh || _routes.isEmpty) {
         _routes = await DancerListAPI.getRoutesByAssociation(
             associationID: associationID);
-        origin = 'REMOTE';
         await _cacheRoutes();
       }
 
@@ -477,19 +453,19 @@ class RouteBuilderBloc {
     return list;
   }
 
-  // var geoLocator = Geolocator();
-  // var locationOptions =
-  //     LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
-  //
+  var locationOptions =
+      LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 100);
   Future<RoutePoint> findRoutePointNearestLandmark(
       {ar.Route route, Landmark landmark}) async {
     assert(landmark != null);
     assert(route != null);
 
     Map<double, RoutePoint> distances = Map();
+
     route.routePoints.forEach((p) async {
-      var distance = geo.GeolocatorPlatform.instance.distanceBetween(
+      var distance = distanceBetween(
           landmark.latitude, landmark.longitude, p.latitude, p.longitude);
+
       distances[distance] = p;
     });
     List sortedKeys = distances.keys.toList()..sort();
@@ -590,8 +566,9 @@ class RouteBuilderBloc {
   }
 
   double _prevLatitude, _prevLongitude;
+  LocationBloc locationBloc = LocationBloc();
   Future _collectRawRoutePoint() async {
-    var currentLocation = await geo.getCurrentPosition();
+    var currentLocation = await locationBloc.getCurrentLocation();
     //todo - get route from method .......
     var routeID = _route.routeID;
     if (routeID == null) {
@@ -616,7 +593,7 @@ class RouteBuilderBloc {
     try {
       if (_prevLatitude != null) {
         var ld = LandmarkDistance();
-        ld.calculateDistance(
+        var distance = await ld.calculateDistance(
             fromLatitude: _prevLatitude,
             fromLongitude: _prevLongitude,
             toLatitude: latitude,
@@ -624,9 +601,9 @@ class RouteBuilderBloc {
 
         print(
             '🥦  🥦  Distance from previous point: ${ld.distanceMetre} : ${DateTime.now().toIso8601String()}');
-        if (ld.distanceMetre < 50.0) {
+        if (distance < 50.0) {
           print(
-              ' 🥦  🥦 🥦  🥦 Looks like we are NOT moving. Distance:  🚹 ${ld.distanceMetre} metres:  🍷 🍷 🍷 Ignoring location');
+              ' 🥦  🥦 🥦  🥦 Looks like we are NOT moving. Distance:  🚹 $distance metres:  🍷 🍷 🍷 Ignoring location');
           return;
         } else {
           await _writeRawPoint(latitude: latitude, longitude: longitude);
@@ -639,10 +616,9 @@ class RouteBuilderBloc {
         _prevLongitude = longitude;
       }
     } catch (e) {
-      //todo - error handling here
-      print('⚠️ ⚠️ ⚠️  $e');
-      _errorController.sink.add(
-          '_addRawRoutePoint: ⚠️ Problem adding route point to Local MongoDB');
+      print('🥦  🥦  🥦  🥦  🥦  🥦  🥦  🥦 ⚠️ ⚠️ ⚠️  $e');
+      _errorController.sink
+          .add('Problem adding raw route point to Local MongoDB');
     }
   }
 

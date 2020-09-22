@@ -89,75 +89,6 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
     }
   }
 
-//  _confirmStopType() {
-//    _stopTimer();
-//    showDialog(
-//        context: context,
-//        barrierDismissible: false,
-//        builder: (_) => new AlertDialog(
-//              title: new Text(
-//                "Confirm Status",
-//                style: TextStyle(
-//                    fontWeight: FontWeight.bold,
-//                    color: Theme.of(context).primaryColor),
-//              ),
-//              content: Container(
-//                height: 160.0,
-//                child: Column(
-//                  children: <Widget>[
-//                    Padding(
-//                      padding: const EdgeInsets.all(8.0),
-//                      child: Column(
-//                        children: <Widget>[
-//                          Text(
-//                            'Do you want to complete the route buikding for ${widget.route.name} ?',
-//                            style: Styles.blackBoldSmall,
-//                          ),
-//                          SizedBox(
-//                            height: 12,
-//                          ),
-//                        ],
-//                      ),
-//                    ),
-//                  ],
-//                ),
-//              ),
-//              actions: <Widget>[
-//                FlatButton(
-//                  child: Text(
-//                    'NO',
-//                    style: TextStyle(color: Colors.grey),
-//                  ),
-//                  onPressed: () {
-//                    Navigator.pop(context);
-//                  },
-//                ),
-//                Padding(
-//                  padding: const EdgeInsets.only(bottom: 20.0),
-//                  child: RaisedButton(
-//                    onPressed: () {
-//                      Navigator.pop(context);
-//                      widget.route.rawRoutePoints = _routePointsCollected;
-//                      Navigator.push(
-//                          context,
-//                          SlideRightRoute(
-//                              widget: CreateRoutePointsPage(widget.route)));
-//                    },
-//                    elevation: 4.0,
-//                    color: Colors.blue.shade700,
-//                    child: Padding(
-//                      padding: const EdgeInsets.all(16.0),
-//                      child: Text(
-//                        'Add Landmark',
-//                        style: TextStyle(color: Colors.white),
-//                      ),
-//                    ),
-//                  ),
-//                ),
-//              ],
-//            ));
-//  }
-
   _stopTimer() async {
     _showSnack(
         message:
@@ -195,8 +126,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
         await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
     assert(widget.route.routeID != null);
     if (_routePointsCollected.isEmpty) {
-      mp(
-          '🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
+      mp('🔵 🔵 _routePointsCollected.isEmpty ... 🔵 refreshing from remote db');
       _route = await DancerListAPI.getRouteByID(routeID: widget.route.routeID);
       await LocalDBAPI.addRoute(route: _route);
       _routePointsCollected = _route.rawRoutePoints;

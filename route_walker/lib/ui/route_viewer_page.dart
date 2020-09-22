@@ -16,6 +16,7 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 import 'package:route_walker/ui/route_editor.dart';
 import 'package:route_walker/ui/route_point_collector.dart';
@@ -60,10 +61,15 @@ class _RouteViewerPageState extends State<RouteViewerPage>
         '🍎 🍎 🍎 _RouteViewerPageState: checkUser: ...................... 🔆🔆 isSignedIn: $isSignedIn  🔆🔆');
     if (!isSignedIn) {
       try {
-        var user = await Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return SignIn();
-        }));
+        var user = await Navigator.push(
+            context,
+            PageTransition(
+                child: SignIn(),
+                type: PageTransitionType.scale,
+                duration: Duration(milliseconds: 1500),
+                alignment: Alignment.topLeft,
+                curve: Curves.easeInOut));
+
         if (user == null) {
           AppSnackbar.showSnackbar(
               scaffoldKey: _key,
@@ -88,7 +94,7 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     if (asses.isEmpty) {
       asses = await routeBuilderBloc.getAssociations();
     } else {
-      mp('asssociations from local cache: ${asses.length}');
+      mp('........................... associations from local cache: ${asses.length}');
     }
     _buildDropDownItems();
     LocalDBAPI.setAppID();
@@ -380,10 +386,8 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   @override
   onMessage(aftarobot.Route route, String message, Color textColor,
       Color backColor, bool isError) {
-    mp(
-        'onMessage: 🍏 🍏 🍏 🍏 ${route.rawRoutePoints.length} 🍎 in route ${route.name}');
-    mp(
-        'onMessage: 🍏 🍏 🍏 🍏 ${route.routePoints.length} 🍎 in route ${route.name}');
+    mp('onMessage: 🍏 🍏 🍏 🍏 ${route.rawRoutePoints.length} 🍎 in route ${route.name}');
+    mp('onMessage: 🍏 🍏 🍏 🍏 ${route.routePoints.length} 🍎 in route ${route.name}');
     if (isError) {
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: message);
     } else {

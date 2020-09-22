@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:dependabot" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:dependabot" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:npm_and_yarn" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:dependabot" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:npm_and_yarn" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:dancer-3033" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8f09a295-6b8f-4077-aee9-7373c07ab601" name="Default Changelist" comment="🐢 fixed geofencer issue">
+      <change beforePath="$PROJECT_DIR$/../marshalz/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../marshalz/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../route_walker/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/../route_walker/.flutter-plugins-dependencies" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="HT79S1A03826" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1hq4nRen7bPpgOMayvYD4qZI0Tc" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RunManager">
+    <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="filePath" value="$PROJECT_DIR$/../marshalz/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8f09a295-6b8f-4077-aee9-7373c07ab601" name="Default Changelist" comment="" />
+      <created>1600725454124</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1600725454124</updated>
+    </task>
+    <task id="LOCAL-00001" summary="🐢 commit after moving to new taxiyam gcp project">
+      <created>1600725909814</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1600725909814</updated>
+    </task>
+    <task id="LOCAL-00002" summary="🐢 commit after moving to new taxiyam gcp project">
+      <created>1600726230771</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1600726230771</updated>
+    </task>
+    <task id="LOCAL-00003" summary="🐢 fixed geofencer issue">
+      <created>1600727151957</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1600727151957</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value=" commit after moving to new taxiyam gcp project" />
+    <MESSAGE value=" fixed geofencer issue" />
+    <option name="LAST_COMMIT_MESSAGE" value=" fixed geofencer issue" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1007" y="469" width="1279" height="476" key="MultipleFileMergeDialog" timestamp="1600726116312">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1007" y="469" width="1279" height="476" key="MultipleFileMergeDialog/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600726116312" />
+    <state x="1409" y="443" key="Vcs.Push.Dialog.v2" timestamp="1600727153872">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1409" y="443" key="Vcs.Push.Dialog.v2/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600727153872" />
+    <state x="1457" y="328" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1600727048276">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1457" y="328" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600727048276" />
+    <state x="1511" y="453" width="596" height="508" key="find.popup" timestamp="1600726980025">
+      <screen x="0" y="23" width="2560" height="1377" />
+    </state>
+    <state x="1511" y="453" width="596" height="508" key="find.popup/-1920.23.1920.1057/0.23.2560.1377@0.23.2560.1377" timestamp="1600726980025" />
+  </component>
+</project>
