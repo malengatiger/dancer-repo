@@ -62,21 +62,21 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  vehiclesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendVehicleAdded(event.fullDocument);
       });
       vehicleCommuterNearbyStream.on("change", (event: any) => {
         log(
           `\n🔆🔆🔆🔆   🍎  vehicleCommuterNearbyStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendVehicleCommuterNearby(event.fullDocument);
       });
       dwellStream.on("change", (event: any) => {
         log(
           `\n🔆🔆🔆🔆   🍎  dwellStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendFenceDwellEvent(event.fullDocument);
       });
       //
@@ -84,7 +84,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  paymentStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendPayment(event.fullDocument);
       });
       // 
@@ -92,7 +92,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎 notificationsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-         log(event)
+        //  log(event)
          Messaging.sendNotification(event.fullDocument)
        });
        //
@@ -100,7 +100,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎 chatStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
           );
-          log(event);
+          // log(event);
             Messaging.sendChat(event.fullDocument);
             });
            //   
@@ -108,7 +108,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  exitStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendFenceExitEvent(event.fullDocument);
       });
       //
@@ -116,7 +116,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendVehicleArrival(event.fullDocument);
       });
       //
@@ -124,7 +124,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendVehicleDeparture(event.fullDocument);
       });
       //
@@ -132,7 +132,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  commuterPickupsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendCommuterPickupLandmark(event.fullDocument);
       });
       //
@@ -140,7 +140,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  panicStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendCommuterPanic(event.fullDocument);
       });
       //
@@ -148,7 +148,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  usersStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         Messaging.sendUser(event.fullDocument);
       });
       //
@@ -156,7 +156,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
-        log(event);
+        // log(event);
         // Messaging.se
       });
       //
@@ -164,7 +164,7 @@ class MongoListeners {
         log(
           `\n🔆🔆🔆🔆   🍎  routeStream onChange fired!  🍎  🔆🔆🔆🔆 `,
         );
-        Messaging.sendRoute(event.fullDocument);
+        // Messaging.sendRoute(event.fullDocument);
       });
       //
       landmarkStream.on("change", (event: any) => {
