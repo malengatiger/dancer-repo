@@ -12,5 +12,11 @@
     },
     "markdown.preview.fontSize": 13,
     "terminal.integrated.cursorBlinking": true,
-    "vscode-corda.isCordaProject": false
+    "vscode-corda.isCordaProject": false,
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/5076fd11-7ab2-42ea-b166-46701d6f561b/resourceGroups/taxiYamGroup/providers/Microsoft.Web/sites/tywebapp",
+    "appService.deploySubpath": "."
 }

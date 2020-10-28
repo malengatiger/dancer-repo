@@ -12,13 +12,13 @@ const ssa1 = JSON.parse(sa1);
 export const appTo: admin.app.App = admin.initializeApp(
     {
         credential: admin.credential.cert(ssa1),
-        databaseURL: "https://dancer26983.firebaseio.com",
-        storageBucket: "dancer26983.appspot.com",
+        databaseURL: "https://taxiyam-2021.firebaseio.com",
+        storageBucket: "taxiyam-2021.appspot.com",
     },
     "appTo",
 );
 log(
-    `🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION} \n`,
+    `🔑🔑🔑 appTo = Firebase Admin SDK initialized: 😍 😍 😍 ... version: ${admin.SDK_VERSION}  \n`,
 );
 
 const fba: admin.messaging.Messaging = appTo.messaging();
@@ -140,6 +140,32 @@ public static async sendChat(
     console.log(payload.data);
 }
 
+public static async sendVehicleAdded(data: any, ): Promise<any> {
+    const options: any = {
+        priority: "high",
+        timeToLive: 60 * 60,
+    };
+    const payload: any = {
+        notification: {
+            title: "Vehicle Added",
+            body: data.vehicleReg + ' at ' + data.landmarkName,
+        },
+        data: {
+            type: Constants.VEHICLES,
+            vehicleID: data.vehicleID,
+            vehicleReg: data.vehicleReg,
+        },
+    };
+    const topic = Constants.VEHICLES + '_' + data.associationID;
+    const result = await fba.sendToTopic(topic, payload, options);
+    log(
+        `😍 sendVehicleAdded: FCM message sent: 😍 ${
+        data.vehicleReg
+        } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+    );
+    console.log(payload.data);
+
+}
     public static async sendVehicleArrival(data: any, ): Promise<any> {
         const options: any = {
             priority: "high",
