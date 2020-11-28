@@ -131,6 +131,7 @@ class _RoutePointCollectorState extends State<RoutePointCollector>
       await LocalDBAPI.addRoute(route: _route);
       _routePointsCollected = _route.rawRoutePoints;
     }
+    mp('_RoutePointCollectorState: 🔵 🔵 _getCollectionPoints  ... 🔵 found ${_routePointsCollected.length}');
     setState(() {});
   }
 
