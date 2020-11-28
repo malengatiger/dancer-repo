@@ -7,7 +7,6 @@ import mongoose from 'mongoose';
 */
 const RouteDistanceEstimationSchema = new mongoose.Schema(
     {
-        // _id: {type: String, required: false},
         routeID: {type: String, required: true},
         routeName: {type: String, required: true},
         nearestLandmark: {type: String, required: true, trim: true},

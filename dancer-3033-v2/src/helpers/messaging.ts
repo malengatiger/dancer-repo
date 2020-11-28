@@ -79,9 +79,9 @@ class Messaging {
         const topic = Constants.ROUTE_DISTANCE_ESTIMATION + '_' + data.routeID;
         const result = await fba.sendToTopic(topic, payload, options);
         log(
-            `😍 sendRouteDistanceEstimation: FCM message sent: 😍 ${
+            `😍 send RouteDistanceEstimation: FCM message sent: 😍 ${
             data.vehicle.vehicleReg
-            } topic: ${topic} : payload data: 🍎🍎 ${JSON.stringify(payload)} 🍎🍎`,
+            } topic: ${topic} : payload: 🍎🍎 ${JSON.stringify(payload)} 🍎🍎`,
         );
     }
     public static async sendNotification(data: any, ): Promise<any> {
