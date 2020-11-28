@@ -3,6 +3,7 @@ import * as admin from "firebase-admin";
 import Landmark from "../models/landmark";
 import {log} from '../log';
 import Constants from "./constants";
+import RouteDistanceEstimation from "../models/route_distance";
 // const StringBuffer = require("stringbuffer");
 
 log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
@@ -55,6 +56,8 @@ class Messaging {
         );
     }
     public static async sendRouteDistanceEstimation(data: any, ): Promise<any> {
+        const m = new RouteDistanceEstimation(data);
+
         const options: any = {
             priority: "high",
             timeToLive: 60 * 60,
@@ -65,7 +68,12 @@ class Messaging {
                 body: data.vehicle.vehicleReg,
             },
             data: {
-                estimation: JSON.stringify(data)
+                id: m.id,
+                created: data.created,
+                routeID: data.routeID,
+                vehicleReg: data.vehicle.vehicleReg,
+                vehicleID: data.vehicle.vehicleID,
+                distancesCalculated: data.dynamicDistances === null? '0' : `${data.dynamicDistances.length}`
             },
         };
         const topic = Constants.ROUTE_DISTANCE_ESTIMATION + '_' + data.routeID;
@@ -73,7 +81,7 @@ class Messaging {
         log(
             `😍 sendRouteDistanceEstimation: FCM message sent: 😍 ${
             data.vehicle.vehicleReg
-            } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`,
+            } topic: ${topic} : payload data: 🍎🍎 ${JSON.stringify(payload)} 🍎🍎`,
         );
     }
     public static async sendNotification(data: any, ): Promise<any> {

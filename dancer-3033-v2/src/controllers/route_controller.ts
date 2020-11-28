@@ -1,11 +1,7 @@
 import { Request, Response } from "express";
 import Route from "../models/route";
-import db from '../database';
 import {log} from '../log';
-import Association from "../models/association";
 import uuid = require("uuid");
-import Database from '../database';
-import { Db, Cursor } from "mongodb";
 import { Types } from "mongoose";
 import RouteDistanceEstimation from "../models/route_distance";
 import Messaging from "../helpers/messaging";
@@ -54,7 +50,6 @@ export class RouteController {
             console.log(req.body);
             try {
                 const assID: any = req.body.associationID;
-                const now = new Date().getTime();
                 log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`)
                 const result = await (await Route.find({associationID:assID }, {routeID: 1, name: 2}));
                 log(result);
@@ -399,7 +394,6 @@ export class RouteController {
                 const latitude = parseFloat(req.body.latitude);
                 const longitude = parseFloat(req.body.longitude);
                 const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
-                const routeID = req.body.routeID;
                 const result = await Route.find({
                     position: {
                         $near: {
