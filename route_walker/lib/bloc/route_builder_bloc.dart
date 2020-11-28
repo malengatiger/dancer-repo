@@ -492,7 +492,9 @@ class RouteBuilderBloc {
         landmarkId: landmark.landmarkID,
         routePoint: routePoint);
 
-    await LocalDBAPI.updateLocalLandmark(landmark: m);
+    try {
+      await LocalDBAPI.updateLocalLandmark(landmark: m);
+    } catch (e) {}
 
     await getRouteLandmarks(route);
     return m;

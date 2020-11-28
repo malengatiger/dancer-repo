@@ -761,7 +761,7 @@ class _LandmarkEditorState extends State<LandmarkEditor>
       Navigator.pop(context);
     } catch (e) {
       print(e);
-      widget.listener.onError('Failed: ${e.message == null ? '' : e.message}');
+      widget.listener.onError('Failed: $e');
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key,
           message:
