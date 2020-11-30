@@ -11,8 +11,8 @@ const RouteSchema = new mongoose.Schema(
         rawRoutePoints: {type: Array, required: true, default: []},
         routePoints: {type: Array, required: true, default: []},
         calculatedDistances: {type: Array, required: true, default: []},
-
         created: {type: String, required: true, default: new Date().toISOString()},
+        updated: {type: String, required: false},
     }
 );
 

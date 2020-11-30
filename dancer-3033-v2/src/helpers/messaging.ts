@@ -68,7 +68,7 @@ class Messaging {
                 body: data.vehicle.vehicleReg,
             },
             data: {
-                id: m.id,
+                id: `${data._id}`,
                 created: data.created,
                 routeID: data.routeID,
                 vehicleReg: data.vehicle.vehicleReg,
