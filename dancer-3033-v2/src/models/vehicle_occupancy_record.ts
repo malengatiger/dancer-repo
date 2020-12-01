@@ -10,6 +10,7 @@ const VehicleOccupancyRecordSchema = new mongoose.Schema(
     {
         vehicleReg: {type: String, required: true, trim: true},
         vehicleID: {type: String, required: true, trim: true},
+        ownerID: {type: String, required: false, trim: true},
         position: {type: Map, required: true},
         currentPersons: {type: Number, required: true, default: 0},
         personsOut: {type: Number, required: true, default: 0},
@@ -29,6 +30,7 @@ VehicleOccupancyRecordSchema.indexes().push({ position: "2dsphere" });
 VehicleOccupancyRecordSchema.indexes().push({vehicleID: 1}, {unique: false});
 VehicleOccupancyRecordSchema.indexes().push({routeID: 1}, {unique: false});
 VehicleOccupancyRecordSchema.indexes().push({landmarkID: 1}, {unique: false});
+VehicleOccupancyRecordSchema.indexes().push({ownerID: 1}, {unique: false});
 
 const VehicleOccupancyRecord = mongoose.model('VehicleOccupancyRecord', VehicleOccupancyRecordSchema);
 export default VehicleOccupancyRecord
