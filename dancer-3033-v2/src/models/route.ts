@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const RouteSchema = new mongoose.Schema(
     {
@@ -16,6 +17,7 @@ const RouteSchema = new mongoose.Schema(
     }
 );
 
-
+RouteSchema.plugin(uniqueValidator);
+RouteSchema.indexes().push({associationID: 1}, {unique: false});
 const Route = mongoose.model('Route', RouteSchema);
 export default Route;

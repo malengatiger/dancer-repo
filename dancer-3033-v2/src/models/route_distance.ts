@@ -14,7 +14,9 @@ const RouteDistanceEstimationSchema = new mongoose.Schema(
     }
 );
 
-//nearestLandmarkID
+RouteDistanceEstimationSchema.indexes().push({'vehicle.vehicleID': 1}, {unique: false});
+RouteDistanceEstimationSchema.indexes().push({routeID: 1}, {unique: false});
+RouteDistanceEstimationSchema.indexes().push({'dynamicDistances.landmarkID': 1}, {unique: false});
 
 const RouteDistanceEstimation = mongoose.model('RouteDistanceEstimation', RouteDistanceEstimationSchema);
 export default RouteDistanceEstimation;

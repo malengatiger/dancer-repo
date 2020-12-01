@@ -10,6 +10,7 @@ import uuid = require("uuid");
 import VehicleRouteAssignment from "../models/vehicle_route_assignment";
 import VehicleCommuterNearby from "../models/vehicle_commuter_nearby";
 import Messaging from "../helpers/messaging";
+import VehicleOccupancyRecord from "../models/vehicle_occupancy_record";
 
 export class VehicleController {
 
@@ -313,6 +314,25 @@ export class VehicleController {
         )
       }
     });
+    app.route("/addVehicleOccupancyRecord").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 addVehicleOccupancyRecord requested `;
+      console.log(msg);
+
+      try {
+        const c: any = new VehicleOccupancyRecord(req.body);
+        c.date = new Date().toISOString();
+        const result = await c.save();
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 addVehicleOccupancyRecord failed'
+          }
+        )
+      }
+    });
     app.route("/updateVehicleOwner").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 updateVehicleOwner requested `;
       console.log(msg);
@@ -609,6 +629,61 @@ export class VehicleController {
         )
       }
     });
+    app.route("/getVehicleOccupancyRecordsByVehicle").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getVehicleOccupancyRecordsByVehicle requested `;
+      console.log(msg);
+      try {
+          const days = req.body.days;
+          const cutOff: string = moment().subtract(days, "days").toISOString();
+          const result = await VehicleOccupancyRecord.find(
+          { vehicleID: req.body.vehicleID, date: { $gt: cutOff },  });
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 getVehicleOccupancyRecordsByVehicle failed'
+          }
+        )
+      }
+    });
+    app.route("/getVehicleOccupancyRecordsByRoute").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getVehicleOccupancyRecordsByRoute requested `;
+      console.log(msg);
+      try {
+          const days = req.body.days;
+          const cutOff: string = moment().subtract(days, "days").toISOString();
+          const result = await VehicleOccupancyRecord.find(
+          { routeID: req.body.routeID, date: { $gt: cutOff },  });
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 getVehicleOccupancyRecordsByRoute failed'
+          }
+        )
+      }
+    });
+    app.route("/getVehicleOccupancyRecordsByLandmark").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getVehicleOccupancyRecordsByLandmark requested `;
+      console.log(msg);
+      try {
+          const days = req.body.days;
+          const cutOff: string = moment().subtract(days, "days").toISOString();
+          const result = await VehicleOccupancyRecord.find(
+          { landmarkID: req.body.landmarkID, date: { $gt: cutOff },  });
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: '🍎🍎🍎🍎 getVehicleOccupancyRecordsByLandmark failed'
+          }
+        )
+      }
+    });
+
 
   }
 

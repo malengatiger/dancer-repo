@@ -16,6 +16,8 @@ const LandmarkSchema = new mongoose.Schema(
 );
 LandmarkSchema.plugin(uniqueValidator);
 LandmarkSchema.indexes().push({position: '2dsphere'})
+LandmarkSchema.indexes().push({'routeDetails.routeID': 1}, {unique: false});
+LandmarkSchema.indexes().push({landmarkID: 1}, {unique: true});
 
 const Landmark = mongoose.model('Landmark', LandmarkSchema);
 export default Landmark;
