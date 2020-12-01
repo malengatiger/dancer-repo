@@ -80,8 +80,9 @@ export class DispatchController {
         )
       }
     });
-    app.route("/findDispatchRecordsByLocation").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 findDispatchRecordsByLocation requested `;
+    
+    app.route("/getDispatchRecordsByLocation").post(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getDispatchRecordsByLocation requested `;
       log(msg);
 
       try {
@@ -154,6 +155,25 @@ export class DispatchController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 getDispatchRecordsByLandmark failed'
+          }
+        )
+      }
+    });
+    app.route("/getDispatchRecordsByMarshal").post((req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getDispatchRecordsByMarshal requested `;
+      console.log(msg);
+
+      try {
+        const days = req.body.days;
+        const cutOff: string = moment().subtract(days, "days").toISOString();
+        const result = DispatchRecord.find({ marshalID: req.body.marshalID, created: { $gt: cutOff }, });
+        // log(result);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎🍎🍎🍎 getDispatchRecordsByMarshal failed'
           }
         )
       }

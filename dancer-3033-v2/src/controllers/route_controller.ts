@@ -6,13 +6,13 @@ import { Types } from "mongoose";
 import RouteDistanceEstimation from "../models/route_distance";
 import Messaging from "../helpers/messaging";
 import RouteFare from "../models/route_fare";
+import moment = require("moment");
+import DispatchRecord from "../models/dispatch_record";
 export class RouteController {
   public routes(app: any): void {
     log(`🏓    RouteController: 💙  setting up default Route routes ... `);
     /////////
-    app
-      .route("/getLatestRoutesByAssociation")
-      .post(async (req: Request, res: Response) => {
+    app.route("/getLatestRoutesByAssociation").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦💦 💦  POST: /getLatestRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -53,9 +53,7 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/getRoutesByAssociation")
-      .post(async (req: Request, res: Response) => {
+    app.route("/getRoutesByAssociation").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦💦 💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -92,9 +90,7 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/getRouteIDsByAssociation")
-      .post(async (req: Request, res: Response) => {
+    app.route("/getRouteIDsByAssociation") .post(async (req: Request, res: Response) => {
         log(
           `\n\n💦💦 💦  POST: /getRouteIDsByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -207,9 +203,7 @@ export class RouteController {
         });
       }
     });
-    app
-      .route("/getRouteFaresByAssociation")
-      .post(async (req: Request, res: Response) => {
+    app.route("/getRouteFaresByAssociation").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦💦 💦  POST: /getRouteFaresByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -259,9 +253,7 @@ export class RouteController {
         });
       }
     });
-    app
-      .route("/addRouteDistanceEstimation")
-      .post(async (req: Request, res: Response) => {
+    app.route("/addRouteDistanceEstimation").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦  POST: /addRouteDistanceEstimation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -288,9 +280,66 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/addRouteDistanceEstimations")
-      .post(async (req: Request, res: Response) => {
+      
+    app.route("/getRouteDistanceEstimationsByRoute").post(async (req: Request, res: Response) => {
+        log(
+          `\n\n💦  POST: /getRouteDistanceEstimationsByRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        );
+        console.log(req.body);
+        try {
+          const minutes = req.body.minutes;
+          const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+          const result = RouteDistanceEstimation.find({ routeID: req.body.routeID, created: { $gt: cutOff }, });
+
+          res.status(200).json(result);
+          
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: "🍎🍎 getRouteDistanceEstimationsByRoute failed",
+          });
+        }
+      });
+    app.route("/getRouteDistanceEstimationsByLandmark").post(async (req: Request, res: Response) => {
+        log(
+          `\n\n💦  POST: /getRouteDistanceEstimationsByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        );
+        console.log(req.body);
+        try {
+          const minutes = req.body.minutes;
+          const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+          const result = RouteDistanceEstimation.find({ 'dynamicDistances.landmarkID': req.body.landmarkID, created: { $gt: cutOff }, });
+
+          res.status(200).json(result);
+          
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: "🍎🍎 getRouteDistanceEstimationsByLandmark failed",
+          });
+        }
+      });
+    app.route("/getRouteDistanceEstimationsByVehicle").post(async (req: Request, res: Response) => {
+        log(
+          `\n\n💦  POST: /getRouteDistanceEstimationsByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        );
+        console.log(req.body);
+        try {
+          const minutes = req.body.minutes;
+          const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
+          const result = RouteDistanceEstimation.find({ 'vehicle.vehicleID': req.body.vehicleID, created: { $gt: cutOff }, });
+
+          res.status(200).json(result);
+          
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: "🍎🍎 getRouteDistanceEstimationsByVehicle failed",
+          });
+        }
+      });
+      
+    app.route("/addRouteDistanceEstimations").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦  POST: /addRouteDistanceEstimations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -324,9 +373,7 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/addCalculatedDistances")
-      .post(async (req: Request, res: Response) => {
+    app.route("/addCalculatedDistances").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦  POST: /addCalculatedDistances requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -409,9 +456,7 @@ export class RouteController {
         });
       }
     });
-    app
-      .route("/addRawRoutePoints")
-      .post(async (req: Request, res: Response) => {
+    app.route("/addRawRoutePoints").post(async (req: Request, res: Response) => {
         log(
           `\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -440,9 +485,7 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/updateLandmarkRoutePoints")
-      .post(async (req: Request, res: Response) => {
+    app.route("/updateLandmarkRoutePoints").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦  POST: /updateLandmarkRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -488,9 +531,7 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/findNearestRoutePoint")
-      .post(async (req: Request, res: Response) => {
+    app.route("/findNearestRoutePoint").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦  POST: /findNearestRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
@@ -526,9 +567,7 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/findNearestRoutes")
-      .post(async (req: Request, res: Response) => {
+    app.route("/findNearestRoutes").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦  POST: /findNearestRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );

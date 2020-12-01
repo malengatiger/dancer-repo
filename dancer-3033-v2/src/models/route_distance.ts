@@ -1,15 +1,11 @@
 import mongoose from 'mongoose';
-/*
- String routeID, routeName, nearestLandmark;
-  List<DynamicDistance> dynamicDistances;
-  double distanceToNearestLandmark;
-  String created;
-*/
+
 const RouteDistanceEstimationSchema = new mongoose.Schema(
     {
         routeID: {type: String, required: true},
         routeName: {type: String, required: true},
-        nearestLandmark: {type: String, required: true, trim: true},
+        nearestLandmarkID: {type: String, required: true, trim: true},
+        nearestLandmarkName: {type: String, required: true, trim: true},
         distanceToNearestLandmark: {type: Number, required: true},
         vehicle: {type: Object, required: true},
         dynamicDistances: {type: Array, required: true, default: []},
@@ -18,6 +14,7 @@ const RouteDistanceEstimationSchema = new mongoose.Schema(
     }
 );
 
+//nearestLandmarkID
 
 const RouteDistanceEstimation = mongoose.model('RouteDistanceEstimation', RouteDistanceEstimationSchema);
 export default RouteDistanceEstimation;
