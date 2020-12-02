@@ -2,6 +2,7 @@ name: route_walker
 description: Route Builder
 
 version: 1.0.0
+publish_to: none
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -11,7 +12,7 @@ dependencies:
     sdk: flutter
 
   aftarobotlibrary4:
-    path: ../../aftarobotlibrary4/aftarobotlibrary4/
+    path: ../../../../DANCER_REPO/aftarobotlibrary4/aftarobotlibrary4
 
 dev_dependencies:
   flutter_test:
