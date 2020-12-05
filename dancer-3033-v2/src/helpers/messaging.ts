@@ -23,6 +23,9 @@ log(
 );
 
 const fba: admin.messaging.Messaging = appTo.messaging();
+
+
+
 log(`😍 😍 😍 FCM Messaging initialized. app: ${fba.app.name} `);
 appTo.firestore().collection('associations').get().then((snapshot) => {
    snapshot.docs.forEach((doc) => {
@@ -32,6 +35,11 @@ appTo.firestore().collection('associations').get().then((snapshot) => {
 class Messaging {
     public static init() {
         log(`😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`);
+    }
+    public static async verify(token: string, ): Promise<any> {
+
+        const admin = appTo.auth().verifyIdToken(token, true);
+
     }
     public static async sendVehicleCommuterNearby(data: any, ): Promise<any> {
         const options: any = {
