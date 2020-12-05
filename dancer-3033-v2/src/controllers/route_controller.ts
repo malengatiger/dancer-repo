@@ -143,9 +143,7 @@ export class RouteController {
       }
     });
     app.route("/addRoute").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /addRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
+      
       try {
         const route: any = new Route(req.body);
         route.routeID = uuid();
@@ -165,10 +163,7 @@ export class RouteController {
       }
     });
     app.route("/addRouteFare").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /addRouteFare requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
-      console.log(req.body);
+      
       try {
         const routeFare: any = new RouteFare(req.body);
         routeFare.created = new Date().toISOString();
@@ -184,9 +179,7 @@ export class RouteController {
       }
     });
     app.route("/addLandmarkFare").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /addLandmarkFare requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
+    
       try {
         const routeFare: any = RouteFare.find({ routeID: req.body.routeID });
         if (!routeFare.landmarkFares) {
@@ -205,10 +198,7 @@ export class RouteController {
       }
     });
     app.route("/getRouteFaresByAssociation").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦💦 💦  POST: /getRouteFaresByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const assID: any = req.body.associationID;
           const now = new Date().getTime();
@@ -255,12 +245,8 @@ export class RouteController {
       }
     });
     app.route("/addRouteDistanceEstimation").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /addRouteDistanceEstimation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
-          //TODO - should this go to DB????? or just to messaging?
           const estimation: any = new RouteDistanceEstimation(req.body);
           if (!estimation.vehicle) {
             throw new Error(`Vehicle missing from estimation`);
@@ -268,9 +254,7 @@ export class RouteController {
           estimation.created = new Date().toISOString();
           await estimation.save();
           await Messaging.sendRouteDistanceEstimation(req.body);
-          log(
-            `addRouteDistanceEstimations added  🍎 1 🍎 to database & messaging service`
-          );
+          
           res.status(200).json({
             message: `Route Distance Estimation FCM message sent`,
           });
@@ -284,10 +268,7 @@ export class RouteController {
       });
       
     app.route("/getRouteDistanceEstimationsByRoute").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /getRouteDistanceEstimationsByRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const minutes = req.body.minutes;
           const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
@@ -303,10 +284,7 @@ export class RouteController {
         }
       });
     app.route("/getRouteDistanceEstimationsByLandmark").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /getRouteDistanceEstimationsByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const minutes = req.body.minutes;
           const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
@@ -322,10 +300,7 @@ export class RouteController {
         }
       });
     app.route("/getRouteDistanceEstimationsByVehicle").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /getRouteDistanceEstimationsByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const minutes = req.body.minutes;
           const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
@@ -342,13 +317,8 @@ export class RouteController {
       });
       
     app.route("/addRouteDistanceEstimations").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /addRouteDistanceEstimations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
-          //TODO - should this go to DB????? or just to messaging?
-
           const list: any[] = req.body.estimations;
           let cnt = 0;
           for (const estimate of list) {
@@ -361,9 +331,7 @@ export class RouteController {
             await Messaging.sendRouteDistanceEstimation(estimate);
             cnt++;
           }
-          log(
-            `addRouteDistanceEstimations added  🍎 ${cnt} 🍎 to database & messaging service`
-          );
+          
           res.status(200).json({
             message: `Route Distance Estimations: ${cnt} FCM messages sent`,
           });
@@ -376,10 +344,7 @@ export class RouteController {
         }
       });
     app.route("/addCalculatedDistances").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /addCalculatedDistances requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           route.calculatedDistances = req.body.calculatedDistances;
@@ -387,7 +352,7 @@ export class RouteController {
           log(
             `💙💙 Distances added to route. ${route.calculatedDistances.length} - 🧡💛 ${route.name}`
           );
-          // log(result);
+          
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -397,10 +362,7 @@ export class RouteController {
         }
       });
     app.route("/addRoutePoints").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /addRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
-      console.log(req.body);
+      
       try {
         const route: any = await Route.findOne({ routeID: req.body.routeID });
         // check clear flag
@@ -414,11 +376,10 @@ export class RouteController {
         });
         route.updated = new Date().toISOString();
         const result = await route.save();
-        log(
-          `💙💙 Points added to route: ${route.routePoints.length} - 🧡💛 ${route.name}`
-        );
+        
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json({
           error: err,
           message: " 🍎🍎🍎🍎 addRoutePoints failed",
@@ -426,10 +387,7 @@ export class RouteController {
       }
     });
     app.route("/updateRoute").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /updateRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
-      console.log(req.body);
+      
       try {
         const route: any = await Route.findOne({ routeID: req.body.routeID });
 
@@ -452,6 +410,7 @@ export class RouteController {
         );
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json({
           error: err,
           message: " 🍎🍎🍎🍎 updateRoute failed",
@@ -459,9 +418,7 @@ export class RouteController {
       }
     });
     app.route("/addRawRoutePoints").post(async (req: Request, res: Response) => {
-        log(
-          `\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
+        
         try {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           if (req.body.clear == true) {
@@ -473,10 +430,7 @@ export class RouteController {
           });
 
           const result = await route.save();
-          log(
-            `💙💙 Raw Route Points added to route: ${route.rawRoutePoints.length} - 🧡💛 ${route.name}`
-          );
-          // log(result);
+          
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -487,10 +441,7 @@ export class RouteController {
         }
       });
     app.route("/updateLandmarkRoutePoints").post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /updateLandmarkRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const routeID = req.body.routeID;
           const routePoints: any[] = req.body.routePoints;
@@ -499,9 +450,7 @@ export class RouteController {
           if (!route) {
             throw new Error("Route not found");
           }
-          log(
-            `🔆🔆🔆 💙 ROUTE: ${route.name} updated. Will update route points ....`
-          );
+          
           for (const routePoint of routePoints) {
             const mRes = await Route.updateOne(
               {
@@ -515,10 +464,7 @@ export class RouteController {
                 },
               }
             );
-            log(
-              `🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 ${routePoint.landmarkName}`
-            );
-            console.log(mRes);
+            
           }
 
           res.status(200).json({

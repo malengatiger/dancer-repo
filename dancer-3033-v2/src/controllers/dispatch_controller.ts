@@ -14,11 +14,9 @@ export class DispatchController {
       `🏓    DispatchController:  💙  setting up default Dispatch routes ...`,
     );
     app.route("/addDispatchRecord").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 DispatchController: ...........  💦  💦  💦  addDispatchRecord requested ........ `;
-      console.log(msg);
-      console.log(req.body);
+      
       try {
-        //validate main data elements
+
         if (!req.body.routeID) {
           const msg = 'DispatchController: 🍎🍎🍎🍎 Dispatch recording failed: Missing route info'
           console.error(msg)
@@ -61,13 +59,8 @@ export class DispatchController {
           if (arrival) {
             arrival.dispatched = true;
             arrival.update();
-            log(`🔆🔆 DispatchRecord has VehicleArrival updated 😍 dispatched = true 😍`)
-          } else {
-            log(`VehicleArrival not found; 🍎🍎🍎 was expected. This is an ERROR`)
-          }
-        } else {
-          log(`🔆🔆DispatchRecord has NO VehicleArrivalID, ....... no need to update`)
-        }
+          } 
+        } 
 
         res.status(200).json(result);
       } catch (err) {
@@ -82,9 +75,7 @@ export class DispatchController {
     });
     
     app.route("/getDispatchRecordsByLocation").post(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getDispatchRecordsByLocation requested `;
-      log(msg);
-
+      
       try {
         const now = new Date().getTime();
         const minutes = parseInt(req.body.minutes);
@@ -104,9 +95,8 @@ export class DispatchController {
             created: { $gt: cutOff },
           },
         });
-        // log(result);
+        
         const end = new Date().getTime();
-        log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
         res.status(200).json(result);
         log(result);
         res.status(200).json(result);
@@ -122,14 +112,13 @@ export class DispatchController {
       }
     });
     app.route("/getDispatchRecordsByVehicle").post((req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getDispatchRecordsByVehicle requested `;
-      console.log(msg);
+    
 
       try {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
         const result = DispatchRecord.find({ vehicleID: req.body.vehicleID, created: { $gt: cutOff }, });
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -141,8 +130,6 @@ export class DispatchController {
       }
     });
     app.route("/getDispatchRecordsByLandmark").post((req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getDispatchRecordsByLandmark requested `;
-      console.log(msg);
 
       try {
         const days = req.body.days;
@@ -160,8 +147,7 @@ export class DispatchController {
       }
     });
     app.route("/getDispatchRecordsByMarshal").post((req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getDispatchRecordsByMarshal requested `;
-      console.log(msg);
+      
 
       try {
         const days = req.body.days;
@@ -179,14 +165,13 @@ export class DispatchController {
       }
     });
     app.route("/getDispatchRecordsByRoute").post((req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getDispatchRecordsByRoute requested `;
-      console.log(msg);
+      
 
       try {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
         const result = DispatchRecord.find({ routeID: req.body.routeID, created: { $gt: cutOff }, });
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -218,16 +203,13 @@ export class DispatchController {
     });
 
     app.route("/addMarshalFenceDwellEvent").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceDwellEvent requested `;
-      console.log(msg);
-
+      
       try {
         const event: any = new MarshalFenceDwellEvent(req.body);
         event.created = new Date().toISOString();
         event.marshalFenceEventID = uuid();
 
         const result = await event.save();
-        log(result);
         res.status(200).json(result);
       } catch (err) {
         console.error(err)
@@ -240,15 +222,13 @@ export class DispatchController {
       }
     });
     app.route("/addMarshalFenceExitEvent").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addMarshalFenceExitEvent requested `;
-      console.log(msg);
 
       try {
         const event: any = new MarshalFenceExitEvent(req.body);
         event.created = new Date().toISOString();
         event.marshalFenceEventID = uuid();
         const result = await event.save();
-        log(result);
+       
         res.status(200).json(result);
       } catch (err) {
         console.error(err)
