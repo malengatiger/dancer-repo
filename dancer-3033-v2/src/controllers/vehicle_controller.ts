@@ -21,13 +21,13 @@ export class VehicleController {
     app.route("/addVehicleCommuterNearby").post(async(req: Request, res: Response) => {
       const msg = `\n\n🌽 POST 🌽🌽 addVehicleCommuterNearby requested `;
       console.log(msg);
-      console.log(req.body);
       try {
         const event: any = new VehicleCommuterNearby(req.body);
         event.created = new Date().toISOString();
         const result = await event.save();
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json(
           {
             error: err,
@@ -306,6 +306,7 @@ export class VehicleController {
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json(
           {
             error: err,
@@ -325,6 +326,7 @@ export class VehicleController {
         // log(result);
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json(
           {
             error: err,
@@ -437,9 +439,10 @@ export class VehicleController {
         c.vehicleArrivalID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        Messaging.sendVehicleArrival(result);
+        // Messaging.sendVehicleArrival(result);
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -464,6 +467,7 @@ export class VehicleController {
         res.status(200).json(assignments);
         
       } catch (err) {
+        console.error(err)
         res.status(400).json(
           {
             error: err,
@@ -484,6 +488,7 @@ export class VehicleController {
         Messaging.sendVehicleDeparture(result);
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json(
           {
             error: err,
@@ -495,7 +500,6 @@ export class VehicleController {
     app.route("/addVehicleLocation").post(async (req: Request, res: Response) => {
       const msg = `🔵 🔵 🔵 🔵 addVehicleLocation; Vehicle Registration: 🍎 ${JSON.stringify(req.body.vehicleReg)} 
       : vehicle location recording at 🔵 ${new Date().toISOString()} 🔵`;
-      //console.log(msg);
 
       try {
 
@@ -505,6 +509,7 @@ export class VehicleController {
        
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -523,6 +528,7 @@ export class VehicleController {
         log(`🍎🍎 vehicleType added: ${result}`);
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json(
           {
             error: err,
@@ -683,7 +689,6 @@ export class VehicleController {
         )
       }
     });
-
 
   }
 

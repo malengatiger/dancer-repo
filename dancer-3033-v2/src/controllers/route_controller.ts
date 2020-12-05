@@ -11,7 +11,7 @@ import DispatchRecord from "../models/dispatch_record";
 export class RouteController {
   public routes(app: any): void {
     log(`🏓    RouteController: 💙  setting up default Route routes ... `);
-    /////////
+    
     app.route("/getLatestRoutesByAssociation").post(async (req: Request, res: Response) => {
         log(
           `\n\n💦💦 💦  POST: /getLatestRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
@@ -146,7 +146,6 @@ export class RouteController {
       log(
         `\n\n💦  POST: /addRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
       );
-      console.log(req.body);
       try {
         const route: any = new Route(req.body);
         route.routeID = uuid();
@@ -158,6 +157,7 @@ export class RouteController {
         log(`result ${result}`);
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json({
           error: err,
           message: " 🍎🍎🍎🍎 addRoute failed",
@@ -176,6 +176,7 @@ export class RouteController {
         log(`routeFare added to db: ${result}`);
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json({
           error: err,
           message: ` 🍎🍎🍎🍎 addRouteFare failed: ${err}`,
@@ -186,7 +187,6 @@ export class RouteController {
       log(
         `\n\n💦  POST: /addLandmarkFare requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
       );
-      console.log(req.body);
       try {
         const routeFare: any = RouteFare.find({ routeID: req.body.routeID });
         if (!routeFare.landmarkFares) {
@@ -197,6 +197,7 @@ export class RouteController {
         log(`landmarkFare added to db: ${result}`);
         res.status(200).json(result);
       } catch (err) {
+        console.error(err)
         res.status(400).json({
           error: err,
           message: ` 🍎🍎🍎🍎 addLandmarkFare failed: ${err}`,
@@ -274,6 +275,7 @@ export class RouteController {
             message: `Route Distance Estimation FCM message sent`,
           });
         } catch (err) {
+          console.error(err)
           res.status(400).json({
             error: err,
             message: "🍎🍎 addRouteDistanceEstimation failed",
@@ -460,7 +462,6 @@ export class RouteController {
         log(
           `\n💦  POST: /addRawRoutePoints requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
-        console.log(req.body);
         try {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           if (req.body.clear == true) {
