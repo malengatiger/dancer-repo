@@ -18,6 +18,8 @@ const RouteSchema = new mongoose.Schema(
 );
 
 RouteSchema.plugin(uniqueValidator);
-RouteSchema.indexes().push({associationID: 1}, {unique: false});
+RouteSchema.indexes().push({associationID: 1, routeID: 1}, {unique: true});
+RouteSchema.indexes().push({associationName: 1}, {unique: true});
+
 const Route = mongoose.model('Route', RouteSchema);
 export default Route;
