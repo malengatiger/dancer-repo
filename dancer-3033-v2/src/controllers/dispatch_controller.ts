@@ -51,9 +51,7 @@ export class DispatchController {
         c.dispatchRecordID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        console.log('💦💦 DispatchController: 💦 Result of addDispatchRecord save operation ...... : ')
-        console.log(result);
-        // todo - use vehicleArrivalID to update the dispatched flag
+        
         if (req.body.vehicleArrivalID) {
           const arrival: any = await VehicleArrival.findOne({ vehicleArrivalID: req.body.vehicleArrivalID })
           if (arrival) {
@@ -152,14 +150,17 @@ export class DispatchController {
       try {
         const days = req.body.days;
         const cutOff: string = moment().subtract(days, "days").toISOString();
-        const result = DispatchRecord.find({ marshalID: req.body.marshalID, created: { $gt: cutOff }, });
-        // log(result);
-        res.status(200).json(result);
+        const result = DispatchRecord.find({ marshalID: req.body.marshalID, created: { $gt: cutOff }, }).exec(function(err, records) {
+          log(`🥦 🥦 🥦 getDispatchRecordsByMarshal:found  🍎 ${records.length} DispatchRecords for marshal: ${req.body.marshalID}`);
+          res.status(200).json(records);
+        })
+        
       } catch (err) {
+        console.error(err)
         res.status(400).json(
           {
             error: err,
-            message: ' 🍎🍎🍎🍎 getDispatchRecordsByMarshal failed'
+            message: `🍎 🍎 🍎 🍎 getDispatchRecordsByMarshal failed: ${err}`
           }
         )
       }

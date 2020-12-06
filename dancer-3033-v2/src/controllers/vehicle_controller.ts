@@ -126,10 +126,7 @@ export class VehicleController {
     app
       .route("/getVehicleArrivalsByLandmark")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /getVehicleArrivalsByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -142,11 +139,7 @@ export class VehicleController {
             created: { $gt: cutOff },
           });
           const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 elapsed time: 💙 ${
-              end / 1000 - now / 1000
-            } 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`
-          );
+          
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -223,10 +216,7 @@ export class VehicleController {
     app
       .route("/getVehicleDeparturesByVehicle")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /getVehicleDeparturesByVehicle requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -238,13 +228,9 @@ export class VehicleController {
             vehicleID: vehicleID,
             created: { $gt: cutOff },
           });
-          // log(result);
+         
           const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 elapsed time: 💙 ${
-              end / 1000 - now / 1000
-            } 💙seconds for query. departures found: 🍎 ${result.length} 🍎`
-          );
+          
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -256,10 +242,7 @@ export class VehicleController {
     app
       .route("/getVehicleDeparturesByLandmark")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /getVehicleDeparturesByLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -271,13 +254,9 @@ export class VehicleController {
             landmarkID: landmarkID,
             created: { $gt: cutOff },
           });
-          // log(result);
+          
           const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 elapsed time: 💙 ${
-              end / 1000 - now / 1000
-            } 💙seconds for query: found: 🍎 ${result.length} 🍎`
-          );
+          
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -289,10 +268,7 @@ export class VehicleController {
     app
       .route("/getVehicleDeparturesByLandmarkIDs")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /getVehicleDeparturesByLandmarkIDs requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+       
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -305,11 +281,7 @@ export class VehicleController {
             created: { $gt: cutOff },
           });
           const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 elapsed time: 💙 ${
-              end / 1000 - now / 1000
-            } 💙seconds for query. arrivals found: 🍎 ${result.length} 🍎`
-          );
+          
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -370,7 +342,7 @@ export class VehicleController {
           c.assignments = [];
         }
         const result = await c.save();
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
