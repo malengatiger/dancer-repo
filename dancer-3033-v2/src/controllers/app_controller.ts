@@ -11,35 +11,36 @@ export class AppController {
       `🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`
     );
    
-    app.use(async function myAuth(req: Request, res: Response, next) {
+    // app.use(async function myAuth(req: Request, res: Response, next) {
       
-      // console.log("🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 JWT authentication:  🍏 🍏 🍏 app.use : 🍏 perform authentication with token 🌺 🌺 🌺 🌺 ", new Date().toISOString());
-      const authHeader = req.headers.authorization;
-      console.log(`🌺 authenticating this url: ${req.url} 💛 ${new Date().toISOString()}`)
-      if (authHeader) {
-        const token = authHeader.split(" ")[1];
-        try {
-          const result = await appTo.auth().verifyIdToken(token, false);
-          // console.log(
-          //   `💛 💛 💛 result of verify: ${JSON.stringify(result)} `
-          // );
-          return next();
+    //   // console.log("🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 JWT authentication:  🍏 🍏 🍏 app.use : 🍏 perform authentication with token 🌺 🌺 🌺 🌺 ", new Date().toISOString());
+    //   const authHeader = req.headers.authorization;
+    //   console.log(`🌺 authenticating this url: ${req.url} 💛 ${new Date().toISOString()}`)
+    //   if (authHeader) {
+    //     const token = authHeader.split(" ")[1];
+    //     try {
+    //       const result = await appTo.auth().verifyIdToken(token, false);
+    //       // console.log(
+    //       //   `💛 💛 💛 result of verify: ${JSON.stringify(result)} `
+    //       // );
+    //       return next();
           
-        } catch (err) {
-          console.error(err);
-          console.log(
-            "👿 👿 👿 👿 invalid authorization header found. 👿 Forbidden! 👿 "
-          );
-          return next(`Just piss off! Fool!`)
-        }
-      } else {
-        console.log(
-          "👿 👿 👿 👿 No authorization header found. 👿 Forbidden! 👿 "
-        );
-        return next('You are truly fucked!')
-      }
+    //     } catch (err) {
+    //       console.error(err);
+    //       console.log(
+    //         "👿 👿 👿 👿 invalid authorization header found. 👿 Forbidden! 👿 "
+    //       );
+    //       return next(`Just piss off! Fool!`)
+    //     }
+    //   } else {
+    //     console.log(
+    //       "👿 👿 👿 👿 No authorization header found. 👿 Forbidden! 👿 "
+    //     );
+    //     return next('You are truly fucked!')
+    //   }
            
-    });
+    // });
+    
     app.route("/").get((req: Request, res: Response) => {
       const msg = `🧡💛🧡💛  Hello World from MizDancer 💙💙💙💙💙💙 Azure 🏓 DOCKER CONTAINER  is UP!  💙💙💙💙💙💙 🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
       logBlue(msg);
