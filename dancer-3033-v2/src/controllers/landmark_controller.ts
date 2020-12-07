@@ -14,10 +14,7 @@ export class LandmarkController {
         );
         /////////
         app.route("/addRouteToLandmark").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦  POST: /addRouteToLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+            
             try {
                 const now = new Date().getTime();
                 const routeID = req.body.routeID;
@@ -49,14 +46,12 @@ export class LandmarkController {
                     name: route.name,
                 })
                 const result = await landmark.save();
-                log(`🔆🔆🔆 💙 landmark ${landmark.landmarkName} updated. Will update route point ....`)
-                // TODO - update routePount
+                
                 const mRes = await Route.updateOne({"_id": new Types.ObjectId(route.id), "routePoints.index": routePoint.index},
                 {$set: {"routePoints.$.landmarkID": landmark.landmarkID, "routePoints.$.landmarkName": landmark.landmarkName}});
                 log(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 `);
                 console.log(mRes);
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds. added route to landmark ${landmark.landmarkName}`)
                 res.status(200).json(result);
             } catch (err) {
                 console.log(err);
@@ -103,10 +98,7 @@ export class LandmarkController {
             }
         });
         app.route("/getLandmarksByRoute").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦  POST: /getLandmarksByRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+
             try {
                 const now = new Date().getTime();
 
@@ -128,10 +120,7 @@ export class LandmarkController {
             }
         });
         app.route("/getLandmarksByRoutes").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦  POST: /getLandmarksByRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+            
             try {
                 const now = new Date().getTime();
         
@@ -150,16 +139,14 @@ export class LandmarkController {
                     }
                 )
             }
-        });        app.route("/getLandmarks").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦  POST: /getLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+        });        
+        
+        app.route("/getLandmarks").post(async (req: Request, res: Response) => {
+            
             try {
                 const now = new Date().getTime();
                 const result = await Landmark.find();
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 getLandmarks: elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query. found ${result.length} landmarks`)
 
                 res.status(200).json(result);
             } catch (err) {
@@ -172,18 +159,13 @@ export class LandmarkController {
             }
         });
         app.route("/addLandmark").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦  POST: /addLandmark requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+           
             try {
                 const landmark: any = new Landmark(req.body);
                 landmark.landmarkID = uuid();
                 landmark.created = new Date().toISOString();
             
-                const result = await landmark.save();
-                log(`🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️️🍀️landmark saved ${landmark.landmarkName}`)
-                
+                const result = await landmark.save();                
                 res.status(200).json(result);
             } catch (err) {
                 console.error(err)

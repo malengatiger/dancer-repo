@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const DispatchRecordSchema = new mongoose.Schema(
     {
@@ -24,8 +25,18 @@ const DispatchRecordSchema = new mongoose.Schema(
 
     }
 );
-
+DispatchRecordSchema.plugin(uniqueValidator);
 DispatchRecordSchema.index({ position: "2dsphere" });
+DispatchRecordSchema.indexes().push({associationID: 1, vehicleID: 1}, {unique: false});
+DispatchRecordSchema.indexes().push({landmarkID: 1}, {unique: false});
+DispatchRecordSchema.indexes().push({marshalID: 1}, {unique: false});
+DispatchRecordSchema.indexes().push({routeID: 1}, {unique: false});
+DispatchRecordSchema.indexes().push({associationD: 1}, {unique: false});
+DispatchRecordSchema.indexes().push({ownerID: 1}, {unique: false});
+
+
+
+
 const DispatchRecord = mongoose.model('DispatchRecord', DispatchRecordSchema);
 export default DispatchRecord
 

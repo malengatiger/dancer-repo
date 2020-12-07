@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const VehicleRouteAssignmentSchema = new mongoose.Schema(
     {
@@ -15,6 +16,7 @@ const VehicleRouteAssignmentSchema = new mongoose.Schema(
     }
 );
 
-
+VehicleRouteAssignmentSchema.plugin(uniqueValidator);
+VehicleRouteAssignmentSchema.indexes().push({routeID: 1, vehicleID: 1}, {unique: true});
 const VehicleRouteAssignment = mongoose.model('VehicleRouteAssignment', VehicleRouteAssignmentSchema);
 export default VehicleRouteAssignment;

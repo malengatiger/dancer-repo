@@ -26,6 +26,14 @@ class Constants {
     public static NOTIFICATIONS = 'notifications';
     public static CHAT = 'chat';
 
+    public static USER_CONDUCTOR = 'Conductor';
+    public static USER_MARSHAL = 'Marshal';
+    public static USER_COMMUTER = 'Commuter';
+    public static USER_DRIVER = 'Driver';
+    public static USER_OWNER = 'Owner';
+    public static USER_STAFF = 'Staff';
+    public static USER_ASSOCIATION_OFFICIAL = 'Official';
+
 }
 
 export default Constants;

@@ -27,6 +27,13 @@ expressApp.use((req: Request, res: Response, next) => {
 
 expressApp.use(cors());
 log(`🥦🥦🥦 CORS set up for app: ${cors().name}`);
+const router = express.Router()
+
+// middleware that is specific to this router
+router.use(function timeLog (req, res, next) {
+  console.log('😍 😍 😍 😍 😍 😍 Time: ', new Date().toISOString())
+  next()
+})
 
 const port = process.env.PORT || 8081;
 const dancer = process.env.DANCER_CONFIG || 'dancer config not found';
@@ -47,10 +54,10 @@ list.forEach((m) => {
 });
 stringList.sort();
 let cnt = 0;
-// stringList.forEach((m) => {
-//   cnt++;
-//   log(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
-// });
+stringList.forEach((m) => {
+  cnt++;
+  log(`🥦🥦🥦 🍎 #${cnt} 🍎 ${m}`);
+});
 
 log(`🥦🥦 Dancer Web(aka ARWeb) endpoints available: 💛 ${list.length}  💛`);
 

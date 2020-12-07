@@ -30,9 +30,7 @@ export class CommuterController {
       `🏓    CommuterController:  💙  setting up default Commuter routes ...`,
     );
     app.route("/addCommuterRequest").post(async (req: Request, res: Response) => {
-      const msg = `🌽 POST 🌽🌽 addCommuterRequest requested `;
-      console.log(msg);
-
+      
       try {
         const walletFlag = req.body.isWallet;
         
@@ -42,19 +40,16 @@ export class CommuterController {
         comm.scanned = false;
         comm.autoDetected = false;
         if (walletFlag === true) {
-          console.log(`about to set isWallet to true .....`);
           comm.isWallet = true;
           
         } else {
-          console.log(`about to set isWallet to false .....`);
           comm.isWallet = false;
         }
-        console.log(`stringWallet: ${walletFlag} .................... Check the incoming isWallet boolean below`);
-        console.log(comm);
         const result = await comm.save();
         Messaging.sendCommuterRequest(result);
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -64,22 +59,16 @@ export class CommuterController {
       }
     });
     app.route("/updateCommuterRequestScanned").post(async (req: Request, res: Response) => {
-      const msg = `🌽 POST 🌽🌽 updateCommuterRequestScanned requested `;
-      console.log(msg);
-
+      
       try {
-        const commuterRequestID = req.body.commuterRequestID;
-        console.log(`🍎🍎🍎incoming requestID: 🍎🍎🍎 ${commuterRequestID}`);
-        
+        const commuterRequestID = req.body.commuterRequestID;        
         const commReq: any = await CommuterRequest.findOne(
           {commuterRequestID: commuterRequestID});
         if (!commReq) {
           throw new Error('CommuterRequest not found');
         }
-        console.log(commReq);
         commReq.scanned = true;
         const result = await commReq.save();
-        // log(result);
         res.status(200).json(result);
       } catch (err) {
         log(err);
@@ -92,9 +81,7 @@ export class CommuterController {
       }
     });
     app.route("/addPayment").post(async (req: Request, res: Response) => {
-      const msg = `🌽 POST 🌽🌽 addPayment requested `;
-      console.log(msg);
-      console.log(req.body);
+      
 
       try {
         const comm : any= new Payment(req.body);
@@ -112,8 +99,6 @@ export class CommuterController {
       }
     });
     app.route("/updateCommuterRequestVehicle").post(async (req: Request, res: Response) => {
-      const msg = `🌽 POST 🌽🌽 updateCommuterRequestVehicle requested `;
-      console.log(msg);
 
       try {
         const commuterRequestID = req.body.commuterRequestID;
@@ -126,7 +111,7 @@ export class CommuterController {
         commReq.vehicleID = req.body.vehicleID;
         commReq.vehicleReg = req.body.vehicleReg;
         const result = await commReq.save();
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -138,8 +123,6 @@ export class CommuterController {
       }
     });
     app.route("/updateCommuterRequestAutoDetected").post(async (req: Request, res: Response) => {
-      const msg = `🌽 POST 🌽🌽 updateCommuterRequestAutoDetected requested `;
-      console.log(msg);
 
       try {
         const commuterRequestID = req.body.commuterRequestID;
@@ -153,7 +136,6 @@ export class CommuterController {
         commReq.vehicleID = req.body.vehicleID;
         commReq.vehicleReg = req.body.vehicleReg;
         const result = await commReq.save();
-        // log(result);
 
         res.status(200).json(result);
       } catch (err) {
@@ -166,15 +148,14 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterRatingsAggregate").post(async (req: Request, res: Response) => {
-      const msg = `🌽 POST 🌽🌽 addCommuterRatingsAggregate requested `;
-      console.log(msg);
+      
 
       try {
         const c: any = new CommuterRatingsAggregate(req.body);
         c.commuterRatingsAggregateID = uuid();
         c.created = new Date().toISOString();
         const result = await c.save();
-        // log(result);
+       
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -186,8 +167,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterArrivalLandmark").post(async (req: Request, res: Response) => {
-      const msg = `🌽 POST 🌽🌽 addCommuterArrivalLandmark requested `;
-      console.log(msg);
+      
 
       try {
         const c: any = new CommuterArrivalLandmark(req.body);
@@ -207,8 +187,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterPickupLandmark").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPickupLandmark requested `;
-      console.log(msg);
+      
 
       try {
         const c: any = new CommuterPickupLandmark(req.body);
@@ -227,8 +206,6 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterPickupLandmarks").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPickupLandmarks requested `;
-      console.log(msg);
 
       try {
         const minutes = parseInt(req.body.minutes);
@@ -238,7 +215,7 @@ export class CommuterController {
           fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
-        // log(result);
+       
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -250,9 +227,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterPickupByLandmarkIDs").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPickupByLandmarkIDs requested `;
-      console.log(msg);
-      log(req.body);
+      
     
       try {
         const minutes = parseInt(req.body.minutes);
@@ -260,9 +235,8 @@ export class CommuterController {
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await CommuterPickupLandmark.find({
         fromLandmarkID: {$in: landmarkIDs}, created: {$gt: cutOff}});
-        // log(result);
+       
         res.status(200).json(result);
-        log(`🍎 getCommuterPickupByLandmarkIDs: found : 🍎 ${result.length} 🍎`)
       } catch (err) {
         log(err);
         res.status(400).json(
@@ -274,9 +248,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterArrivalLandmarks").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalLandmarks requested `;
-      console.log(msg);
-      log(req.body);
+      
 
       try {
         const minutes = parseInt(req.body.minutes);
@@ -286,7 +258,7 @@ export class CommuterController {
           fromLandmarkID: landmarkID,
           created: {$gt: cutOff}
         });
-        // log(result);
+        
         res.status(200).json(result);
         log(`🍎 getCommuterArrivalLandmarks: found : 🍎 ${result.length} 🍎`)
       } catch (err) {
@@ -300,9 +272,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterArrivalByLandmarkIDs").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterArrivalByLandmarkIDs requested `;
-      console.log(msg);
-      log(req.body);
+      
     
       try {
         const minutes = parseInt(req.body.minutes);
@@ -310,9 +280,8 @@ export class CommuterController {
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await CommuterArrivalLandmark.find({
         fromLandmarkID: {$in: landmarkIDs}, created: {$gt: cutOff}});
-        // log(result);
+        
         res.status(200).json(result);
-        log(`🍎 getCommuterArrivalByLandamrkIDs: found : 🍎 ${result.length} 🍎`)
       } catch (err) {
         log(err);
         res.status(400).json(
@@ -323,11 +292,9 @@ export class CommuterController {
         )
       }
     });
-    //findCommuterRequestByID
+    
     app.route("/getCommuterStartingLandmarks").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterStartingLandmarks requested `;
-      console.log(msg);
-
+      
       try {
         const minutes = parseInt(req.body.minutes);
         const landmarkID = parseInt(req.body.landmarkID);
@@ -336,7 +303,7 @@ export class CommuterController {
           landmarkID: landmarkID,
           created: {$gt: cutOff}
         });
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -348,9 +315,7 @@ export class CommuterController {
       }
     });
     app.route("/findCommuterRequestByID").post(async(req: Request, res: Response) => {
-      const msg = `\n🌽 POST 🌽🌽 findCommuterRequestByID requested `;
-      console.log(msg);
-      console.log(req.body);
+      
 
       try {
         const commuterRequestID = req.body.commuterRequestID;
@@ -369,9 +334,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterStartingLandmark").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterStartingLandmark requested `;
-      console.log(msg);
-      log(req.body)
+      
       try {
         const c: any = new CommuterStartingLandmark(req.body);
         c.commuterStartingLandmarkID = uuid();
@@ -392,9 +355,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterArrivalLandmark").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterArrivalLandmark requested `;
-      console.log(msg);
-
+     
       try {
         const c: any = new CommuterArrivalLandmark(req.body);
         c.commuterArrivalLandmarkID = uuid();
@@ -403,6 +364,7 @@ export class CommuterController {
         Messaging.sendCommuterArrivalLandmark(result);
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -412,8 +374,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterRating").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterRating requested `;
-      console.log(msg);
+       
 
       try {
         const commuterRequest = await CommuterRequest.findOne({
@@ -428,7 +389,7 @@ export class CommuterController {
           c.commuterRatingID = uuid();
           c.created = new Date().toISOString();
           const result = await c.save();
-          // log(result);
+          
           res.status(200).json(result);
         } else {
           res.status(400).json({
@@ -437,6 +398,7 @@ export class CommuterController {
         }
         
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -446,8 +408,7 @@ export class CommuterController {
       }
     });
     app.route("/addSafetyNetworkBuddy").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addSafetyNetworkBuddy requested `;
-      console.log(msg);
+      
 
       try {
         const buddy = new SafetyNetworkBuddy(req.body)
@@ -465,8 +426,7 @@ export class CommuterController {
       }
     });
     app.route("/commuterClaimPrize").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 commuterClaimPrize requested `;
-      console.log(msg);
+      
 
       try {
         const prize = new CommuterPrize(req.body)
@@ -474,6 +434,7 @@ export class CommuterController {
           res.status(200).json(result);
       }
        catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -483,14 +444,13 @@ export class CommuterController {
       }
     });
     app.route("/getIncentiveTypeByAssociation").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getIncentiveTypeByAssociation requested `;
-      console.log(msg);
+    
 
       try {
         const incentiveType: any = await CommuterIncentiveType.findOne({
           associationID: req.body.associationID
         })
-        // log(result);
+        
         res.status(200).json(incentiveType);
       } catch (err) {
         res.status(400).json(
@@ -502,13 +462,11 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterIncentiveType").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentiveType requested `;
-      console.log(msg);
-
+      
       try {
         const incentiveType: any = new CommuterIncentiveType(req.body);
         const result = await incentiveType.save();
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -520,8 +478,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterIncentive").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterIncentive requested `;
-      console.log(msg);
+      
 
       try {
         const incentiveType = await CommuterIncentiveType.findById(req.body.incentiveTypeID)
@@ -543,7 +500,7 @@ export class CommuterController {
           user: user
         });
         const result = await incentive.save();
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -555,8 +512,6 @@ export class CommuterController {
       }
     });
     app.route("/findSafetyNetworkBuddiesByUserID").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 findSafetyNetworkBuddiesByUserID requested `;
-      console.log(msg);
 
       try {
         const buddies = await SafetyNetworkBuddy.find({userID: req.body.userID})
@@ -564,6 +519,7 @@ export class CommuterController {
         }
 
        catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -573,9 +529,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterPanicLocation").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanicLocation requested `;
-      console.log(msg);
-
+     
       if (!req.body.commuterPanicID) {
         throw Error('panicID not present in call parameters')
       }
@@ -608,10 +562,9 @@ export class CommuterController {
             message: 'addCommuterPanicLocation failed: commuterPanic'
           })
         }
-        
-        // log(result);
-        
+                
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -621,9 +574,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterPanic").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterPanic requested `;
-      console.log(msg);
-
+      
       try {
         const panic: any = new CommuterPanic(req.body);
         panic.created = new Date().toISOString();
@@ -634,6 +585,7 @@ export class CommuterController {
         log(result);
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -643,9 +595,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterFenceDwellEvent").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterFenceDwellEvent requested `;
-      console.log(msg);
-
+      
       try {
         const event: any = new CommuterFenceDwellEvent(req.body);
         event.created = new Date().toISOString();
@@ -655,6 +605,7 @@ export class CommuterController {
         log(result);
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -664,8 +615,7 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterFenceExitEvent").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterFenceExitEvent requested `;
-      console.log(msg);
+      
 
       try {
         const event: any = new CommuterFenceExitEvent(req.body);
@@ -673,7 +623,7 @@ export class CommuterController {
         event.commuterFenceEventID = uuid();
 
         const result = await event.save();
-        log(result);
+
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -685,15 +635,14 @@ export class CommuterController {
       }
     });
     app.route("/addCommuterVehicleNearby").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 addCommuterVehicleNearby requested `;
-      console.log(msg);
-      console.log(req.body);
+      
       try {
         const event: any = new CommuterVehicleNearby(req.body);
         event.created = new Date().toISOString();
         const result = await event.save();
         res.status(200).json(result);
       } catch (err) {
+        console.log(err)
         res.status(400).json(
           {
             error: err,
@@ -703,13 +652,11 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterPanicsByUserID").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterPanicsByUserID requested `;
-      console.log(msg);
+      
 
       try {
         const panics: any = await CommuterPanic.find({userID: req.body.userID})
-        
-        // log(result);
+
         res.status(200).json(panics);
       } catch (err) {
         console.log(err)
@@ -722,13 +669,10 @@ export class CommuterController {
       }
     });
     app.route("/getPanicLocations").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getPanicLocations requested `;
-      console.log(msg);
-
+      
       try {
         const panics: any = await CommuterPanicLocation.find({commuterPanicID: req.body.commuterPanicID})
         
-        // log(result);
         res.status(200).json(panics);
       } catch (err) {
         console.log(err)
@@ -741,9 +685,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByUserID").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
-      console.log(msg);
-
+      
       try {
         const uid = req.body.firebaseUID;
         const result = (await  User.find({userID: uid})).reverse();
@@ -754,7 +696,7 @@ export class CommuterController {
             message: 'User not found'
           })
         }
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -766,8 +708,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterFenceDwellEvents").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceDwellEvents requested `;
-      console.log(msg);
+      
 
       try {
         const landmarkID = req.body.landmarkID;
@@ -782,7 +723,7 @@ export class CommuterController {
             error: 'getCommuterFenceDwellEvents failed',
           })
         }
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -794,8 +735,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByLandmark").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByLandmark requested `;
-      console.log(msg);
+      
 
       try {
         const landmarkID = req.body.landmarkID;
@@ -810,7 +750,7 @@ export class CommuterController {
             error: 'getCommuterRequestsByLandmark failed',
           })
         }
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -822,9 +762,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByLandmarkIDs").post(async(req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByLandmarkIDs requested `;
-      console.log(msg);
-      log(req.body);
+    
     
       try {
         const minutes = parseInt(req.body.minutes);
@@ -832,9 +770,8 @@ export class CommuterController {
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await CommuterRequest.find({
         fromLandmarkID: {$in: landmarkIDs}, created: {$gt: cutOff}});
-        // log(result);
+        
         res.status(200).json(result);
-        log(`🍎 getCommuterRequestsByLandmarkIDs: found : 🍎 ${result.length} 🍎`)
       } catch (err) {
         log(err);
         res.status(400).json(
@@ -846,8 +783,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterFenceExitEvents").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterFenceExitEvents requested `;
-      console.log(msg);
+     
 
       try {
         const landmarkID = req.body.landmarkID;
@@ -862,7 +798,7 @@ export class CommuterController {
             error: 'getCommuterFenceExitEvents failed',
           })
         }
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -874,8 +810,7 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByID").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByID requested `;
-      console.log(msg);
+      
 
       try {
         const id = req.body.commuterRequestID;
@@ -887,7 +822,7 @@ export class CommuterController {
             message: 'Commuter request not found'
           })
         }
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -899,15 +834,14 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByFromLandmark").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByFromLandmark requested `;
-      console.log(msg);
+    
 
       try {
         const minutes = parseInt(req.body.minutes);
         const fromLandmarkID = req.body.fromLandmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await  CommuterRequest.find({fromLandmarkID: fromLandmarkID, created: { $gt: cutOff },});
-        // log(result);
+       
         res.status(200).json(result);
       } catch (err) {
         log(err)
@@ -920,15 +854,14 @@ export class CommuterController {
       }
     });
     app.route("/getCommuterRequestsByToLandmark").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 getCommuterRequestsByToLandmark requested `;
-      console.log(msg);
+      
 
       try {
         const minutes = parseInt(req.body.minutes);
         const toLandmarkID = req.body.toLandmarkID;
         const cutOff: string = moment().subtract(minutes, "minutes").toISOString();
         const result = await  CommuterRequest.find({toLandmarkID: toLandmarkID, created: { $gt: cutOff },});
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -940,13 +873,12 @@ export class CommuterController {
       }
     });
     app.route("/findCommuterRequestsByUserID").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByUserID requested `;
-      console.log(msg);
+      
 
       try {
         const uid = req.body.UID;
         const result = (await  CommuterRequest.find({userID: uid})).reverse();
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json(
@@ -958,8 +890,7 @@ export class CommuterController {
       }
     });
     app.route("/findCommuterRequestsByLocation").post(async (req: Request, res: Response) => {
-      const msg = `\n\n🌽 POST 🌽🌽 findCommuterRequestsByLocation requested `;
-      console.log(msg);
+    
 
       try {
         const minutes = parseInt(req.body.minutes);
@@ -979,7 +910,7 @@ export class CommuterController {
           },
           createdAt: { $gt: cutOff }
         });
-        // log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         console.log(err)

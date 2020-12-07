@@ -21,5 +21,7 @@ VehicleSchema.plugin(uniqueValidator);
 VehicleSchema.index({vehicleID: 1}, {unique: true})
 VehicleSchema.index({associationID: 1}, {unique: false})
 VehicleSchema.index({ownerID: 1}, {unique: false})
+VehicleSchema.index({vehicleReg: 1}, {unique: true})
+VehicleSchema.indexes().push({associationID: 1, vehicleID: 1}, {unique: true});
 const Vehicle = mongoose.model('Vehicle', VehicleSchema);
 export default Vehicle
