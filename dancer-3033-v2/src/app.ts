@@ -4,7 +4,7 @@ import cors from "cors";
 dotenv.config();
 import { Request, Response, NextFunction, Application } from "express";
 import bodyParser from "body-parser";
-// import AftaRobotApp from "../app";
+
 import http from "http";
 import { log } from './log';
 import AftaRobotApp from './ar';
