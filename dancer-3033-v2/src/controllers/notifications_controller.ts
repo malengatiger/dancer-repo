@@ -9,7 +9,7 @@ import { log } from '../log';
 export class NotificationsController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓    Notifications Controller: 💙  setting up notifications messages ... `,
+            `🏓    Notifications Controller: 💙  setting up notifications messages ... `,
         );
         /////////
 

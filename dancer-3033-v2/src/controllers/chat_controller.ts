@@ -9,7 +9,7 @@ import {log} from "../log";
 export class ChatController {
     public routes(app: any): void {
         log(
-            `🏓🏓🏓    ChatController: 💙  setting up messages for live chat ... `,
+            `🏓    ChatController: 💙  setting up messages for live chat ... `,
         );
         /////////
         

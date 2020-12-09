@@ -19,7 +19,7 @@ mongoose
       `\n🔆🔆  Mongo connected ... 🔆 ${new Date()} `,
     );
     log(
-      `\n🍎🍎  Mongo Client version: 💙${client.version} 💙 model names: ${
+      `\n🍎🍎  Mongo Client version: 💙 ${client.version} 💙 model names: ${
         JSON.stringify(client.modelNames())
       }  ☘️  is OK   🍎🍎 `,
     );

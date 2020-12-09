@@ -9,6 +9,7 @@ export class ItineraryController {
         console.log(
             `🏓    ItineraryController:  💙  setting up default ItineraryController ...`,
         );
+        
         app.route("/addItinerary").post(async (req: Request, res: Response) => {
             const msg = `🌽🌽🌽 addItinerary requested `;
             console.log(msg);
@@ -29,6 +30,7 @@ export class ItineraryController {
                 )
             }
         });
+        
         app.route("/deleteItinerary").post(async (req: Request, res: Response) => {
             const msg = `🌽🌽🌽 deleteItinerary requested `;
             console.log(msg);
@@ -49,7 +51,7 @@ export class ItineraryController {
             }
         });
 
-        app.route("/getAssociationItineraries").post(async (req: Request, res: Response) => {
+        app.route("/getItinerariesByAssociation").post(async (req: Request, res: Response) => {
             try {
                 const itineraries = await Itinerary.find({'associationID': req.body.associationID})
                 res.status(200).json(itineraries);
@@ -58,6 +60,62 @@ export class ItineraryController {
                     {
                         error: err,
                         message: `🍎🍎🍎🍎 getAssociationItineraries failed: ${err}`
+                    }
+                )
+            }
+        });
+        
+        app.route("/getItinerariesByDestinationCity").post(async (req: Request, res: Response) => {
+            try {
+                const itineraries = await Itinerary.find({'destinationCities.cityID': req.body.cityID})
+                res.status(200).json(itineraries);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: `🍎🍎🍎🍎 getItinerariesByDestinationCity failed: ${err}`
+                    }
+                )
+            }
+        });
+
+        app.route("/getItinerariesByDestinationCity").post(async (req: Request, res: Response) => {
+            try {
+                const itineraries = await Itinerary.find({'destinationCities.cityID': req.body.cityID})
+                res.status(200).json(itineraries);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: `🍎🍎🍎🍎 getItinerariesByDestinationCity failed: ${err}`
+                    }
+                )
+            }
+        });
+
+        app.route("/getItinerariesByRoute").post(async (req: Request, res: Response) => {
+            try {
+                const itineraries = await Itinerary.find({'routes.routeID': req.body.routeID})
+                res.status(200).json(itineraries);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: `🍎🍎🍎🍎 getItinerariesByRoute failed: ${err}`
+                    }
+                )
+            }
+        });
+
+        app.route("/getItinerariesByLandmark").post(async (req: Request, res: Response) => {
+            try {
+                const itineraries = await Itinerary.find({'landmarks.landmarkID': req.body.landmarkID})
+                res.status(200).json(itineraries);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: `🍎🍎🍎🍎 getItinerariesByLandmark failed: ${err}`
                     }
                 )
             }

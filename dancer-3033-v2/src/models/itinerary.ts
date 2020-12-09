@@ -11,11 +11,13 @@ const ItinerarySchema = new mongoose.Schema(
         associationName: {type: String, required: true, trim: true},
         associationID: {type: String, required: true, trim: true},
         websiteUrl: {type: String, required: false, trim: true },
+        fare: {type: Number, required: false, default: 0 },
         created: {type: String, required: true, default: new Date().toISOString()},
 
     }
 );
 
+mongoose.set('useCreateIndex', true)
 ItinerarySchema.plugin(uniqueValidator);
 ItinerarySchema.indexes().push({position: '2dsphere'})
 ItinerarySchema.indexes().push({associationID: 1});
