@@ -4,6 +4,7 @@ import { logBlue, logGreen } from "../log";
 import QRCodeUtil from "../helpers/qrcode";
 import { appTo } from "../helpers/messaging";
 import { reset } from "chalk";
+import AppTermination from "../models/app_termination";
 
 export class AppController {
   public routes(app: express.Application): void {
@@ -138,5 +139,40 @@ export class AppController {
           `💛OK, MTN Mobile Money Callback: 💛body: ${JSON.stringify(req.body)}`
         );
     });
+
+    app
+      .route("/addAppTermination")
+      .post(async (req: Request, res: Response) => {
+        
+        try {
+          const c: any = new AppTermination(req.body);
+          c.created = new Date().toISOString();
+          const result = await c.save();
+
+          res.status(200).json(result);
+        } catch (err) {
+          console.log(err);
+          res.status(400).json({
+            error: err,
+            message: `🍎🍎🍎🍎 addAppTermination failed: ${err}`,
+          });
+        }
+      });
+
+      app
+      .route("/getAppTerminations")
+      .post(async (req: Request, res: Response) => {
+        
+        try {
+          const c = AppTermination.find({})
+          res.status(200).json(c);
+        } catch (err) {
+          console.log(err);
+          res.status(400).json({
+            error: err,
+            message: `🍎🍎🍎🍎 getAppTerminations failed: ${err}`,
+          });
+        }
+      });
   }
 }

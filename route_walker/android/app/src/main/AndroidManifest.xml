@@ -32,8 +32,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <receiver android:name="com.dancer.routewalker.geofence.FenceBroadcastReceiver" />
         <!-- flutter_background_geolocation licence -->
         <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="9c12af374fa51474f20329ae23938274fd975353f2b9455fcc4771a00eb1d87f" />
         <activity
