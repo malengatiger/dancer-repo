@@ -1,12 +1,10 @@
 import 'package:aftarobotlibrary4/data/citydto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/maps/cards.dart';
-
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
-
 
 class LandmarkCityPage extends StatefulWidget {
   final Landmark landmark;
@@ -19,10 +17,10 @@ class LandmarkCityPage extends StatefulWidget {
 
 class _LandmarkCityPageState extends State<LandmarkCityPage>
     implements SnackBarListener {
-  List<CityDTO>  _filteredCities = List();
+  List<City> _filteredCities = List();
   GlobalKey<ScaffoldState> _key = GlobalKey();
   String name;
-  CityDTO city;
+  City city;
 
   @override
   void initState() {
@@ -37,16 +35,20 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
 
   void _loadCities() {
     widget.landmark.cities.forEach((c) {
-      _filteredCities.add(CityDTO.fromJson(c.toJson()));
+      _filteredCities.add(City.fromJson(c.toJson()));
     });
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   void _getCities() async {
     prettyPrint(widget.landmark.toJson(), 'LANDMARK to link cities: 🍏 🍏 🍏 ');
-    debugPrint('🧩🧩🧩 Finding cities within 5 km of 🍏 ${widget.landmark.landmarkName} 🍏 ');
-    AppSnackbar.showSnackbarWithProgressIndicator(scaffoldKey: _key, message: 'Finding nearby  places ...', textColor: Colors.white, backgroundColor: Colors.black);
+    debugPrint(
+        '🧩🧩🧩 Finding cities within 5 km of 🍏 ${widget.landmark.landmarkName} 🍏 ');
+    AppSnackbar.showSnackbarWithProgressIndicator(
+        scaffoldKey: _key,
+        message: 'Finding nearby  places ...',
+        textColor: Colors.white,
+        backgroundColor: Colors.black);
     await routeBuilderBloc.findCitiesByLocation(
       latitude: widget.landmark.latitude,
       longitude: widget.landmark.longitude,
@@ -55,7 +57,6 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
     if (_key.currentState != null) {
       _key.currentState.removeCurrentSnackBar();
     }
-
   }
 
   void _showConfirmDialog() {
@@ -123,7 +124,6 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
   }
 
   void _writeLandmarkCities() async {
-
     AppSnackbar.showSnackbarWithProgressIndicator(
         scaffoldKey: _key,
         message: "Linking places to Landmark ...",
@@ -163,8 +163,6 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,7 +193,6 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
                 SizedBox(
                   height: 24,
                 ),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -205,7 +202,10 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
                         onPressed: _showConfirmDialog,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text('Link Places', style: Styles.whiteSmall,),
+                          child: Text(
+                            'Link Places',
+                            style: Styles.whiteSmall,
+                          ),
                         )),
                     SizedBox(
                       width: 40,
@@ -268,9 +268,9 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
   }
 
   @override
-  onCitiesFound(List<CityDTO> cities) {
+  onCitiesFound(List<City> cities) {
     debugPrint(' 🍎 🍎 🍎 onCitiesFound: ${cities.length}   🍎 🍎 🍎');
-    Map<String, CityDTO> map = Map();
+    Map<String, City> map = Map();
     _filteredCities.forEach((c) {
       map[c.name] = c;
     });
@@ -281,7 +281,7 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
     setState(() {
       _filteredCities.clear();
     });
-    map.forEach((k,v) {
+    map.forEach((k, v) {
       _filteredCities.add(v);
     });
     setState(() {
@@ -290,10 +290,8 @@ class _LandmarkCityPageState extends State<LandmarkCityPage>
   }
 
   @override
-  onCitiesNearLandmark(landmark, List<CityDTO> cities) {
+  onCitiesNearLandmark(landmark, List<City> cities) {
     // TODO: implement onCitiesNearLandmark
     return null;
   }
-
-
 }

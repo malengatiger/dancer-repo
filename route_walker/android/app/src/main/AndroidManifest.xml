@@ -7,29 +7,35 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
+
         android:label="RouteWalker"
         tools:replace="android:label"
         android:icon="@mipmap/ic_launcher"
         tools:ignore="GoogleAppIndexingWarning">
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBvhKm4U0Blz70621ntH5ctw4XfUSuJUTc" />
+            android:value="AIzaSyACofErGIEE0odzZcUrTXCmnlX9lU-Ufog" />
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyACofErGIEE0odzZcUrTXCmnlX9lU-Ufog" />
+        <meta-data
+            android:name="com.google.android.awareness.API_KEY"
+            android:value="AIzaSyACofErGIEE0odzZcUrTXCmnlX9lU-Ufog"/>
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <receiver android:name="com.dancer.routewalker.geofence.FenceBroadcastReceiver" />
         <!-- flutter_background_geolocation licence -->
-        <meta-data android:name="com.transistorsoft.locationmanager.license"
-                   android:value="9c12af374fa51474f20329ae23938274fd975353f2b9455fcc4771a00eb1d87f" />
-<!--        <meta-data-->
-<!--            android:name="flutterEmbedding"-->
-<!--            android:value="2" />-->
-
-        <service android:name="com.transistorsoft.locationmanager.service.TrackingService" android:foregroundServiceType="location" />
-        <service android:name="com.transistorsoft.locationmanager.service.LocationRequestService" android:foregroundServiceType="location" />
-
+        <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="9c12af374fa51474f20329ae23938274fd975353f2b9455fcc4771a00eb1d87f" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -37,13 +43,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- This keeps the window background of the activity showing
-                 until Flutter renders its first frame. It can be removed if
-                 there is no splash screen (such as the default splash screen
-                 defined in @style/LaunchTheme). -->
-<!--            <meta-data-->
-<!--                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"-->
-<!--                android:value="true" />-->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

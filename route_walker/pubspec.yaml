@@ -24,26 +24,9 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/fincash.jpg
-    - assets/fin3.jpeg
-    - assets/computers.png
-    - assets/condominium.png
-    - assets/taxi.png
-    - assets/red_square.png
-    - assets/black_square.png
-    - assets/green_square.png
-    - assets/pin.png
-    - assets/pin_red.png
-    - assets/bus.png
-    - assets/number_1.png
-    - assets/hda.png
-    - assets/icons8-bus-24.png
-    - assets/icons8-bus-48.png
-    - assets/icons8-bus-96.png
+    - assets/
     - .env
-    #    - files/routes.json
-    #    - files/cities.json
-    #    - files/landmarks.json
+
   fonts:
     - family: Raleway
       fonts:

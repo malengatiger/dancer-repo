@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:route_walker/ui/route_viewer_page.dart';
+import 'package:route_walker/ui/route_list_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(color: Colors.indigo[300]),
         fontFamily: 'Raleway',
       ),
-      home: RouteViewerPage(),
+      home: RouteListPage(),
 //      home: EstimationPage(),
     );
   }

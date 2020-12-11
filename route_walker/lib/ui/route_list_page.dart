@@ -7,14 +7,18 @@ import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
 import 'package:aftarobotlibrary4/data/route_point.dart';
 import 'package:aftarobotlibrary4/data/user.dart' as ar;
+import 'package:aftarobotlibrary4/geo/geofencer.dart';
+import 'package:aftarobotlibrary4/location_bloc.dart';
+import 'package:aftarobotlibrary4/maps/distance.dart';
 import 'package:aftarobotlibrary4/maps/route_map.dart';
 import 'package:aftarobotlibrary4/signin/sign_in.dart';
-import 'package:aftarobotlibrary4/util/busy.dart';
+import 'package:aftarobotlibrary4/util/constants.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
-import 'package:aftarobotlibrary4/util/slide_right.dart';
 import 'package:aftarobotlibrary4/util/snack.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
+    as bg;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
@@ -25,18 +29,15 @@ import 'package:route_walker/ui/routepoints_manager.dart';
 import 'landmark_manager.dart';
 import 'landmark_routes_page.dart';
 
-/*
-  This widget manages a list of routes. A route builder selects a route and starts the LocationCollector
-  for collection of raw route points.
-*/
-
-class RouteViewerPage extends StatefulWidget {
+class RouteListPage extends StatefulWidget {
   @override
-  _RouteViewerPageState createState() => _RouteViewerPageState();
+  _RouteListPageState createState() => _RouteListPageState();
 }
 
-class _RouteViewerPageState extends State<RouteViewerPage>
-    implements SnackBarListener, RouteCardListener {
+class _RouteListPageState extends State<RouteListPage>
+    with SingleTickerProviderStateMixin
+    implements RouteCardListener, GeofencerListener {
+  AnimationController _controller;
   ScrollController scrollController = ScrollController();
   String status = 'AftaRobot Routes';
   int routeCount = 0, landmarkCount = 0;
@@ -44,18 +45,68 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   Association association;
   ar.User user;
   final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
+  String switchLabel = 'Hide';
+  bool switchStatus = false, isBusy = false;
+  RouteBuilderModel appModel;
 
   @override
   void initState() {
+    _controller = AnimationController(vsync: this);
     super.initState();
     _subscribe();
     _checkUser();
+    _startGeofencing();
+  }
+
+  @override
+  onDistanceEstimated(RouteDistanceEstimation distanceEstimation) {
+    mp('RouteListViewer: 🍎 🍎 🍎 onDistanceEstimated: ${distanceEstimation.routeName}');
+  }
+
+  @override
+  onDistanceNotEstimated() {
+    mp('RouteListViewer: 🍎 🍎 🍎 onDistanceNotEstimated: ');
+  }
+
+  @override
+  onError(String message) {
+    mp('RouteListViewer: 🍎 🍎 🍎 onError: $message');
+  }
+
+  @override
+  onHeartbeat(bg.Location location) {
+    mp('RouteListViewer: 🍎 🍎 🍎 onHeartbeat: isMoving: ${location.isMoving}');
+    AppSnackbar.showSnackbar(
+        scaffoldKey: _key,
+        backgroundColor: Theme.of(context).primaryColor,
+        message: 'Heartbeat: '
+            '${getFormattedDateHourMinSec(DateTime.now().toString())} : ${location.coords.toString()}');
+  }
+
+  @override
+  onLandmarkDwell(Landmark landmark) {
+    mp('RouteListViewer: 🍎 🍎 🍎 onLandmarkDwell: ${landmark.landmarkName}');
+    AppSnackbar.showSnackbar(
+        scaffoldKey: _key,
+        message: 'Entered: '
+            '${getFormattedDateHourMinSec(DateTime.now().toString())} : ${landmark.landmarkName}');
+  }
+
+  @override
+  onLandmarkExit(Landmark landmark) {
+    mp('RouteListViewer: 🍎 🍎 🍎 onLandmarkExit: ${landmark.landmarkName}');
+    AppSnackbar.showErrorSnackbar(
+        scaffoldKey: _key,
+        message:
+            'Exited: ${getFormattedDateHourMinSec(DateTime.now().toString())} : '
+            '${landmark.landmarkName}');
   }
 
   void _checkUser() async {
     setState(() {
       isBusy = true;
     });
+
     bool isSignedIn = await isUserSignedIn();
     print(
         '🍎 🍎 🍎 _RouteViewerPageState: checkUser: ...................... 🔆🔆 isSignedIn: $isSignedIn  🔆🔆');
@@ -104,6 +155,15 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     });
   }
 
+  Future _startGeofencing() async {
+    p(' ❎  ❎  ❎  ❎ RouteListViewer: _startGeofencing ........');
+    var bloc = LocationBloc();
+    await bloc.requestPermission();
+    await geoFencer.initializeBackgroundLocation(
+        userType: Constants.USER_STAFF, geofencerListener: this);
+    p(' ❎  ❎  ❎  ❎ RouteListViewer: _startGeofencing 🍎 🍎 🍎 DONE!.');
+  }
+
   Future _getAssociation() async {
     association = await Prefs.getAssociation();
     if (association != null) {
@@ -111,6 +171,51 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       await _refresh(false);
     }
     setState(() {});
+  }
+
+  void _addNewRoute() {
+    if (association == null) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'Please select Association');
+      return;
+    }
+    print(
+        '🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage for ${association.toJson()}');
+    Navigator.push(
+        context,
+        PageTransition(
+            child: NewRoutePage(association),
+            type: PageTransitionType.scale,
+            duration: Duration(milliseconds: 1500),
+            alignment: Alignment.topLeft,
+            curve: Curves.easeInOut));
+  }
+
+  void _onAssociationTapped(Association ass) async {
+    print(
+        '⚜️⚜️⚜️ onAssociationTapped ⚜️ ${ass.associationID} ⚜ ${ass.associationName} ... ♻️♻️♻️ set Association and refresh');
+    association = ass;
+    await Prefs.saveAssociation(association);
+    _refresh(true);
+  }
+
+  Future _refresh(bool forceRefresh) async {
+    if (association == null) {
+      AppSnackbar.showErrorSnackbar(
+          scaffoldKey: _key, message: 'Please select association');
+      return;
+    }
+    try {
+      routes = await routeBuilderBloc.getRoutesByAssociation(
+          association.associationID, forceRefresh);
+    } catch (e) {
+      print(e);
+      AppSnackbar.showErrorSnackbar(
+        scaffoldKey: _key,
+        message: 'Some shit happened, Boss!',
+        actionLabel: 'Err',
+      );
+    }
   }
 
   List<aftarobot.Route> routes = List();
@@ -132,126 +237,6 @@ class _RouteViewerPageState extends State<RouteViewerPage>
     routeBuilderBloc.errorStream.listen((msg) {
       AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: msg);
     });
-  }
-
-  void _cancelSub() {
-    subscription.cancel();
-  }
-
-  Future _refresh(bool forceRefresh) async {
-    if (association == null) {
-      AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key, message: 'Please select association');
-      return;
-    }
-    try {
-      routes = await routeBuilderBloc.getRoutesByAssociation(
-          association.associationID, forceRefresh);
-    } catch (e) {
-      print(e);
-      AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key,
-          message: 'Some shit happened, Boss!',
-          actionLabel: 'Err',
-          listener: this);
-    }
-  }
-
-  DateTime start, end;
-  Widget _getListView() {
-    return ListView.builder(
-        itemCount: routes.length,
-        controller: scrollController,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16, top: 4.0),
-            child: StreamBuilder<List<aftarobot.Route>>(
-                stream: routeBuilderBloc.routeStream,
-                builder: (context, snapshot) {
-                  if ((snapshot.hasData)) {
-                    routes = snapshot.data;
-                  }
-                  return RouteCard(
-                    route: routes.elementAt(index),
-                    number: index + 1,
-                    hideLandmarks: switchStatus,
-                    routeCardListener: this,
-                  );
-                }),
-          );
-        });
-  }
-
-  String switchLabel = 'Hide';
-  bool switchStatus = false, isBusy = false;
-  RouteBuilderModel appModel;
-  void _sortRoutes() {
-    //appModel.routes.sort((a, b) => a.name.compareTo(b.name));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<Association>>(
-      stream: routeBuilderBloc.associationStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          asses = snapshot.data;
-          print(
-              '🔵 RouteViewerPage 🧩🧩🧩 ConnectionState.active  🔴 set appModel from stream: associations ${asses.length}');
-          _buildDropDownItems();
-        }
-
-        return Scaffold(
-          key: _key,
-          appBar: AppBar(
-            title: mTitle == null
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      'AftaRobot Routes',
-                      style: Styles.blackBoldMedium,
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      mTitle,
-                      style: Styles.blackBoldMedium,
-                    ),
-                  ),
-            elevation: 16,
-            backgroundColor: Colors.pink[300],
-            bottom: _getTotalsView(),
-          ),
-          bottomNavigationBar: _getBottomNav(),
-          body: Stack(
-            children: <Widget>[
-              isBusy ? Busy() : _getListView(),
-            ],
-          ),
-          backgroundColor: Colors.brown.shade100,
-        );
-      },
-    );
-  }
-
-  void _addNewRoute() {
-    if (association == null) {
-      AppSnackbar.showErrorSnackbar(
-          scaffoldKey: _key, message: 'Please select Association');
-      return;
-    }
-    print(
-        '🌀 🌀 🌀 🌀 add new route .... 🔴 start NewRoutePage for ${association.toJson()}');
-    Navigator.push(context, SlideRightRoute(widget: NewRoutePage(association)));
-  }
-
-  void _onAssociationTapped(Association ass) async {
-    print(
-        '⚜️⚜️⚜️ onAssociationTapped ⚜️ ${ass.associationID} ⚜ ${ass.associationName} ... ♻️♻️♻️ set Association and refresh');
-    association = ass;
-    await Prefs.saveAssociation(association);
-    _refresh(true);
   }
 
   String mTitle;
@@ -289,6 +274,18 @@ class _RouteViewerPageState extends State<RouteViewerPage>
       onTap: _bottomNavTapped,
       backgroundColor: Colors.amber[100],
     );
+  }
+
+  void _bottomNavTapped(int index) {
+    switch (index) {
+      case 0:
+        _addNewRoute();
+        break;
+      case 1:
+        _refresh(true);
+        break;
+      default:
+    }
   }
 
   Widget _getTotalsView() {
@@ -379,36 +376,98 @@ class _RouteViewerPageState extends State<RouteViewerPage>
   }
 
   @override
-  onActionPressed(int action) {
-    return null;
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  DateTime start, end;
+  Widget _getListView() {
+    return ListView.builder(
+        itemCount: routes.length,
+        controller: scrollController,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16, top: 4.0),
+            child: StreamBuilder<List<aftarobot.Route>>(
+                stream: routeBuilderBloc.routeStream,
+                builder: (context, snapshot) {
+                  if ((snapshot.hasData)) {
+                    routes = snapshot.data;
+                  }
+
+                  return RouteCard(
+                    route: routes.elementAt(index),
+                    number: index + 1,
+                    hideLandmarks: switchStatus,
+                    routeCardListener: this,
+                  );
+                }),
+          );
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<Association>>(
+      stream: routeBuilderBloc.associationStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          asses = snapshot.data;
+          print(
+              '🔵 RouteViewerPage 🧩🧩🧩 ConnectionState.active  🔴 set appModel from stream: associations ${asses.length}');
+          _buildDropDownItems();
+        }
+
+        return Scaffold(
+          key: _key,
+          appBar: AppBar(
+            title: mTitle == null
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'AftaRobot Routes',
+                      style: Styles.blackBoldMedium,
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      mTitle,
+                      style: Styles.blackBoldMedium,
+                    ),
+                  ),
+            elevation: 16,
+            backgroundColor: Colors.pink[300],
+            bottom: _getTotalsView(),
+          ),
+          bottomNavigationBar: _getBottomNav(),
+          body: Stack(
+            children: <Widget>[
+              isBusy
+                  ? Center(
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 16,
+                          backgroundColor: Colors.amber,
+                        ),
+                      ),
+                    )
+                  : _getListView(),
+            ],
+          ),
+          backgroundColor: Colors.brown.shade100,
+        );
+      },
+    );
   }
 
   @override
   onMessage(aftarobot.Route route, String message, Color textColor,
       Color backColor, bool isError) {
-    mp('onMessage: 🍏 🍏 🍏 🍏 ${route.rawRoutePoints.length} 🍎 in route ${route.name}');
-    mp('onMessage: 🍏 🍏 🍏 🍏 ${route.routePoints.length} 🍎 in route ${route.name}');
-    if (isError) {
-      AppSnackbar.showErrorSnackbar(scaffoldKey: _key, message: message);
-    } else {
-      AppSnackbar.showSnackbar(
-          scaffoldKey: _key,
-          message: message,
-          backgroundColor: backColor,
-          textColor: textColor);
-    }
-  }
-
-  void _bottomNavTapped(int index) {
-    switch (index) {
-      case 0:
-        _addNewRoute();
-        break;
-      case 1:
-        _refresh(true);
-        break;
-      default:
-    }
+    mp('RouteListPage: onMessage: ${route.name}');
   }
 }
 
@@ -439,6 +498,7 @@ class _RouteCardState extends State<RouteCard>
     implements SnackBarListener, RouteMapListener {
   int index = 0;
   bool isExpanded = false;
+  static const platform = const MethodChannel('aftarobot.com/routebuilder');
   @override
   void initState() {
     super.initState();
@@ -514,22 +574,30 @@ class _RouteCardState extends State<RouteCard>
             ));
   }
 
+  void _addRouteGeoFences() async {
+    p('🌸 🌸 🌸 🌸 🌸 🌸  ....... calling geoFencer.addRouteGeoFences shit ......... 🌸 🌸 🌸');
+    geoFencer.addRouteGeoFences(routeID: widget.route.routeID);
+  }
+
   List<PopupMenuItem<String>> menuItems = List();
   _buildMenuItems() {
     menuItems.clear();
-//    menuItems.add(PopupMenuItem<String>(
-//      value: 'Collect Route Points',
-//      child: GestureDetector(
-//        onTap: _startRoutePointCollector,
-//        child: ListTile(
-//          leading: Icon(
-//            Icons.location_on,
-//            color: getRandomColor(),
-//          ),
-//          title: Text('Collect Route Points', style: Styles.blackSmall),
-//        ),
-//      ),
-//    ));
+    menuItems.add(PopupMenuItem<String>(
+      value: 'Start Geofencing',
+      child: GestureDetector(
+        onTap: () {
+          _addRouteGeoFences();
+          Navigator.pop(context);
+        },
+        child: ListTile(
+          leading: Icon(
+            Icons.location_searching,
+            color: getRandomColor(),
+          ),
+          title: Text('Start Geofencing', style: Styles.blackSmall),
+        ),
+      ),
+    ));
     menuItems.add(PopupMenuItem<String>(
       value: 'Manage Route Points',
       child: GestureDetector(
@@ -581,23 +649,20 @@ class _RouteCardState extends State<RouteCard>
     List<aftarobot.Route> list = List();
     list.add(widget.route);
 
-    Navigator.push(
+    await Navigator.push(
         context,
-        SlideRightRoute(
-            widget: RouteMap(
-          routes: list,
-          title: widget.route.name,
-          hideAppBar: false,
-          landmarkIconColor: RouteMap.colorOrange,
-//          title: widget.route.name,
-          listener: this,
-//              bottomRightWidget: btn,
-//              topLeftWidget: fab,
-//          bottomRightWidget: card,
-//          topLeftWidget: card2,
-////          container: container,
-//          containerHeight: 100,
-        )));
+        PageTransition(
+            child: RouteMap(
+              routes: list,
+              title: widget.route.name,
+              hideAppBar: false,
+              landmarkIconColor: RouteMap.colorOrange,
+              listener: this,
+            ),
+            type: PageTransitionType.scale,
+            duration: Duration(milliseconds: 1500),
+            alignment: Alignment.topLeft,
+            curve: Curves.easeInOut));
   }
 
   aftarobot.Route route;
@@ -609,28 +674,58 @@ class _RouteCardState extends State<RouteCard>
     if (widget.route.rawRoutePoints.isEmpty &&
         widget.route.routePoints.isEmpty) {
       Navigator.push(
-          context, SlideRightRoute(widget: RoutePointCollector(route)));
+          context,
+          PageTransition(
+              child: RoutePointCollector(route),
+              type: PageTransitionType.scale,
+              duration: Duration(milliseconds: 1500),
+              alignment: Alignment.topLeft,
+              curve: Curves.easeInOut));
       return;
     }
     if (widget.route.rawRoutePoints.isNotEmpty &&
         widget.route.routePoints.isEmpty) {
       Navigator.push(
-          context, SlideRightRoute(widget: CreateRoutePointsPage(route)));
+          context,
+          PageTransition(
+              child: CreateRoutePointsPage(route),
+              type: PageTransitionType.scale,
+              duration: Duration(milliseconds: 1500),
+              alignment: Alignment.topLeft,
+              curve: Curves.easeInOut));
       return;
     }
     if (widget.route.rawRoutePoints.isNotEmpty &&
         widget.route.routePoints.isNotEmpty) {
       Navigator.push(
-          context, SlideRightRoute(widget: LandmarksManagerPage(route)));
+          context,
+          PageTransition(
+              child: LandmarksManagerPage(route),
+              type: PageTransitionType.scale,
+              duration: Duration(milliseconds: 1500),
+              alignment: Alignment.topLeft,
+              curve: Curves.easeInOut));
       return;
     }
     if (widget.route.routePoints.isEmpty &&
         widget.route.rawRoutePoints.isNotEmpty) {
       Navigator.push(
-          context, SlideRightRoute(widget: CreateRoutePointsPage(route)));
+          context,
+          PageTransition(
+              child: CreateRoutePointsPage(route),
+              type: PageTransitionType.scale,
+              duration: Duration(milliseconds: 1500),
+              alignment: Alignment.topLeft,
+              curve: Curves.easeInOut));
     } else {
       Navigator.push(
-          context, SlideRightRoute(widget: LandmarksManagerPage(route)));
+          context,
+          PageTransition(
+              child: LandmarksManagerPage(route),
+              type: PageTransitionType.scale,
+              duration: Duration(milliseconds: 1500),
+              alignment: Alignment.topLeft,
+              curve: Curves.easeInOut));
     }
   }
 
@@ -651,7 +746,6 @@ class _RouteCardState extends State<RouteCard>
   Widget build(BuildContext context) {
     return Card(
       elevation: 4.0,
-//      color: getRandomPastelColor(),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -724,14 +818,14 @@ class _RouteCardState extends State<RouteCard>
   }
 
   void _executeUpdate() async {
-    if (routeName.isEmpty) {
-      AppSnackbar.showErrorSnackbar(
-          scaffoldKey: widget.key,
-          message: 'Enter route name',
-          listener: this,
-          actionLabel: 'close');
-      return;
-    }
+    // if (routeName.isEmpty) {
+    //   AppSnackbar.showErrorSnackbar(
+    //       scaffoldKey: _key,
+    //       message: 'Enter route name',
+    //       listener: this,
+    //       actionLabel: 'close');
+    //   return;
+    // }
     Navigator.pop(context);
 
     widget.routeCardListener.onMessage(widget.route, 'Updating route name',
@@ -767,8 +861,15 @@ class _RouteCardState extends State<RouteCard>
   onLandmarkInfoWindowTapped(Landmark landmark) {
     print(
         '️🔴  RouteViewerPage: Caller has received onLandmarkInfoWindowTapped ☘ ☘ ☘ ☘  ${landmark.landmarkName}');
+
     Navigator.push(
-        context, SlideRightRoute(widget: LandmarkRoutesPage(landmark)));
+        context,
+        PageTransition(
+            child: LandmarkRoutesPage(landmark),
+            type: PageTransitionType.scale,
+            duration: Duration(milliseconds: 1500),
+            alignment: Alignment.topLeft,
+            curve: Curves.easeInOut));
   }
 
   @override
