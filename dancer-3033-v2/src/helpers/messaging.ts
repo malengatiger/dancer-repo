@@ -537,7 +537,7 @@ class Messaging {
       "routeDetails.routeID": data.routeID,
     });
     log(
-      `☘️☘️☘️send dispatch record to all ${result.length} landmarks in route: 🍎${data.routeID} 🍎 ${data.routeName}`
+      `☘️☘️☘️ send dispatch record to all ${result.length} landmarks in route: 🍎${data.routeID} 🍎 ${data.routeName}`
     );
     let cnt = 0;
     for (const m of result) {
@@ -545,11 +545,9 @@ class Messaging {
       const result = await fba.sendToTopic(topic, payload, options);
       cnt++;
       log(
-        `😍 sendDispatchRecord: FCM message #${cnt} sent: 😍 ${
+        `😍 DispatchRecord: FCM message #${cnt} landmarkID: 😍 ${
           data.landmarkID
-        } ${data.created} topic: 🍎 ${topic} : result: 🍎🍎 ${JSON.stringify(
-          result
-        )} 🍎🍎 🍎`
+        } on ${data.created} topic: 🍎 ${topic} 🍎`
       );
     }
   }

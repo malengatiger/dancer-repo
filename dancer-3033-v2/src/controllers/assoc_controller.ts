@@ -15,12 +15,13 @@ export class AssociationController {
             console.log(req.body);
             try {
                 const asses = await Association.find();
+                log(`🍎🍎🍎🍎 getAssociations found :${asses.length} asses :)`)
                 res.status(200).json(asses);
             } catch (err) {
                 res.status(400).json(
                     {
                         error: err,
-                        message: ' 🍎🍎🍎🍎 getRoutes failed'
+                        message: `🍎🍎🍎🍎 getAssociations failed:${err}`
                     }
                 )
             }
@@ -42,7 +43,7 @@ export class AssociationController {
                 res.status(400).json(
                     {
                         error: err,
-                        message: ' 🍎🍎🍎🍎 addAssociation failed'
+                        message: `🍎🍎🍎🍎 addAssociation failed:${err}`
                     }
                 )
             }

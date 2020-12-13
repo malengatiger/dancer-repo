@@ -14,6 +14,8 @@ const VehicleDepartureSchema = new mongoose.Schema(
         routeID: {type: String, required: false,trim: true, index: true},
         routeName: {type: String, required: false,trim: true},
         created: {type: String, required: true, default: new Date().toISOString()},
+        metadata: {type: {}, required:true, default:{}}
+
 
     }
 );

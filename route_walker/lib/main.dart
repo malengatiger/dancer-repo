@@ -8,7 +8,8 @@ import 'package:route_walker/ui/route_list_page.dart';
 // Headless task
 void backgroundGeolocationHeadlessTask(bg.HeadlessEvent event) async {
   p('[backgroundGeolocationHeadlessTask] 🎽 🎽 🎽 🎽 headless task fired with event 🎽 ${event.name} 🎽');
-  HeadlessEventProcessor.processEvent(headlessEvent: event);
+  HeadlessEventProcessor.processEvent(
+      headlessEvent: event, caller: 'RouteBuilderApp');
 }
 
 Future<void> main() async {
