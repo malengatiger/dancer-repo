@@ -89,11 +89,11 @@ class Messaging {
       },
     };
     const topic = Constants.ROUTE_DISTANCE_ESTIMATION + "_" + data.routeID;
-    const result = await fba.sendToTopic(topic, payload, options);
+    await fba.sendToTopic(topic, payload, options);
     log(
-      `😍 send RouteDistanceEstimation: FCM message sent: 😍 ${
+      `😍 RouteDistanceEstimation: FCM message sent for vehicle: 😍 ${
         data.vehicle.vehicleReg
-      } topic: ${topic} : payload: 🍎🍎 ${JSON.stringify(payload)} 🍎🍎`
+      } topic: ${topic} 🍎🍎`
     );
   }
   public static async sendNotification(data: any): Promise<any> {
@@ -206,11 +206,34 @@ class Messaging {
     const topic = Constants.VEHICLE_ARRIVALS + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
     log(
-      `😍 sendVehicleArrival: FCM message sent: 😍 ${
+      `😍 😍 😍 sendVehicleArrival: FCM message sent: 😍 ${
         data.landmarkName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
     console.log(payload.data);
+  }
+
+  public static async sendScannedResultToCommuter(fcmToken: string, commuterRequestID: string): Promise<any> {
+    const options: any = {
+      priority: "high",
+      timeToLive: 60 * 60,
+    };
+    const payload: any = {
+      
+      data: {
+        type: Constants.SCANNED,
+        commuterRequestID: commuterRequestID,
+        scanned: 'true',
+        created: new Date().toISOString(),
+      },
+      token: fcmToken
+    };
+    
+    const result = await fba.send(payload);
+    log(
+      `😍 sendScannedResultToCommuter: FCM message sent to DEVICE: 😍 🍎 ${JSON.stringify(result)}🍎`
+    );
+    
   }
   public static async sendRoute(data: any): Promise<any> {
     const options: any = {
@@ -236,7 +259,7 @@ class Messaging {
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    fba;
+    
   }
 
   public static async sendFenceDwellEvent(data: any): Promise<any> {
@@ -264,7 +287,7 @@ class Messaging {
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    fba;
+    
   }
   public static async sendFenceExitEvent(data: any): Promise<any> {
     const options: any = {
@@ -291,7 +314,7 @@ class Messaging {
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    fba;
+    
   }
   public static async sendLandmark(data: any): Promise<any> {
     const options: any = {

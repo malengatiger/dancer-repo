@@ -8,7 +8,6 @@ import CommuterStartingLandmark from "../models/commuter_starting_landmark";
 import CommuterRating from "../models/commuter_rating";
 import CommuterPanic from "../models/commuter_panic";
 import CommuterRatingsAggregate from "../models/commuter_ratings_aggregate";
-import bodyParser = require("body-parser");
 import uuid from "uuid/v1";
 import User from "../models/user";
 import CommuterPanicLocation from "../models/commuter_panic_location";
@@ -16,7 +15,6 @@ import SafetyNetworkBuddy from "../models/safety_network_buddy";
 import CommuterPrize from "../models/commuter_prize";
 import CommuterIncentiveType from "../models/commuter_incentive_type";
 import CommuterIncentive from "../models/commuter_incentive";
-import CommuterFenceEvent from "../models/commuter_fence_dwell_event";
 import CommuterFenceDwellEvent from "../models/commuter_fence_dwell_event";
 import CommuterFenceExitEvent from "../models/commuter_fence_exit_event";
 import Payment from "../models/payment";
@@ -45,7 +43,7 @@ export class CommuterController {
             comm.isWallet = false;
           }
           const result = await comm.save();
-          Messaging.sendCommuterRequest(result);
+          // Messaging.sendCommuterRequest(result);
           res.status(200).json(result);
         } catch (err) {
           console.log(err);
@@ -70,13 +68,18 @@ export class CommuterController {
           } else {
             console.log(`🍎🍎🍎 request from db: ${JSON.stringify(commReq)}`);
           }
-          if (commReq.scanned === true) {
-            logGreen('🥦🥦 CommuterRequest already scanned, 🥦 ignored')
-            res.status(200).json(commReq);
-            return
-          }
+          // if (commReq.scanned === true) {
+          //   logGreen('🥦🥦 CommuterRequest already scanned, 🥦 ignored')
+          //   res.status(200).json(commReq);
+          //   return
+          // }
           commReq.scanned = true;
           const result = await commReq.save();
+          const token = commReq.fcmToken
+          console.log(`🍎 🍎 🍎 token for commuterRequest: ${token}`);
+          //send scanned messaged to commuter's device
+          await Messaging.sendScannedResultToCommuter(token, commReq.commuterRequestID);
+
           res.status(200).json(result);
         } catch (err) {
           log(err);

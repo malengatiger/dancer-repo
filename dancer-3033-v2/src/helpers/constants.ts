@@ -1,5 +1,6 @@
 class Constants {
 
+    public static SCANNED = 'scanned';
     public static ROUTES = 'routes';
     public static LANDMARKS = 'landmarks';
     public static COUNTRIES = 'countries';
