@@ -1,10 +1,11 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import mongoose from 'mongoose';
 dotenv.config();
 import { Request, Response, NextFunction, Application } from "express";
 import bodyParser from "body-parser";
-// import AftaRobotApp from "../app";
+
 import http from "http";
 import { log } from './log';
 import AftaRobotApp from './ar';
@@ -44,6 +45,10 @@ server.listen(port, () => {
   );
 
 });
+
+mongoose.set('useCreateIndex', true);
+log(`🥦🥦🥦 Mongoose useCreateIndex has been set`);
+
 const ar = new AftaRobotApp();
 log(`\n🔆🔆 Dancer Web(aka ARWeb) API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
 // log(`🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆`);

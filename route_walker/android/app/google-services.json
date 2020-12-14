@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "537538709082-m4ceq0lv669r98d7mt22n8c1ot5u7u8l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aftarobot.commuterx",
+            "certificate_hash": "d3c1a3cb683cf6b71485c0a33ed92d11bdde8638"
+          }
+        },
+        {
           "client_id": "537538709082-56nvqhm70qfdm4kjr1d31shs0jldmu6p.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +38,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyDv_9xDO3RDSyQxXl1Z_K4Tvhjv2ruK_Fw"
+        },
+        {
+          "current_key": "AIzaSyACofErGIEE0odzZcUrTXCmnlX9lU-Ufog"
         }
       ],
       "services": {
@@ -60,6 +71,14 @@
           }
         },
         {
+          "client_id": "537538709082-tnkv7jfonhsfmegjhspj09pff31kbqup.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aftarobot.marshalz",
+            "certificate_hash": "d3c1a3cb683cf6b71485c0a33ed92d11bdde8638"
+          }
+        },
+        {
           "client_id": "537538709082-56nvqhm70qfdm4kjr1d31shs0jldmu6p.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -67,6 +86,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyDv_9xDO3RDSyQxXl1Z_K4Tvhjv2ruK_Fw"
+        },
+        {
+          "current_key": "AIzaSyACofErGIEE0odzZcUrTXCmnlX9lU-Ufog"
         }
       ],
       "services": {
@@ -82,18 +104,18 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:537538709082:android:f3d9820358532f6193fa63",
+        "mobilesdk_app_id": "1:537538709082:android:060d03b520eb950c93fa63",
         "android_client_info": {
-          "package_name": "com.aftarobot.vehiclex"
+          "package_name": "com.aftarobot.vehicle"
         }
       },
       "oauth_client": [
         {
-          "client_id": "537538709082-nv3orljlos8og6belipbe11rm608i2lm.apps.googleusercontent.com",
+          "client_id": "537538709082-nppoegv25o39eopoj88equv7e1nc2ino.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.aftarobot.vehiclex",
-            "certificate_hash": "ed02ddd0e7e0820a41307a8872c95032d8f8c897"
+            "package_name": "com.aftarobot.vehicle",
+            "certificate_hash": "d3c1a3cb683cf6b71485c0a33ed92d11bdde8638"
           }
         },
         {
@@ -104,6 +126,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyDv_9xDO3RDSyQxXl1Z_K4Tvhjv2ruK_Fw"
+        },
+        {
+          "current_key": "AIzaSyACofErGIEE0odzZcUrTXCmnlX9lU-Ufog"
         }
       ],
       "services": {
@@ -134,6 +159,14 @@
           }
         },
         {
+          "client_id": "537538709082-kp2pio77sgp1eqttpp7id56551pn1fo5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dancer.routewalker",
+            "certificate_hash": "d3c1a3cb683cf6b71485c0a33ed92d11bdde8638"
+          }
+        },
+        {
           "client_id": "537538709082-56nvqhm70qfdm4kjr1d31shs0jldmu6p.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -141,6 +174,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyDv_9xDO3RDSyQxXl1Z_K4Tvhjv2ruK_Fw"
+        },
+        {
+          "current_key": "AIzaSyACofErGIEE0odzZcUrTXCmnlX9lU-Ufog"
         }
       ],
       "services": {

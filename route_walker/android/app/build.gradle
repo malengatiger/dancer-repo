@@ -49,8 +49,8 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled true
             shrinkResources false
-            // background_geolocation requires custom Proguard Rules with minifyEnabled
-            proguardFiles "${background_geolocation.projectDir}/proguard-rules.pro"
+//             background_geolocation requires custom Proguard Rules with minifyEnabled
+//            proguardFiles "${background_geolocation.projectDir}/proguard-rules.pro"
         }
     }
 }
@@ -60,8 +60,24 @@ flutter {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:26.1.1')
+
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+
+    // Declare the dependency for the Firebase SDK for Google Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.android.gms:play-services-basement'
+
+    // Declare the dependencies for any other desired Firebase products
+    // For example, declare the dependencies for Firebase Authentication and Cloud Firestore
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.android.gms:play-services-location'
+    implementation 'com.google.firebase:firebase-messaging'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 apply plugin: 'com.google.gms.google-services'

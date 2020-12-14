@@ -1,9 +1,26 @@
+import 'package:aftarobotlibrary4/geo/geofencer.dart';
+import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:flutter/material.dart';
-import 'package:route_walker/ui/route_viewer_page.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
+    as bg;
+import 'package:route_walker/ui/route_list_page.dart';
 
-void main() {
+// Headless task
+void backgroundGeolocationHeadlessTask(bg.HeadlessEvent event) async {
+  p('[backgroundGeolocationHeadlessTask] 🎽 🎽 🎽 🎽 headless task fired with event 🎽 ${event.name} 🎽');
+  HeadlessEventProcessor.processEvent(
+      headlessEvent: event, caller: 'RouteBuilderApp');
+}
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
+
+  // Register to receive BackgroundGeolocation events after app is terminated.
+  // Requires {stopOnTerminate: false, enableHeadless: true}
+  bool isRegistered = await bg.BackgroundGeolocation.registerHeadlessTask(
+      backgroundGeolocationHeadlessTask);
+  p('main: 🥦 🥦 🥦 🥦 bg.BackgroundGeolocation.registerHeadlessTask:  🍎 isRegistered: $isRegistered  🍎  🥦 🥦 🥦 🥦');
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +36,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(color: Colors.indigo[300]),
         fontFamily: 'Raleway',
       ),
-      home: RouteViewerPage(),
+      home: RouteListPage(),
 //      home: EstimationPage(),
     );
   }

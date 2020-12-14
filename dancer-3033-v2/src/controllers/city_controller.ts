@@ -25,7 +25,22 @@ export class CityController {
                 res.status(400).json(
                     {
                         error: err,
-                        message: ' 🍎🍎🍎🍎 addCity failed'
+                        message: ` 🍎🍎🍎🍎 addCity failed: ${err}`
+                    }
+                )
+            }
+        });
+        app.route("/deleteCity").post(async (req: Request, res: Response) => {
+
+            try {
+                const c = City.findOne({cityID: req.body.cityID})
+                const result = await c.deleteOne();
+                res.status(200).json(result);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ` 🍎🍎🍎🍎 deleteCity failed: ${err}`
                     }
                 )
             }

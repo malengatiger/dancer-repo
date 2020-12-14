@@ -15,8 +15,6 @@ import 'package:aftarobotlibrary4/location_bloc.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
-    as bg;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
@@ -32,9 +30,9 @@ class RouteBuilderModel {
   List<VehicleGeofenceEvent> _geofenceEvents = List();
   List<Association> _associations = List();
   List<AssociationBag> _associationBags = List();
-  List<CityDTO> _cities = List();
+  List<City> _cities = List();
 
-  List<CityDTO> get cities => _cities;
+  List<City> get cities => _cities;
   List<ar.Route> get routes => _routes;
   List<Landmark> get landmarks => _landmarks;
   List<Landmark> get routeLandmarks => _routeLandmarks;
@@ -52,10 +50,7 @@ class RouteBuilderBloc {
       StreamController<RouteBuilderModel>.broadcast();
   final StreamController<String> _errorController =
       StreamController<String>.broadcast();
-  final StreamController<bg.Location> _currentLocationController =
-      StreamController<bg.Location>.broadcast();
-  final StreamController<bg.GeofenceEvent> _geofenceEventController =
-      StreamController<bg.GeofenceEvent>.broadcast();
+
   final StreamController<List<Landmark>> _marksNearPointController =
       StreamController.broadcast();
 
@@ -77,14 +72,11 @@ class RouteBuilderBloc {
   List<ar.Route> _routes = List();
 
   final RouteBuilderModel _appModel = RouteBuilderModel();
-  bg.Location _currentLocation;
-  bg.Location get currentLocation => _currentLocation;
+
   RouteBuilderModel get model => _appModel;
   closeStream() {
     _appModelController.close();
     _errorController.close();
-    _currentLocationController.close();
-    _geofenceEventController.close();
     _marksNearPointController.close();
     _routePointController.close();
     _rawRoutePointController.close();
@@ -98,8 +90,7 @@ class RouteBuilderBloc {
   Stream get associationStream => _associationController.stream;
   Stream get routeStream => _routeController.stream;
   Stream get appModelStream => _appModelController.stream;
-  Stream get currentLocationStream => _currentLocationController.stream;
-  Stream get geofenceEventStream => _geofenceEventController.stream;
+
   Stream get landmarksNearPointStream => _marksNearPointController.stream;
   Stream get routePointsStream => _routePointController.stream;
   Stream get rawRoutePointsStream => _rawRoutePointController.stream;
@@ -353,7 +344,7 @@ class RouteBuilderBloc {
     return result;
   }
 
-  Future addCityToLandmark(Landmark landmark, CityDTO city) async {
+  Future addCityToLandmark(Landmark landmark, City city) async {
     mp('📍 📍 📍  update landmark ${landmark.landmarkName} on Firestore ..........\n');
 
     _appModel.landmarks.remove(landmark);
@@ -383,7 +374,7 @@ class RouteBuilderBloc {
     return null;
   }
 
-  Future<List<CityDTO>> getCities(String countryId) async {
+  Future<List<City>> getCities(String countryId) async {
 //    mp('### ℹ️  getCities: getting cities in Firestore ..........\n');
 //    var cities = await LocalDBAPI.getCities();
 //    if (cities == null || cities.isEmpty) {
@@ -428,7 +419,7 @@ class RouteBuilderBloc {
     return list;
   }
 
-  Future<List<CityDTO>> findCitiesByLocation(
+  Future<List<City>> findCitiesByLocation(
       {@required double latitude,
       @required double longitude,
       @required double radiusInKM}) async {
@@ -441,7 +432,7 @@ class RouteBuilderBloc {
     return list;
   }
 
-  Future<List<CityDTO>> findCitiesNearLandmark({
+  Future<List<City>> findCitiesNearLandmark({
     @required Landmark landmark,
     @required double radiusInKM,
   }) async {
@@ -570,7 +561,7 @@ class RouteBuilderBloc {
   double _prevLatitude, _prevLongitude;
   LocationBloc locationBloc = LocationBloc();
   Future _collectRawRoutePoint() async {
-    var currentLocation = await locationBloc.getCurrentLocation();
+    var currentLocation = await locationBloc.getCurrentPosition();
     //todo - get route from method .......
     var routeID = _route.routeID;
     if (routeID == null) {

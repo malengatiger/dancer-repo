@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import {Position} from '../models/interfaces'
 
 const CommuterRequestSchema = new mongoose.Schema(
     {
@@ -12,9 +11,10 @@ const CommuterRequestSchema = new mongoose.Schema(
         vehicleID: {type: String, required: false, trim: true},
         vehicleReg: {type: String, required: false, trim: true},
         commuterRequestID: {type: String, required: true, index: true, trim: true},
+        fcmToken: {type: String, required: true, trim: true},
         passengers: {type: Number, required: true, default: 1},
         position: {type: Map, required: true},
-        userID: {type: String, required: true, trim: true},
+        userID: {type: String, required: false, trim: true},
         stringTime: {type: String, required: false},
         time: {type: Number, required: true},
         fare: {type: Number, required: true, default: 0.00},

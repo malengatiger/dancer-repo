@@ -16,6 +16,7 @@ import { CityController } from "./controllers/city_controller";
 import { BGController } from "./controllers/bg_controller";
 import { ChatController } from "./controllers/chat_controller";
 import { NotificationsController } from "./controllers/notifications_controller";
+import { ItineraryController } from "./controllers/itinerary_controller";
 
 const port = process.env.PORT || "8083";
 
@@ -27,6 +28,7 @@ class AftaRobotApp {
     public routeController: RouteController = new RouteController();
     public assocController: AssociationController = new AssociationController();
     public userController: UserController = new UserController();
+    public itineraryController: ItineraryController = new ItineraryController();
    
     public chatController: ChatController = new ChatController();
     public notificationsController: NotificationsController = new NotificationsController
@@ -62,6 +64,8 @@ class AftaRobotApp {
         this.dispatchController.routes(this.app);
         this.bgController.routes(this.app);
         this.deleteController.routes(this.app);
+
+        this.itineraryController.routes(this.app);
        
     }
     private initializeMiddleware() {
