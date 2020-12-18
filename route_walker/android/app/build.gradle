@@ -60,6 +60,7 @@ flutter {
 }
 
 dependencies {
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -74,9 +75,11 @@ dependencies {
 
     // Declare the dependencies for any other desired Firebase products
     // For example, declare the dependencies for Firebase Authentication and Cloud Firestore
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.android.gms:play-services-location'
-    implementation 'com.google.firebase:firebase-messaging'
+//    implementation 'com.google.firebase:firebase-auth'
+//    implementation 'com.google.android.gms:play-services-location'
+//    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.maps.android:android-maps-utils:2.2.0'
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
 
     implementation 'com.google.code.gson:gson:2.8.6'
 }

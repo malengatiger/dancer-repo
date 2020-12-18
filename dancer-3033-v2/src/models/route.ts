@@ -5,9 +5,9 @@ const RouteSchema = new mongoose.Schema(
     {
         name: {type: String, required: true},
         routeID: {type: String, required: true},
-        associationID: {type: String, required: true, trim: true},
-        associationName: {type: String, required: true, trim: true},
-        color: {type: String, required: true, default: 'white'},
+        associationID: {type: String, required: false, trim: true},
+        associationName: {type: String, required: false, trim: true},
+        color: {type: String, required: false, default: 'white'},
         heading: {type: Number, required: true, default: 0.0},
         rawRoutePoints: {type: Array, required: true, default: []},
         routePoints: {type: Array, required: true, default: []},

@@ -136,11 +136,14 @@ class RouteBuilderBloc {
     }
   }
 
-  Future<List<Association>> getAssociations() async {
+  Future<List<Association>> getAssociations({bool forceRefresh = false}) async {
     mp('### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
-    var asses = await DancerListAPI.getAssociations();
-    await LocalDBAPI.deleteAssociations();
-    await LocalDBAPI.addAssociations(associations: asses);
+    var asses = await LocalDBAPI.getAssociations();
+    if (asses.isEmpty || forceRefresh) {
+      asses = await DancerListAPI.getAssociations();
+      await LocalDBAPI.deleteAssociations();
+      await LocalDBAPI.addAssociations(associations: asses);
+    }
 
     mp(' 📍📍📍📍 adding ${asses.length} Associations to  📎 model and stream sink ...');
     _associationController.sink.add(asses);

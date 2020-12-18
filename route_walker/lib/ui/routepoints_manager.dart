@@ -47,19 +47,20 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   void initState() {
     super.initState();
     print('🔆 🔆 🔆  CreateRoutePointsPage: initState');
-    _getRoute();
+    _getRoutePoints();
   }
 
   String routeID;
-  void _getRoute() async {
-    _rawRoutePoints =
-        await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
+  void _getRoutePoints() async {
+    if (widget.route.rawRoutePoints.isNotEmpty) {
+      _rawRoutePoints = widget.route.rawRoutePoints;
+    } else {
+      _rawRoutePoints =
+          await LocalDBAPI.getRawRoutePoints(routeID: widget.route.routeID);
+    }
     assert(_rawRoutePoints.isNotEmpty);
     mp('\n\nCreateRoutePointsPage: 🍏 🍎  Raw route points collected:  🧩 ${_rawRoutePoints.length} 🧩 '
         ' snapped: ${_routePoints.length} 🧩\n\n');
-    _rawRoutePoints.forEach((p) {
-      print(p.toJson());
-    });
     setState(() {});
     await _getLandmarks();
   }

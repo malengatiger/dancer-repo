@@ -365,6 +365,7 @@ export class RouteController {
       
       try {
         const route: any = await Route.findOne({ routeID: req.body.routeID });
+
         // check clear flag
         if (req.body.clear == true) {
           route.routePoints = [];
@@ -418,9 +419,19 @@ export class RouteController {
       }
     });
     app.route("/addRawRoutePoints").post(async (req: Request, res: Response) => {
-        
+      log(
+        `💙 💙 💙 💙 addRawRoutePoints: Points to add to route - 🧡💛 ${JSON.stringify(req.body)}`
+      );
         try {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
+          if (!route) {
+            // throw new Error('Route not found')
+            log(`No route found ... quit! 🍎 🍎 🍎`)
+            res.status(400).json({
+              message: 'Yor shit is cooked! No route here!!'
+            });
+            return
+          }
           if (req.body.clear == true) {
             route.rawRoutePoints = [];
             await route.save();

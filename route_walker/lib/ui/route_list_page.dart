@@ -141,18 +141,27 @@ class _RouteListPageState extends State<RouteListPage>
     print(
         '🍎 🍎 🍎 _RouteViewerPageState: checkUser: set local MongoDB appID and get saved association');
     user = await Prefs.getUser();
-    asses = await LocalDBAPI.getAssociations();
-    if (asses.isEmpty) {
-      asses = await routeBuilderBloc.getAssociations();
-    } else {
-      mp('........................... associations from local cache: ${asses.length}');
-    }
+    _refreshAssociations(false);
     _buildDropDownItems();
     LocalDBAPI.setAppID();
     await _getAssociation();
     setState(() {
       isBusy = false;
     });
+  }
+
+  Future _refreshAssociations(bool forceRefresh) async {
+    setState(() {
+      isBusy = true;
+    });
+
+    asses = await routeBuilderBloc.getAssociations(forceRefresh: forceRefresh);
+
+    setState(() {
+      isBusy = false;
+    });
+
+    return null;
   }
 
   Future _startGeofencing() async {
@@ -441,6 +450,15 @@ class _RouteListPageState extends State<RouteListPage>
                   ),
             elevation: 16,
             backgroundColor: Colors.pink[300],
+            actions: [
+              IconButton(
+                icon: Icon(Icons.refresh_rounded),
+                onPressed: () async {
+                  await _refreshAssociations(true);
+                  _refresh(true);
+                },
+              )
+            ],
             bottom: _getTotalsView(),
           ),
           bottomNavigationBar: _getBottomNav(),
@@ -603,7 +621,7 @@ class _RouteCardState extends State<RouteCard>
     menuItems.add(PopupMenuItem<String>(
       value: 'Manage Route Points',
       child: GestureDetector(
-        onTap: _startNavigation,
+        onTap: _navigateToRoutePointCollectorOrCreateRoutePoints,
         child: ListTile(
           leading: Icon(
             Icons.settings,
@@ -668,7 +686,7 @@ class _RouteCardState extends State<RouteCard>
   }
 
   aftarobot.Route route;
-  _startNavigation() async {
+  _navigateToRoutePointCollectorOrCreateRoutePoints() async {
     mp('_startNavigation........... : 🍎 🍎 🍎');
     await Prefs.saveRouteID(widget.route.routeID);
     Navigator.pop(context);
@@ -762,7 +780,7 @@ class _RouteCardState extends State<RouteCard>
                 children: <Widget>[
                   Text(
                     'Landmarks',
-                    style: Styles.greyLabelSmall,
+                    style: Styles.greyLabelTiny,
                   ),
                   SizedBox(
                     width: 8,
@@ -772,8 +790,8 @@ class _RouteCardState extends State<RouteCard>
                     width: 24,
                   ),
                   Text(
-                    'Route Points',
-                    style: Styles.greyLabelSmall,
+                    'Points',
+                    style: Styles.greyLabelTiny,
                   ),
                   SizedBox(
                     width: 8,
@@ -781,6 +799,17 @@ class _RouteCardState extends State<RouteCard>
                   Text(
                     '${route.routePoints.length}',
                     style: Styles.tealBoldSmall,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text('Raw', style: Styles.greyLabelTiny),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    '${route.rawRoutePoints.length}',
+                    style: Styles.pinkBoldSmall,
                   ),
                 ],
               ),
