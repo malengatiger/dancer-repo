@@ -17,7 +17,6 @@ import 'package:route_walker/bloc/route_builder_bloc.dart';
 import 'package:route_walker/ui/landmark_manager.dart';
 
 import 'cards.dart';
-import 'flag_routepoint_landmarks.dart';
 import 'landmark_city_page.dart';
 
 class CreateRoutePointsPage extends StatefulWidget {
@@ -139,25 +138,25 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   List<DropdownMenuItem<Landmark>> _items = List();
 
   _onMarkerTapped(RoutePoint point) {
-    print('Marker tapped: route: ${point.created}');
-    _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(point.latitude, point.longitude), zoom: 16.0)));
-    if (widget.route.routePoints.isNotEmpty) {
-      _startLandmarksPage(point);
-    }
+    print('Marker tapped: routePoint: ${point.toJson()}');
+    // _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+    //     target: LatLng(point.latitude, point.longitude), zoom: 16.0)));
+    // if (widget.route.routePoints.isNotEmpty) {
+    //   _startLandmarksPage(point);
+    // }
   }
 
-  _startLandmarksPage(RoutePoint marker) {
-    Navigator.push(
-      context,
-      SlideRightRoute(
-        widget: FlagRoutePointLandmarks(
-          route: widget.route,
-          routePoint: marker,
-        ),
-      ),
-    );
-  }
+  // _startLandmarksPage(RoutePoint marker) {
+  //   Navigator.push(
+  //     context,
+  //     SlideRightRoute(
+  //       widget: FlagRoutePointLandmarks(
+  //         route: widget.route,
+  //         routePoint: marker,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -209,29 +208,6 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                     16.0));
               }
             },
-          ),
-          Positioned(
-            top: 12,
-            left: 12,
-            child: FloatingActionButton(
-              backgroundColor: Colors.pink.shade900,
-              elevation: 16,
-              child: Icon(Icons.airport_shuttle),
-              onPressed: () {
-                if (widget.route != null &&
-                    widget.route.routePoints.isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    SlideRightRoute(
-                      widget: FlagRoutePointLandmarks(
-                        route: widget.route,
-                      ),
-                    ),
-                  );
-                }
-//                  _setRoutePolyline();
-              },
-            ),
           ),
           isBusy == false
               ? Container()

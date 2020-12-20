@@ -30,21 +30,21 @@ export class CityController {
                 )
             }
         });
-        app.route("/deleteCity").post(async (req: Request, res: Response) => {
+        // app.route("/deleteCity").post(async (req: Request, res: Response) => {
 
-            try {
-                const c = City.findOne({cityID: req.body.cityID})
-                const result = await c.deleteOne();
-                res.status(200).json(result);
-            } catch (err) {
-                res.status(400).json(
-                    {
-                        error: err,
-                        message: ` 🍎🍎🍎🍎 deleteCity failed: ${err}`
-                    }
-                )
-            }
-        });
+        //     try {
+        //         const c = City.findOne({cityID: req.body.cityID})
+        //         const result = await c.delete();
+        //         res.status(200).json(result);
+        //     } catch (err) {
+        //         res.status(400).json(
+        //             {
+        //                 error: err,
+        //                 message: ` 🍎🍎🍎🍎 deleteCity failed: ${err}`
+        //             }
+        //         )
+        //     }
+        // });
         app.route("/addCountry").post((req: Request, res: Response) => {
             const msg = `🌽🌽🌽 addCountry requested `;
             console.log(msg);

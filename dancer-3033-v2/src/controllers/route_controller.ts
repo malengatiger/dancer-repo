@@ -98,18 +98,17 @@ export class RouteController {
         try {
           const assID: any = req.body.associationID;
           log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
-          const result = await await Route.find(
+          const result = await Route.find(
             { associationID: assID },
             { routeID: 1, name: 2 }
           );
-          log(result);
-
           res.status(200).json(result);
+          log(`🍎 🍎 Routes (id and name only) info found: ${result.length}`)
         } catch (err) {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getRoutes failed",
+            message: ` 🍎🍎🍎🍎 getRouteIDsByAssociation failed: ${err}`,
           });
         }
       });

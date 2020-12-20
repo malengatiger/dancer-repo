@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aftarobotlibrary4/api/local_db_api.dart';
 import 'package:aftarobotlibrary4/api/sharedprefs.dart';
+import 'package:aftarobotlibrary4/dancer/dancer_list_api.dart';
 import 'package:aftarobotlibrary4/data/associationdto.dart';
 import 'package:aftarobotlibrary4/data/landmark.dart';
 import 'package:aftarobotlibrary4/data/route.dart' as aftarobot;
@@ -58,6 +59,7 @@ class _RouteListPageState extends State<RouteListPage>
     _startGeofencing();
   }
 
+  void _getData() async {}
   @override
   onDistanceEstimated(RouteDistanceEstimation distanceEstimation) {
     mp('RouteListViewer: 🍎 🍎 🍎 onDistanceEstimated: ${distanceEstimation.routeName}');
@@ -179,8 +181,9 @@ class _RouteListPageState extends State<RouteListPage>
     association = await Prefs.getAssociation();
     if (association != null) {
       mTitle = association.associationName;
-      await _refresh(false);
+      routes = await _getAssociationRoutes(false);
     }
+
     setState(() {});
   }
 
@@ -207,10 +210,10 @@ class _RouteListPageState extends State<RouteListPage>
         '⚜️⚜️⚜️ onAssociationTapped ⚜️ ${ass.associationID} ⚜ ${ass.associationName} ... ♻️♻️♻️ set Association and refresh');
     association = ass;
     await Prefs.saveAssociation(association);
-    _refresh(true);
+    _getAssociationRoutes(true);
   }
 
-  Future _refresh(bool forceRefresh) async {
+  Future _getAssociationRoutes(bool forceRefresh) async {
     if (association == null) {
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key, message: 'Please select association');
@@ -273,13 +276,14 @@ class _RouteListPageState extends State<RouteListPage>
   Widget _getBottomNav() {
     List<BottomNavigationBarItem> items = List();
     items.add(BottomNavigationBarItem(
-        title: Text('Create New Route'),
+        label: 'Create New Route',
         icon: Icon(
           Icons.add_circle_outline,
           color: Colors.pink,
         )));
-    items.add(BottomNavigationBarItem(
-        title: Text('Refresh Data'), icon: Icon(Icons.refresh)));
+
+    items.add(
+        BottomNavigationBarItem(label: 'Refresh Data', icon: Icon(Icons.wc)));
     return BottomNavigationBar(
       items: items,
       onTap: _bottomNavTapped,
@@ -291,9 +295,6 @@ class _RouteListPageState extends State<RouteListPage>
     switch (index) {
       case 0:
         _addNewRoute();
-        break;
-      case 1:
-        _refresh(true);
         break;
       default:
     }
@@ -329,47 +330,44 @@ class _RouteListPageState extends State<RouteListPage>
                   SizedBox(
                     width: 0,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _refresh(true);
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        user == null
-                            ? Container()
-                            : Column(
-                                children: <Widget>[
-                                  Text(
-                                    '${user.firstName} ${user.lastName}',
-                                    style: Styles.whiteBoldMedium,
-                                  ),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                  Text(
-                                    'Route Builder',
-                                    style: Styles.blackSmall,
-                                  ),
-                                ],
-                              ),
-                        SizedBox(
-                          width: 28,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Text(
-                              '${routes.length}',
-                              style: Styles.blackBoldLarge,
+                  Row(
+                    children: <Widget>[
+                      user == null
+                          ? Container()
+                          : Column(
+                              children: <Widget>[
+                                Text(
+                                  '${user.firstName} ${user.lastName}',
+                                  style: Styles.whiteBoldMedium,
+                                ),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  'Route Builder',
+                                  style: Styles.blackSmall,
+                                ),
+                              ],
                             ),
-                            Text(
-                              'Routes',
-                              style: Styles.whiteSmall,
+                      SizedBox(
+                        width: 28,
+                      ),
+                      routes == null
+                          ? Container()
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  '${routes.length}',
+                                  style: Styles.blackBoldLarge,
+                                ),
+                                Text(
+                                  'Routes',
+                                  style: Styles.whiteSmall,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                   SizedBox(
                     width: 20,
@@ -395,7 +393,7 @@ class _RouteListPageState extends State<RouteListPage>
   DateTime start, end;
   Widget _getListView() {
     return ListView.builder(
-        itemCount: routes.length,
+        itemCount: routes == null ? 0 : routes.length,
         controller: scrollController,
         itemBuilder: (BuildContext context, int index) {
           return Padding(
@@ -420,6 +418,10 @@ class _RouteListPageState extends State<RouteListPage>
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return StreamBuilder<List<Association>>(
       stream: routeBuilderBloc.associationStream,
       builder: (context, snapshot) {
@@ -455,7 +457,6 @@ class _RouteListPageState extends State<RouteListPage>
                 icon: Icon(Icons.refresh_rounded),
                 onPressed: () async {
                   await _refreshAssociations(true);
-                  _refresh(true);
                 },
               )
             ],
@@ -489,6 +490,13 @@ class _RouteListPageState extends State<RouteListPage>
       Color backColor, bool isError) {
     mp('RouteListPage: onMessage: ${route.name}');
   }
+
+  @override
+  onRouteRefreshed(aftarobot.Route route) async {
+    p('🍏 🍏 🍏 Route has been refreshed: ${route.name} 🍏 raw: ${route.rawRoutePoints.length} points: ${route.routePoints.length}');
+    routes = await LocalDBAPI.getRoutesByAssociation(route.associationID);
+    setState(() {});
+  }
 }
 
 class RouteCard extends StatefulWidget {
@@ -512,13 +520,14 @@ class RouteCard extends StatefulWidget {
 abstract class RouteCardListener {
   onMessage(aftarobot.Route route, String message, Color textColor,
       Color backColor, bool isError);
+  onRouteRefreshed(aftarobot.Route route);
 }
 
 class _RouteCardState extends State<RouteCard>
     implements SnackBarListener, RouteMapListener {
   int index = 0;
   bool isExpanded = false;
-  static const platform = const MethodChannel('aftarobot.com/routebuilder');
+  aftarobot.Route route;
   @override
   void initState() {
     super.initState();
@@ -528,6 +537,14 @@ class _RouteCardState extends State<RouteCard>
       route = widget.route;
     }
     _buildMenuItems();
+  }
+
+  void _refreshRoute() async {
+    p('.......  🔵 Refreshing freshRoute:  🔵 ${route.name}..... ');
+    aftarobot.Route freshRoute =
+        await DancerListAPI.getRouteByID(routeID: route.routeID);
+    await LocalDBAPI.addRoute(route: freshRoute);
+    widget.routeCardListener.onRouteRefreshed(freshRoute);
   }
 
   void _showUpdateRouteDialog() async {
@@ -650,13 +667,13 @@ class _RouteCardState extends State<RouteCard>
     }
     menuItems.add(PopupMenuItem<String>(
       child: GestureDetector(
-        onTap: _showUpdateRouteDialog,
+        onTap: _refreshRoute,
         child: ListTile(
           leading: Icon(
-            Icons.edit,
+            Icons.refresh_sharp,
             color: getRandomColor(),
           ),
-          title: Text('Update Route', style: Styles.blackSmall),
+          title: Text('Refresh Route', style: Styles.blackSmall),
         ),
       ),
     ));
@@ -675,7 +692,7 @@ class _RouteCardState extends State<RouteCard>
             child: RouteMap(
               routes: list,
               title: widget.route.name,
-              hideAppBar: false,
+              hideAppBar: true,
               landmarkIconColor: RouteMap.colorOrange,
               listener: this,
             ),
@@ -685,7 +702,6 @@ class _RouteCardState extends State<RouteCard>
             curve: Curves.easeInOut));
   }
 
-  aftarobot.Route route;
   _navigateToRoutePointCollectorOrCreateRoutePoints() async {
     mp('_startNavigation........... : 🍎 🍎 🍎');
     await Prefs.saveRouteID(widget.route.routeID);
