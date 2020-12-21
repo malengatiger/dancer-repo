@@ -13,6 +13,7 @@ import 'package:aftarobotlibrary4/util/snack.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:route_walker/bloc/route_builder_bloc.dart';
 import 'package:route_walker/ui/landmark_manager.dart';
 
@@ -66,7 +67,8 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   Future _getLandmarks() async {
     try {
-      _landmarks = await routeBuilderBloc.getRouteLandmarks(widget.route);
+      _landmarks = await routeBuilderBloc.getRouteLandmarks(
+          route: widget.route, forceRefresh: false);
       _buildItems();
       setState(() {});
     } catch (e) {
@@ -139,24 +141,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
   _onMarkerTapped(RoutePoint point) {
     print('Marker tapped: routePoint: ${point.toJson()}');
-    // _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-    //     target: LatLng(point.latitude, point.longitude), zoom: 16.0)));
-    // if (widget.route.routePoints.isNotEmpty) {
-    //   _startLandmarksPage(point);
-    // }
   }
-
-  // _startLandmarksPage(RoutePoint marker) {
-  //   Navigator.push(
-  //     context,
-  //     SlideRightRoute(
-  //       widget: FlagRoutePointLandmarks(
-  //         route: widget.route,
-  //         routePoint: marker,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -296,39 +281,43 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   void _startRouteMap(bool showConfirm) {
     List<aftarobot.Route> list = List();
     list.add(widget.route);
+
     Navigator.push(
         context,
-        SlideRightRoute(
-          widget: RouteMap(
-            routes: list,
-            hideAppBar: false,
-            listener: this,
-            title: widget.route.name,
-            landmarkIconColor: RouteMap.colorRed,
-            containerHeight: showConfirm == false ? 0 : 60,
-            container: showConfirm == false
-                ? Container()
-                : Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: RaisedButton(
-                        color: Colors.blue.shade800,
-                        elevation: 16,
-                        onPressed: () {
-                          mp('🧩 🧩 🧩 🧩 Confirm Route button pressed  🧩 🧩 🧩 🧩 ');
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            '🧩 🧩 Confirm Route?',
-                            style: Styles.whiteSmall,
+        PageTransition(
+            child: RouteMap(
+              routes: list,
+              hideAppBar: false,
+              listener: this,
+              title: widget.route.name,
+              landmarkIconColor: RouteMap.colorRed,
+              containerHeight: showConfirm == false ? 0 : 60,
+              container: showConfirm == false
+                  ? Container()
+                  : Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: RaisedButton(
+                          color: Colors.blue.shade800,
+                          elevation: 16,
+                          onPressed: () {
+                            mp('🧩 🧩 🧩 🧩 Confirm Route button pressed  🧩 🧩 🧩 🧩 ');
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              '🧩 🧩 Confirm Route?',
+                              style: Styles.whiteSmall,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-          ),
-        ));
+            ),
+            type: PageTransitionType.scale,
+            duration: Duration(milliseconds: 1500),
+            alignment: Alignment.topLeft,
+            curve: Curves.easeInOut));
   }
 
   TextEditingController controller = TextEditingController();
@@ -376,25 +365,20 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Route',
-                    style: Styles.greyLabelSmall,
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Text(
-                    widget.route == null ? 'No Route?' : widget.route.name,
-                    style: Styles.whiteBoldSmall,
-                  ),
-                ],
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Flexible(
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      widget.route == null ? 'No Route?' : widget.route.name,
+                      style: Styles.whiteBoldSmall,
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(
-              height: 8,
+              height: 16,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -419,10 +403,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
                   label: 'Collected',
                   total: _rawRoutePoints.length,
                   totalStyle: Styles.blackBoldMedium,
-                  labelStyle: Styles.blackSmall,
+                  labelStyle: Styles.blackTiny,
                 ),
                 SizedBox(
-                  width: 8,
+                  width: 12,
                 ),
               ],
             ),
@@ -440,9 +424,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
   void _snapPoints() async {
     setState(() {
       isBusy = true;
+      showButton = false;
     });
     assert(_rawRoutePoints.isNotEmpty);
-
     try {
       mp('\n\n🔵 🔵 🔵 🔵 🔵 Getting snapped points from raw route points: ${_rawRoutePoints.length}....');
       _routePoints = await SnapToRoads.getSnappedPoints(
@@ -458,11 +442,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       mp('🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${widget.route.name} ...');
       await routeBuilderBloc.addRoutePointsToMongoDB(
           widget.route, _routePoints);
-      mp('\n\n🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length} to REMOTE db....');
+      mp('🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length} to REMOTE db....');
       await routeBuilderBloc.addRawRoutePointsToMongoDB(
           widget.route, _rawRoutePoints);
 
-      setState(() {});
       AppSnackbar.showSnackbarWithAction(
           scaffoldKey: _key,
           message: 'Route Points added',
@@ -472,6 +455,10 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
           backgroundColor: Colors.teal[800]);
     } catch (e) {
       print(e);
+      setState(() {
+        isBusy = false;
+        showButton = true;
+      });
       AppSnackbar.showErrorSnackbar(
           scaffoldKey: _key,
           message: "Berlin Wall fell down. Shit happens",
@@ -479,10 +466,9 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
           listener: this);
     }
 
-    mp('\n\nManager: 🍏 🍎 route points added to database. Done  for ${widget.route.name}');
+    mp('\n\nManager: 🍏 🍎 route points added to database. 🍎 Done OK for ${widget.route.name}');
     setState(() {
       isBusy = false;
-      showButton = false;
     });
   }
 

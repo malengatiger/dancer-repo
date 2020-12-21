@@ -433,7 +433,6 @@ export class RouteController {
           }
           if (req.body.clear == true) {
             route.rawRoutePoints = [];
-            await route.save();
           }
           req.body.routePoints.forEach((p: any) => {
             route.rawRoutePoints.push(p);
@@ -446,7 +445,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addRawRoutePoints failed",
+            message: `🍎🍎🍎🍎 addRawRoutePoints failed`,
           });
         }
       });

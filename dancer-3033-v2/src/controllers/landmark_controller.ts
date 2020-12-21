@@ -80,6 +80,42 @@ export class LandmarkController {
         }
       });
     app
+      .route("/addCitiesToLandmark")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const now = new Date().getTime();
+          const landmarkID = req.body.landmarkID;
+          const cities = req.body.cities;
+
+          const landmark: any = await Landmark.findOne({
+            landmarkID: landmarkID,
+          });
+          console.log(`current cities in landmark: ${landmark.cities.length}`);
+          if (!landmark.cities) {
+           landmark.cities = []
+          }
+          cities.forEach((city: any) => {
+            landmark.cities.push(city);
+          });
+          const result = await landmark.save();
+          log(
+            `🔆🔆🔆 cities added to landmark. 🍎🍎 ${result.cities.length}!: 💙 `
+          );
+          console.log(result);
+          const end = new Date().getTime();
+          res.status(200).json({
+            message: `${result.cities.length} Cities now inside Landmark: ${result.landmarkName}`,
+            landmark: result,
+          });
+        } catch (err) {
+          console.log(err);
+          res.status(400).json({
+            error: err.message,
+            message: `🍎🍎 addCitiesToLandmark failed: ${err}`,
+          });
+        }
+      });
+    app
       .route("/findLandmarksByLocation")
       .post(async (req: Request, res: Response) => {
         log(
