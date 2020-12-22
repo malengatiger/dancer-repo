@@ -59,6 +59,8 @@ class _RouteListPageState extends State<RouteListPage>
     _startGeofencing();
   }
 
+  void _getLatestRoutesByAssociation() async {}
+
   @override
   onDistanceEstimated(RouteDistanceEstimation distanceEstimation) {
     mp('RouteListViewer: 🍎 🍎 🍎 onDistanceEstimated: ${distanceEstimation.routeName}');
@@ -76,12 +78,12 @@ class _RouteListPageState extends State<RouteListPage>
 
   @override
   onHeartbeat(bg.Location location) {
-    mp('RouteListViewer: 🍎 🍎 🍎 onHeartbeat: isMoving: ${location.isMoving}');
-    AppSnackbar.showSnackbar(
-        scaffoldKey: _key,
-        backgroundColor: Theme.of(context).primaryColor,
-        message: 'Heartbeat: '
-            '${getFormattedDateHourMinSec(DateTime.now().toString())} : ${location.coords.toString()}');
+    mp('RouteListViewer: 🍎 🍎onHeartbeat: isMoving: ${location.isMoving} :::  🍎  ${DateTime.now().toIso8601String()}');
+    // AppSnackbar.showSnackbar(
+    //     scaffoldKey: _key,
+    //     backgroundColor: Theme.of(context).primaryColor,
+    //     message: 'Heartbeat: '
+    //         '${getFormattedDateHourMinSec(DateTime.now().toString())} : ${location.coords.toString()}');
   }
 
   @override
@@ -107,7 +109,6 @@ class _RouteListPageState extends State<RouteListPage>
     setState(() {
       isBusy = true;
     });
-
     bool isSignedIn = await isUserSignedIn();
     print(
         '🍎 🍎 🍎 _RouteViewerPageState: checkUser: ...................... 🔆🔆 isSignedIn: $isSignedIn  🔆🔆');
@@ -142,9 +143,8 @@ class _RouteListPageState extends State<RouteListPage>
     print(
         '🍎 🍎 🍎 _RouteViewerPageState: checkUser: set local MongoDB appID and get saved association');
     user = await Prefs.getUser();
-    _refreshAssociations(false);
+    asses = await routeBuilderBloc.getAssociations(forceRefresh: false);
     _buildDropDownItems();
-    LocalDBAPI.setAppID();
     await _getAssociation();
     setState(() {
       isBusy = false;
@@ -178,8 +178,10 @@ class _RouteListPageState extends State<RouteListPage>
     p('😡 😡 😡 😡 ............. _getAssociation .......');
     association = await Prefs.getAssociation();
     if (association != null) {
-      p('😡 😡 😡 😡 Association is cached. setting mTitle : 😡 ${association.associationName}');
+      p('😡 😡 😡 😡 Association is cached. setting mTitle : 😡 ${association.associationName} 😡 ... getLatestRoutesByAssociation ....');
       mTitle = association.associationName;
+      await routeBuilderBloc.getLatestRoutesByAssociation(
+          associationID: association.associationID);
       await _getAssociationRoutes(false);
     } else {
       p('😡 😡 😡 😡 Association is NOT cached. 😡 wtf? ... is this first time in?');
@@ -891,7 +893,10 @@ class RouteName extends StatelessWidget {
           width: 40,
           child: Text(
             number == null ? '' : '$number',
-            style: Styles.pinkBoldMedium,
+            style: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
           ),
         ),
         Flexible(

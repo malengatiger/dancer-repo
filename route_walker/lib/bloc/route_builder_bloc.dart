@@ -172,6 +172,20 @@ class RouteBuilderBloc {
     return _routes;
   }
 
+  Future<List<ar.Route>> getLatestRoutesByAssociation(
+      {@required String associationID, String startDate}) async {
+    if (startDate == null) {
+      startDate =
+          DateTime.now().subtract(Duration(days: 2)).toUtc().toIso8601String();
+    }
+    p('RouteBuilderBloc: 🌺 🌸 🌼 getLatestRoutesByAssociation ....');
+    var routes = await DancerListAPI.getLatestRoutesByAssociation(
+        associationID: associationID, startDate: startDate);
+    await LocalDBAPI.addRoutes(routes: routes);
+    p('RouteBuilderBloc: 🌺 🌸 🌼 Associations latest routes: ${routes.length} since $startDate');
+    return routes;
+  }
+
   static const batchSize = 300;
   Future addRoutePointsToMongoDB(
       ar.Route route, List<RoutePoint> routePoints) async {
@@ -556,6 +570,7 @@ class RouteBuilderBloc {
     await LocalDBAPI.addLandmarks(landmarks: marks);
     mp('ℹ️ ℹ️ ℹ️ routeBuilderBloc: getLandmarksAround: cached landmarks LOCAL : 🍎  ${marks.length} ..........');
   }
+  //
 
   Timer timer;
   int timerDuration = 10;

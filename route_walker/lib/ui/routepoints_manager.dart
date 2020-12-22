@@ -442,17 +442,14 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
       mp('🍎🍎🍎🍎 adding ${_routePoints.length} route points to 🍎 ${widget.route.name} ...');
       await routeBuilderBloc.addRoutePointsToMongoDB(
           widget.route, _routePoints);
-      mp('🔵 🔵 🔵 🔵 🔵 Saving raw points: ${_rawRoutePoints.length} to REMOTE db....');
-      await routeBuilderBloc.addRawRoutePointsToMongoDB(
-          widget.route, _rawRoutePoints);
 
       AppSnackbar.showSnackbarWithAction(
           scaffoldKey: _key,
-          message: 'Route Points added',
+          message: '🌺 🌸 🌼 Route Points confirmed! ',
           action: 1,
-          actionLabel: 'DONE',
+          actionLabel: '',
           listener: this,
-          backgroundColor: Colors.teal[800]);
+          backgroundColor: Colors.teal[600]);
     } catch (e) {
       print(e);
       setState(() {
