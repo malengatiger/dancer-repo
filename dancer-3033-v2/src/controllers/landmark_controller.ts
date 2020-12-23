@@ -86,20 +86,26 @@ export class LandmarkController {
           const now = new Date().getTime();
           const landmarkID = req.body.landmarkID;
           const cities = req.body.cities;
-
+          const clear = req.body.clear;
           const landmark: any = await Landmark.findOne({
             landmarkID: landmarkID,
           });
           console.log(`current cities in landmark: ${landmark.cities.length}`);
           if (!landmark.cities) {
-           landmark.cities = []
+            landmark.cities = [];
           }
+          if (clear) {
+            landmark.cities = []
+          }
+
           cities.forEach((city: any) => {
-            landmark.cities.push(city);
+            if (findCity(landmark, city) == false) {
+              landmark.cities.push(city);
+            }
           });
           const result = await landmark.save();
           log(
-            `🔆🔆🔆 cities added to landmark. 🍎🍎 ${result.cities.length}!: 💙 `
+            `🔆🔆🔆 cities added to landmark. result: 🍎🍎 ${result.cities.length} cities!: 💙 `
           );
           console.log(result);
           const end = new Date().getTime();
@@ -114,7 +120,17 @@ export class LandmarkController {
             message: `🍎🍎 addCitiesToLandmark failed: ${err}`,
           });
         }
+
+        function findCity(landmark: any, city: any) {
+          landmark.cities.forEach((c: any) => {
+            if (c.cityID == city.cityID) {
+              return true;
+            }
+          });
+          return false;
+        }
       });
+
     app
       .route("/findLandmarksByLocation")
       .post(async (req: Request, res: Response) => {
