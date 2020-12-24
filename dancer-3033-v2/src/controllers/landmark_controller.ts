@@ -7,6 +7,7 @@ import uuid = require("uuid");
 import { ObjectID } from "bson";
 import { Types } from "mongoose";
 import chalk = require("chalk");
+import DistanceUtil from "../helpers/distance_util";
 export class LandmarkController {
   public routes(app: any): void {
     log(
@@ -65,6 +66,7 @@ export class LandmarkController {
             }
           );
           log(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 `);
+          //calculate landmark distances from start and then sort them
           console.log(mRes);
           const end = new Date().getTime();
           res.status(200).json({
@@ -185,8 +187,18 @@ export class LandmarkController {
               end / 1000 - now / 1000
             } 💙 seconds for query. found ${result.length} landmarks`
           );
-
-          res.status(200).json(result);
+          const route = await Route.findOne({
+            routeID: req.body.routeID
+          })
+          console.log(route?.toJSON())
+          const list: any[] =  []
+          result.forEach(r => {
+            list.push(r.toJSON())
+          })
+          console.log(list)
+          const dist = new DistanceUtil()
+          const sorted = dist.reorder(route?.toJSON(), list)
+          res.status(200).json(sorted);
         } catch (err) {
           res.status(400).json({
             error: err,

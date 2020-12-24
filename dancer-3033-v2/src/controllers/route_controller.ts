@@ -567,7 +567,7 @@ export class RouteController {
             routeID: routeID
           })
           //TODO - calculate distance from each route point and take those within 100 metres
-          res.status(200).json(result);
+          res.status(200).json(route);
         } catch (err) {
           res.status(400).json({
             error: err,
