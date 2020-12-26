@@ -173,8 +173,6 @@ export class LandmarkController {
       .post(async (req: Request, res: Response) => {
         try {
           const now = new Date().getTime();
-
-          log(`💦 💦 💦 💦 💦 💦 routeID: ☘️☘️ ${req.body.routeID} ☘️☘️`);
           const result = await Landmark.find({
             "routeDetails.routeID": req.body.routeID,
           });
@@ -187,12 +185,10 @@ export class LandmarkController {
           const route = await Route.findOne({
             routeID: req.body.routeID
           })
-          console.log(route?.toJSON())
           const list: any[] =  []
           result.forEach(r => {
             list.push(r.toJSON())
           })
-          console.log(list)
           const dist = new DistanceUtilNew()
           const sorted = dist.reorder(route?.toJSON(), list)
           res.status(200).json(sorted);

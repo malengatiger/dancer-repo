@@ -115,20 +115,41 @@ export class RouteController {
         `\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
       );
       log(
-        `🧩 🧩 🧩 🧩 🧩 🧩 🍎🍎 EXPENSIVE CALL! 🍎🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `
+        `🧩 🧩 🧩 🧩 🧩 🧩 🍎 🍎 EXPENSIVE CALL! 🍎 🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `
       );
-      console.log(req.body);
       try {
         const routeID: any = req.body.routeID;
         const now = new Date().getTime();
-        log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${routeID} ☘️☘️`);
-        const result = await Route.findOne({ routeID: routeID });
-        log(result);
+        const result: any = await Route.findOne({ routeID: routeID });
+        if (result.routePoints) {
+          if (!result.heading || result.heading === 0) {
+            const startLat = result.routePoints[0].position.coordinates[1];
+            const startLng = result.routePoints[0].position.coordinates[0];
+            const endLat =
+              result.routePoints[result.routePoints.length - 1].position
+                .coordinates[1];
+            const endLng =
+              result.routePoints[result.routePoints.length - 1].position
+                .coordinates[0];
+            const heading = Heading.getBearing(
+              startLat,
+              startLng,
+              endLat,
+              endLng
+            );
+            result.heading = heading;
+            await result.save();
+            log(
+              `💦 💦 💦 💦 💦 💦  route heading calculated: 🍎 ${heading} 🍎 and updated on DB`
+            );
+          }
+        }
+
         const end = new Date().getTime();
         log(
-          `🔆🔆🔆 elapsed time: ${
+          `🔆🔆🔆 getRouteById: elapsed time: ${
             end / 1000 - now / 1000
-          } seconds for query. found 😍route`
+          } seconds for query. found 😍 route: ${result.name}`
         );
         res.status(200).json(result);
       } catch (err) {
@@ -441,7 +462,6 @@ export class RouteController {
     app
       .route("/addRawRoutePoints")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           if (!route) {
@@ -493,7 +513,9 @@ export class RouteController {
 
           route.routePoints = list;
           await route.save();
-          log(`🔵 🔵 🔵 RoutePoint ${routePoint.index} updated and marked as a Landmark: ${routePoint.landmarkName}`)
+          log(
+            `🔵 🔵 🔵 RoutePoint ${routePoint.index} updated and marked as a Landmark: ${routePoint.landmarkName}`
+          );
           res.status(200).json({
             message: `route point ${JSON.stringify(
               routePoint
@@ -546,7 +568,7 @@ export class RouteController {
         }
       });
 
-      app
+    app
       .route("/findRoutePointNearestToPosition")
       .post(async (req: Request, res: Response) => {
         log(
@@ -558,10 +580,10 @@ export class RouteController {
           const latitude = parseFloat(req.body.latitude);
           const longitude = parseFloat(req.body.longitude);
           const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
-          const routeID = req.body.routeID
+          const routeID = req.body.routeID;
           const route = await Route.findOne({
-            routeID: routeID
-          })
+            routeID: routeID,
+          });
           //TODO - calculate distance from each route point and take those within 100 metres
           res.status(200).json(route);
         } catch (err) {

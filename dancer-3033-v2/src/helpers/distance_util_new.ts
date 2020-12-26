@@ -81,7 +81,6 @@ class DistanceUtilNew {
 
     try {
       landmarks.forEach((landmark:any) => {
-        console.log(landmark)
         const dist = this.calculateDistanceBetween(
           start.position.coordinates[1],
           start.position.coordinates[0],
@@ -103,7 +102,6 @@ class DistanceUtilNew {
     );
     
     distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-    console.log(distances)
     const sortedLandmarks:any[] = [];
    try {
     distances.forEach(d => {
@@ -113,12 +111,9 @@ class DistanceUtilNew {
      console.error(error)
    }
     console.log(
-      `🧡 🧡 🧡  ... Sorted landmarks by distance from start of route ...`
+      `🧡 🧡 🧡  ... Sorted landmarks by distance from start of route: 🍎 ${sortedLandmarks.length} 🍎 ...`
     );
-    sortedLandmarks.forEach((m) => {
-      console.log(`... Sorted landmark:  🧡 ${m.landmarkName}`);
-    });
-    console.log(sortedLandmarks)
+   
     return sortedLandmarks;
   }
   findLandmark(landmarkID: string, landmarks:any[]) {
