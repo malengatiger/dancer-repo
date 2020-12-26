@@ -366,15 +366,15 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 4.0),
-              child: Flexible(
-                child: Row(
-                  children: <Widget>[
-                    Text(
+              child: Row(
+                children: <Widget>[
+                  Flexible(
+                    child: Text(
                       widget.route == null ? 'No Route?' : widget.route.name,
                       style: Styles.whiteBoldSmall,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             SizedBox(
@@ -445,7 +445,7 @@ class _CreateRoutePointsPageState extends State<CreateRoutePointsPage>
 
       AppSnackbar.showSnackbarWithAction(
           scaffoldKey: _key,
-          message: '🌺 🌸 🌼 Route Points confirmed! ',
+          message: 'Route Points confirmed! ',
           action: 1,
           actionLabel: '',
           listener: this,

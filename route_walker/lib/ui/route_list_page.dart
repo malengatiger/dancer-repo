@@ -78,6 +78,7 @@ class _RouteListPageState extends State<RouteListPage>
 
   @override
   onHeartbeat(bg.Location location) {
+    if (location == null) return;
     mp('RouteListViewer: 🍎 🍎onHeartbeat: isMoving: ${location.isMoving} :::  🍎  ${DateTime.now().toIso8601String()}');
     // AppSnackbar.showSnackbar(
     //     scaffoldKey: _key,

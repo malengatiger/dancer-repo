@@ -441,11 +441,7 @@ export class RouteController {
     app
       .route("/addRawRoutePoints")
       .post(async (req: Request, res: Response) => {
-        log(
-          `💙 💙 💙 💙 addRawRoutePoints: Points to add to route - 🧡💛 ${JSON.stringify(
-            req.body
-          )}`
-        );
+        
         try {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           if (!route) {

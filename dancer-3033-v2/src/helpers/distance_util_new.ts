@@ -1,16 +1,17 @@
-const geolib = require("geolib");
 
-class DistanceUtil {
-  calculateDistanceBetween(fromLat, fromLng, toLat, toLng) {
-    const distance = geolib.getDistance(
-      { latitude: fromLat, longitude: fromLng },
-      { latitude: toLat, longitude: toLng }
+import { getDistance } from 'geolib';
+
+class DistanceUtilNew {
+  calculateDistanceBetween(fromLat:Number, fromLng:Number, toLat:Number, toLng:Number) {
+    const distance = getDistance(
+      { latitude: fromLat.toString(), longitude: fromLng.toString() },
+      { latitude: toLat.toString(), longitude: toLng.toString() }
     );
     return distance;
   }
 
-  findNearestRoutePoint(latitude, longitude, routePoints) {
-    const list = [];
+  findNearestRoutePoint(latitude:Number, longitude:Number, routePoints:any[]) {
+    const list: any[] = [];
     routePoints.forEach((p) => {
       const dist = this.calculateDistanceBetween(
         latitude,
@@ -32,20 +33,19 @@ class DistanceUtil {
         list[0].distance
       } metres; ${JSON.stringify(list[0])}`
     );
-    log(list[0]);
-    log(list[1]);
-    log(list[2]);
+    console.log(list[0]);
+    console.log(list[1]);
+    console.log(list[2]);
 
-    const routePoint = new RoutePoint(list[0].routePoint);
-    return routePoint;
+    return list[0].routePoint;
   }
 
-  calculateRouteLength(route) {
+  calculateRouteLength(route:any) {
     console.log(route);
     let total = 0.0;
     let index = 0;
-    let prevPoint;
-    route.routePoints.forEach((p) => {
+    let prevPoint:any;
+    route.routePoints.forEach((p:any) => {
       if (index > 0) {
         const dist = this.calculateDistanceBetween(
           prevPoint.position.coordinates[1],
@@ -66,39 +66,32 @@ class DistanceUtil {
     return total;
   }
 
-  reorder(route, landmarks) {
+  reorder(route:any, landmarks:any) {
     console.log(
       `🧡 🧡 🧡 Sorting landmarks by distance from start of route 🍎 landmarks: ${landmarks.length}`
     );
-    const distances = [];
-    const landmarkPoints = [];
-    route.routePoints.forEach((rp) => {
+    const distances:any[] = [];
+    const landmarkPoints:any[] = [];
+    route.routePoints.forEach((rp:any) => {
       if (rp.landmarkID) {
         landmarkPoints.push(rp);
       }
     });
+    const start = route.routePoints[0]
 
     try {
-      landmarkPoints.forEach((landmarkRoutePoint) => {
-        //calculate dist from start of route
-        let landmarkDistanceFromStart = 0.0;
-        for (var i = 0; i < landmarkRoutePoint.index; i++) {
-          const dist = this.calculateDistanceBetween(
-            landmarkRoutePoint.position.coordinates[1],
-            landmarkRoutePoint.position.coordinates[0],
-            route.routePoints[i].position.coordinates[1],
-            route.routePoints[i].position.coordinates[0],
-          );
-          // console.log(`calculated distance: ${dist} metres : ${landmarkRoutePoint.landmarkName}`)
-          landmarkDistanceFromStart = landmarkDistanceFromStart + dist;
-        }
-        console.log(`🧡 🧡 calculated distance Landmark Point: ${landmarkDistanceFromStart} m: 🧡 ${landmarkRoutePoint.landmarkName}`);
-
+      landmarks.forEach((landmark:any) => {
+        console.log(landmark)
+        const dist = this.calculateDistanceBetween(
+          start.position.coordinates[1],
+          start.position.coordinates[0],
+          landmark.position.coordinates[1],
+          landmark.position.coordinates[0]
+        );
         distances.push({
-          distance: landmarkDistanceFromStart,
-          landmarkID: landmarkRoutePoint.landmarkID,
-          landmarkName: landmarkRoutePoint.landmarkName
-        });
+            distance: dist,
+            landmark: landmark
+        })
       });
     } catch (error) {
       console.log(`😈 😈 😈 😈 There is some sort of fuckup here! returning unsorted landmarks`);
@@ -111,21 +104,10 @@ class DistanceUtil {
     
     distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
     console.log(distances)
-    const sortedLandmarks = [];
+    const sortedLandmarks:any[] = [];
    try {
     distances.forEach(d => {
-      console.log(d)
-      const mark = this.findLandmark(d.landmarkID, landmarks)
-      console.log(`Found landmark: ${JSON.stringify(mark)}`)
-      sortedLandmarks.push({
-        landmarkID: d.landmarkID,
-        landmarkName: d.landmarkName,
-        // latitude:  d.position.coordinates[1],
-        // longitude:  d.position.coordinates[0],
-        // position: {
-        //   coordinates: [d.position.coordinates[0], d.position.coordinates[1]]
-        // }
-      });
+      sortedLandmarks.push(d.landmark);
     });
    } catch (error) {
      console.error(error)
@@ -139,12 +121,12 @@ class DistanceUtil {
     console.log(sortedLandmarks)
     return sortedLandmarks;
   }
-  findLandmark(landmarkID, landmarks) {
-    landmarks.forEach(m => {
+  findLandmark(landmarkID: string, landmarks:any[]) {
+    landmarks.forEach((m:any) => {
       console.log(`🌿 landmarkID: ${landmarkID} 🌿 m.landmarkID: ${m.landmarkID}`)
-      const res = landmarkID.localeCompare(m.landmarkID) 
+      const res:number = landmarkID.localeCompare(m.landmarkID) 
       console.log(`Result of localeCompare: ${res}`)
-      if (res == 0) {
+      if (res === 0) {
         console.log(`🌿🌿🌿🌿🌿🌿🌿 FOUND: landmarkID: ${landmarkID} 🌿 m.landmarkID: ${m.landmarkID}`)
         return m;
       }
@@ -153,7 +135,7 @@ class DistanceUtil {
     return null
   }
 }
-export default DistanceUtil;
+export default DistanceUtilNew;
 
 /*
 landmarks.forEach((landmark) => {

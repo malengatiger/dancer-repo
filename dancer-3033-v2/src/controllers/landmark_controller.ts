@@ -8,6 +8,7 @@ import { ObjectID } from "bson";
 import { Types } from "mongoose";
 import chalk = require("chalk");
 import DistanceUtil from "../helpers/distance_util";
+import DistanceUtilNew from "../helpers/distance_util_new";
 export class LandmarkController {
   public routes(app: any): void {
     log(
@@ -26,14 +27,11 @@ export class LandmarkController {
           const route: any = await Route.findOne({
             routeID: routeID,
           });
-          console.log(route);
-          console.log(`id from route:  💦 💦 ${route.id} 💦 💦`);
+          
           const landmark: any = await Landmark.findOne({
             landmarkID: landmarkID,
           });
-          landmark.routeDetails.forEach((element: any) => {
-            console.log(element);
-          });
+          
           let isFound: boolean = false;
           landmark.routeDetails.forEach((element: any) => {
             if (element.routeID === routeID) {
@@ -52,8 +50,9 @@ export class LandmarkController {
             name: route.name,
           });
           const result = await landmark.save();
-
-          const mRes = await Route.updateOne(
+          console.log(`🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${route.name} 💦 💦`);
+          console.log(result.toJSON());
+          await Route.updateOne(
             {
               _id: new Types.ObjectId(route.id),
               "routePoints.index": routePoint.index,
@@ -65,12 +64,10 @@ export class LandmarkController {
               },
             }
           );
-          log(`🔆🔆🔆 routePoint updated. 🍎🍎🍎🍎 sweet!: 💙 `);
-          //calculate landmark distances from start and then sort them
-          console.log(mRes);
+          console.log(`🔆🔆🔆 addRouteToLandmark: routePoint inside route updated. 🍎🍎🍎🍎 sweet!: 💙 `);
           const end = new Date().getTime();
           res.status(200).json({
-            message: `Route added to Landmark: ${result.landmarkName}`,
+            message: `Route ${route.name} added to Landmark: ${result.landmarkName}:  `,
             landmark: result,
           });
         } catch (err) {
@@ -196,7 +193,7 @@ export class LandmarkController {
             list.push(r.toJSON())
           })
           console.log(list)
-          const dist = new DistanceUtil()
+          const dist = new DistanceUtilNew()
           const sorted = dist.reorder(route?.toJSON(), list)
           res.status(200).json(sorted);
         } catch (err) {
