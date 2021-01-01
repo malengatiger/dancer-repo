@@ -2,7 +2,7 @@
 import { getDistance } from 'geolib';
 
 class DistanceUtilNew {
-  calculateDistanceBetween(fromLat:Number, fromLng:Number, toLat:Number, toLng:Number) {
+  static calculateDistanceBetween(fromLat:Number, fromLng:Number, toLat:Number, toLng:Number) {
     const distance = getDistance(
       { latitude: fromLat.toString(), longitude: fromLng.toString() },
       { latitude: toLat.toString(), longitude: toLng.toString() }
@@ -10,7 +10,7 @@ class DistanceUtilNew {
     return distance;
   }
 
-  findNearestRoutePoint(latitude:Number, longitude:Number, routePoints:any[]) {
+  static findNearestRoutePoint(latitude:Number, longitude:Number, routePoints:any[]) {
     const list: any[] = [];
     routePoints.forEach((p) => {
       const dist = this.calculateDistanceBetween(
@@ -40,7 +40,7 @@ class DistanceUtilNew {
     return list[0].routePoint;
   }
 
-  calculateRouteLength(route:any) {
+  static calculateRouteLength(route:any) : Number {
     console.log(route);
     let total = 0.0;
     let index = 0;
@@ -66,7 +66,7 @@ class DistanceUtilNew {
     return total;
   }
 
-  reorder(route:any, landmarks:any) {
+  static reorder(route:any, landmarks:any) {
     console.log(
       `🧡 🧡 🧡 Sorting landmarks by distance from start of route 🍎 landmarks: ${landmarks.length}`
     );
@@ -116,7 +116,7 @@ class DistanceUtilNew {
    
     return sortedLandmarks;
   }
-  findLandmark(landmarkID: string, landmarks:any[]) {
+  static findLandmark(landmarkID: string, landmarks:any[]) {
     landmarks.forEach((m:any) => {
       console.log(`🌿 landmarkID: ${landmarkID} 🌿 m.landmarkID: ${m.landmarkID}`)
       const res:number = landmarkID.localeCompare(m.landmarkID) 

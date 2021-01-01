@@ -9,6 +9,7 @@ import RouteFare from "../models/route_fare";
 import moment = require("moment");
 import DispatchRecord from "../models/dispatch_record";
 import Heading from "../helpers/Heading";
+import DistanceUtilNew from "../helpers/distance_util_new";
 export class RouteController {
   public routes(app: any): void {
     log(`🏓    RouteController: 💙  setting up default Route routes ... `);
@@ -61,14 +62,9 @@ export class RouteController {
           const result = await Route.find({ associationID: assID });
           log(result);
           result.forEach((m: any) => {
-            if (m.associationID === assID) {
-              log(
-                `😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎rawRoutePoints: ${m.rawRoutePoints.length} `
-              );
-              log(
-                `😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎routePoints: ${m.routePoints.length} \n\n`
-              );
-            }
+            log(
+              `😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎 routePoints: ${m.routePoints.length} 🍎 rawRoutePoints: ${m.rawRoutePoints.length} `
+            );
           });
           const end = new Date().getTime();
           log(
@@ -120,27 +116,16 @@ export class RouteController {
       try {
         const routeID: any = req.body.routeID;
         const now = new Date().getTime();
-        const result: any = await Route.findOne({ routeID: routeID });
-        if (result.routePoints) {
-          if (!result.heading || result.heading === 0) {
-            const startLat = result.routePoints[0].position.coordinates[1];
-            const startLng = result.routePoints[0].position.coordinates[0];
-            const endLat =
-              result.routePoints[result.routePoints.length - 1].position
-                .coordinates[1];
-            const endLng =
-              result.routePoints[result.routePoints.length - 1].position
-                .coordinates[0];
-            const heading = Heading.getBearing(
-              startLat,
-              startLng,
-              endLat,
-              endLng
-            );
-            result.heading = heading;
-            await result.save();
+        const route: any = await Route.findOne({ routeID: routeID });
+        if (route.routePoints) {
+          if (!route.heading || route.heading === 0.0) {
+            route.updated = new Date().toISOString();
+            Heading.getRouteHeading(route);
+            const length = DistanceUtilNew.calculateRouteLength(route);
+            route.lengthInMetres = length;
+            await route.save();
             log(
-              `💦 💦 💦 💦 💦 💦  route heading calculated: 🍎 ${heading} 🍎 and updated on DB`
+              `💦 💦 💦 💦 💦 💦  route heading and length:: 🍎 ${route.heading} heading:: 🍎 ${route.lengthInMetres} 🍎 and updated on DB`
             );
           }
         }
@@ -149,9 +134,9 @@ export class RouteController {
         log(
           `🔆🔆🔆 getRouteById: elapsed time: ${
             end / 1000 - now / 1000
-          } seconds for query. found 😍 route: ${result.name}`
+          } seconds for query. found 😍 route: ${route.name}`
         );
-        res.status(200).json(result);
+        res.status(200).json(route);
       } catch (err) {
         console.error(err);
         res.status(400).json({
@@ -398,7 +383,6 @@ export class RouteController {
     app.route("/addRoutePoints").post(async (req: Request, res: Response) => {
       try {
         const route: any = await Route.findOne({ routeID: req.body.routeID });
-
         // check clear flag
         if (req.body.clear === true) {
           route.routePoints = [];
@@ -409,16 +393,9 @@ export class RouteController {
           route.routePoints.push(p);
         });
         route.updated = new Date().toISOString();
-        const startLat = route.routePoints[0].latitude;
-        const startLng = route.routePoints[0].longitude;
-        const endLat = route.routePoints[route.routePoints.length - 1].latitude;
-        const endLng =
-          route.routePoints[route.routePoints.length - 1].longitude;
-
-        route.heading = Heading.getBearing(startLat, startLng, endLat, endLng);
-        log(
-          `Route heading calculated: 💙 💙 💙 ${route.heading} 💙 💙 💙 ${route.name}`
-        );
+        Heading.getRouteHeading(route);
+        const length = DistanceUtilNew.calculateRouteLength(route);
+        route.lengthInMetres = length;
         const result = await route.save();
         res.status(200).json(result);
       } catch (err) {
@@ -445,6 +422,9 @@ export class RouteController {
         if (req.body.color) {
           route.color = req.body.color;
         }
+        Heading.getRouteHeading(route);
+        const length = DistanceUtilNew.calculateRouteLength(route);
+        route.lengthInMetres = length;
         route.updated = new Date().toISOString();
         const result = await route.save();
         log(
@@ -511,7 +491,11 @@ export class RouteController {
             }
           });
 
+          Heading.getRouteHeading(route);
+          const length = DistanceUtilNew.calculateRouteLength(route);
+          route.lengthInMetres = length;
           route.routePoints = list;
+          route.updated = new Date().toISOString();
           await route.save();
           log(
             `🔵 🔵 🔵 RoutePoint ${routePoint.index} updated and marked as a Landmark: ${routePoint.landmarkName}`
@@ -662,6 +646,8 @@ export class RouteController {
         });
         route.routePoints = list;
         route.updated = new Date().toISOString();
+        const length = DistanceUtilNew.calculateRouteLength(route);
+        route.lengthInMetres = length;
         await route.save();
         log(
           `💙💙 💙💙 💙💙 RoutePoint index: ${routePoint.index} updated on route: 🧡💛 ${route.name}`

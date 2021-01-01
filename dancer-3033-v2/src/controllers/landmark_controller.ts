@@ -189,8 +189,8 @@ export class LandmarkController {
           result.forEach(r => {
             list.push(r.toJSON())
           })
-          const dist = new DistanceUtilNew()
-          const sorted = dist.reorder(route?.toJSON(), list)
+       
+          const sorted = DistanceUtilNew.reorder(route?.toJSON(), list)
           res.status(200).json(sorted);
         } catch (err) {
           res.status(400).json({

@@ -9,6 +9,7 @@ const RouteSchema = new mongoose.Schema(
         associationName: {type: String, required: false, trim: true},
         color: {type: String, required: false, default: 'white'},
         heading: {type: Number, required: true, default: 0.0},
+        lengthInMetres: {type: Number, required: true, default: 0.0},
         rawRoutePoints: {type: Array, required: true, default: []},
         routePoints: {type: Array, required: true, default: []},
         calculatedDistances: {type: Array, required: true, default: []},
