@@ -136,11 +136,14 @@ class RouteBuilderBloc {
     }
   }
 
-  Future<List<Association>> getAssociations() async {
+  Future<List<Association>> getAssociations({bool forceRefresh = false}) async {
     mp('### ℹ️ ℹ️ ℹ️ 🧩🧩🧩🧩🧩  getAssociations: getting ALL Associations from mongoDB ..........\n');
-    var asses = await DancerListAPI.getAssociations();
-    await LocalDBAPI.deleteAssociations();
-    await LocalDBAPI.addAssociations(associations: asses);
+    var asses = await LocalDBAPI.getAssociations();
+    if (asses.isEmpty || forceRefresh) {
+      asses = await DancerListAPI.getAssociations();
+      await LocalDBAPI.deleteAssociations();
+      await LocalDBAPI.addAssociations(associations: asses);
+    }
 
     mp(' 📍📍📍📍 adding ${asses.length} Associations to  📎 model and stream sink ...');
     _associationController.sink.add(asses);
@@ -149,6 +152,7 @@ class RouteBuilderBloc {
   }
 
   Future getRoutesByAssociation(String associationID, bool forceRefresh) async {
+    p('RouteBuilderBloc: 🍀 getRoutesByAssociation ....');
     try {
       _busyController.sink.add(true);
       _routes = await LocalDBAPI.getRoutesByAssociation(associationID);
@@ -158,7 +162,6 @@ class RouteBuilderBloc {
             associationID: associationID);
         await _cacheRoutes();
       }
-
       _routes.sort((a, b) => a.name.compareTo(b.name));
       _routeController.sink.add(_routes);
       _busyController.sink.add(false);
@@ -167,6 +170,20 @@ class RouteBuilderBloc {
       _errorController.sink.add(e.toString());
     }
     return _routes;
+  }
+
+  Future<List<ar.Route>> getLatestRoutesByAssociation(
+      {@required String associationID, String startDate}) async {
+    if (startDate == null) {
+      startDate =
+          DateTime.now().subtract(Duration(days: 2)).toUtc().toIso8601String();
+    }
+    p('RouteBuilderBloc: 🌺 🌸 🌼 getLatestRoutesByAssociation ....');
+    var routes = await DancerListAPI.getLatestRoutesByAssociation(
+        associationID: associationID, startDate: startDate);
+    await LocalDBAPI.addRoutes(routes: routes);
+    p('RouteBuilderBloc: 🌺 🌸 🌼 Associations latest routes: ${routes.length} since $startDate');
+    return routes;
   }
 
   static const batchSize = 300;
@@ -487,19 +504,29 @@ class RouteBuilderBloc {
       await LocalDBAPI.updateLocalLandmark(landmark: m);
     } catch (e) {}
 
-    await getRouteLandmarks(route);
+    //await getRouteLandmarks(route);
     return m;
   }
 
-  Future<List<Landmark>> getRouteLandmarks(ar.Route route) async {
-    var marks = await DancerListAPI.getRouteLandmarks(routeId: route.routeID);
+  Future<List<Landmark>> getRouteLandmarks(
+      {ar.Route route, bool forceRefresh}) async {
+    // var testMarks =
+    //     await LocalDBAPI.getRouteLandmarksByQuery(routeID: route.routeID);
+    // mp('routeBuilderBloc; ✅ QUERY 1: testMarks retrieved:  🔵 ${testMarks.length}');
+    var marks =
+        await LocalDBAPI.getRouteLandmarksByQuery(routeID: route.routeID);
+    mp('routeBuilderBloc; ✅ getRouteLandmarksByQuery: marks retrieved:  🔵 ${marks.length}');
+    if (marks.isEmpty || forceRefresh) {
+      marks = await DancerListAPI.getRouteLandmarks(routeId: route.routeID);
+      await LocalDBAPI.addLandmarks(landmarks: marks);
+    }
 
     _routeLandmarks.clear();
     _routeLandmarks.addAll(marks);
     _routeLandmarksController.sink.add(_routeLandmarks);
     mp('routeBuilderBloc; ✅ route landmarks retrieved: ${_routeLandmarks.length}\n');
 
-    return _routeLandmarks;
+    return marks;
   }
 
   Future<List<RoutePoint>> getRawRoutePoints({ar.Route route}) async {
@@ -525,15 +552,25 @@ class RouteBuilderBloc {
   }
 
   Future _cacheRoutes() async {
-    mp('ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  ..........');
-
+    mp('ℹ️ ℹ️ ℹ️ RouteBuilderBloc: cacheRoutes  ..........');
     for (var route in _routes) {
-      mp('ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️ ℹ️  cacheRoutes  : 🍎  ${route.name} ..........');
+      mp('ℹ️ ℹ️ ℹ️ RouteBuilderBloc: cacheRoutes  : 🍎 caching:  ${route.name} ..........');
       await LocalDBAPI.addRoute(route: route);
+      var marks = await DancerListAPI.getRouteLandmarks(routeId: route.routeID);
+      await LocalDBAPI.addLandmarks(landmarks: marks);
     }
-    mp('\n\n️ℹ️ ℹ️ ℹ️ ℹ️   🍎 🍎 🍎 🍎  Routes cached: 🍎 ${_routes.length}');
+    mp('️ℹ️ ℹ️ ℹ️ RouteBuilderBloc: Routes cached: 🍎 ${_routes.length}');
     return _routePoints;
   }
+
+  Future getLandmarksAround() async {
+    var pos = await locationBloc.getCurrentPosition();
+    var marks = await DancerListAPI.findLandmarksByLocation(
+        latitude: pos.latitude, longitude: pos.longitude, radiusInKM: 100.0);
+    await LocalDBAPI.addLandmarks(landmarks: marks);
+    mp('ℹ️ ℹ️ ℹ️ routeBuilderBloc: getLandmarksAround: cached landmarks LOCAL : 🍎  ${marks.length} ..........');
+  }
+  //
 
   Timer timer;
   int timerDuration = 10;

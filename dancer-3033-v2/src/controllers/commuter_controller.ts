@@ -154,6 +154,28 @@ export class CommuterController {
           });
         }
       });
+      app
+      .route("/updateCommuterRequestExpired")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const commuterRequestID = req.body.commuterRequestID;
+          const commReq: any = await CommuterRequest.findOne({
+            commuterRequestID: commuterRequestID,
+          });
+          if (!commReq) {
+            throw new Error("CommuterRequest not found");
+          }
+          commReq.expiredDate = new Date().toISOString();
+          const result = await commReq.save();
+
+          res.status(200).json(result);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: `🍎🍎🍎🍎 updateCommuterRequestExpired failed: ${err}`,
+          });
+        }
+      });
     app
       .route("/addCommuterRatingsAggregate")
       .post(async (req: Request, res: Response) => {
@@ -665,16 +687,16 @@ export class CommuterController {
         }
       });
     app
-      .route("/getCommuterRequestsByUserID")
+      .route("/getCommuterRequestsByUser")
       .post(async (req: Request, res: Response) => {
         try {
-          const uid = req.body.firebaseUID;
-          const result = (await User.find({ userID: uid })).reverse();
+          const uid = req.body.userID;
+          const result = (await CommuterRequest.find({ userID: uid })).reverse();
 
-          if (result == null) {
+          if (result == null || result.length == 0) {
             res.status(400).json({
-              error: "User not found",
-              message: "User not found",
+              error: "CommuterRequest failed",
+              message: "CommuterRequests not found",
             });
           }
 
@@ -682,7 +704,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByUserID failed",
+            message: " 🍎🍎🍎🍎 getCommuterRequestsByUser failed",
           });
         }
       });

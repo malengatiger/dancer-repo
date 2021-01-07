@@ -21,6 +21,7 @@ const CommuterRequestSchema = new mongoose.Schema(
         scanned: {type: Boolean, required: true, default: false},
         autoDetected: {type: Boolean, required: true, default: false},
         isWallet: {type: Boolean, required: true, default: false},
+        expiredDate: {type: String, required: false,trim: true},
         associationD: {type: String, required: false,trim: true, index: true},
         associationName: {type: String, required: false,trim: true},
         created: {type: String, required: true, default: new Date().toISOString()},
@@ -29,5 +30,11 @@ const CommuterRequestSchema = new mongoose.Schema(
 );
 
 CommuterRequestSchema.index({ position: "2dsphere" });
+CommuterRequestSchema.indexes().push({associationID: 1}, {unique: false});
+CommuterRequestSchema.indexes().push({fromLandmarkID: 1}, {unique: false});
+CommuterRequestSchema.indexes().push({toLandmarkID: 1}, {unique: false});
+CommuterRequestSchema.indexes().push({routeID: 1}, {unique: false});
+CommuterRequestSchema.indexes().push({created: 1}, {unique: false});
+
 const CommuterRequest = mongoose.model('CommuterRequest', CommuterRequestSchema);
 export default CommuterRequest
