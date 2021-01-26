@@ -65,6 +65,7 @@ export class CityController {
                 )
             }
         });
+        
         app.route("/findCitiesByLocation").post(async (req: Request, res: Response) => {
             const msg = `🌽🌽🌽 findCitiesByLocation requested `;
             log(msg);
