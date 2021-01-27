@@ -15,7 +15,7 @@ import 'package:aftarobotlibrary4/location_bloc.dart';
 import 'package:aftarobotlibrary4/util/functions.dart';
 import 'package:aftarobotlibrary4/util/maps/snap_to_roads.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 
@@ -108,11 +108,11 @@ class RouteBuilderBloc {
   _initialize() async {
     print(
         '\n🔵 🔵 🔵 🔵 🔵 RouteBuilderBloc: ️ ✳️ initializing ... 🍀️🍀️🍀️ doing nothing so far 🔵 🔵 🔵 🔵 🔵 \n');
-    await DotEnv().load('.env');
+    await DotEnv.load(fileName: ".env");
     print('🌸 DotEnv has been created. Check content of variables');
-    var status = DotEnv().env['status'];
-    var devURL = DotEnv().env['devURL'];
-    var prodURL = DotEnv().env['prodURL'];
+    var status = DotEnv.env['status'];
+    var devURL = DotEnv.env['devURL'];
+    var prodURL = DotEnv.env['prodURL'];
     print(
         '🌸 properties from .env : 🌸  status: $status 🌸  devURL: $devURL 🍏 prodURL: $prodURL 🍏 ');
   }

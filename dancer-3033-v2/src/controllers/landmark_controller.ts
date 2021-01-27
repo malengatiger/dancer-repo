@@ -246,6 +246,23 @@ export class LandmarkController {
         landmark.landmarkID = uuid();
         landmark.created = new Date().toISOString();
 
+        if (!req.body.cities) {
+          const latitude = parseFloat(landmark.position.coordinates[1]);
+                const longitude = parseFloat(landmark.position.coordinates[1]);
+                const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+                const result = await City.find({
+                    position: {
+                        $near: {
+                            $geometry: {
+                                coordinates: [longitude, latitude],
+                                type: "Point",
+                            },
+                            $maxDistance: RADIUS,
+                        },
+                    },
+                });
+        }
+
         const result = await landmark.save();
         console.log(result);
         res.status(200).json(result);
