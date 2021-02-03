@@ -132,18 +132,4 @@ class DistanceUtilNew {
 }
 export default DistanceUtilNew;
 
-/*
-landmarks.forEach((landmark) => {
-        console.log(landmark)
-        const dist = this.calculateDistanceBetween(
-          start.position.coordinates[1],
-          start.position.coordinates[0],
-          landmark.position.coordinates[1],
-          landmark.position.coordinates[0]
-        );
-        distances.push({
-            distance: dist,
-            landmark: landmark
-        })
-      });
-*/
+

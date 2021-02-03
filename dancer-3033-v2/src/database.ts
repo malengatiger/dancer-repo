@@ -19,12 +19,12 @@ mongoose
       `\n🔆🔆  Mongo connected ... 🔆 ${new Date()} `,
     );
     log(
-      `\n🍎🍎  Mongo Client version: 💙 ${client.version} 💙 model names: ${
+      `\n🍎  Mongo Client version: 💙 ${client.version} 💙 model names: ${
         JSON.stringify(client.modelNames())
-      }  ☘️  is OK   🍎🍎 `,
+      }  ☘️  is OK   🍎 `,
     );
     log(
-      `🍎🍎🍎  MongoDB config ...${JSON.stringify(
+      `🍎  MongoDB config ...${JSON.stringify(
         mongoose.connection.config,
       )}`,
     );
@@ -32,8 +32,8 @@ mongoose
     Messaging.init();
     
     MongoListeners.listen(client);
-    // console.log(`🍎🍎🍎  MongoDB collections available ...`);
-    // console.log(mongoose.connection.collections);
+    console.log(`🍎  MongoDB collections available ...`);
+    console.log(mongoose.connection.collections);
     
   })
   .catch((err) => {
@@ -48,4 +48,5 @@ export class Database {
         return db;
     }
 }
+
 export default Database;

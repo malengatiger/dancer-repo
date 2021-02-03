@@ -9,6 +9,7 @@ import { Types } from "mongoose";
 import chalk = require("chalk");
 import DistanceUtil from "../helpers/distance_util";
 import DistanceUtilNew from "../helpers/distance_util_new";
+import City from "../models/city";
 export class LandmarkController {
   public routes(app: any): void {
     log(
