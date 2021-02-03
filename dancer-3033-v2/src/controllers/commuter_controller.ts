@@ -764,6 +764,34 @@ export class CommuterController {
           });
         }
       });
+      app
+      .route("/getCommuterRequestsByRoute")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const routeID = req.body.routeID;
+          const minutes = parseInt(req.body.minutes);
+          const cutOff: string = moment()
+            .subtract(minutes, "minutes")
+            .toISOString();
+          const result = await CommuterRequest.find({
+            routeID: routeID,
+            created: { $gt: cutOff },
+          });
+
+          if (result == null) {
+            res.status(400).json({
+              error: "getCommuterRequestsByRoute failed",
+            });
+          }
+
+          res.status(200).json(result);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: " 🍎🍎🍎🍎 getCommuterRequestsByRoute failed",
+          });
+        }
+      });
     app
       .route("/getCommuterRequestsByLandmarkIDs")
       .post(async (req: Request, res: Response) => {
