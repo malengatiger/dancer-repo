@@ -8,7 +8,7 @@ class UserHelper {
         await appTo.auth().createUser({
             uid: user.userID,
             email: user.email, 
-            password: user.password? user.password:'changeThisPassword',
+            password: user.password? user.password : user.password:'changeThisPassword'
             displayName: user.firstName + ' ' + user.lastName,
           })
             .then(function(userRecord) {
