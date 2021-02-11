@@ -32,8 +32,8 @@ mongoose
     Messaging.init();
     
     MongoListeners.listen(client);
-    console.log(`🍎  MongoDB collections available ...`);
-    console.log(mongoose.connection.collections);
+    console.log(`🍎  MongoDB collections available ... ${mongoose.connection.collections.length}`);
+    // console.log(mongoose.connection.collections);
     
   })
   .catch((err) => {

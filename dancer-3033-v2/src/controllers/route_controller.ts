@@ -110,29 +110,34 @@ export class RouteController {
       log(
         `\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
       );
-      log(
-        `🧩 🧩 🧩 🧩 🧩 🧩 🍎 🍎 EXPENSIVE CALL! 🍎 🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `
-      );
+      
       try {
         const routeID: any = req.body.routeID;
         const now = new Date().getTime();
         const route: any = await Route.findOne({ routeID: routeID });
-        if (route.routePoints) {
-          if (!route.heading || route.heading === 0.0) {
+        log(
+          `🧩 🧩 🧩 🧩 🧩 🧩 🍎 🍎 EXPENSIVE CALL! 🍎  route:${route.name}, points:  🍎 ${route.routePoints.length} 🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `
+        );
+        if (route.routePoints.length > 0) {
+          if (!route.heading || route.heading === 0.0 || route.heading === 0) {
             route.updated = new Date().toISOString();
+            log(
+              `🧩 🧩 🧩  🍎 🍎 calling DistanceUtilNew.calculateRouteLength! 🍎  🍎 🧩 🧩 🧩  `
+            );
             Heading.getRouteHeading(route);
-            const length = DistanceUtilNew.calculateRouteLength(route);
+            let length: Number = DistanceUtilNew.calculateRouteLength(route);
+            
             route.lengthInMetres = length;
             await route.save();
-            log(
-              `💦 💦 💦 💦 💦 💦  route heading and length:: 🍎 ${route.heading} heading:: 🍎 ${route.lengthInMetres} 🍎 and updated on DB`
+            console.log(
+              `💦 💦 💦 💦 💦 💦  route heading 🍎 ${route.heading} lengthInMetres:: 🍎 ${route.lengthInMetres} 🍎 ... updated on DB`
             );
           }
         }
 
         const end = new Date().getTime();
-        log(
-          `🔆🔆🔆 getRouteById: elapsed time: ${
+        console.log(
+          `🔆 getRouteById: elapsed time: ${
             end / 1000 - now / 1000
           } seconds for query. found 😍 route: ${route.name}`
         );
@@ -141,7 +146,7 @@ export class RouteController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 getRoutes failed",
+          message: `🍎 🍎 🍎 🍎 getRouteByID failed: ${err}`,
         });
       }
     });

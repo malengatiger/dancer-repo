@@ -14,6 +14,12 @@ class Heading {
   }
 
   static getRouteHeading(route) {
+    if (!route.routePoints) {
+      return -1.0;
+    }
+    if (!route.routePoints.length == 0) {
+      return -1.0;
+    }
     const startLat = route.routePoints[0].latitude;
     const startLng = route.routePoints[0].longitude;
     const endLat = route.routePoints[route.routePoints.length - 1].latitude;
@@ -21,7 +27,7 @@ class Heading {
 
     const heading = this.getBearing(startLat, startLng, endLat, endLng);
     route.heading = heading
-    log(
+    console.log(
       `Route heading calculated: 💙 💙 💙 ${route.heading} 💙 💙 💙 ${route.name}`
     );
     return heading
