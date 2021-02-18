@@ -4,6 +4,8 @@ const VehicleLocationSchema = new mongoose.Schema(
     {
         vehicleReg: {type: String, required: true, trim: true},
         vehicleID: {type: String, required: true, trim: true},
+        routePoints: {type: Array, required: true, default: []},
+        nearestLandmarks: {type: Array, required: true, default: []},
         position: {type: Map, required: true},
         vehicleType: {type: {}, required: true, default:{}},
         associationID: {type: String, required: false,trim: true, index: true},
