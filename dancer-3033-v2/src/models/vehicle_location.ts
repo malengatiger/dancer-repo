@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+//add points
 const VehicleLocationSchema = new mongoose.Schema(
     {
         vehicleReg: {type: String, required: true, trim: true},
