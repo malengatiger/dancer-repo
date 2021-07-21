@@ -508,12 +508,11 @@ export class VehicleController {
       .route("/addVehicleLocation")
       .post(async (req: Request, res: Response) => {
         
-
         try {
           const c: any = new VehicleLocation(req.body);
           c.created = new Date().toISOString();
           const result = await c.save();
-
+          console.log(`💙 💙 .... Added vehicle location: ${req.body.vehicleReg} : at: ${new Date()}`)
           res.status(200).json(result);
         } catch (err) {
           console.log(err);

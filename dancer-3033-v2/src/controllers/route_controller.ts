@@ -108,8 +108,15 @@ export class RouteController {
       });
     app.route("/getRouteById").post(async (req: Request, res: Response) => {
       log(
-        `\n\n💦  POST: /getRouteById requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        `\n\n💦  POST: /getRouteById requested ....  ${req.body.routeID} 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
       );
+      if (!req.body.routeID) {
+        res.status(400).json({
+          error: 'routeID is null',
+          message: `🍎 🍎 🍎 🍎 getRouteByID failed`,
+        });
+        return
+      }
       
       try {
         const routeID: any = req.body.routeID;
@@ -139,7 +146,7 @@ export class RouteController {
         console.log(
           `🔆 getRouteById: elapsed time: ${
             end / 1000 - now / 1000
-          } seconds for query. found 😍 route: ${route.name}`
+          } seconds for query. found 😍 route: ${route}`
         );
         res.status(200).json(route);
       } catch (err) {
@@ -254,12 +261,14 @@ export class RouteController {
       .route("/addRouteDistanceEstimation")
       .post(async (req: Request, res: Response) => {
         try {
+          console.log(`... addRouteDistanceEstimation ... vehicleReg: ${JSON.stringify(req.body.vehicle.vehicleReg)}`)
           const estimation: any = new RouteDistanceEstimation(req.body);
           if (!estimation.vehicle) {
             throw new Error(`Vehicle missing from estimation`);
           }
           estimation.created = new Date().toISOString();
           await estimation.save();
+          console.log('... Estimation has been saved; sending fcm message ... ')
           await Messaging.sendRouteDistanceEstimation(req.body);
 
           res.status(200).json({
@@ -341,6 +350,7 @@ export class RouteController {
     app
       .route("/addRouteDistanceEstimations")
       .post(async (req: Request, res: Response) => {
+        
         try {
           const list: any[] = req.body.estimations;
           let cnt = 0;
@@ -351,6 +361,7 @@ export class RouteController {
             }
             estimation.created = new Date().toISOString();
             await estimation.save();
+            console.log(`.... ...... Added RouteDistanceEstimation: ${req.body.vehicleReg}`)
             await Messaging.sendRouteDistanceEstimation(estimate);
             cnt++;
           }
@@ -362,7 +373,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: ` 🍎🍎🍎🍎 addRouteDistanceEstimations failed: ${err}`,
+            message: ` 🍎 🍎 🍎 🍎 addRouteDistanceEstimations failed: ${err}`,
           });
         }
       });

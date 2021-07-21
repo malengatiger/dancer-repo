@@ -19,7 +19,7 @@ export class CityController {
                 c.cityID = uuid();
                 c.created = new Date().toISOString();
                 const result = await c.save();
-                // log(result);
+                console.log(`🥦 🥦 🥦 city added: ${JSON.stringify(result)}`)
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -54,7 +54,7 @@ export class CityController {
                 c.countryID = uuid();
                 c.created = new Date().toISOString();
                 const result = c.save();
-                // log(result);
+                
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -86,7 +86,7 @@ export class CityController {
                         },
                     },
                 });
-                // log(result);
+                
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
                 res.status(200).json(result);
@@ -106,9 +106,29 @@ export class CityController {
             try {
                 const now = new Date().getTime();
                 const result = await City.find({countryID: req.body.countryID });
-                // log(result);
+                
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+                res.status(200).json(result);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 getCitiesByCountry failed'
+                    }
+                )
+            }
+        });
+        app.route("/getCitiesAddedSince").post(async (req: Request, res: Response) => {
+            const msg = `🌽🌽🌽 getCitiesAddedSince requested `;
+            log(msg);
+
+            try {
+                const now = new Date().getTime();
+                const result = await City.find({created: { $gt: req.body.date},});
+                
+                const end = new Date().getTime();
+                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query`)
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -126,9 +146,9 @@ export class CityController {
             try {
                 const now = new Date().getTime();
                 const result = await City.find({provinceName: req.body.provinceName });
-                // log(result);
+                
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+                log(`🔆🔆🔆 elapsed time: 💙 ${(end / 1000) - (now / 1000)} 💙 seconds for query`)
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(
@@ -146,7 +166,7 @@ export class CityController {
             try {
                 const now = new Date().getTime();
                 const result = await Country.find();
-                // log(result);
+                
                 const end = new Date().getTime();
                 log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
                 res.status(200).json(result);

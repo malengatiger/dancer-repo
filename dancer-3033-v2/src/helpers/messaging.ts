@@ -91,7 +91,7 @@ class Messaging {
     const topic = Constants.ROUTE_DISTANCE_ESTIMATION + "_" + data.routeID;
     await fba.sendToTopic(topic, payload, options);
     log(
-      `😍 RouteDistanceEstimation: FCM message sent for vehicle: 😍 ${
+      `😍 sendRouteDistanceEstimation: FCM message sent from vehicle: 😍 ${
         data.vehicle.vehicleReg
       } topic: ${topic} 🍎🍎`
     );
@@ -261,8 +261,39 @@ class Messaging {
     );
     
   }
+  public static async sendCity(data: any): Promise<any> {
+    const options: any = {
+      priority: "normal",
+      timeToLive: 60 * 60,
+    };
+    const payload: any = {
+      notification: {
+        title: "City Added",
+        body: `${data.name}, ${data.provinceName}`,
+      },
+      data: {
+        type: Constants.CITIES,
+        provinceName: data.provinceName,
+        countryID: data.countryID,
+        cityID: data.routeID,
+        name: data.name,
+        position: data.position,
+        countryName: data.countryName,
+        created: data.created,
+      },
+    };
+    const topic = Constants.CITIES;
+    const result = await fba.sendToTopic(topic, payload, options);
+    log(
+      `😍 sendCity: FCM message sent: 😍 ${
+        JSON.stringify(data)
+      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+    );
+    
+  }
 
   public static async sendFenceDwellEvent(data: any): Promise<any> {
+    console.log(`😍 😍 😍 sendFenceDwellEvent: ${JSON.stringify(data)}`)
     const options: any = {
       priority: "normal",
       timeToLive: 60 * 60,
@@ -276,7 +307,7 @@ class Messaging {
         type: Constants.COMMUTER_FENCE_DWELL_EVENTS,
         landmarkID: data.landmarkID,
         landmarkName: data.landmarkName,
-        userID: data.userID,
+        userID: data.userID == null? null: data.userID,
         created: data.created,
       },
     };
@@ -336,7 +367,7 @@ class Messaging {
     const topic = Constants.LANDMARKS;
     const result = await fba.sendToTopic(topic, payload, options);
     log(
-      `😍 sendLandmark: FCM message sent: 😍 ${
+      `😍 💙 💙 💙 💙 💙 send Landmark has changed message: FCM message sent: 😍 ${
         data.landmarkName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );

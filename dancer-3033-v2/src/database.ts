@@ -8,6 +8,7 @@ import Messaging from "./helpers/messaging";
 const password = process.env.MONGODB_PASSWORD || "xxxxx";
 const user = process.env.MONGODB_USER || "xxxx";
 const mongoConnectionString = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
+log(mongoConnectionString);
 
 mongoose.Promise = global.Promise;
 mongoose.set('useNewUrlParser', true);

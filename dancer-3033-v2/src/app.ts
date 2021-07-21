@@ -51,7 +51,28 @@ log(`🥦🥦🥦 Mongoose useCreateIndex has been set`);
 
 const ar = new AftaRobotApp();
 log(`\n🔆🔆 Dancer Web(aka ARWeb) API has been created and stood up! 🔆 🔆 🍎🍎 ${new Date().toUTCString()} 🍎🍎`);
-// log(`🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+log(`🔆🔆 Dancer Web(aka ARWeb) API has the following endpoints set up 🔆 🔆 🔆 🔆`);
+
+const authenticate:any = (req: { headers: { authorization: any; }; user: any; }, res: { sendStatus: (arg0: number) => void; }, next: () => void) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader) {
+      const token = authHeader.split(' ')[1];
+
+      // jwt.verify(token, accessTokenSecret, (err: any, user: any) => {
+      //     if (err) {
+      //         return res.sendStatus(403);
+      //     }
+
+      //     req.user = user;
+      //     next();
+      // });
+  } else {
+      res.sendStatus(401);
+  }
+};
+
+
 const list: any[] = listEndpoints(expressApp);
 const stringList: string[] = [];
 list.forEach((m) => {
