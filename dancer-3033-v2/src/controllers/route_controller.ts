@@ -15,6 +15,40 @@ export class RouteController {
     log(`🏓    RouteController: 💙  setting up default Route routes ... `);
 
     app
+      .route("/getUpdatedRoutesByAssociation")
+      .post(async (req: Request, res: Response) => {
+        log(
+          `💦💦 💦  POST: /getUpdatedRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        );
+        console.log(req.body);
+        try {
+          const assID: any = req.body.associationID;
+          const startDate: any = req.body.startDate;
+          const now = new Date().getTime();
+          /*
+          {"associationID": "0df4c8a0-8b19-11e9-815c-b1ada6043f84", "created": {$gt: "2020-12-21T23"}}
+          */
+          const result = await Route.find({
+            associationID: assID,
+            updated: { $gt: startDate },
+          });
+          const end = new Date().getTime();
+          log(
+            `💦 💦 💦 💦 💦 💦 getUpdatedRoutesByAssociation: elapsed time: ${
+              end / 1000 - now / 1000
+            } seconds for query. found 😍 ${result.length} routes`
+          );
+
+          res.status(200).json(result);
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎🍎🍎🍎 getUpdatedRoutesByAssociation failed",
+          });
+        }
+      });
+      app
       .route("/getLatestRoutesByAssociation")
       .post(async (req: Request, res: Response) => {
         log(

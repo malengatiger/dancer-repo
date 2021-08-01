@@ -34,6 +34,8 @@ class Constants {
     public static USER_OWNER = 'Owner';
     public static USER_STAFF = 'Staff';
     public static USER_ASSOCIATION_OFFICIAL = 'Official';
+    public static CITY_ADDED = 'CityAdded';
+    public static LANDMARK_ADDED = 'LandmarkAdded';
 
 }
 

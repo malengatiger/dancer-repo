@@ -231,7 +231,7 @@ export class LandmarkController {
           //// log(result);
           const end = new Date().getTime();
           log(
-            `🔆🔆🔆 elapsed time: 💙 ${
+            `🔆🔆🔆 findLandmarksByLocation: elapsed time: 💙 ${
               end / 1000 - now / 1000
             } 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`
           );
@@ -239,10 +239,53 @@ export class LandmarkController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getLandmarks failed",
+            message: " 🍎🍎🍎🍎 findLandmarksByLocation failed",
           });
         }
       });
+
+      app
+      .route("/findLandmarksByLocationDate")
+      .post(async (req: Request, res: Response) => {
+        log(
+          `\n\n💦  POST: /findLandmarksByLocationDate requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        );
+        console.log(req.body);
+        try {
+          const now = new Date().getTime();
+          const latitude = parseFloat(req.body.latitude);
+          const longitude = parseFloat(req.body.longitude);
+          const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+          const date = req.body.date
+          const result = await Landmark.find({
+            created: { $gt: date },
+            position: {
+              $near: {
+                $geometry: {
+                  coordinates: [longitude, latitude],
+                  type: "Point",
+                },
+                $maxDistance: RADIUS,
+              },
+            },
+          });
+          //// log(result);
+          const end = new Date().getTime();
+          log(
+            `🔆🔆🔆 findLandmarksByLocationDate: elapsed time: 💙 ${
+              end / 1000 - now / 1000
+            } 💙 seconds for query: landmarks found: 🍎 ${result.length} 🍎`
+          );
+          res.status(200).json(result);
+        } catch (err) {
+          console.log(err)
+          res.status(400).json({
+            error: err,
+            message: " 🍎🍎🍎🍎 findLandmarksByLocationDate failed",
+          });
+        }
+      });
+      //
     app
       .route("/getLandmarksByRoute")
       .post(async (req: Request, res: Response) => {

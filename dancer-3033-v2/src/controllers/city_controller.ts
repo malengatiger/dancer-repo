@@ -67,7 +67,7 @@ export class CityController {
         });
         
         app.route("/findCitiesByLocation").post(async (req: Request, res: Response) => {
-            const msg = `🌽🌽🌽 findCitiesByLocation requested `;
+            const msg = `🌽🌽🌽 findCitiesByLocation requested ........................ `;
             log(msg);
 
             try {
@@ -75,6 +75,7 @@ export class CityController {
                 const latitude = parseFloat(req.body.latitude);
                 const longitude = parseFloat(req.body.longitude);
                 const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+                const msg = `🌽🌽🌽  🍎 🍎 🍎 ... findCitiesByLocation: 🍎 latitude: ${latitude} 🍎 longitude: ${longitude} `;
                 const result = await City.find({
                     position: {
                         $near: {
@@ -88,7 +89,43 @@ export class CityController {
                 });
                 
                 const end = new Date().getTime();
-                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙seconds for query`)
+                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query; found ${result.length} cities`)
+                res.status(200).json(result);
+            } catch (err) {
+                res.status(400).json(
+                    {
+                        error: err,
+                        message: ' 🍎🍎🍎🍎 findCitiesByLocation failed'
+                    }
+                )
+            }
+        });
+         app.route("/findCitiesByLocationDate").post(async (req: Request, res: Response) => {
+            const msg = `🌽🌽🌽 findCitiesByLocationDate requested ........................ `;
+            log(msg);
+
+            try {
+                const now = new Date().getTime();
+                const latitude = parseFloat(req.body.latitude);
+                const longitude = parseFloat(req.body.longitude);
+                const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+                const date = req.body.date 
+                const msg = `🌽🌽🌽  🍎 🍎 🍎 ... findCitiesByLocationDate: 🍎 latitude: ${latitude} 🍎 longitude: ${longitude} ${date}`;
+                const result = await City.find({
+                    created: { $gt: date },
+                    position: {
+                        $near: {
+                            $geometry: {
+                                coordinates: [longitude, latitude],
+                                type: "Point",
+                            },
+                            $maxDistance: RADIUS,
+                        },
+                    },
+                });
+                
+                const end = new Date().getTime();
+                log(`🔆🔆🔆 elapsed time: 💙 ${end / 1000 - now / 1000} 💙 seconds for query; found ${result.length} cities`)
                 res.status(200).json(result);
             } catch (err) {
                 res.status(400).json(

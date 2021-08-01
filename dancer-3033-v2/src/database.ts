@@ -22,19 +22,20 @@ mongoose
     log(
       `\n🍎  Mongo Client version: 💙 ${client.version} 💙 model names: ${
         JSON.stringify(client.modelNames())
-      }  ☘️  is OK   🍎 `,
+      }  🍎 `,
     );
     log(
       `🍎  MongoDB config ...${JSON.stringify(
         mongoose.connection.config,
       )}`,
     );
+
     MongooseDebugSetting.setDebug();
     Messaging.init();
-    
     MongoListeners.listen(client);
-    console.log(`🍎  MongoDB collections available ... ${mongoose.connection.collections.length}`);
-    // console.log(mongoose.connection.collections);
+
+    console.log(`🍎 🍎 🍎  MongoDB collections up and running! 🍎 ... waiting to be called!!`);
+    // console.log(mongoose.connection.collections.length);
     
   })
   .catch((err) => {

@@ -126,7 +126,6 @@ export class VehicleController {
     app
       .route("/getVehicleArrivalsByLandmark")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -139,7 +138,7 @@ export class VehicleController {
             created: { $gt: cutOff },
           });
           const end = new Date().getTime();
-          
+
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -216,7 +215,6 @@ export class VehicleController {
     app
       .route("/getVehicleDeparturesByVehicle")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -228,9 +226,9 @@ export class VehicleController {
             vehicleID: vehicleID,
             created: { $gt: cutOff },
           });
-         
+
           const end = new Date().getTime();
-          
+
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -242,7 +240,6 @@ export class VehicleController {
     app
       .route("/getVehicleDeparturesByLandmark")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -254,9 +251,9 @@ export class VehicleController {
             landmarkID: landmarkID,
             created: { $gt: cutOff },
           });
-          
+
           const end = new Date().getTime();
-          
+
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -268,7 +265,6 @@ export class VehicleController {
     app
       .route("/getVehicleDeparturesByLandmarkIDs")
       .post(async (req: Request, res: Response) => {
-       
         try {
           const now = new Date().getTime();
           const minutes = parseInt(req.body.minutes);
@@ -281,7 +277,7 @@ export class VehicleController {
             created: { $gt: cutOff },
           });
           const end = new Date().getTime();
-          
+
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -342,7 +338,7 @@ export class VehicleController {
           c.assignments = [];
         }
         const result = await c.save();
-        
+
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -455,7 +451,7 @@ export class VehicleController {
           c.vehicleArrivalID = uuid();
           c.created = new Date().toISOString();
           const result = await c.save();
-          
+
           res.status(200).json(result);
         } catch (err) {
           console.log(err);
@@ -488,7 +484,6 @@ export class VehicleController {
     app
       .route("/addVehicleDeparture")
       .post(async (req: Request, res: Response) => {
-
         try {
           const c: any = new VehicleDeparture(req.body);
           c.vehicleDepartureID = uuid();
@@ -507,12 +502,15 @@ export class VehicleController {
     app
       .route("/addVehicleLocation")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const c: any = new VehicleLocation(req.body);
           c.created = new Date().toISOString();
           const result = await c.save();
-          console.log(`💙 💙 .... Added vehicle location: ${req.body.vehicleReg} : at: ${new Date()}`)
+          console.log(
+            `💙 💙 .... Added vehicle location: ${
+              req.body.vehicleReg
+            } : at: ${new Date()}`
+          );
           res.status(200).json(result);
         } catch (err) {
           console.log(err);
@@ -523,12 +521,11 @@ export class VehicleController {
         }
       });
     app.route("/addVehicleType").post(async (req: Request, res: Response) => {
-      
       try {
         const vehicleType: any = new VehicleType(req.body);
         vehicleType.vehicleTypeID = uuid();
         const result = await vehicleType.save();
-      
+
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -539,7 +536,6 @@ export class VehicleController {
       }
     });
     app.route("/getVehicleTypes").post(async (req: Request, res: Response) => {
-      
       try {
         const result = await VehicleType.find();
         log(`🌽🌽🌽 getVehicleTypes  found: ${result.length}`);
@@ -552,7 +548,6 @@ export class VehicleController {
       }
     });
     app.route("/getVehicles").post(async (req: Request, res: Response) => {
-      
       try {
         const result = await Vehicle.find();
         log(`🌽🌽🌽 getVehicles  found: ${result.length}`);
@@ -567,7 +562,6 @@ export class VehicleController {
     app
       .route("/getVehiclesByOwner")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const result = await Vehicle.find({ ownerID: req.body.ownerID });
           res.status(200).json(result);
@@ -581,7 +575,6 @@ export class VehicleController {
     app
       .route("/getVehiclesByAssociation")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const result = await Vehicle.find({
             associationID: req.body.associationID,
@@ -598,9 +591,50 @@ export class VehicleController {
         }
       });
     app
+      .route("/getLatestVehiclesByAssociation")
+      .post(async (req: Request, res: Response) => {
+        const startDate: any = req.body.startDate;
+        const associationID: any = req.body.associationID;
+        try {
+          const result = await Vehicle.find({
+            associationID: associationID,
+            created: { $gt: startDate },
+          });
+          log(
+            `🌽🌽🌽 getLatestVehiclesByAssociation vehicles found: ${result.length}`
+          );
+          res.status(200).json(result);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: "🍎🍎🍎🍎 getLatestVehiclesByAssociation failed",
+          });
+        }
+      });
+    app
+      .route("/getUpdatedVehiclesByAssociation")
+      .post(async (req: Request, res: Response) => {
+        const startDate: any = req.body.startDate;
+        const associationID: any = req.body.associationID;
+        try {
+          const result = await Vehicle.find({
+            associationID: associationID,
+            updated: { $gt: startDate },
+          });
+          log(
+            `🌽🌽🌽 getLatestVehiclesByAssociation vehicles found: ${result.length}`
+          );
+          res.status(200).json(result);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: "🍎🍎🍎🍎 getLatestVehiclesByAssociation failed",
+          });
+        }
+      });
+    app
       .route("/getVehicleRoutesByAssociation")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const days = parseInt(req.body.days);
           const cutOff: string = moment().subtract(days, "days").toISOString();
@@ -618,7 +652,6 @@ export class VehicleController {
     app
       .route("/getVehicleRoutesByVehicle")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const result = await VehicleRouteAssignment.find({
             vehicleID: req.body.vehicleID,
@@ -634,7 +667,6 @@ export class VehicleController {
     app
       .route("/getVehicleOccupancyRecordsByVehicle")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const days = req.body.days;
           const cutOff: string = moment().subtract(days, "days").toISOString();
@@ -653,7 +685,6 @@ export class VehicleController {
     app
       .route("/getVehicleOccupancyRecordsByRoute")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const days = req.body.days;
           const cutOff: string = moment().subtract(days, "days").toISOString();
@@ -672,7 +703,6 @@ export class VehicleController {
     app
       .route("/getVehicleOccupancyRecordsByLandmark")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const days = req.body.days;
           const cutOff: string = moment().subtract(days, "days").toISOString();

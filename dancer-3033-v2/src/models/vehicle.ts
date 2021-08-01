@@ -9,6 +9,7 @@ const VehicleSchema = new mongoose.Schema(
         associationName: {type: String, required: true},
         ownerID: {type: String, required: false, trim: true},
         ownerName: {type: String, required: false},
+        updated: {type: String, required: false, trim: true},
         vehicleType: {type: Map, required: true},
         photos: {type: Array, required: true, default: []},
         videos: {type: Array, required: true, default: []},
