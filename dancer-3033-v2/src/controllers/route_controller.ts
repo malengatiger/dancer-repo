@@ -10,10 +10,10 @@ import moment = require("moment");
 import DispatchRecord from "../models/dispatch_record";
 import Heading from "../helpers/Heading";
 import DistanceUtilNew from "../helpers/distance_util_new";
-import { stringify, parse } from 'zipson';
-import * as zlib from 'zlib';
-import * as fs from 'fs';
-import * as  path from 'path'
+import { stringify, parse } from "zipson";
+import * as zlib from "zlib";
+import * as fs from "fs";
+import * as path from "path";
 
 export class RouteController {
   public routes(app: any): void {
@@ -53,7 +53,7 @@ export class RouteController {
           });
         }
       });
-      app
+    app
       .route("/getLatestRoutesByAssociation")
       .post(async (req: Request, res: Response) => {
         log(
@@ -145,18 +145,20 @@ export class RouteController {
           });
         }
       });
-    app.route("/getRouteById").post(async (req: Request, res: Response) => {
+    app.route("/getRouteById").get(async (req: Request, res: Response) => {
       log(
-        `\n\n💦  POST: /getRouteById requested ....  ${req.body.routeID} 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        `\n\n💦  POST: /getRouteById requested ....  ${
+          req.query.routeID
+        } 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
       );
-      if (!req.body.routeID) {
+      if (!req.query.routeID) {
         res.status(400).json({
-          error: 'routeID is null',
+          error: "routeID is null",
           message: `🍎 🍎 🍎 🍎 getRouteByID failed`,
         });
-        return
+        return;
       }
-      
+
       try {
         const routeID: any = req.body.routeID;
         const now = new Date().getTime();
@@ -172,7 +174,7 @@ export class RouteController {
             );
             Heading.getRouteHeading(route);
             let length: Number = DistanceUtilNew.calculateRouteLength(route);
-            
+
             route.lengthInMetres = length;
             await route.save();
             console.log(
@@ -300,14 +302,20 @@ export class RouteController {
       .route("/addRouteDistanceEstimation")
       .post(async (req: Request, res: Response) => {
         try {
-          console.log(`... addRouteDistanceEstimation ... vehicleReg: ${JSON.stringify(req.body.vehicle.vehicleReg)}`)
+          console.log(
+            `... addRouteDistanceEstimation ... vehicleReg: ${JSON.stringify(
+              req.body.vehicle.vehicleReg
+            )}`
+          );
           const estimation: any = new RouteDistanceEstimation(req.body);
           if (!estimation.vehicle) {
             throw new Error(`Vehicle missing from estimation`);
           }
           estimation.created = new Date().toISOString();
           await estimation.save();
-          console.log('... Estimation has been saved; sending fcm message ... ')
+          console.log(
+            "... Estimation has been saved; sending fcm message ... "
+          );
           await Messaging.sendRouteDistanceEstimation(req.body);
 
           res.status(200).json({
@@ -389,7 +397,6 @@ export class RouteController {
     app
       .route("/addRouteDistanceEstimations")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const list: any[] = req.body.estimations;
           let cnt = 0;
@@ -400,7 +407,9 @@ export class RouteController {
             }
             estimation.created = new Date().toISOString();
             await estimation.save();
-            console.log(`.... ...... Added RouteDistanceEstimation: ${req.body.vehicleReg}`)
+            console.log(
+              `.... ...... Added RouteDistanceEstimation: ${req.body.vehicleReg}`
+            );
             await Messaging.sendRouteDistanceEstimation(estimate);
             cnt++;
           }
@@ -594,6 +603,7 @@ export class RouteController {
           });
         }
       });
+      //
     app
       .route("/findRoutesByLocation")
       .get(async (req: Request, res: Response) => {
@@ -620,9 +630,11 @@ export class RouteController {
           });
           log(` 🍎🍎 ROUTES FOUND  🍎 ${result.length}`);
           if (result.length == 0) {
-            console.log(`No routes found around lat: ${latitude} lng: ${longitude}`);
+            console.log(
+              `No routes found around lat: ${latitude} lng: ${longitude}`
+            );
             res.status(400).json({
-              error: `No routes found at this location within ${RADIUS} metres`,
+              message: `No Data Found`,
             });
             return;
           }
@@ -634,24 +646,24 @@ export class RouteController {
               log(
                 `🔆🔆🔆 elapsed time: 💙 ${
                   end / 1000 - now / 1000
-                } 💙 seconds for query: ${result.length} routes found: 🍎 result: ${JSON.stringify(result).length} 
-                compressed: ${buffer.toString('base64').length} 🍎`
+                } 💙 seconds for query: ${
+                  result.length
+                } routes found: 🍎 result: ${JSON.stringify(result).length} 
+                compressed: ${buffer.toString("base64").length} 🍎`
               );
               //todo - write buffer to a file
               const fileName = `f_${new Date().getTime()}.zip`;
-              const mPath = path.join(fileName) 
-              
-              fs.writeFileSync(mPath, buffer)
-              console.log(`............ downloading zipfile ... ${mPath}`)
+              const mPath = path.join(fileName);
+
+              fs.writeFileSync(mPath, buffer);
+              console.log(`............ downloading zipfile ... ${mPath}`);
               res.download(mPath); // Set disposition and send it.
-          
+
               // res.status(200).send(path.);
-            } 
-            else {
+            } else {
               console.log(err);
             }
           });
-          
         } catch (err) {
           console.error(err);
           res.status(400).json({
@@ -661,7 +673,7 @@ export class RouteController {
         }
       });
 
-      app
+    app
       .route("/findRoutesByLocationDate")
       .post(async (req: Request, res: Response) => {
         log(
@@ -672,7 +684,7 @@ export class RouteController {
           const now = new Date().getTime();
           const latitude = parseFloat(req.body.latitude);
           const longitude = parseFloat(req.body.longitude);
-          const date = req.body.date
+          const date = req.body.date;
           const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
 
           const result = await Route.find({
@@ -695,7 +707,9 @@ export class RouteController {
             } 💙seconds for query: routes found: 🍎 ${result.length} 🍎`
           );
           if (result.length == 0) {
-            console.log(`No routes found around lat: ${latitude} lng: ${longitude}`);
+            console.log(
+              `No routes found around lat: ${latitude} lng: ${longitude}`
+            );
             res.status(400).json({
               error: `No routes found at this location within ${RADIUS} metres`,
             });
@@ -709,20 +723,21 @@ export class RouteController {
               log(
                 `🔆🔆🔆 elapsed time: 💙 ${
                   end / 1000 - now / 1000
-                } 💙 seconds for query: ${result.length} routes found: 🍎 result: ${JSON.stringify(result).length} 
-                compressed: ${buffer.toString('base64').length} 🍎`
+                } 💙 seconds for query: ${
+                  result.length
+                } routes found: 🍎 result: ${JSON.stringify(result).length} 
+                compressed: ${buffer.toString("base64").length} 🍎`
               );
               //todo - write buffer to a file
               const fileName = `f_${new Date().getTime()}.zip`;
-              const mPath = path.join(fileName) 
-              
-              fs.writeFileSync(mPath, buffer)
-              console.log(`............ downloading zipfile ... ${mPath}`)
+              const mPath = path.join(fileName);
+
+              fs.writeFileSync(mPath, buffer);
+              console.log(`............ downloading zipfile ... ${mPath}`);
               res.download(mPath); // Set disposition and send it.
-          
+
               // res.status(200).send(path.);
-            } 
-            else {
+            } else {
               console.log(err);
             }
           });

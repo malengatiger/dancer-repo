@@ -4,10 +4,7 @@ import db from "../database";
 import { log } from "../log";
 import Route from "../models/route";
 import uuid = require("uuid");
-import { ObjectID } from "bson";
 import { Error, Types } from "mongoose";
-import chalk = require("chalk");
-import DistanceUtil from "../helpers/distance_util";
 import DistanceUtilNew from "../helpers/distance_util_new";
 import City from "../models/city";
 export class LandmarkController {
@@ -16,11 +13,24 @@ export class LandmarkController {
       `🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${db.name} 🥦🥦🥦`
     );
     /////////
+    app.route("/getLandmarkByID").get(async (req: Request, res: Response) => {
+      const msg = `🌽🌽🌽 getLandmarkByID requested `;
+      console.log(msg);
+
+      try {
+        const c: any = Landmark.findOne({landmarkID: req.query.landmarkID})
+        res.status(200).json(c);
+      } catch (err) {
+        res.status(400).json({
+          error: err,
+          message: ` 🍎🍎🍎🍎 getLandmarkByID failed: ${err}`,
+        });
+      }
+    });
     app
       .route("/addRouteToLandmark")
       .post(async (req: Request, res: Response) => {
         try {
-          const now = new Date().getTime();
           const routeID = req.body.routeID;
           const landmarkID = req.body.landmarkID;
           const routePoint = req.body.routePoint;
@@ -70,7 +80,6 @@ export class LandmarkController {
           console.log(
             `🔆🔆🔆 addRouteToLandmark: routePoint inside route updated. 🍎🍎🍎🍎 sweet!: 💙 `
           );
-          const end = new Date().getTime();
           res.status(200).json({
             message: `Route ${route.name} added to Landmark: ${result.landmarkName}:  `,
             landmark: result,
@@ -140,14 +149,6 @@ export class LandmarkController {
         }
       });
 
-    function findCity(landmark: any, city: any) {
-      landmark.cities.forEach((c: any) => {
-        if (c.cityID == city.cityID) {
-          return true;
-        }
-      });
-      return false;
-    }
 
     async function addCities(landmarkID: String) {
       //get cities near the landmark
@@ -165,7 +166,6 @@ export class LandmarkController {
       console.log(
         `😍 😍 😍 😍 landmark coordinates: lat: ${pos.coordinates[1]} lng: ${pos.coordinates[0]}`
       );
-      const now = new Date().getTime();
       const latitude = pos.coordinates[1];
       const longitude = pos.coordinates[0];
       const RADIUS = 5000;
@@ -200,7 +200,6 @@ export class LandmarkController {
         `💛 💛 💛 💛 💙 cities added to landmark: 💙 ${landmark.landmarkName} 💙  🍎 ${result.cities.length} cities! Yebo!!!: 💙 `
       );
       console.log(result);
-      const end = new Date().getTime();
 
       return result;
     }
@@ -235,7 +234,13 @@ export class LandmarkController {
               end / 1000 - now / 1000
             } 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`
           );
-          res.status(200).json(result);
+          if (result.length == 0) {
+            res.status(400).json({
+              message: "No Data Found",
+            });
+          } else {
+            res.status(200).json(result);
+          }
         } catch (err) {
           res.status(400).json({
             error: err,
@@ -276,7 +281,13 @@ export class LandmarkController {
               end / 1000 - now / 1000
             } 💙 seconds for query: landmarks found: 🍎 ${result.length} 🍎`
           );
-          res.status(200).json(result);
+          if (result.length == 0) {
+            res.status(400).json({
+              message: "No Data Found",
+            });
+          } else {
+            res.status(200).json(result);
+          }
         } catch (err) {
           console.log(err)
           res.status(400).json({
@@ -345,9 +356,7 @@ export class LandmarkController {
 
     app.route("/getLandmarks").post(async (req: Request, res: Response) => {
       try {
-        const now = new Date().getTime();
         const result = await Landmark.find();
-        const end = new Date().getTime();
 
         res.status(200).json(result);
       } catch (err) {
