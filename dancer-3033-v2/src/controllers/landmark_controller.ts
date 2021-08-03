@@ -18,7 +18,7 @@ export class LandmarkController {
       console.log(msg);
 
       try {
-        const c: any = Landmark.findOne({landmarkID: req.query.landmarkID})
+        const c: any = Landmark.findOne({ landmarkID: req.query.landmarkID });
         res.status(200).json(c);
       } catch (err) {
         res.status(400).json({
@@ -87,7 +87,7 @@ export class LandmarkController {
         } catch (err) {
           console.log(err);
           res.status(400).json({
-            error: err.message,
+            error: err,
             message: " 🍎🍎🍎🍎 addRouteToLandmark failed",
           });
         }
@@ -118,7 +118,7 @@ export class LandmarkController {
         } catch (err) {
           console.log(err);
           res.status(400).json({
-            error: err.message,
+            error: err,
             message: `🍎🍎 addCitiesToAllLandmarks failed: ${err}`,
           });
         }
@@ -143,12 +143,11 @@ export class LandmarkController {
         } catch (err) {
           console.log(err);
           res.status(400).json({
-            error: err.message,
+            error: err,
             message: `🍎🍎 addCitiesToLandmark failed: ${err}`,
           });
         }
       });
-
 
     async function addCities(landmarkID: String) {
       //get cities near the landmark
@@ -227,7 +226,7 @@ export class LandmarkController {
               },
             },
           });
-         
+
           const end = new Date().getTime();
           log(
             `🔆🔆🔆 findLandmarksByLocation: elapsed time: 💙 ${
@@ -249,7 +248,7 @@ export class LandmarkController {
         }
       });
 
-      app
+    app
       .route("/findLandmarksByLocationDate")
       .post(async (req: Request, res: Response) => {
         log(
@@ -261,7 +260,7 @@ export class LandmarkController {
           const latitude = parseFloat(req.body.latitude);
           const longitude = parseFloat(req.body.longitude);
           const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
-          const date = req.body.date
+          const date = req.body.date;
           const result = await Landmark.find({
             created: { $gt: date },
             position: {
@@ -274,7 +273,7 @@ export class LandmarkController {
               },
             },
           });
-          
+
           const end = new Date().getTime();
           log(
             `🔆🔆🔆 findLandmarksByLocationDate: elapsed time: 💙 ${
@@ -289,14 +288,14 @@ export class LandmarkController {
             res.status(200).json(result);
           }
         } catch (err) {
-          console.log(err)
+          console.log(err);
           res.status(400).json({
             error: err,
             message: " 🍎🍎🍎🍎 findLandmarksByLocationDate failed",
           });
         }
       });
-      //
+    //
     app
       .route("/getLandmarksByRoute")
       .post(async (req: Request, res: Response) => {
