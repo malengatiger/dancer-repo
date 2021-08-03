@@ -166,14 +166,14 @@ class MongoListeners {
           `\n🔆🔆🔆🔆   🍎  assocStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(event._id)}`,
         );
         
-        // Messaging.se
+        
       });
       //
       routeStream.on("change", (event: any) => {
         log(
           `\n🔆🔆🔆🔆   🍎  routeStream onChange fired!  🍎  🔆🔆🔆🔆 `,
         );
-        // Messaging.sendRoute(event.fullDocument);
+        Messaging.sendRoute(event.fullDocument);
       });
       //
       landmarkStream.on("change", (event: any) => {

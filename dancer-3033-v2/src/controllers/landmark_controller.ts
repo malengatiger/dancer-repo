@@ -228,7 +228,7 @@ export class LandmarkController {
               },
             },
           });
-          //// log(result);
+         
           const end = new Date().getTime();
           log(
             `🔆🔆🔆 findLandmarksByLocation: elapsed time: 💙 ${
@@ -269,7 +269,7 @@ export class LandmarkController {
               },
             },
           });
-          //// log(result);
+          
           const end = new Date().getTime();
           log(
             `🔆🔆🔆 findLandmarksByLocationDate: elapsed time: 💙 ${

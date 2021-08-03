@@ -10,6 +10,11 @@ import moment = require("moment");
 import DispatchRecord from "../models/dispatch_record";
 import Heading from "../helpers/Heading";
 import DistanceUtilNew from "../helpers/distance_util_new";
+import { stringify, parse } from 'zipson';
+import * as zlib from 'zlib';
+import * as fs from 'fs';
+import * as  path from 'path'
+
 export class RouteController {
   public routes(app: any): void {
     log(`🏓    RouteController: 💙  setting up default Route routes ... `);
@@ -563,44 +568,6 @@ export class RouteController {
           });
         }
       });
-    app
-      .route("/findNearestRoutePoint")
-      .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /findNearestRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
-        try {
-          const now = new Date().getTime();
-          const latitude = parseFloat(req.body.latitude);
-          const longitude = parseFloat(req.body.longitude);
-          const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
-          const result = await Route.find({
-            position: {
-              $near: {
-                $geometry: {
-                  coordinates: [longitude, latitude],
-                  type: "Point",
-                },
-                $maxDistance: RADIUS,
-              },
-            },
-          });
-          //// log(result);
-          const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 elapsed time: 💙 ${
-              end / 1000 - now / 1000
-            } 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`
-          );
-          res.status(200).json(result);
-        } catch (err) {
-          res.status(400).json({
-            error: err,
-            message: " 🍎🍎🍎🍎 getLandmarks failed",
-          });
-        }
-      });
 
     app
       .route("/findRoutePointNearestToPosition")
@@ -623,22 +590,22 @@ export class RouteController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getLandmarks failed",
+            message: " 🍎🍎🍎🍎 findRoutePointNearestToPosition failed",
           });
         }
       });
     app
-      .route("/findNearestRoutes")
-      .post(async (req: Request, res: Response) => {
+      .route("/findRoutesByLocation")
+      .get(async (req: Request, res: Response) => {
         log(
-          `\n\n💦  POST: /findNearestRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+          `\n\n💦  GET: /findRoutesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
-        console.log(req.body);
+        console.log(req.query);
         try {
           const now = new Date().getTime();
-          const latitude = parseFloat(req.body.latitude);
-          const longitude = parseFloat(req.body.longitude);
-          const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+          const latitude = Number(req.query.latitude);
+          const longitude = Number(req.query.longitude);
+          const RADIUS = Number(req.query.radiusInKM) * 1000;
 
           const result = await Route.find({
             "routePoints.position": {
@@ -651,19 +618,119 @@ export class RouteController {
               },
             },
           });
-          log(` 🍎🍎🍎🍎 🍎🍎🍎🍎 ROUTES FOUND  🍎🍎🍎🍎 ${result.length}`);
-          const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 elapsed time: 💙 ${
-              end / 1000 - now / 1000
-            } 💙seconds for query: routes found: 🍎 ${result.length} 🍎`
-          );
-          res.status(200).json(result);
+          log(` 🍎🍎 ROUTES FOUND  🍎 ${result.length}`);
+          if (result.length == 0) {
+            console.log(`No routes found around lat: ${latitude} lng: ${longitude}`);
+            res.status(400).json({
+              error: `No routes found at this location within ${RADIUS} metres`,
+            });
+            return;
+          }
+          // Calling gzip method
+          zlib.gzip(JSON.stringify(result), (err, buffer) => {
+            if (!err) {
+              // console.log(`buffer: ${buffer.toString('base64')}`);
+              const end = new Date().getTime();
+              log(
+                `🔆🔆🔆 elapsed time: 💙 ${
+                  end / 1000 - now / 1000
+                } 💙 seconds for query: ${result.length} routes found: 🍎 result: ${JSON.stringify(result).length} 
+                compressed: ${buffer.toString('base64').length} 🍎`
+              );
+              //todo - write buffer to a file
+              const fileName = `f_${new Date().getTime()}.zip`;
+              const mPath = path.join(fileName) 
+              
+              fs.writeFileSync(mPath, buffer)
+              console.log(`............ downloading zipfile ... ${mPath}`)
+              res.download(mPath); // Set disposition and send it.
+          
+              // res.status(200).send(path.);
+            } 
+            else {
+              console.log(err);
+            }
+          });
+          
         } catch (err) {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findNearestRoutes failed",
+            message: " 🍎🍎🍎🍎 findRoutesByLocation failed",
+          });
+        }
+      });
+
+      app
+      .route("/findRoutesByLocationDate")
+      .post(async (req: Request, res: Response) => {
+        log(
+          `\n\n💦  POST: /findRoutesByLocationDate requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        );
+        console.log(req.body);
+        try {
+          const now = new Date().getTime();
+          const latitude = parseFloat(req.body.latitude);
+          const longitude = parseFloat(req.body.longitude);
+          const date = req.body.date
+          const RADIUS = parseFloat(req.body.radiusInKM) * 1000;
+
+          const result = await Route.find({
+            updated: { $gt: date },
+            "routePoints.position": {
+              $near: {
+                $geometry: {
+                  coordinates: [longitude, latitude],
+                  type: "Point",
+                },
+                $maxDistance: RADIUS,
+              },
+            },
+          });
+          log(` 🍎 ROUTES FOUND  🍎 ${result.length}`);
+          const end = new Date().getTime();
+          log(
+            `🔆🔆🔆 findRoutesByLocationDate: elapsed time: 💙 ${
+              end / 1000 - now / 1000
+            } 💙seconds for query: routes found: 🍎 ${result.length} 🍎`
+          );
+          if (result.length == 0) {
+            console.log(`No routes found around lat: ${latitude} lng: ${longitude}`);
+            res.status(400).json({
+              error: `No routes found at this location within ${RADIUS} metres`,
+            });
+            return;
+          }
+          // Calling gzip method
+          zlib.gzip(JSON.stringify(result), (err, buffer) => {
+            if (!err) {
+              // console.log(`buffer: ${buffer.toString('base64')}`);
+              const end = new Date().getTime();
+              log(
+                `🔆🔆🔆 elapsed time: 💙 ${
+                  end / 1000 - now / 1000
+                } 💙 seconds for query: ${result.length} routes found: 🍎 result: ${JSON.stringify(result).length} 
+                compressed: ${buffer.toString('base64').length} 🍎`
+              );
+              //todo - write buffer to a file
+              const fileName = `f_${new Date().getTime()}.zip`;
+              const mPath = path.join(fileName) 
+              
+              fs.writeFileSync(mPath, buffer)
+              console.log(`............ downloading zipfile ... ${mPath}`)
+              res.download(mPath); // Set disposition and send it.
+          
+              // res.status(200).send(path.);
+            } 
+            else {
+              console.log(err);
+            }
+          });
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎🍎🍎🍎 findRoutesByLocationDate failed",
           });
         }
       });
