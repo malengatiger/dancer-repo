@@ -160,11 +160,11 @@ export class RouteController {
       }
 
       try {
-        const routeID: any = req.body.routeID;
+        const routeID: any = req.query.routeID;
         const now = new Date().getTime();
         const route: any = await Route.findOne({ routeID: routeID });
         log(
-          `🧩 🧩 🧩 🧩 🧩 🧩 🍎 🍎 EXPENSIVE CALL! 🍎  route:${route.name}, points:  🍎 ${route.routePoints.length} 🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `
+          `🧩 🧩 🧩 🧩 🧩 🧩 🍎 🍎 EXPENSIVE CALL! 🍎  route:${route.name}, routePoints:  🍎 ${route.routePoints.length} 🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `
         );
         if (route.routePoints.length > 0) {
           if (!route.heading || route.heading === 0.0 || route.heading === 0) {
@@ -187,7 +187,7 @@ export class RouteController {
         console.log(
           `🔆 getRouteById: elapsed time: ${
             end / 1000 - now / 1000
-          } seconds for query. found 😍 route: ${route}`
+          } seconds for query. found 😍 route: ${route.name} - routePoints: ${route.routePoints.length}`
         );
         res.status(200).json(route);
       } catch (err) {

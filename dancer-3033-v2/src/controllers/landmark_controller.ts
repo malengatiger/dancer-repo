@@ -18,7 +18,9 @@ export class LandmarkController {
       console.log(msg);
 
       try {
-        const c: any = Landmark.findOne({ landmarkID: req.query.landmarkID });
+        const c: any = await Landmark.findOne({
+          landmarkID: req.query.landmarkID,
+        });
         res.status(200).json(c);
       } catch (err) {
         res.status(400).json({
@@ -60,6 +62,7 @@ export class LandmarkController {
             routeID: routeID,
             name: route.name,
           });
+          landmark.updated = new Date().toISOString();
           const result = await landmark.save();
           console.log(
             `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${route.name} 💦 💦`
@@ -130,15 +133,9 @@ export class LandmarkController {
         if (!req.body.landmarkID) {
           throw new Error("fucking landmarkID is missing");
         }
-        console.log(
-          `😍 😍 😍 😍 addCitiesToLandmark: landmarkID: ${req.body.landmarkID}`
-        );
+        
         try {
           const result = await addCities(req.body.landmarkID);
-          console.log(
-            `😍 😍 😍 😍  🥦🥦🥦 addCitiesToLandmark: check landmark below:  🥦🥦🥦 `
-          );
-          console.log(JSON.stringify(result));
           res.status(200).json(result);
         } catch (err) {
           console.log(err);
@@ -150,24 +147,17 @@ export class LandmarkController {
       });
 
     async function addCities(landmarkID: String) {
-      //get cities near the landmark
-      console.log(`😍 😍 😍 😍  addCities:  ... find landmark: ${landmarkID}`);
       const landmark: any = await Landmark.findOne({
         landmarkID: landmarkID,
       });
       console.log(
         `😍 😍 😍 😍 adding cities to landmark: ${landmark.landmarkName}`
       );
-      console.log(
-        `😍 😍 😍 😍 landmark position: ${JSON.stringify(landmark.position)}`
-      );
+
       const pos = JSON.parse(JSON.stringify(landmark.position));
-      console.log(
-        `😍 😍 😍 😍 landmark coordinates: lat: ${pos.coordinates[1]} lng: ${pos.coordinates[0]}`
-      );
       const latitude = pos.coordinates[1];
       const longitude = pos.coordinates[0];
-      const RADIUS = 5000;
+      const RADIUS = 10000;
       const cities = await City.find({
         position: {
           $near: {
@@ -180,26 +170,19 @@ export class LandmarkController {
         },
       });
 
-      console.log(
-        `💛 💛 💛 💛 ${cities.length} cities found around location: ${landmark.landmarkName}`
-      );
-      console.log(
-        `💛 💛 💛 💛 current cities in landmark: ${landmark.cities.length}`
-      );
-
       landmark.cities = [];
 
       cities.forEach((city: any) => {
         landmark.cities.push(city);
       });
 
+      landmark.updated = new Date().toISOString();
       const result = await landmark.save();
 
       log(
-        `💛 💛 💛 💛 💙 cities added to landmark: 💙 ${landmark.landmarkName} 💙  🍎 ${result.cities.length} cities! Yebo!!!: 💙 `
+        `💛 💛 💛 💛 💙 cities added to landmark: 💙 ${landmark.landmarkName} 
+        🍎 ${result.cities.length} cities! Yebo!!!: 💙 `
       );
-      console.log(result);
-
       return result;
     }
 
@@ -374,7 +357,7 @@ export class LandmarkController {
 
         const result = await landmark.save();
         await addCities(landmark.landmarkID);
-        console.log(result);
+        
         res.status(200).json(result);
       } catch (err) {
         console.error(err);

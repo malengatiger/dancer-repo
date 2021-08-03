@@ -14,7 +14,7 @@ export class CityController {
         console.log(msg);
   
         try {
-          const c: any = City.findOne({cityID: req.query.cityID})
+          const c: any = await City.findOne({cityID: req.query.cityID})
           res.status(200).json(c);
         } catch (err) {
           res.status(400).json({

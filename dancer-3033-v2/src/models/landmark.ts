@@ -11,6 +11,7 @@ const LandmarkSchema = new mongoose.Schema(
         landmarkID: {type: String, required: true, },
 
         created: {type: String, required: true, default: new Date().toISOString()},
+        updated: {type: String, required: false, },
 
     }
 );
