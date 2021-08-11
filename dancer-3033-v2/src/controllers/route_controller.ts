@@ -99,7 +99,7 @@ export class RouteController {
           const now = new Date().getTime();
           log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
           const result = await Route.find({ associationID: assID });
-          log(result);
+        
           result.forEach((m: any) => {
             log(
               `😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎 routePoints: ${m.routePoints.length} 🍎 rawRoutePoints: ${m.rawRoutePoints.length} `
@@ -168,14 +168,13 @@ export class RouteController {
         );
         if (route.routePoints.length > 0) {
           if (!route.heading || route.heading === 0.0 || route.heading === 0) {
-            route.updated = new Date().toISOString();
-            log(
-              `🧩 🧩 🧩  🍎 🍎 calling DistanceUtilNew.calculateRouteLength! 🍎  🍎 🧩 🧩 🧩  `
-            );
-            Heading.getRouteHeading(route);
+          
+            const haeding = Heading.getRouteHeading(route);
             let length: Number = DistanceUtilNew.calculateRouteLength(route);
 
             route.lengthInMetres = length;
+            route.heading = haeding;
+            route.updated = new Date().toISOString();
             await route.save();
             console.log(
               `💦 💦 💦 💦 💦 💦  route heading 🍎 ${route.heading} lengthInMetres:: 🍎 ${route.lengthInMetres} 🍎 ... updated on DB`
@@ -199,21 +198,42 @@ export class RouteController {
       }
     });
     app.route("/addRoute").post(async (req: Request, res: Response) => {
+      console.log('addRoute requested ........')
+      console.log(req.body)
       try {
         const route: any = new Route(req.body);
-        route.routeID = uuid();
         route.created = new Date().toISOString();
         if (!req.body.heading) {
           route.heading = 0;
         }
         const result = await route.save();
-        log(`result ${result}`);
+        log(`result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `);
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
         res.status(400).json({
           error: err,
           message: " 🍎🍎🍎🍎 addRoute failed",
+        });
+      }
+    });
+    app.route("/addFullRoute").post(async (req: Request, res: Response) => {
+      console.log('addFullRoute requested ........')
+      console.log(req.body)
+      try {
+        const route: any = new Route(req.body);
+        route.created = new Date().toISOString();
+        if (!req.body.heading) {
+          route.heading = 0;
+        }
+        const result = await route.save();
+        log(`result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `);
+        res.status(200).json(result);
+      } catch (err) {
+        console.error(err);
+        res.status(400).json({
+          error: err,
+          message: " 🍎🍎🍎🍎 addFullRoute failed",
         });
       }
     });
@@ -444,23 +464,52 @@ export class RouteController {
           });
         }
       });
+      app
+      .route("/updateRouteHeading")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const route: any = await Route.findOne({ routeID: req.body.routeID });
+          route.heading = req.body.heading;
+          const result = await route.save();
+          log(
+            `💙💙 Route heading updated; heading: ${route.heading} - 🧡💛 ${route.name}`
+          );
+
+          res.status(200).json(result);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: " 🍎🍎🍎🍎 updateRouteHeading failed",
+          });
+        }
+      });
     app.route("/addRoutePoints").post(async (req: Request, res: Response) => {
+      
       try {
-        const route: any = await Route.findOne({ routeID: req.body.routeID });
-        // check clear flag
+        const routeID = req.body.routeID
+        const route: any = await Route.findOne({ routeID: routeID });
+        if (!route) {
+          res.status(400).json({
+          message: ` 🍎🍎🍎🍎 addRoutePoints failed: Route ${routeID} not found`,
+        });
+        return;
+        }
         if (req.body.clear === true) {
           route.routePoints = [];
-          await route.save();
         }
-
-        req.body.routePoints.forEach((p: any) => {
+        const list:any[] = req.body.routePoints
+        // console.log(list)
+        list.forEach((p: any) => {
           route.routePoints.push(p);
         });
         route.updated = new Date().toISOString();
-        Heading.getRouteHeading(route);
-        const length = DistanceUtilNew.calculateRouteLength(route);
-        route.lengthInMetres = length;
+        // const heading = Heading.getRouteHeading(route);
+        // const length = DistanceUtilNew.calculateRouteLength(route);
+        // route.lengthInMetres = length;
+        // route.heading = heading;
         const result = await route.save();
+        console.log(`${route.routePoints.length} routePoints added to route ${route.name}`)
+
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -486,9 +535,9 @@ export class RouteController {
         if (req.body.color) {
           route.color = req.body.color;
         }
-        Heading.getRouteHeading(route);
-        const length = DistanceUtilNew.calculateRouteLength(route);
-        route.lengthInMetres = length;
+        // Heading.getRouteHeading(route);
+        // const length = DistanceUtilNew.calculateRouteLength(route);
+        // route.lengthInMetres = length;
         route.updated = new Date().toISOString();
         const result = await route.save();
         log(
@@ -555,9 +604,10 @@ export class RouteController {
             }
           });
 
-          Heading.getRouteHeading(route);
+          const heading = Heading.getRouteHeading(route);
           const length = DistanceUtilNew.calculateRouteLength(route);
           route.lengthInMetres = length;
+          route.heading = heading;
           route.routePoints = list;
           route.updated = new Date().toISOString();
           await route.save();

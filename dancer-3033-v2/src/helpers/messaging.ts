@@ -236,6 +236,10 @@ class Messaging {
     
   }
   public static async sendRoute(data: any): Promise<any> {
+    
+    if (!data) {
+      return;
+    }
     const options: any = {
       priority: "normal",
       timeToLive: 60 * 60,
@@ -243,13 +247,13 @@ class Messaging {
     const payload: any = {
       notification: {
         title: "Route Added",
-        body: data.name,
+        body: data.name? data.name: '',
       },
       data: {
         type: Constants.ROUTES,
-        routeID: data.routeID,
-        name: data.name,
-        created: data.created,
+        routeID: data.routeID? data.routeID : "UNKNOWN",
+        name: data.name? data.name: '',
+        created: data.created? data.created : `${new Date().toISOString()}`,
       },
     };
     const topic = Constants.ROUTES;
@@ -347,6 +351,13 @@ class Messaging {
     
   }
   public static async sendLandmark(data: any): Promise<any> {
+    if (!data) {
+      return;
+    }
+    console.log(data);
+    if (!data.landmarkID) {
+      return;
+    }
     const options: any = {
       priority: "normal",
       timeToLive: 60 * 60,

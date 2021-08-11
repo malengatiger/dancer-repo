@@ -153,6 +153,7 @@ class DistanceUtil {
     return null
   }
 }
+
 export default DistanceUtil;
 
 /*

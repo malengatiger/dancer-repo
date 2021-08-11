@@ -34,30 +34,30 @@ class MongoListeners {
     const commuterExitEvents = client.connection.collection(Constants.COMMUTER_FENCE_EXIT_EVENTS);
     const payments = client.connection.collection(Constants.PAYMENTS);
     //
-    const paymentStream = payments.watch({ fullDocument: 'updateLookup' });
-    const assocStream = associations.watch({ fullDocument: 'updateLookup' });
-    const routeStream = routes.watch({ fullDocument: 'updateLookup' });
-    const landmarkStream = landmarks.watch({ fullDocument: 'updateLookup' });
-    const notificationsStream = notifications.watch({fullDocument: 'updateLookup'})
-    const chatStream = chat.watch({ fullDocument: 'updateLookup' });
-    const vehiclesStream = vehicles.watch({ fullDocument: 'updateLookup' });
-    const cityStream = cities.watch({ fullDocument: 'updateLookup' });
+    const paymentStream = payments.watch({ fullDocument: 'default' });
+    const assocStream = associations.watch({ fullDocument: 'default' });
+    const routeStream = routes.watch({ fullDocument: 'default' });
+    const landmarkStream = landmarks.watch({ fullDocument: 'default' });
+    const notificationsStream = notifications.watch({fullDocument: 'default'})
+    const chatStream = chat.watch({ fullDocument: 'default' });
+    const vehiclesStream = vehicles.watch({ fullDocument: 'default' });
+    const cityStream = cities.watch({ fullDocument: 'default' });
 
-    const dwellStream = commuterDwellEvents.watch({ fullDocument: 'updateLookup' });
-    const exitStream = commuterExitEvents.watch({ fullDocument: 'updateLookup' });
+    const dwellStream = commuterDwellEvents.watch({ fullDocument: 'default' });
+    const exitStream = commuterExitEvents.watch({ fullDocument: 'default' });
 
-    const commuterArrivalStream = commuterArrivalLandmarks.watch({ fullDocument: 'updateLookup' });
-    const commuterRequestsStream = commuterRequests.watch({ fullDocument: 'updateLookup' });
-    const commuterPickupsStream = commuterPickups.watch({ fullDocument: 'updateLookup' });
+    const commuterArrivalStream = commuterArrivalLandmarks.watch({ fullDocument: 'default' });
+    const commuterRequestsStream = commuterRequests.watch({ fullDocument: 'default' });
+    const commuterPickupsStream = commuterPickups.watch({ fullDocument: 'default' });
 
-    const dispatchRecordsStream = dispatchRecords.watch({ fullDocument: 'updateLookup' });
+    const dispatchRecordsStream = dispatchRecords.watch({ fullDocument: 'default' });
 
-    const usersStream = users.watch({ fullDocument: 'updateLookup' });
-    const panicStream = panics.watch({ fullDocument: 'updateLookup' });
+    const usersStream = users.watch({ fullDocument: 'default' });
+    const panicStream = panics.watch({ fullDocument: 'default' });
 
-    const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'updateLookup' });
-    const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'updateLookup' });
-    const vehicleCommuterNearbyStream = vehicleCommuterNearby.watch({ fullDocument: 'updateLookup' });
+    const vehicleArrivalsStream = vehicleArrivals.watch({ fullDocument: 'default' });
+    const vehicleDeparturesStream = vehicleDepartures.watch({ fullDocument: 'default' });
+    const vehicleCommuterNearbyStream = vehicleCommuterNearby.watch({ fullDocument: 'default' });
 
     try {
       cityStream.on("change", (event: any) => {

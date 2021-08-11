@@ -35,11 +35,13 @@ export class LandmarkController {
         try {
           const routeID = req.body.routeID;
           const landmarkID = req.body.landmarkID;
-          const routePoint = req.body.routePoint;
+          const index = req.body.index;
+          const routeName = req.body.routeName;
+          
 
           const route: any = await Route.findOne({
             routeID: routeID,
-          });
+           });
 
           const landmark: any = await Landmark.findOne({
             landmarkID: landmarkID,
@@ -60,23 +62,29 @@ export class LandmarkController {
           }
           landmark.routeDetails.push({
             routeID: routeID,
-            name: route.name,
+            name: routeName,
+          });
+          landmark.routePoints.push({
+            routeID: routeID,
+            name: routeName,
+            index: index,
           });
           landmark.updated = new Date().toISOString();
           const result = await landmark.save();
           console.log(
-            `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${route.name} 💦 💦`
+            `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${routeName} 💦 💦`
           );
-          console.log(result.toJSON());
+          
           await Route.updateOne(
             {
               _id: new Types.ObjectId(route.id),
-              "routePoints.index": routePoint.index,
+              "routePoints.index": index,
             },
             {
               $set: {
                 "routePoints.$.landmarkID": landmark.landmarkID,
                 "routePoints.$.landmarkName": landmark.landmarkName,
+                "routePoints.$.index": index,
               },
             }
           );
@@ -84,7 +92,7 @@ export class LandmarkController {
             `🔆🔆🔆 addRouteToLandmark: routePoint inside route updated. 🍎🍎🍎🍎 sweet!: 💙 `
           );
           res.status(200).json({
-            message: `Route ${route.name} added to Landmark: ${result.landmarkName}:  `,
+            message: `Route ${routeName} added to Landmark: ${result.landmarkName}:  `,
             landmark: result,
           });
         } catch (err) {
@@ -157,7 +165,7 @@ export class LandmarkController {
       const pos = JSON.parse(JSON.stringify(landmark.position));
       const latitude = pos.coordinates[1];
       const longitude = pos.coordinates[0];
-      const RADIUS = 10000;
+      const RADIUS = 3000;
       const cities = await City.find({
         position: {
           $near: {
@@ -181,7 +189,7 @@ export class LandmarkController {
 
       log(
         `💛 💛 💛 💛 💙 cities added to landmark: 💙 ${landmark.landmarkName} 
-        🍎 ${result.cities.length} cities! Yebo!!!: 💙 `
+        🍎 = ${result.cities.length} cities added! Yebo!!!: 💙 `
       );
       return result;
     }
@@ -293,16 +301,20 @@ export class LandmarkController {
               end / 1000 - now / 1000
             } 💙 seconds for query. found ${result.length} landmarks`
           );
-          const route = await Route.findOne({
-            routeID: req.body.routeID,
-          });
+         
           const list: any[] = [];
           result.forEach((r) => {
             list.push(r.toJSON());
           });
+          if (list.length == 0) {
+              res.status(400).json({
+              message: "No Data Found",
+            });
+            return;
+          }
 
-          const sorted = DistanceUtilNew.reorder(route?.toJSON(), list);
-          res.status(200).json(sorted);
+          //const sorted = DistanceUtilNew.reorder(route?.toJSON(), list);
+          res.status(200).json(list);
         } catch (err) {
           res.status(400).json({
             error: err,
