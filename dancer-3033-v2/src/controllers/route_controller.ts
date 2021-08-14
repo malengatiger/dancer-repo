@@ -2,18 +2,16 @@ import { Request, Response } from "express";
 import Route from "../models/route";
 import { log } from "../log";
 import uuid = require("uuid");
-import { Types } from "mongoose";
 import RouteDistanceEstimation from "../models/route_distance";
 import Messaging from "../helpers/messaging";
 import RouteFare from "../models/route_fare";
 import moment = require("moment");
-import DispatchRecord from "../models/dispatch_record";
 import Heading from "../helpers/Heading";
 import DistanceUtilNew from "../helpers/distance_util_new";
-import { stringify, parse } from "zipson";
 import * as zlib from "zlib";
 import * as fs from "fs";
 import * as path from "path";
+import Landmark from "../models/landmark";
 
 export class RouteController {
   public routes(app: any): void {
@@ -843,6 +841,57 @@ export class RouteController {
         res.status(400).json({
           error: err,
           message: " 🍎🍎🍎🍎 updateRoutePoint failed",
+        });
+      }
+    });
+
+    app.route("/deleteRoute").post(async (req: Request, res: Response) => {
+      log(
+        `\n\n💦  POST: /deleteRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+      );
+      console.log(req.body);
+      try {
+        const routeID = req.body.routeID;
+        
+        const route: any = await Route.findOne({ routeID: routeID });
+        if (!route) {
+          res.status(400).json({
+            message: `🍎🍎🍎🍎 deleteRoute failed; route ${routeID} not found`,
+          });
+          return;
+        }
+        console.log(`This route ${route.name} is about to be removed ...`)
+        const landmarks = await Landmark.find({
+          "routeDetails.routeID": routeID,
+        });
+
+        console.log(`This route ${route.name} passes thru ${landmarks.length} landmarks`)
+        landmarks.forEach(async (landmark: any) => {
+          const list: any[] = [];
+          landmark.routeDetails.forEach(async (rd: any) => {
+            if (rd.routeID === routeID) {
+              console.log(`This route ${route.name} is removed from ${landmark.landmarkName}`)
+            } else {
+              list.push(rd);
+            }
+          })
+          landmark.routeDetails = list;
+          console.log(`... about to update landmark ${landmark.landmarkName} `)
+          await landmark.save();
+        });
+        console.log(`... about to delete route ${route.name}`) 
+        await Route.deleteOne({ routeID: routeID });
+        log(
+          `💙💙 Route ${route.name} has been removed: `
+        );
+        res.status(200).json({
+          message: `💙💙 Route ${route.name} has been removed; Yebo! `,
+        });
+      } catch (err) {
+        console.log(err);
+        res.status(400).json({
+          error: err,
+          message: `🍎🍎🍎🍎 deleteRoute failed: ${err}`,
         });
       }
     });
