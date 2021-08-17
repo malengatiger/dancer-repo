@@ -860,12 +860,12 @@ export class RouteController {
           });
           return;
         }
-        console.log(`This route ${route.name} is about to be removed ...`)
+        console.log(`💦 💦 This route ${route.name} is about to be removed ...`)
         const landmarks = await Landmark.find({
           "routeDetails.routeID": routeID,
         });
 
-        console.log(`This route ${route.name} passes thru ${landmarks.length} landmarks`)
+        console.log(`💦 💦 This route ${route.name} passes thru ${landmarks.length} landmarks`)
         landmarks.forEach(async (landmark: any) => {
           const list: any[] = [];
           landmark.routeDetails.forEach(async (rd: any) => {
@@ -876,16 +876,16 @@ export class RouteController {
             }
           })
           landmark.routeDetails = list;
-          console.log(`... about to update landmark ${landmark.landmarkName} `)
+          console.log(`💦 💦 ... about to update landmark ${landmark.landmarkName} `)
           await landmark.save();
         });
-        console.log(`... about to delete route ${route.name}`) 
+        console.log(`💦 💦 ... about to delete route ${route.name}`) 
         await Route.deleteOne({ routeID: routeID });
         log(
-          `💙💙 Route ${route.name} has been removed: `
+          `💙 💙 Route ${route.name} has been removed: `
         );
         res.status(200).json({
-          message: `💙💙 Route ${route.name} has been removed; Yebo! `,
+          message: `💙 💙 Route ${route.name} has been removed; Yebo! `,
         });
       } catch (err) {
         console.log(err);

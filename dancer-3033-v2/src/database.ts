@@ -14,27 +14,28 @@ mongoose.Promise = global.Promise;
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose
-  .connect(mongoConnectionString)
+  .connect(mongoConnectionString, {maxPoolSize: 2000})
   .then((client) => {
-    log(
-      `\n🔆🔆  Mongo connected ... 🔆 ${new Date()} `,
+   console.log(
+      `\n🔆🔆  Mongoose has connected MongoDB Atlas ... 🔆 ${new Date()} `,
     );
-    log(
+    
+    console.log(
       `\n🍎  Mongo Client version: 💙 ${client.version} 💙 model names: ${
         JSON.stringify(client.modelNames())
       }  🍎 `,
     );
-    log(
-      `🍎  MongoDB config ...${JSON.stringify(
+    console.log(
+      `🍎  MongoDB configuration ... \n 💙 ${JSON.stringify(
         mongoose.connection.config,
-      )}`,
+      )} 💙`,
     );
 
     MongooseDebugSetting.setDebug();
     Messaging.init();
     MongoListeners.listen(client);
 
-    console.log(`🍎 🍎 🍎  MongoDB collections up and running! 🍎 ... waiting to be called!!`);
+    console.log(`🍎 🍎 🍎 MongoDB Atlas collections up and running! 🍎 ... waiting to be of service!!`);
     // console.log(mongoose.connection.collections.length);
     
   })

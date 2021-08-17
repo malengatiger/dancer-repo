@@ -37,15 +37,32 @@ export class LandmarkController {
           const landmarkID = req.body.landmarkID;
           const index = req.body.index;
           const routeName = req.body.routeName;
-          
-
-          const route: any = await Route.findOne({
-            routeID: routeID,
-           });
 
           const landmark: any = await Landmark.findOne({
             landmarkID: landmarkID,
           });
+          const route: any = await Route.findOne({
+            routeID: routeID,
+          });
+
+          const point = route.routePoints[index];
+          route.routePoints[index] = {
+            'routeID': routeID,
+            'name': routeName,
+            'index': index,
+            'landmarkID': landmarkID,
+            'landmarkName': landmark.landmarkName,
+            'position': point.position,
+            'latitude': point.latitude,
+            'longitude': point.longitude
+          };
+          await route.save();
+          console.log(
+            `Route point ${index} updated to landmark: ${landmark.landmarkName}`
+          );
+          console.log(
+            `🔆🔆🔆 addRouteToLandmark: routePoint inside route updated. 🍎 sweet!: 💙 `
+          );
 
           let isFound: boolean = false;
           landmark.routeDetails.forEach((element: any) => {
@@ -72,25 +89,23 @@ export class LandmarkController {
           landmark.updated = new Date().toISOString();
           const result = await landmark.save();
           console.log(
-            `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${routeName} 💦 💦`
+            `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${route.name} 💦 💦`
           );
-          
-          await Route.updateOne(
-            {
-              _id: new Types.ObjectId(route.id),
-              "routePoints.index": index,
-            },
-            {
-              $set: {
-                "routePoints.$.landmarkID": landmark.landmarkID,
-                "routePoints.$.landmarkName": landmark.landmarkName,
-                "routePoints.$.index": index,
-              },
-            }
-          );
-          console.log(
-            `🔆🔆🔆 addRouteToLandmark: routePoint inside route updated. 🍎🍎🍎🍎 sweet!: 💙 `
-          );
+
+          // await Route.updateOne(
+          //   {
+          //     _id: new Types.ObjectId(route.id),
+          //     "routePoints.index": index,
+          //   },
+          //   {
+          //     $set: {
+          //       "routePoints.$.landmarkID": landmark.landmarkID,
+          //       "routePoints.$.landmarkName": landmark.landmarkName,
+          //       "routePoints.$.index": index,
+          //     },
+          //   }
+          // );
+
           res.status(200).json({
             message: `Route ${routeName} added to Landmark: ${result.landmarkName}:  `,
             landmark: result,
@@ -99,7 +114,149 @@ export class LandmarkController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addRouteToLandmark failed",
+            message: " 🍎 addRouteToLandmark failed",
+          });
+        }
+      });
+
+    app
+      .route("/deleteRouteFromLandmarks")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const routeID = req.body.routeID;
+          const landmarks: any[] = await Landmark.find({
+            "routeDetails.routeID": routeID,
+          });
+
+          const route: any = await Route.findOne({
+            routeID: routeID,
+          });
+
+          if (!route) {
+            res.status(400).json({
+              message: ` 🍎 deleteRouteFromLandmarks failed; route ${routeID} not found`,
+            });
+          }
+
+          const list: any[] = [];
+          console.log(
+            `.... 🔆 update route: ${route.name} with ${route.routePoints.length} routePoints set to landmark nulled`
+          );
+
+          route.routePoints.forEach(async (rp: any) => {
+            list.push({
+              'routeID': routeID,
+              'index': rp.index,
+              'position': rp.position,
+              'created': rp.created,
+              'latitude': rp.latitude,
+              'longitude': rp.longitude,
+            });
+          });
+        
+          console.log(
+            `.... 🔆 route: ${route.name} has ${list.length} nulled points`
+          );
+          route.routePoints = list;
+          route.updated = new Date().toISOString();
+          await route.save();
+          console.log(
+            `.... 🔆 route updated: ${route.name}, all routePoints must be nulled out re landmark`
+          );
+
+          landmarks.forEach(async (mark: any) => {
+            const list: any[] = [];
+            mark.routeDetails.forEach((element: any) => {
+              if (element.routeID === routeID) {
+                console.log(
+                  `.... 🔆 removing route ${element.name} from landmark: ${mark.landmarkName}`
+                );
+              } else {
+                list.push(element);
+              }
+            });
+            mark.routeDetails = list;
+            mark.updated = new Date().toISOString();
+            await mark.save();
+            console.log(`.... 🔆 removed route from ${mark.landmarkName}`);
+          });
+
+          console.log(
+            `Route ${route.name} removed from ${landmarks.length} Landmarks  `
+          );
+
+          res.status(200).json({
+            message: `Route ${route.name} removed from  ${landmarks.length} Landmarks`,
+          });
+        } catch (err) {
+          console.log(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎 deleteRouteFromLandmarks failed",
+          });
+        }
+      });
+
+    app
+      .route("/deleteRouteFromLandmark")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const routeID = req.body.routeID;
+          const landmarkID = req.body.landmarkID;
+          const index = req.body.index;
+          const landmark: any = await Landmark.findOne({
+            landmarkID: landmarkID,
+          });
+          const route: any = await Route.findOne({
+            routeID: routeID,
+          });
+          if (!landmark) {
+            res.status(400).json({
+              message: `🍎deleteRouteFromLandmark failed; landmark ${landmarkID} not found`,
+            });
+            return;
+          }
+          if (!route) {
+            res.status(400).json({
+              message: `🍎deleteRouteFromLandmark failed; route ${routeID} not found`,
+            });
+            return;
+          }
+
+          const list: any[] = [];
+          landmark.routeDetails.forEach((element: any) => {
+            if (element.routeID === routeID) {
+              console.log(`.... 🔆 removing route: ${element.name}`);
+            } else {
+              list.push(element);
+            }
+          });
+          landmark.routeDetails = list;
+          landmark.updated = new Date().toISOString();
+          await landmark.save();
+          // log(result);
+          const list2: any[] = [];
+          route.routePoints.forEach((element: any) => {
+            if (element.index === index) {
+              console.log(`.... 🔆 removing landmark, index: ${element.index}`);
+              element.landmarkID = null;
+              element.landmarkName = null;
+            }
+            list2.push(element);
+          });
+          route.routePoints = list2;
+          route.updated = new Date().toISOString();
+          await route.save();
+          console.log(`.... 🔆 removed route from: ${landmark.landmarkName}`);
+
+          res.status(200).json({
+            message: `Route: ${routeID} removed from Landmark: ${landmark.landmarkName} `,
+          });
+        } catch (err) {
+          console.log(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎🍎🍎🍎 deleteRouteFromLandmark failed",
           });
         }
       });
@@ -141,7 +298,7 @@ export class LandmarkController {
         if (!req.body.landmarkID) {
           throw new Error("fucking landmarkID is missing");
         }
-        
+
         try {
           const result = await addCities(req.body.landmarkID);
           res.status(200).json(result);
@@ -301,13 +458,13 @@ export class LandmarkController {
               end / 1000 - now / 1000
             } 💙 seconds for query. found ${result.length} landmarks`
           );
-         
+
           const list: any[] = [];
           result.forEach((r) => {
             list.push(r.toJSON());
           });
           if (list.length == 0) {
-              res.status(400).json({
+            res.status(400).json({
               message: "No Data Found",
             });
             return;
@@ -369,7 +526,7 @@ export class LandmarkController {
 
         const result = await landmark.save();
         await addCities(landmark.landmarkID);
-        
+
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
