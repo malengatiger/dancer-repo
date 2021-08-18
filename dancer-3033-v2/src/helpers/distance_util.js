@@ -32,16 +32,16 @@ class DistanceUtil {
         list[0].distance
       } metres; ${JSON.stringify(list[0])}`
     );
-    log(list[0]);
-    log(list[1]);
-    log(list[2]);
+    console.log(list[0]);
+    console.log(list[1]);
+    console.log(list[2]);
 
     const routePoint = new RoutePoint(list[0].routePoint);
     return routePoint;
   }
 
   calculateRouteLength(route) {
-    console.log(route);
+    
     let total = 0.0;
     let index = 0;
     let prevPoint;
@@ -59,7 +59,7 @@ class DistanceUtil {
       index++;
     });
     console.log(
-      `💙 💙 💙 Mexico has paid for the wall!!! 💙 💙 💙 , Length of route: ${
+      `💙 💙 💙 calculateRouteLength: Mexico has paid for the wall!!! 💙 , Length of route: ${
         route.name
       } is 🏀 ${total} metres or 🏀 ${total / 1000} kilometres`
     );
@@ -114,7 +114,6 @@ class DistanceUtil {
     const sortedLandmarks = [];
    try {
     distances.forEach(d => {
-      console.log(d)
       const mark = this.findLandmark(d.landmarkID, landmarks)
       console.log(`Found landmark: ${JSON.stringify(mark)}`)
       sortedLandmarks.push({
@@ -155,19 +154,3 @@ class DistanceUtil {
 }
 
 export default DistanceUtil;
-
-/*
-landmarks.forEach((landmark) => {
-        console.log(landmark)
-        const dist = this.calculateDistanceBetween(
-          start.position.coordinates[1],
-          start.position.coordinates[0],
-          landmark.position.coordinates[1],
-          landmark.position.coordinates[0]
-        );
-        distances.push({
-            distance: dist,
-            landmark: landmark
-        })
-      });
-*/

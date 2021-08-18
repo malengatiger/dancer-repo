@@ -8,7 +8,7 @@ import RouteDistanceEstimation from "../models/route_distance";
 log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
 const sa1 = process.env.DANCER_CONFIG || "NOTFOUND";
 const ssa1 = JSON.parse(sa1);
-// log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
+// console.log(`☘️ serviceAccounts listed ☘️ ok: 😍 😍 😍 ...`);
 export const appTo: admin.app.App = admin.initializeApp(
   {
     credential: admin.credential.cert(ssa1),
@@ -30,12 +30,12 @@ appTo
   .get()
   .then((snapshot) => {
     snapshot.docs.forEach((doc) => {
-      log(`Association: 🥦🥦 ${doc.data}`);
+      console.log(`Association: 🥦🥦 ${doc.data}`);
     });
   });
 class Messaging {
   public static init() {
-    log(
+    console.log(
       `😍 😍 😍 initializing Messaging ... 😍 fake call (really?) to test environment variables config`
     );
   }
@@ -58,7 +58,7 @@ class Messaging {
     };
     const topic = Constants.VEHICLE_COMMUTER_NEARBY + "_" + data.vehicleID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendVehicleCommuterNearby: FCM message sent: 😍 ${
         data.vehicleReg
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -90,7 +90,7 @@ class Messaging {
     };
     const topic = Constants.ROUTE_DISTANCE_ESTIMATION + "_" + data.routeID;
     await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendRouteDistanceEstimation: FCM message sent from vehicle: 😍 ${
         data.vehicle.vehicleReg
       } topic: ${topic} 🍎🍎`
@@ -118,12 +118,12 @@ class Messaging {
     };
     const topic = Constants.NOTIFICATIONS + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendNotification: FCM message sent: 😍 ${
         data.landmarkID
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    console.log(payload.data);
+    
   }
   public static async sendChat(data: any): Promise<any> {
     const options: any = {
@@ -150,12 +150,11 @@ class Messaging {
     };
     const topic = Constants.CHAT + "_" + data.associationName;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendChat: FCM message sent: 😍 ${
         data.associationName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    console.log(payload.data);
   }
 
   public static async sendVehicleAdded(data: any): Promise<any> {
@@ -176,12 +175,11 @@ class Messaging {
     };
     const topic = Constants.VEHICLES + "_" + data.associationID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendVehicleAdded: FCM message sent: 😍 ${
         data.vehicleReg
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    console.log(payload.data);
   }
   public static async sendVehicleArrival(data: any): Promise<any> {
     const options: any = {
@@ -205,12 +203,11 @@ class Messaging {
     };
     const topic = Constants.VEHICLE_ARRIVALS + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 😍 😍 sendVehicleArrival: FCM message sent: 😍 ${
         data.landmarkName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    console.log(payload.data);
   }
 
   public static async sendScannedResultToCommuter(fcmToken: string, commuterRequestID: string): Promise<any> {
@@ -230,7 +227,7 @@ class Messaging {
     };
     
     const result = await fba.send(payload);
-    log(
+    console.log(
       `😍 sendScannedResultToCommuter: FCM message sent to DEVICE: 😍 🍎 ${JSON.stringify(result)}🍎`
     );
     
@@ -258,7 +255,7 @@ class Messaging {
     };
     const topic = Constants.ROUTES;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendRoute: FCM message sent: 😍 ${
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -287,7 +284,7 @@ class Messaging {
     };
     const topic = Constants.CITIES;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendCity: FCM message sent: 😍 ${
         JSON.stringify(data)
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -316,7 +313,7 @@ class Messaging {
     };
     const topic = Constants.COMMUTER_FENCE_DWELL_EVENTS + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendFenceDwellEvent: FCM message sent: 😍 ${
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -343,7 +340,7 @@ class Messaging {
     };
     const topic = Constants.COMMUTER_FENCE_EXIT_EVENTS + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendFenceExitEvent: FCM message sent: 😍 ${
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -354,7 +351,7 @@ class Messaging {
     if (!data) {
       return;
     }
-    console.log(data);
+    
     if (!data.landmarkID) {
       return;
     }
@@ -376,10 +373,10 @@ class Messaging {
     };
     const topic = Constants.LANDMARKS;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
-      `😍 💙 💙 💙 💙 💙 send Landmark has changed message: FCM message sent: 😍 ${
+    console.log(
+      `😍 Messaging: sendLandmark: FCM message sent for ${
         data.landmarkName
-      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+      } topic: ${topic} : result: 🍎 ${JSON.stringify(result)} 🍎`
     );
   }
   public static async sendVehicleDeparture(data: any): Promise<any> {
@@ -404,7 +401,7 @@ class Messaging {
     };
     const topic = Constants.VEHICLE_DEPARTURES + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendVehicleDeparture: FCM message sent: 😍 ${
         data.landmarkName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -438,7 +435,7 @@ class Messaging {
     const topic =
       Constants.COMMUTER_PICKUP_LANDMARKS + "_" + data.fromLandmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendCommuterPickupLandmark: FCM message sent: 😍 ☘️☘️☘️ ${
         data.fromLandmarkName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -448,8 +445,6 @@ class Messaging {
     console.log(
       `Check below to see isWallet value... should be fucking true; why???`
     );
-
-    console.log(data);
 
     const options: any = {
       priority: "normal",
@@ -486,7 +481,7 @@ class Messaging {
 
     const topic = Constants.COMMUTER_REQUESTS + "_" + data.fromLandmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendCommuterRequest: FCM message sent: 😍 ${
         data.fromLandmarkName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -524,7 +519,7 @@ class Messaging {
     if (data.driverID) {
       const topic = Constants.PAYMENTS + "_" + data.driverID;
       const result = await fba.sendToTopic(topic, payload, options);
-      log(
+      console.log(
         `😍 sendPayment: FCM message sent to Driver: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(
           result
         )} 🍎🍎`
@@ -533,7 +528,7 @@ class Messaging {
     if (data.ownerID) {
       const topic = Constants.PAYMENTS + "_" + data.ownerID;
       const result = await fba.sendToTopic(topic, payload, options);
-      log(
+      console.log(
         `😍 sendPayment: FCM message sent to Owner: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(
           result
         )} 🍎🍎`
@@ -542,7 +537,7 @@ class Messaging {
     if (data.marshalID) {
       const topic = Constants.PAYMENTS + "_" + data.marshalID;
       const result = await fba.sendToTopic(topic, payload, options);
-      log(
+      console.log(
         `😍 sendPayment: FCM message sent to Marshal: 😍topic: ${topic} : result: 🍎🍎 ${JSON.stringify(
           result
         )} 🍎🍎`
@@ -571,12 +566,11 @@ class Messaging {
       },
     };
     const body = data.fullDocument;
-    log(`userID: ${data.userID}`);
-    log(body);
+    console.log(`userID: ${data.userID}`);
     const topic =
       Constants.COMMUTER_ARRIVAL_LANDMARKS + "_" + data.fromLandmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
-    log(
+    console.log(
       `😍 sendCommuterArrivalLandmark: FCM message sent: 😍 ☘️☘️☘️ ${
         data.fromLandmarkName
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -600,7 +594,7 @@ class Messaging {
     const result: any[] = await Landmark.find({
       "routeDetails.routeID": data.routeID,
     });
-    log(
+    console.log(
       `☘️☘️☘️ send dispatch record to all ${result.length} landmarks in route: 🍎${data.routeID} 🍎 ${data.routeName}`
     );
     let cnt = 0;
@@ -608,7 +602,7 @@ class Messaging {
       const topic = Constants.DISPATCH_RECORDS + "_" + m.landmarkID;
       const result = await fba.sendToTopic(topic, payload, options);
       cnt++;
-      log(
+      console.log(
         `😍 DispatchRecord: FCM message #${cnt} landmarkID: 😍 ${
           data.landmarkID
         } on ${data.created} topic: 🍎 ${topic} 🍎`
@@ -632,7 +626,7 @@ class Messaging {
     };
     const topic1 = Constants.USERS;
     const result = await fba.sendToTopic(topic1, payload, options);
-    log(
+    console.log(
       `😍😍 sendUser: FCM message sent: 😍😍 ${data.firstName} ${
         data.lastName
       } 👽👽👽 ${topic1} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
@@ -643,7 +637,7 @@ class Messaging {
       priority: "high",
       timeToLive: 60 * 60,
     };
-    log("Sending commute panic message");
+    console.log("Sending commute panic message");
     console.log(data.commuterPanicID);
     const longitude = "" + data.position.coordinates[0];
     const latitude = "" + data.position.coordinates[1];
@@ -661,7 +655,7 @@ class Messaging {
         },
       },
     });
-    log(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
+    console.log(`☘️☘️☘️landmarks found near panic: ☘️ ${list.length}`);
     // Define a condition which will send to devices which are subscribed
     // to either the Google stock or the tech industry topics.
     const payload: any = {
@@ -690,11 +684,11 @@ class Messaging {
         const result = await fba.sendToTopic(topic1, payload, options);
         cnt++;
         console.log(
-          `🍎🍎🍎🍎🍎 FCM Panic message #${cnt} sent to  💙 ${landmark.landmarkName} :  💙💙 topic: 🔆 ${topic1} 🔆`
+          `🍎 FCM Panic message #${cnt} sent to  💙 ${landmark.landmarkName} :  💙💙 topic: 🔆 ${topic1} 🔆`
         );
       }
     }
-    console.log(`🍎🍎🍎🍎🍎  💛 FCM Panic messages sent:  💛 ${cnt}  💛 `);
+    console.log(`🍎 FCM Panic messages sent:  💛 ${cnt}  💛 `);
   }
 }
 

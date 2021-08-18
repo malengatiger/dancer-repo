@@ -15,28 +15,23 @@ import Landmark from "../models/landmark";
 
 export class RouteController {
   public routes(app: any): void {
-    log(`🏓    RouteController: 💙  setting up default Route routes ... `);
+    console.log(`🏓    RouteController: 💙  setting up default Route routes ... `);
 
     app
       .route("/getUpdatedRoutesByAssociation")
       .post(async (req: Request, res: Response) => {
-        log(
-          `💦💦 💦  POST: /getUpdatedRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const assID: any = req.body.associationID;
           const startDate: any = req.body.startDate;
           const now = new Date().getTime();
-          /*
-          {"associationID": "0df4c8a0-8b19-11e9-815c-b1ada6043f84", "created": {$gt: "2020-12-21T23"}}
-          */
+          
           const result = await Route.find({
             associationID: assID,
             updated: { $gt: startDate },
           });
           const end = new Date().getTime();
-          log(
+          console.log(
             `💦 💦 💦 💦 💦 💦 getUpdatedRoutesByAssociation: elapsed time: ${
               end / 1000 - now / 1000
             } seconds for query. found 😍 ${result.length} routes`
@@ -54,23 +49,18 @@ export class RouteController {
     app
       .route("/getLatestRoutesByAssociation")
       .post(async (req: Request, res: Response) => {
-        log(
-          `💦💦 💦  POST: /getLatestRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+       
         try {
           const assID: any = req.body.associationID;
           const startDate: any = req.body.startDate;
           const now = new Date().getTime();
-          /*
-          {"associationID": "0df4c8a0-8b19-11e9-815c-b1ada6043f84", "created": {$gt: "2020-12-21T23"}}
-          */
+
           const result = await Route.find({
             associationID: assID,
             created: { $gt: startDate },
           });
           const end = new Date().getTime();
-          log(
+          console.log(
             `💦 💦 💦 💦 💦 💦 getLatestRoutesByAssociation: elapsed time: ${
               end / 1000 - now / 1000
             } seconds for query. found 😍 ${result.length} routes`
@@ -88,23 +78,20 @@ export class RouteController {
     app
       .route("/getRoutesByAssociation")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦💦 💦  POST: /getRoutesByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+       
         try {
           const assID: any = req.body.associationID;
           const now = new Date().getTime();
-          log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
           const result = await Route.find({ associationID: assID });
-        
+
           result.forEach((m: any) => {
-            log(
-              `😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎 routePoints: ${m.routePoints.length} 🍎 rawRoutePoints: ${m.rawRoutePoints.length} `
+            console.log(
+              `😍 ${m.name} - 😍 - association ${assID} is OK: route: ${m.name} 🍎 routePoints: ${m.routePoints.length} 
+              🍎 rawRoutePoints: ${m.rawRoutePoints.length} `
             );
           });
           const end = new Date().getTime();
-          log(
+          console.log(
             `🔆🔆🔆 elapsed time: ${
               end / 1000 - now / 1000
             } seconds for query. found 😍 ${result.length} routes`
@@ -122,37 +109,29 @@ export class RouteController {
     app
       .route("/getRouteIDsByAssociation")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦💦 💦  POST: /getRouteIDsByAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const assID: any = req.body.associationID;
-          log(`💦 💦 💦 💦 💦 💦 associationID for routes: ☘️☘️ ${assID} ☘️☘️`);
           const result = await Route.find(
             { associationID: assID },
             { routeID: 1, name: 2 }
           );
           res.status(200).json(result);
-          log(`🍎 🍎 Routes (id and name only) info found: ${result.length}`);
+          console.log(`🍎 Routes (id and name only) info found: ${result.length}`);
         } catch (err) {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: ` 🍎🍎🍎🍎 getRouteIDsByAssociation failed: ${err}`,
+            message: `🍎 getRouteIDsByAssociation failed: ${err}`,
           });
         }
       });
     app.route("/getRouteById").get(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /getRouteById requested ....  ${
-          req.query.routeID
-        } 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
+      
       if (!req.query.routeID) {
         res.status(400).json({
           error: "routeID is null",
-          message: `🍎 🍎 🍎 🍎 getRouteByID failed`,
+          message: `🍎 getRouteByID failed`,
         });
         return;
       }
@@ -161,31 +140,45 @@ export class RouteController {
         const routeID: any = req.query.routeID;
         const now = new Date().getTime();
         const route: any = await Route.findOne({ routeID: routeID });
-        log(
-          `🧩 🧩 🧩 🧩 🧩 🧩 🍎 🍎 EXPENSIVE CALL! 🍎  route:${route.name}, routePoints:  🍎 ${route.routePoints.length} 🍎 🧩 🧩 🧩 🧩 🧩 🧩 - RETURNS routePoints `
-        );
-        if (route.routePoints.length > 0) {
-          if (!route.heading || route.heading === 0.0 || route.heading === 0) {
-          
-            const haeding = Heading.getRouteHeading(route);
-            let length: Number = DistanceUtilNew.calculateRouteLength(route);
 
-            route.lengthInMetres = length;
-            route.heading = haeding;
-            route.updated = new Date().toISOString();
-            await route.save();
-            console.log(
-              `💦 💦 💦 💦 💦 💦  route heading 🍎 ${route.heading} lengthInMetres:: 🍎 ${route.lengthInMetres} 🍎 ... updated on DB`
-            );
+        if (route) {
+          console.log(
+            `🧩 🧩 EXPENSIVE CALL! 🍎 route: ${route.name}, routePoints:  
+            🍎 ${route.routePoints.length} 🍎 `
+          );
+          if (route.routePoints.length > 0) {
+            if (
+              !route.heading ||
+              route.heading === 0.0 ||
+              route.heading === 0
+            ) {
+              const haeding = Heading.getRouteHeading(route);
+              let length: Number = DistanceUtilNew.calculateRouteLength(route);
+
+              route.lengthInMetres = length;
+              route.heading = haeding;
+              route.updated = new Date().toISOString();
+              await route.save();
+              console.log(
+                `💦 route heading 🍎 ${route.heading} lengthInMetres:: 🍎 ${route.lengthInMetres} 🍎 ... updated on DB`
+              );
+            }
           }
-        }
 
-        const end = new Date().getTime();
-        console.log(
-          `🔆 getRouteById: elapsed time: ${
-            end / 1000 - now / 1000
-          } seconds for query. found 😍 route: ${route.name} - routePoints: ${route.routePoints.length}`
-        );
+          const end = new Date().getTime();
+          console.log(
+            `🔆 getRouteById: elapsed time: ${
+              end / 1000 - now / 1000
+            } seconds for query. found 😍 route: ${route.name} - routePoints: ${
+              route.routePoints.length
+            }`
+          );
+        } else {
+          res.status(400).json({
+            message: `🍎 getRouteByID failed: Route not found`,
+          });
+          return;
+        }
         res.status(200).json(route);
       } catch (err) {
         console.error(err);
@@ -196,8 +189,7 @@ export class RouteController {
       }
     });
     app.route("/addRoute").post(async (req: Request, res: Response) => {
-      console.log('addRoute requested ........')
-      console.log(req.body)
+      
       try {
         const route: any = new Route(req.body);
         route.created = new Date().toISOString();
@@ -205,7 +197,9 @@ export class RouteController {
           route.heading = 0;
         }
         const result = await route.save();
-        log(`result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `);
+        console.log(
+          `result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `
+        );
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -216,8 +210,7 @@ export class RouteController {
       }
     });
     app.route("/addFullRoute").post(async (req: Request, res: Response) => {
-      console.log('addFullRoute requested ........')
-      console.log(req.body)
+      
       try {
         const route: any = new Route(req.body);
         route.created = new Date().toISOString();
@@ -225,7 +218,9 @@ export class RouteController {
           route.heading = 0;
         }
         const result = await route.save();
-        log(`result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `);
+        console.log(
+          `result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `
+        );
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -240,7 +235,7 @@ export class RouteController {
         const routeFare: any = new RouteFare(req.body);
         routeFare.created = new Date().toISOString();
         const result = await routeFare.save();
-        log(`routeFare added to db: ${result}`);
+        console.log(`routeFare added to db: ${result}`);
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -258,13 +253,13 @@ export class RouteController {
         }
         routeFare.landmarkFares.push(req.body);
         const result = await routeFare.save();
-        log(`landmarkFare added to db: ${result}`);
+        console.log(`landmarkFare added to db: ${result}`);
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: ` 🍎🍎🍎🍎 addLandmarkFare failed: ${err}`,
+          message: ` 🍎 addLandmarkFare failed: ${err}`,
         });
       }
     });
@@ -275,9 +270,8 @@ export class RouteController {
           const assID: any = req.body.associationID;
           const now = new Date().getTime();
           const result = await RouteFare.find({ associationID: assID });
-          log(result);
           const end = new Date().getTime();
-          log(
+          console.log(
             `🔆🔆🔆 elapsed time: ${
               end / 1000 - now / 1000
             } seconds for query. found 😍 ${result.length} routes`
@@ -293,17 +287,14 @@ export class RouteController {
         }
       });
     app.route("/getRouteFares").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦💦 💦  POST: /getRouteFare requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
-      console.log(req.body);
+      
       try {
         const routeID: any = req.body.routeID;
         const now = new Date().getTime();
         const result = await RouteFare.find({ routeID: routeID });
-        log(result);
+        console.log(result);
         const end = new Date().getTime();
-        log(
+        console.log(
           `🔆🔆🔆 elapsed time: ${end / 1000 - now / 1000} seconds for query`
         );
 
@@ -320,11 +311,7 @@ export class RouteController {
       .route("/addRouteDistanceEstimation")
       .post(async (req: Request, res: Response) => {
         try {
-          console.log(
-            `... addRouteDistanceEstimation ... vehicleReg: ${JSON.stringify(
-              req.body.vehicle.vehicleReg
-            )}`
-          );
+         
           const estimation: any = new RouteDistanceEstimation(req.body);
           if (!estimation.vehicle) {
             throw new Error(`Vehicle missing from estimation`);
@@ -450,26 +437,26 @@ export class RouteController {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           route.calculatedDistances = req.body.calculatedDistances;
           const result = await route.save();
-          log(
-            `💙💙 Distances added to route. ${route.calculatedDistances.length} - 🧡💛 ${route.name}`
+          console.log(
+            `💙 Distances added to route: ${route.calculatedDistances.length} - 🧡 ${route.name}`
           );
 
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCalculatedDistances failed",
+            message: "🍎 addCalculatedDistances failed",
           });
         }
       });
-      app
+    app
       .route("/updateRouteHeading")
       .post(async (req: Request, res: Response) => {
         try {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           route.heading = req.body.heading;
           const result = await route.save();
-          log(
+          console.log(
             `💙💙 Route heading updated; heading: ${route.heading} - 🧡💛 ${route.name}`
           );
 
@@ -477,38 +464,35 @@ export class RouteController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 updateRouteHeading failed",
+            message: " 🍎 updateRouteHeading failed",
           });
         }
       });
     app.route("/addRoutePoints").post(async (req: Request, res: Response) => {
-      
       try {
-        const routeID = req.body.routeID
+        const routeID = req.body.routeID;
         const route: any = await Route.findOne({ routeID: routeID });
         if (!route) {
           res.status(400).json({
-          message: ` 🍎🍎🍎🍎 addRoutePoints failed: Route ${routeID} not found`,
-        });
-        return;
+            message: `🍎 addRoutePoints failed: Route ${routeID} not found`,
+          });
+          return;
         }
         if (req.body.clear === true) {
           route.routePoints = [];
         }
-        const list:any[] = req.body.routePoints
-        // console.log(list)
+        const list: any[] = req.body.routePoints;
         list.forEach((p: any) => {
           route.routePoints.push(p);
         });
         route.updated = new Date().toISOString();
-        // const heading = Heading.getRouteHeading(route);
-        // const length = DistanceUtilNew.calculateRouteLength(route);
-        // route.lengthInMetres = length;
-        // route.heading = heading;
         const result = await route.save();
-        console.log(`${route.routePoints.length} routePoints added to route ${route.name}`)
+        console.log(
+          `${route.routePoints.length} routePoints added to route ${route.name}`
+        );
 
-        res.status(200).json(result);
+        const result2 = await RouteController.setRoutePointIndexes(result);
+        res.status(200).json(result2);
       } catch (err) {
         console.error(err);
         res.status(400).json({
@@ -538,7 +522,7 @@ export class RouteController {
         // route.lengthInMetres = length;
         route.updated = new Date().toISOString();
         const result = await route.save();
-        log(
+        console.log(
           `💙💙 Points added to route: ${route.routePoints.length} - 🧡💛 ${route.name}`
         );
         res.status(200).json(result);
@@ -557,7 +541,7 @@ export class RouteController {
           const route: any = await Route.findOne({ routeID: req.body.routeID });
           if (!route) {
             // throw new Error('Route not found')
-            log(`No route found ... quit! 🍎 🍎 🍎`);
+            console.log(`No route found ... quit! 🍎 🍎 🍎`);
             res.status(400).json({
               message: "Yor shit is cooked! No route here!!",
             });
@@ -609,7 +593,7 @@ export class RouteController {
           route.routePoints = list;
           route.updated = new Date().toISOString();
           await route.save();
-          log(
+          console.log(
             `🔵 🔵 🔵 RoutePoint ${routePoint.index} updated and marked as a Landmark: ${routePoint.landmarkName}`
           );
           res.status(200).json({
@@ -621,7 +605,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 updateLandmarkRoutePoint failed",
+            message: " 🍎 updateLandmarkRoutePoint failed",
           });
         }
       });
@@ -629,10 +613,7 @@ export class RouteController {
     app
       .route("/findRoutePointNearestToPosition")
       .post(async (req: Request, res: Response) => {
-        log(
-          `💦  POST: /findRoutePointNearestToPosition requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const now = new Date().getTime();
           const latitude = parseFloat(req.body.latitude);
@@ -651,14 +632,11 @@ export class RouteController {
           });
         }
       });
-      //
+    //
     app
       .route("/findRoutesByLocation")
       .get(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  GET: /findRoutesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.query);
+        
         try {
           const now = new Date().getTime();
           const latitude = Number(req.query.latitude);
@@ -676,7 +654,7 @@ export class RouteController {
               },
             },
           });
-          log(` 🍎🍎 ROUTES FOUND  🍎 ${result.length}`);
+          console.log(`🍎 ROUTES FOUND  🍎 ${result.length}`);
           if (result.length == 0) {
             console.log(
               `No routes found around lat: ${latitude} lng: ${longitude}`
@@ -689,9 +667,8 @@ export class RouteController {
           // Calling gzip method
           zlib.gzip(JSON.stringify(result), (err, buffer) => {
             if (!err) {
-              // console.log(`buffer: ${buffer.toString('base64')}`);
               const end = new Date().getTime();
-              log(
+              console.log(
                 `🔆🔆🔆 elapsed time: 💙 ${
                   end / 1000 - now / 1000
                 } 💙 seconds for query: ${
@@ -724,10 +701,7 @@ export class RouteController {
     app
       .route("/findRoutesByLocationDate")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /findRoutesByLocationDate requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+
         try {
           const now = new Date().getTime();
           const latitude = parseFloat(req.body.latitude);
@@ -747,12 +721,12 @@ export class RouteController {
               },
             },
           });
-          log(` 🍎 ROUTES FOUND  🍎 ${result.length}`);
+          console.log(`🍎 ROUTES FOUND  🍎 ${result.length}`);
           const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 findRoutesByLocationDate: elapsed time: 💙 ${
+          console.log(
+            `🔆 findRoutesByLocationDate: elapsed time: 💙 ${
               end / 1000 - now / 1000
-            } 💙seconds for query: routes found: 🍎 ${result.length} 🍎`
+            } 💙 seconds for query: routes found: 🍎 ${result.length} 🍎`
           );
           if (result.length == 0) {
             console.log(
@@ -766,9 +740,8 @@ export class RouteController {
           // Calling gzip method
           zlib.gzip(JSON.stringify(result), (err, buffer) => {
             if (!err) {
-              // console.log(`buffer: ${buffer.toString('base64')}`);
               const end = new Date().getTime();
-              log(
+              console.log(
                 `🔆🔆🔆 elapsed time: 💙 ${
                   end / 1000 - now / 1000
                 } 💙 seconds for query: ${
@@ -799,10 +772,7 @@ export class RouteController {
       });
 
     app.route("/updateRoutePoint").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /updateRoutePoint requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
-      console.log(req.body);
+      
       try {
         const routePoint = req.body;
         if (!routePoint.landmarkID) {
@@ -829,7 +799,7 @@ export class RouteController {
         const length = DistanceUtilNew.calculateRouteLength(route);
         route.lengthInMetres = length;
         await route.save();
-        log(
+        console.log(
           `💙💙 💙💙 💙💙 RoutePoint index: ${routePoint.index} updated on route: 🧡💛 ${route.name}`
         );
         res.status(200).json({
@@ -846,13 +816,10 @@ export class RouteController {
     });
 
     app.route("/deleteRoute").post(async (req: Request, res: Response) => {
-      log(
-        `\n\n💦  POST: /deleteRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-      );
-      console.log(req.body);
+      
       try {
         const routeID = req.body.routeID;
-        
+
         const route: any = await Route.findOne({ routeID: routeID });
         if (!route) {
           res.status(400).json({
@@ -860,30 +827,36 @@ export class RouteController {
           });
           return;
         }
-        console.log(`💦 💦 This route ${route.name} is about to be removed ...`)
+        console.log(
+          `💦 💦 This route ${route.name} is about to be removed ...`
+        );
         const landmarks = await Landmark.find({
           "routeDetails.routeID": routeID,
         });
 
-        console.log(`💦 💦 This route ${route.name} passes thru ${landmarks.length} landmarks`)
+        console.log(
+          `💦 💦 This route ${route.name} passes thru ${landmarks.length} landmarks`
+        );
         landmarks.forEach(async (landmark: any) => {
           const list: any[] = [];
           landmark.routeDetails.forEach(async (rd: any) => {
             if (rd.routeID === routeID) {
-              console.log(`This route ${route.name} is removed from ${landmark.landmarkName}`)
+              console.log(
+                `This route ${route.name} is removed from ${landmark.landmarkName}`
+              );
             } else {
               list.push(rd);
             }
-          })
+          });
           landmark.routeDetails = list;
-          console.log(`💦 💦 ... about to update landmark ${landmark.landmarkName} `)
+          console.log(
+            `💦 💦 ... about to update landmark ${landmark.landmarkName} `
+          );
           await landmark.save();
         });
-        console.log(`💦 💦 ... about to delete route ${route.name}`) 
+        console.log(`💦 💦 ... about to delete route ${route.name}`);
         await Route.deleteOne({ routeID: routeID });
-        log(
-          `💙 💙 Route ${route.name} has been removed: `
-        );
+        console.log(`💙 💙 Route ${route.name} has been removed: `);
         res.status(200).json({
           message: `💙 💙 Route ${route.name} has been removed; Yebo! `,
         });
@@ -895,22 +868,63 @@ export class RouteController {
         });
       }
     });
+
+    //////
+    app.route("/fixRoutes").post(async (req: Request, res: Response) => {
+      console.log(req.body);
+      try {
+        const now = new Date().getTime();
+        await RouteController.fixRoutes();
+        const end = new Date().getTime();
+        console.log(
+          `🔆🔆🔆 elapsed time: 💙 ${
+            end / 1000 - now / 1000
+          } 💙 seconds for /fixRoutes`
+        );
+        res.status(200).json({
+          message: `💙 💙 Routes have been fixed ... please check routePoint indexes`,
+        });
+      } catch (err) {
+        console.log(err);
+        res.status(400).json({
+          error: err,
+          message: `🍎 fixRoutes failed: ${err}`,
+        });
+      }
+    });
   }
 
   public static async fixRoutes() {
     const list: any[] = await Route.find();
-    let cnt = 0;
-    for (const m of list) {
-      if (m.associationDetails)
-        m.associationID = m.associationDetails[0].associationID;
-      m.associationName = m.associationDetails[0].associationName;
-      await m.save();
-      cnt++;
-      log(`❇️❇️❇️ Route #${cnt} updated 🍎 ${m.associationName} 🍎 ${m.name}`);
+    console.log(`fixRoutes started for ${list.length} routes .....`);
+    for (const route of list) {
+      RouteController.setRoutePointIndexes(route);
     }
     return {
-      message: `${cnt} routes have been updated`,
+      message: `${list.length} routes have been updated`,
     };
+  }
+  public static async setRoutePointIndexes(route: any) {
+    const points: any[] = [];
+    if (route.routePoints) {
+      let cnt = 0;
+      route.routePoints.forEach((r: any) => {
+        r.index = cnt;
+        points.push(r);
+        cnt++;
+      });
+    }
+    route.routePoints = [];
+    const routeWithNoPoints = await route.save();
+    console.log(
+      `saved route without points ... about to add ${points.length} points`
+    );
+    routeWithNoPoints.routePoints = points;
+    const finalRoute = await routeWithNoPoints.save();
+    console.log(
+      `❇️❇️❇️ Route: ${finalRoute.routeID} 🍎 ${finalRoute.name} updated with ${finalRoute.routePoints.length} routePoints 🍎 `
+    );
+    return finalRoute
   }
 }
 

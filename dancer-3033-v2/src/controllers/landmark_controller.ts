@@ -9,13 +9,12 @@ import DistanceUtilNew from "../helpers/distance_util_new";
 import City from "../models/city";
 export class LandmarkController {
   public routes(app: any): void {
-    log(
+    console.log(
       `🏓    LandmarkController: 💙  setting up default Landmark routes ... 🥦🥦🥦 ${db.name} 🥦🥦🥦`
     );
     /////////
     app.route("/getLandmarkByID").get(async (req: Request, res: Response) => {
-      const msg = `🌽🌽🌽 getLandmarkByID requested `;
-      console.log(msg);
+      
 
       try {
         const c: any = await Landmark.findOne({
@@ -25,7 +24,7 @@ export class LandmarkController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: ` 🍎🍎🍎🍎 getLandmarkByID failed: ${err}`,
+          message: ` 🍎 getLandmarkByID failed: ${err}`,
         });
       }
     });
@@ -44,8 +43,26 @@ export class LandmarkController {
           const route: any = await Route.findOne({
             routeID: routeID,
           });
-
+          
+          console.log(`addRouteToLandmark: Route mongodb id: ${route.id} `)
+          const id = route.id
+          const upd = await Route.updateOne(
+            {
+              _id: new Types.ObjectId(id),
+              "routePoints.index": index,
+            },
+            {
+              $set: {
+                "routePoints.$.landmarkID": landmark.landmarkID,
+                "routePoints.$.landmarkName": landmark.landmarkName,
+                "routePoints.$.index": index,
+              },
+            }
+          );
+          
+          console.log(`addRouteToLandmark: Route: ${route.name} landmark: ${landmark.landmarkName}`)
           const point = route.routePoints[index];
+          console.log(`addRouteToLandmark: RoutePoint: ${JSON.stringify(point)} `)
           route.routePoints[index] = {
             'routeID': routeID,
             'name': routeName,
@@ -56,9 +73,12 @@ export class LandmarkController {
             'latitude': point.latitude,
             'longitude': point.longitude
           };
-          await route.save();
+          const savedRoute = await route.save();
+          const pointSaved = savedRoute.routePoints[index];
           console.log(
-            `Route point ${index} updated to landmark: ${landmark.landmarkName}`
+            `Route point ${index} updated routePoint  
+            - pointSaved: ${JSON.stringify(pointSaved)}`
+          
           );
           console.log(
             `🔆🔆🔆 addRouteToLandmark: routePoint inside route updated. 🍎 sweet!: 💙 `
@@ -92,19 +112,7 @@ export class LandmarkController {
             `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${route.name} 💦 💦`
           );
 
-          // await Route.updateOne(
-          //   {
-          //     _id: new Types.ObjectId(route.id),
-          //     "routePoints.index": index,
-          //   },
-          //   {
-          //     $set: {
-          //       "routePoints.$.landmarkID": landmark.landmarkID,
-          //       "routePoints.$.landmarkName": landmark.landmarkName,
-          //       "routePoints.$.index": index,
-          //     },
-          //   }
-          // );
+         
 
           res.status(200).json({
             message: `Route ${routeName} added to Landmark: ${result.landmarkName}:  `,
@@ -134,8 +142,9 @@ export class LandmarkController {
 
           if (!route) {
             res.status(400).json({
-              message: ` 🍎 deleteRouteFromLandmarks failed; route ${routeID} not found`,
+              message: `🍎 deleteRouteFromLandmarks failed; route ${routeID} not found`,
             });
+            return;
           }
 
           const list: any[] = [];
@@ -234,7 +243,7 @@ export class LandmarkController {
           landmark.routeDetails = list;
           landmark.updated = new Date().toISOString();
           await landmark.save();
-          // log(result);
+          
           const list2: any[] = [];
           route.routePoints.forEach((element: any) => {
             if (element.index === index) {
@@ -315,9 +324,7 @@ export class LandmarkController {
       const landmark: any = await Landmark.findOne({
         landmarkID: landmarkID,
       });
-      console.log(
-        `😍 😍 😍 😍 adding cities to landmark: ${landmark.landmarkName}`
-      );
+      
 
       const pos = JSON.parse(JSON.stringify(landmark.position));
       const latitude = pos.coordinates[1];
@@ -344,9 +351,8 @@ export class LandmarkController {
       landmark.updated = new Date().toISOString();
       const result = await landmark.save();
 
-      log(
-        `💛 💛 💛 💛 💙 cities added to landmark: 💙 ${landmark.landmarkName} 
-        🍎 = ${result.cities.length} cities added! Yebo!!!: 💙 `
+      console.log(
+        `💛 ${result.cities.length} cities added to landmark: 💙 ${landmark.landmarkName} - Yebo!!!: 💙 `
       );
       return result;
     }
@@ -354,10 +360,7 @@ export class LandmarkController {
     app
       .route("/findLandmarksByLocation")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /findLandmarksByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const now = new Date().getTime();
           const latitude = parseFloat(req.body.latitude);
@@ -376,7 +379,7 @@ export class LandmarkController {
           });
 
           const end = new Date().getTime();
-          log(
+          console.log(
             `🔆🔆🔆 findLandmarksByLocation: elapsed time: 💙 ${
               end / 1000 - now / 1000
             } 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`
@@ -399,10 +402,7 @@ export class LandmarkController {
     app
       .route("/findLandmarksByLocationDate")
       .post(async (req: Request, res: Response) => {
-        log(
-          `\n\n💦  POST: /findLandmarksByLocationDate requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
-        );
-        console.log(req.body);
+        
         try {
           const now = new Date().getTime();
           const latitude = parseFloat(req.body.latitude);
@@ -423,7 +423,7 @@ export class LandmarkController {
           });
 
           const end = new Date().getTime();
-          log(
+          console.log(
             `🔆🔆🔆 findLandmarksByLocationDate: elapsed time: 💙 ${
               end / 1000 - now / 1000
             } 💙 seconds for query: landmarks found: 🍎 ${result.length} 🍎`
@@ -453,8 +453,8 @@ export class LandmarkController {
             "routeDetails.routeID": req.body.routeID,
           });
           const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 getLandmarksByRoute: elapsed time: 💙 ${
+          console.log(
+            `🔆 getLandmarksByRoute: elapsed time: 💙 ${
               end / 1000 - now / 1000
             } 💙 seconds for query. found ${result.length} landmarks`
           );
@@ -463,19 +463,12 @@ export class LandmarkController {
           result.forEach((r) => {
             list.push(r.toJSON());
           });
-          if (list.length == 0) {
-            res.status(400).json({
-              message: "No Data Found",
-            });
-            return;
-          }
 
-          //const sorted = DistanceUtilNew.reorder(route?.toJSON(), list);
           res.status(200).json(list);
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getLandmarks failed",
+            message: " 🍎 getLandmarks failed",
           });
         }
       });
@@ -485,13 +478,12 @@ export class LandmarkController {
         try {
           const now = new Date().getTime();
 
-          log(`💦 💦 💦 💦 💦 💦 routeIDs: ☘️☘️ ${req.body.routeIDs} ☘️☘️`);
           const result = await Landmark.find({
             "routeDetails.routeID": { $in: req.body.routeIDs },
           });
           const end = new Date().getTime();
-          log(
-            `🔆🔆🔆 getLandmarksByRoutes: elapsed time: 💙 ${
+          console.log(
+            `🔆 getLandmarksByRoutes: elapsed time: 💙 ${
               end / 1000 - now / 1000
             } 💙 seconds for query. found ${result.length} landmarks`
           );
@@ -519,7 +511,7 @@ export class LandmarkController {
     });
     app.route("/addLandmark").post(async (req: Request, res: Response) => {
       try {
-        console.log(req.body);
+        
         const landmark: any = new Landmark(req.body);
         landmark.landmarkID = uuid();
         landmark.created = new Date().toISOString();
@@ -532,7 +524,7 @@ export class LandmarkController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addLandmark failed",
+          message: " 🍎 addLandmark failed",
         });
       }
     });

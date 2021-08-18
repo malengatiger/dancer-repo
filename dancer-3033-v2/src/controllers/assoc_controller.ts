@@ -10,29 +10,23 @@ export class AssociationController {
         );
         /////////
         app.route("/getAssociations").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦  POST: /getAssociations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+            
             try {
                 const asses = await Association.find();
-                log(`🍎 🍎 🍎 🍎 getAssociations found :${asses.length} asses :)`)
+                log(`🍎 getAssociations found :${asses.length} asses :)`)
                 res.status(200).json(asses);
             } catch (err) {
                 res.status(400).json(
                     {
                         error: err,
-                        message: `🍎 🍎 🍎 🍎 getAssociations failed:${err}`
+                        message: `🍎 getAssociations failed:${err}`
                     }
                 )
             }
         });
 
         app.route("/addAssociation").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦  POST: /addAssociation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+           
             try {
                 const association: any = new Association(req.body);
                 association.associationID = uuid();
@@ -68,10 +62,7 @@ export class AssociationController {
         });
 
         app.route("/getSettingsModel").post(async (req: Request, res: Response) => {
-            log(
-                `\n\n💦 GET: /getSettingsModel requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
-            );
-            console.log(req.body);
+            
             try {
                 const result = await SettingsModel .find({ associationID: req.body.associationID }).sort({created: "descending"});;
                 log(`🍎 🍎 🍎 🍎 getSettingsModel found :${result.length} settings models :)`)

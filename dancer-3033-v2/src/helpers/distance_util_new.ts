@@ -41,7 +41,7 @@ class DistanceUtilNew {
   }
 
   static calculateRouteLength(route:any) : Number {
-    console.log(route);
+    
     let total = 0.0;
     let index = 0;
     let prevPoint:any;
@@ -59,16 +59,16 @@ class DistanceUtilNew {
       index++;
     });
     console.log(
-      `💙 💙 💙 Mexico has paid for the wall!!! 💙 💙 💙 , Length of route: ${
+      `💙 Mexico has paid for the wall!!! 💙 : Length of route: ${
         route.name
-      } is 🏀 ${total} metres or 🏀 ${total / 1000} kilometres`
+      } is 🏀 ${total} metres or 🏀 ${total / 1000} kilometres (from js calculateRouteLength)`
     );
     return total;
   }
 
   static reorder(route:any, landmarks:any) {
     console.log(
-      `🧡 🧡 🧡 Sorting landmarks by distance from start of route 🍎 landmarks: ${landmarks.length}`
+      `🧡 Sorting landmarks by distance from start of route 🍎 landmarks: ${landmarks.length}`
     );
     const distances:any[] = [];
     const landmarkPoints:any[] = [];
