@@ -136,6 +136,10 @@ export class LandmarkController {
             "routeDetails.routeID": routeID,
           });
 
+          console.log(
+            `.... 🔆 deleteRouteFromLandmarks: ${landmarks.length} landmarks found`
+          );
+
           const route: any = await Route.findOne({
             routeID: routeID,
           });
@@ -146,7 +150,9 @@ export class LandmarkController {
             });
             return;
           }
-
+          console.log(
+            `.... 🔆 deleteRouteFromLandmarks: route: ${route.name}found`
+          );
           const list: any[] = [];
           console.log(
             `.... 🔆 update route: ${route.name} with ${route.routePoints.length} routePoints set to landmark nulled`
@@ -162,15 +168,18 @@ export class LandmarkController {
               'longitude': rp.longitude,
             });
           });
-        
+        //10213
           console.log(
-            `.... 🔆 route: ${route.name} has ${list.length} nulled points`
+            `.... 🔆 route: ${route.name} has ${list.length} nulled points, no landmarks here`
           );
-          route.routePoints = list;
-          route.updated = new Date().toISOString();
-          await route.save();
+          route.routePoints = []
+          const updatedRoute = await route.save();
+          updatedRoute.routePoints = list;
+          updatedRoute.calculatedDistances = [];
+          updatedRoute.updated = new Date().toISOString();
+          await updatedRoute.save();
           console.log(
-            `.... 🔆 route updated: ${route.name}, all routePoints must be nulled out re landmark`
+            `.... 🔆 route updated: ${updatedRoute.name}, all routePoints must be nulled out re landmark`
           );
 
           landmarks.forEach(async (mark: any) => {
@@ -380,7 +389,7 @@ export class LandmarkController {
 
           const end = new Date().getTime();
           console.log(
-            `🔆🔆🔆 findLandmarksByLocation: elapsed time: 💙 ${
+            `🔆 findLandmarksByLocation: elapsed time: 💙 ${
               end / 1000 - now / 1000
             } 💙seconds for query: landmarks found: 🍎 ${result.length} 🍎`
           );
@@ -394,7 +403,7 @@ export class LandmarkController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findLandmarksByLocation failed",
+            message: "🍎 findLandmarksByLocation failed",
           });
         }
       });
@@ -424,7 +433,7 @@ export class LandmarkController {
 
           const end = new Date().getTime();
           console.log(
-            `🔆🔆🔆 findLandmarksByLocationDate: elapsed time: 💙 ${
+            `🔆 findLandmarksByLocationDate: elapsed time: 💙 ${
               end / 1000 - now / 1000
             } 💙 seconds for query: landmarks found: 🍎 ${result.length} 🍎`
           );
@@ -439,7 +448,7 @@ export class LandmarkController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findLandmarksByLocationDate failed",
+            message: "🍎 findLandmarksByLocation🍎 Date failed",
           });
         }
       });
@@ -472,30 +481,34 @@ export class LandmarkController {
           });
         }
       });
-    app
-      .route("/getLandmarksByRoutes")
-      .post(async (req: Request, res: Response) => {
-        try {
-          const now = new Date().getTime();
+    // app
+    //   .route("/getLandmarksByRoutes")
+    //   .post(async (req: Request, res: Response) => {
+    //     try {
+    //       const now = new Date().getTime();
 
-          const result = await Landmark.find({
-            "routeDetails.routeID": { $in: req.body.routeIDs },
-          });
-          const end = new Date().getTime();
-          console.log(
-            `🔆 getLandmarksByRoutes: elapsed time: 💙 ${
-              end / 1000 - now / 1000
-            } 💙 seconds for query. found ${result.length} landmarks`
-          );
-
-          res.status(200).json(result);
-        } catch (err) {
-          res.status(400).json({
-            error: err,
-            message: " 🍎🍎🍎🍎 getLandmarks failed",
-          });
-        }
-      });
+    //       const result = await Landmark.find({
+    //         "routeDetails.routeID": { $in: req.body.routeIDs },
+    //       });
+    //       const end = new Date().getTime();
+    //       console.log(
+    //         `🔆 getLandmarksByRoutes: elapsed time: 💙 ${
+    //           end / 1000 - now / 1000
+    //         } 💙 seconds for query. found ${result.length} landmarks`
+    //       );
+    //       if (result.length == 0) {
+    //         res.status(200).json([]);
+    //       } else {
+    //       res.status(200).json(result);
+    //       }
+    //     } catch (err) {
+    //       res.status(400).json({
+    //         error: err,
+    //         message: "🍎 getLandmarks failed",
+    //       });
+    //     }
+      
+    //   });
 
     app.route("/getLandmarks").post(async (req: Request, res: Response) => {
       try {

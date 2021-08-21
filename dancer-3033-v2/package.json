@@ -48,6 +48,7 @@
     "node-forge": ">=0.10.0",
     "qrcode": "^1.4.4",
     "request": "^2.81.0",
+    "response-time": "^2.3.2",
     "socket.io-client": "^2.4.0",
     "stringbuffer": "^1.0.0",
     "supertest": "^6.1.3",

@@ -139,12 +139,12 @@ export class RouteController {
       try {
         const routeID: any = req.query.routeID;
         const now = new Date().getTime();
+        console.log(`🧩🧩 Getting route: ${routeID}`);
         const route: any = await Route.findOne({ routeID: routeID });
 
         if (route) {
           console.log(
-            `🧩 🧩 EXPENSIVE CALL! 🍎 route: ${route.name}, routePoints:  
-            🍎 ${route.routePoints.length} 🍎 `
+            `🧩🧩 EXPENSIVE CALL! 🍎 route: ${route.name}, routePoints: 🍎 ${route.routePoints.length} 🍎 `
           );
           if (route.routePoints.length > 0) {
             if (

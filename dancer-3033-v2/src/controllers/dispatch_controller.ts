@@ -6,6 +6,8 @@ import uuid = require("uuid");
 import MarshalFenceDwellEvent from "../models/marshal_fence_dwell_event";
 import MarshalFenceExitEvent from "../models/marshal_fence_exit_event";
 import VehicleArrival from "../models/vehicle_arrival";
+import TripComplete from "../models/trip_complete";
+import TripStart from "../models/trip_start";
 
 export class DispatchController {
 
@@ -67,6 +69,64 @@ export class DispatchController {
           {
             error: err,
             message: ' 🍎🍎🍎🍎 addDispatchRecord failed'
+          }
+        )
+      }
+    });
+
+    app.route("/addTripComplete").post(async (req: Request, res: Response) => {
+      
+      try {
+        const tripComplete: any = new TripComplete(req.body);
+
+        if (!tripComplete) {
+          const msg = 'DispatchController: 🍎 tripComplete failed: Missing trip info'
+          console.error(msg)
+          res.status(400).json(
+            {
+              message: msg
+            }
+          )
+          return
+        }
+        
+        const result = await tripComplete.save();
+        res.status(200).json(result);
+      } catch (err) {
+        console.error('DispatchController: 💦 tripComplete failed', err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎 tripComplete failed'
+          }
+        )
+      }
+    });
+
+    app.route("/addTripStart").post(async (req: Request, res: Response) => {
+      
+      try {
+        const tripStart: any = new TripStart(req.body);
+
+        if (!tripStart) {
+          const msg = 'DispatchController: 🍎 tripStart failed: Missing trip info'
+          console.error(msg)
+          res.status(400).json(
+            {
+              message: msg
+            }
+          )
+          return
+        }
+        
+        const result = await tripStart.save();
+        res.status(200).json(result);
+      } catch (err) {
+        console.error('DispatchController: 💦 tripStart failed', err)
+        res.status(400).json(
+          {
+            error: err,
+            message: ' 🍎 tripStart failed'
           }
         )
       }
