@@ -601,13 +601,13 @@ export class VehicleController {
             created: { $gt: startDate },
           });
           log(
-            `🌽🌽🌽 getLatestVehiclesByAssociation vehicles found: ${result.length}`
+            `🌽 getLatestVehiclesByAssociation vehicles found: ${result.length}`
           );
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getLatestVehiclesByAssociation failed",
+            message: "🍎 getLatestVehiclesByAssociation failed",
           });
         }
       });
@@ -622,13 +622,13 @@ export class VehicleController {
             updated: { $gt: startDate },
           });
           log(
-            `🌽🌽🌽 getLatestVehiclesByAssociation vehicles found: ${result.length}`
+            `🌽 getUpdatedVehiclesByAssociation vehicles found: ${result.length}`
           );
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getLatestVehiclesByAssociation failed",
+            message: "🍎 getUpdatedVehiclesByAssociation failed",
           });
         }
       });

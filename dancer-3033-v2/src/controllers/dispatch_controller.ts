@@ -80,7 +80,7 @@ export class DispatchController {
         const tripComplete: any = new TripComplete(req.body);
 
         if (!tripComplete) {
-          const msg = 'DispatchController: 🍎 tripComplete failed: Missing trip info'
+          const msg = 'DispatchController: 🍎 tripComplete failed: Missing trip parameters'
           console.error(msg)
           res.status(400).json(
             {
@@ -109,7 +109,7 @@ export class DispatchController {
         const tripStart: any = new TripStart(req.body);
 
         if (!tripStart) {
-          const msg = 'DispatchController: 🍎 tripStart failed: Missing trip info'
+          const msg = 'DispatchController: 🍎 tripStart failed: Missing trip parameters'
           console.error(msg)
           res.status(400).json(
             {

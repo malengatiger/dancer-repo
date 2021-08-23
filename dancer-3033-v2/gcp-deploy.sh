@@ -1,7 +1,9 @@
-echo "🍎 🍎 🍎 Deploy TaxiYam Backend ............."
-echo "Login to GCP using  🎽 gcloud auth login 🎽"
+echo "🍎 🍎 🍎 Build Docker image and Deploy AftaRobot Backend ............."
 
+echo "🎽 🎽 builds submit: starting to build image  🎽 🎽"
 gcloud builds submit --tag gcr.io/taxiyam-2021/arwebapi
-gcloud beta run deploy --image gcr.io/taxiyam-2021/arwebapi --platform managed
 
-echo "🍎 🍎 🍎 End of TaxiYam Deploymnet on Google Cloud Platform.  🍐 YEBO GOGO!!  🍐"
+echo "🎽 🎽 beta run deploy: ... starting ....  🎽 🎽"
+gcloud beta run deploy arwebapi --image gcr.io/taxiyam-2021/arwebapi --platform managed
+
+echo "🍎 🍎 🍎 End of AftaRobot Deploymnet on Google Cloud Platform.  🍐 YEBO GOGO!!  🍐"
