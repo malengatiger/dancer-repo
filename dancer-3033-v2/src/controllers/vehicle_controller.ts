@@ -568,7 +568,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getVehiclesByOwner failed",
+            message: "🍎 getVehiclesByOwner failed",
           });
         }
       });
@@ -580,13 +580,13 @@ export class VehicleController {
             associationID: req.body.associationID,
           });
           log(
-            `🌽🌽🌽 getVehiclesByAssociation vehicles found: ${result.length}`
+            `🌽 getVehiclesByAssociation vehicles found: ${result.length} cars`
           );
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getVehiclesByAssociation failed",
+            message: "🍎 getVehiclesByAssociation failed",
           });
         }
       });
