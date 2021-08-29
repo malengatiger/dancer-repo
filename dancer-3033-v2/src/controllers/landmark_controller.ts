@@ -481,34 +481,34 @@ export class LandmarkController {
           });
         }
       });
-    // app
-    //   .route("/getLandmarksByRoutes")
-    //   .post(async (req: Request, res: Response) => {
-    //     try {
-    //       const now = new Date().getTime();
+     app
+       .route("/getLandmarksByRoutes")
+       .post(async (req: Request, res: Response) => {
+         try {
+           const now = new Date().getTime();
 
-    //       const result = await Landmark.find({
-    //         "routeDetails.routeID": { $in: req.body.routeIDs },
-    //       });
-    //       const end = new Date().getTime();
-    //       console.log(
-    //         `🔆 getLandmarksByRoutes: elapsed time: 💙 ${
-    //           end / 1000 - now / 1000
-    //         } 💙 seconds for query. found ${result.length} landmarks`
-    //       );
-    //       if (result.length == 0) {
-    //         res.status(200).json([]);
-    //       } else {
-    //       res.status(200).json(result);
-    //       }
-    //     } catch (err) {
-    //       res.status(400).json({
-    //         error: err,
-    //         message: "🍎 getLandmarks failed",
-    //       });
-    //     }
+           const result = await Landmark.find({
+             "routeDetails.routeID": { $in: req.body.routeIDs },
+           });
+           const end = new Date().getTime();
+           console.log(
+             `🔆 getLandmarksByRoutes: elapsed time: 💙 ${
+               end / 1000 - now / 1000
+             } 💙 seconds for query. found ${result.length} landmarks`
+           );
+           if (result.length == 0) {
+             res.status(200).json([]);
+           } else {
+           res.status(200).json(result);
+           }
+         } catch (err) {
+           res.status(400).json({
+             error: err,
+             message: "🍎 getLandmarks failed",
+           });
+         }
       
-    //   });
+       });
 
     app.route("/getLandmarks").post(async (req: Request, res: Response) => {
       try {
