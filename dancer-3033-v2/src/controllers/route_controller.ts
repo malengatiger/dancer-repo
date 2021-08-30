@@ -114,7 +114,7 @@ export class RouteController {
           const assID: any = req.body.associationID;
           const result = await Route.find(
             { associationID: assID },
-            { routeID: 1, name: 2 }
+            { routeID: 1, name: 2, associationID: 3, associationName: 4 }
           );
           res.status(200).json(result);
           console.log(
@@ -344,9 +344,6 @@ export class RouteController {
           }
           estimation.created = new Date().toISOString();
           await estimation.save();
-          console.log(
-            "... Estimation has been saved; sending fcm message ... "
-          );
           await Messaging.sendRouteDistanceEstimation(req.body);
 
           res.status(200).json({
@@ -356,7 +353,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: "🍎🍎 addRouteDistanceEstimation failed",
+            message: "🍎 addRouteDistanceEstimation failed",
           });
         }
       });

@@ -75,8 +75,8 @@ export class VehicleController {
         } catch (err) {
           log(err);
           res.status(400).json({
-            error: err.message,
-            message: " 🍎🍎🍎🍎 findVehiclesByLocation failed",
+            error: err,
+            message: "🍎 findVehiclesByLocation failed",
           });
         }
       });
@@ -119,7 +119,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findVehicleArrivalsByLocation failed",
+            message: "🍎 findVehicleArrivalsByLocation failed",
           });
         }
       });
@@ -143,7 +143,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getVehicleArrivalsByLandmark failed",
+            message: "🍎 getVehicleArrivalsByLandmark failed",
           });
         }
       });
@@ -175,7 +175,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getVehicleArrivalsByLandmarkIDs failed",
+            message: "🍎 getVehicleArrivalsByLandmarkIDs failed",
           });
         }
       });
@@ -208,7 +208,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getVehicleArrivalsByVehicle failed",
+            message: "🍎 getVehicleArrivalsByVehicle failed",
           });
         }
       });
@@ -233,7 +233,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getVehicleDeparturesByVehicle failed",
+            message: "🍎 getVehicleDeparturesByVehicle failed",
           });
         }
       });
@@ -258,7 +258,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getVehicleArrivalsByLandmark failed",
+            message: "🍎 getVehicleArrivalsByLandmark failed",
           });
         }
       });
@@ -282,7 +282,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getVehicleDeparturesByLandmarkIDs failed",
+            message: "🍎 getVehicleDeparturesByLandmarkIDs failed",
           });
         }
       });
