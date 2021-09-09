@@ -11,7 +11,7 @@ const SettingsModelSchema = new mongoose.Schema(
         numberOfLandmarksToScan: {type: Number, required: false},
         distanceFilter: {type: Number, required: false},
         vehicleGeoQueryRadius: {type: Number, required: true},
-        associationId: {type: String, required: true}, 
+        associationID: {type: String, required: true}, 
         created: {type: String, required: true, default: new Date().toISOString()},
 
     }

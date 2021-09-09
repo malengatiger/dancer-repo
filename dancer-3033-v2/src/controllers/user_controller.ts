@@ -164,10 +164,12 @@ export class UserController {
           }
 
           const result = await user.save();
-          // log(result);
+          console.log(`user updated: ${result}`);
           res.status(200).json(result);
         } else {
-          throw "User not found";
+          res.status(400).json({
+            message: " 🍎 updateUser failed: User not found",
+          });
         }
       } catch (err) {
         console.log(err);
