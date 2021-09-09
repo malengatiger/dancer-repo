@@ -11,9 +11,9 @@ export class AppController {
     logBlue(
       `🏓    AppController:  💙 setting up / and /ping routes: ☘️ use to check if API is up ... ${app.name}`
     );
-   
+
     // app.use(async function myAuth(req: Request, res: Response, next) {
-      
+
     //   // console.log("🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 🌺 JWT authentication:  🍏 🍏 🍏 app.use : 🍏 perform authentication with token 🌺 🌺 🌺 🌺 ", new Date().toISOString());
     //   const authHeader = req.headers.authorization;
     //   console.log(`🌺 authenticating this url: ${req.url} 💛 ${new Date().toISOString()}`)
@@ -25,7 +25,7 @@ export class AppController {
     //       //   `💛 💛 💛 result of verify: ${JSON.stringify(result)} `
     //       // );
     //       return next();
-          
+
     //     } catch (err) {
     //       console.error(err);
     //       console.log(
@@ -39,9 +39,9 @@ export class AppController {
     //     );
     //     return next('You are truly fucked!')
     //   }
-           
+
     // });
-    
+
     app.route("/").get((req: Request, res: Response) => {
       const msg = `🧡💛🧡💛  Hello World from MizDancer 💙💙💙💙💙💙 Azure 🏓 DOCKER CONTAINER  is UP!  💙💙💙💙💙💙 🌽🌽🌽 ${new Date().toISOString()} 🌽🌽🌽`;
       logBlue(msg);
@@ -49,7 +49,6 @@ export class AppController {
         message: msg,
       });
     });
-
 
     app.route("/ping").get((req: Request, res: Response) => {
       logGreen(
@@ -101,20 +100,19 @@ export class AppController {
           console.log(
             `💛 💛 💛 💛 💛 💛 result of verify: ${JSON.stringify(result)} `
           );
-          res.status(200)
-          
+          res.status(200);
         } catch (err) {
           console.error(err);
           console.log(
             "👿 👿 👿 👿 invalid authorization header found. 👿 Forbidden! 👿 "
           );
-          res.status(401)
+          res.status(401);
         }
       } else {
         console.log(
           "👿 👿 👿 👿 No authorization header found. 👿 Forbidden! 👿 "
         );
-        res.status(401)
+        res.status(401);
       }
     }
 
@@ -143,7 +141,6 @@ export class AppController {
     app
       .route("/addAppTermination")
       .post(async (req: Request, res: Response) => {
-        
         try {
           const c: any = new AppTermination(req.body);
           c.created = new Date().toISOString();
@@ -154,23 +151,22 @@ export class AppController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 addAppTermination failed: ${err}`,
+            message: `🍎 addAppTermination failed: ${err}`,
           });
         }
       });
 
-      app
+    app
       .route("/getAppTerminations")
       .post(async (req: Request, res: Response) => {
-        
         try {
-          const c = AppTermination.find({})
+          const c = AppTermination.find({});
           res.status(200).json(c);
         } catch (err) {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 getAppTerminations failed: ${err}`,
+            message: `🍎 getAppTerminations failed: ${err}`,
           });
         }
       });

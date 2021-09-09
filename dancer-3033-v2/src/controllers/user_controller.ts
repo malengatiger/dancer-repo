@@ -23,7 +23,7 @@ export class UserController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 getUsers failed",
+          message: " 🍎 getUsers failed",
         });
       }
     });
@@ -41,7 +41,7 @@ export class UserController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 findUserByEmail failed",
+          message: " 🍎 findUserByEmail failed",
         });
       }
     });
@@ -60,11 +60,11 @@ export class UserController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getUsersByAssociation failed",
+            message: " 🍎 getUsersByAssociation failed",
           });
         }
       });
-      app
+    app
       .route("/getConductorsByAssociation")
       .post(async (req: Request, res: Response) => {
         log(
@@ -80,11 +80,10 @@ export class UserController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getConductorsByAssociation failed",
+            message: " 🍎 getConductorsByAssociation failed",
           });
         }
       });
-
 
     app.route("/userLogin").post(async (req: Request, res: Response) => {
       log(
@@ -114,7 +113,7 @@ export class UserController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 User login failed",
+          message: " 🍎 User login failed",
         });
       }
     });
@@ -141,7 +140,7 @@ export class UserController {
         console.error("addUser failed", err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addUser failed",
+          message: " 🍎 addUser failed",
         });
       }
     });
@@ -174,7 +173,7 @@ export class UserController {
         console.log(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 updateUser failed",
+          message: " 🍎 updateUser failed",
         });
       }
     });
@@ -193,7 +192,7 @@ export class UserController {
         console.log(err, "deleteUser failed");
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 deleteUser failed",
+          message: " 🍎 deleteUser failed",
         });
       }
     });

@@ -24,9 +24,12 @@ expressApp.use((req: Request, res: Response, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With-Content-Type, Accept"
   );
+
   const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
-  console.log(`💙 ... request URL received: 💙 ${fullUrl} 💙`);
-  // console.log(`💙 response header: 💙 ${res.header.arguments()} 💙`);
+  if (req.get("host")) {
+    console.log(`💙 ... request URL received: 💙 ${fullUrl} 💙`);
+    // console.log(`💙 response header: 💙 ${res.header.arguments()} 💙`);
+  }
   next();
 });
 

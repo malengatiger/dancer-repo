@@ -10,19 +10,19 @@ export class CityController {
       `🏓    CityController:  💙  setting up default City routes ...`
     );
     app.route("/getCityByID").get(async (req: Request, res: Response) => {
-        const msg = `🌽🌽🌽 getCityByID requested `;
-        console.log(msg);
-  
-        try {
-          const c: any = await City.findOne({cityID: req.query.cityID})
-          res.status(200).json(c);
-        } catch (err) {
-          res.status(400).json({
-            error: err,
-            message: ` 🍎🍎🍎🍎 getCityByID failed: ${err}`,
-          });
-        }
-      });
+      const msg = `🌽🌽🌽 getCityByID requested `;
+      console.log(msg);
+
+      try {
+        const c: any = await City.findOne({ cityID: req.query.cityID });
+        res.status(200).json(c);
+      } catch (err) {
+        res.status(400).json({
+          error: err,
+          message: ` 🍎 getCityByID failed: ${err}`,
+        });
+      }
+    });
     app.route("/addCity").post(async (req: Request, res: Response) => {
       const msg = `🌽🌽🌽 addCity requested `;
       console.log(msg);
@@ -37,7 +37,7 @@ export class CityController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: ` 🍎🍎🍎🍎 addCity failed: ${err}`,
+          message: ` 🍎 addCity failed: ${err}`,
         });
       }
     });
@@ -51,7 +51,7 @@ export class CityController {
     //         res.status(400).json(
     //             {
     //                 error: err,
-    //                 message: ` 🍎🍎🍎🍎 deleteCity failed: ${err}`
+    //                 message: ` 🍎 deleteCity failed: ${err}`
     //             }
     //         )
     //     }
@@ -70,7 +70,7 @@ export class CityController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addCountry failed",
+          message: " 🍎 addCountry failed",
         });
       }
     });
@@ -109,7 +109,7 @@ export class CityController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findCitiesByLocation failed",
+            message: " 🍎 findCitiesByLocation failed",
           });
         }
       });
@@ -155,7 +155,7 @@ export class CityController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findCitiesByLocationDate failed",
+            message: " 🍎 findCitiesByLocationDate failed",
           });
         }
       });
@@ -179,7 +179,7 @@ export class CityController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCitiesByCountry failed",
+            message: " 🍎 getCitiesByCountry failed",
           });
         }
       });
@@ -203,7 +203,7 @@ export class CityController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCitiesByCountry failed",
+            message: " 🍎 getCitiesByCountry failed",
           });
         }
       });
@@ -229,7 +229,7 @@ export class CityController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCitiesByProvinceName failed",
+            message: " 🍎 getCitiesByProvinceName failed",
           });
         }
       });
@@ -251,7 +251,7 @@ export class CityController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 getCountries failed",
+          message: " 🍎 getCountries failed",
         });
       }
     });

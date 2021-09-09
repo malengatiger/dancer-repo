@@ -29,7 +29,7 @@ export class VehicleController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addVehicleCommuterNearby failed",
+            message: " 🍎 addVehicleCommuterNearby failed",
           });
         }
       });
@@ -325,7 +325,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findVehicleDeparturesByLocation failed",
+            message: " 🍎 findVehicleDeparturesByLocation failed",
           });
         }
       });
@@ -344,7 +344,7 @@ export class VehicleController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addVehicle failed",
+          message: " 🍎 addVehicle failed",
         });
       }
     });
@@ -361,7 +361,7 @@ export class VehicleController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addVehicleOccupancyRecord failed",
+            message: " 🍎 addVehicleOccupancyRecord failed",
           });
         }
       });
@@ -372,7 +372,7 @@ export class VehicleController {
           const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
           if (!c) {
             res.status(400).json({
-              message: "🍎🍎🍎🍎 updateVehicleOwner failed. Vehicle not found",
+              message: "🍎 updateVehicleOwner failed. Vehicle not found",
             });
           }
           c.ownerID = req.body.ownerID;
@@ -384,7 +384,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 updateVehicleOwner failed",
+            message: "🍎 updateVehicleOwner failed",
           });
         }
       });
@@ -393,7 +393,7 @@ export class VehicleController {
         const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
         if (!c) {
           res.status(400).json({
-            message: "🍎🍎🍎🍎 addVehiclePhoto failed. Vehicle not found",
+            message: "🍎 addVehiclePhoto failed. Vehicle not found",
           });
         }
         const photo = {
@@ -410,7 +410,7 @@ export class VehicleController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: "🍎🍎🍎🍎 addVehiclePhoto failed",
+          message: "🍎 addVehiclePhoto failed",
         });
       }
     });
@@ -422,7 +422,7 @@ export class VehicleController {
         const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
         if (!c) {
           res.status(400).json({
-            message: "🍎🍎🍎🍎 addVehicleVideo failed. Vehicle not found",
+            message: "🍎 addVehicleVideo failed. Vehicle not found",
           });
         }
         const video = {
@@ -439,7 +439,7 @@ export class VehicleController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: "🍎🍎🍎🍎 addVehicleVideo failed",
+          message: "🍎 addVehicleVideo failed",
         });
       }
     });
@@ -457,7 +457,7 @@ export class VehicleController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 addVehicleArrival failed",
+            message: "🍎 addVehicleArrival failed",
           });
         }
       });
@@ -477,7 +477,7 @@ export class VehicleController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 addVehicleRouteAssignment failed",
+            message: "🍎 addVehicleRouteAssignment failed",
           });
         }
       });
@@ -495,13 +495,20 @@ export class VehicleController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 addVehicleDeparture failed",
+            message: "🍎 addVehicleDeparture failed",
           });
         }
       });
     app
       .route("/addVehicleLocation")
       .post(async (req: Request, res: Response) => {
+        if (req.body.vehicleReg === "JB68BJGP") {
+          console.log(
+            "👽👽👽 👽👽👽 Ignoring JB68BJGP ... remove this when new app installed on the car"
+          );
+          res.status(200).json(req.body);
+          return;
+        }
         try {
           const c: any = new VehicleLocation(req.body);
           c.created = new Date().toISOString();
@@ -516,7 +523,7 @@ export class VehicleController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 addVehicleLocation failed",
+            message: "🍎 addVehicleLocation failed",
           });
         }
       });
@@ -531,7 +538,7 @@ export class VehicleController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: "🍎🍎🍎🍎 addVehicleType failed",
+          message: "🍎 addVehicleType failed",
         });
       }
     });
@@ -543,7 +550,7 @@ export class VehicleController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: "🍎🍎🍎🍎 getVehicleTypes failed",
+          message: "🍎 getVehicleTypes failed",
         });
       }
     });
@@ -555,7 +562,7 @@ export class VehicleController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: "🍎🍎🍎🍎 getVehicles failed",
+          message: "🍎 getVehicles failed",
         });
       }
     });
@@ -645,7 +652,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getVehicleRoutesByAssociation failed",
+            message: "🍎 getVehicleRoutesByAssociation failed",
           });
         }
       });
@@ -660,7 +667,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getVehicleRoutesByVehicle failed",
+            message: "🍎 getVehicleRoutesByVehicle failed",
           });
         }
       });
@@ -678,7 +685,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getVehicleOccupancyRecordsByVehicle failed",
+            message: "🍎 getVehicleOccupancyRecordsByVehicle failed",
           });
         }
       });
@@ -696,7 +703,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getVehicleOccupancyRecordsByRoute failed",
+            message: "🍎 getVehicleOccupancyRecordsByRoute failed",
           });
         }
       });
@@ -714,7 +721,7 @@ export class VehicleController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: "🍎🍎🍎🍎 getVehicleOccupancyRecordsByLandmark failed",
+            message: "🍎 getVehicleOccupancyRecordsByLandmark failed",
           });
         }
       });

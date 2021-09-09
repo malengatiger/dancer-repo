@@ -292,6 +292,36 @@ class Messaging {
     
   }
 
+  public static async sendSettings(data: any): Promise<any> {
+    const options: any = {
+      priority: "normal",
+      timeToLive: 60 * 60,
+    };
+    const payload: any = {
+      notification: {
+        title: "Settings Added/Updated",
+        body: `heartbeatIntervalSeconds: ${data.heartbeatIntervalSeconds}`,
+      },
+      data: {
+        type: 'settings',
+        heartbeatIntervalSeconds: data.heartbeatIntervalSeconds,
+        associationId: data.associationId,
+        geofenceRadius: `${data.geofenceRadius}`,
+        vehicleSearchMinutes: `${data.vehicleSearchMinutes}`,
+        vehicleGeoQueryRadius: `${data.vehicleGeoQueryRadius}`,
+        created: data.created,
+      },
+    };
+    const topic = `settings_${data.associationID}`;
+    const result = await fba.sendToTopic(topic, payload, options);
+    console.log(
+      `😍 sendSettings: FCM message sent: 😍 ${
+        JSON.stringify(data)
+      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+    );
+    
+  }
+
   public static async sendFenceDwellEvent(data: any): Promise<any> {
     console.log(`😍 😍 😍 sendFenceDwellEvent: ${JSON.stringify(data)}`)
     const options: any = {

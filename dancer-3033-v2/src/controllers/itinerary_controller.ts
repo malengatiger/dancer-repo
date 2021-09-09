@@ -23,7 +23,7 @@ export class ItineraryController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: `🍎🍎🍎🍎 addItinerary failed: ${err}`,
+          message: `🍎 addItinerary failed: ${err}`,
         });
       }
     });
@@ -43,7 +43,7 @@ export class ItineraryController {
       } catch (err) {
         res.status(400).json({
           error: err,
-          message: `🍎🍎🍎🍎 deleteItinerary failed: ${err}`,
+          message: `🍎 deleteItinerary failed: ${err}`,
         });
       }
     });
@@ -61,7 +61,7 @@ export class ItineraryController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 getAssociationItineraries failed: ${err}`,
+            message: `🍎 getAssociationItineraries failed: ${err}`,
           });
         }
       });
@@ -79,7 +79,7 @@ export class ItineraryController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 getItinerariesByDestinationCity failed: ${err}`,
+            message: `🍎 getItinerariesByDestinationCity failed: ${err}`,
           });
         }
       });
@@ -97,7 +97,7 @@ export class ItineraryController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 getItinerariesByRoute failed: ${err}`,
+            message: `🍎 getItinerariesByRoute failed: ${err}`,
           });
         }
       });
@@ -115,7 +115,7 @@ export class ItineraryController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 getItinerariesByLandmark failed: ${err}`,
+            message: `🍎 getItinerariesByLandmark failed: ${err}`,
           });
         }
       });
@@ -153,7 +153,7 @@ export class ItineraryController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 findItinerariesByLocation failed: ${err}`,
+            message: `🍎 findItinerariesByLocation failed: ${err}`,
           });
         }
       });

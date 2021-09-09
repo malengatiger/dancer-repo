@@ -49,7 +49,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterRequest failed",
+            message: " 🍎 addCommuterRequest failed",
           });
         }
       });
@@ -57,7 +57,11 @@ export class CommuterController {
       .route("/updateCommuterRequestScanned")
       .post(async (req: Request, res: Response) => {
         try {
-          console.log(`🍎🍎🍎 request body, commuterRequestID: ${JSON.stringify(req.body.commuterRequestID)}`);
+          console.log(
+            `🍎🍎🍎 request body, commuterRequestID: ${JSON.stringify(
+              req.body.commuterRequestID
+            )}`
+          );
           const commuterRequestID = req.body.commuterRequestID;
           const commReq: any = await CommuterRequest.findOne({
             commuterRequestID: commuterRequestID,
@@ -75,17 +79,20 @@ export class CommuterController {
           // }
           commReq.scanned = true;
           const result = await commReq.save();
-          const token = commReq.fcmToken
+          const token = commReq.fcmToken;
           console.log(`🍎 🍎 🍎 token for commuterRequest: ${token}`);
           //send scanned messaged to commuter's device
-          await Messaging.sendScannedResultToCommuter(token, commReq.commuterRequestID);
+          await Messaging.sendScannedResultToCommuter(
+            token,
+            commReq.commuterRequestID
+          );
 
           res.status(200).json(result);
         } catch (err) {
           log(err);
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 updateCommuterRequestScanned failed: ${err}`,
+            message: `🍎 updateCommuterRequestScanned failed: ${err}`,
           });
         }
       });
@@ -99,7 +106,7 @@ export class CommuterController {
         log(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addPayment failed",
+          message: " 🍎 addPayment failed",
         });
       }
     });
@@ -124,7 +131,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 updateCommuterRequestVehicle failed",
+            message: " 🍎 updateCommuterRequestVehicle failed",
           });
         }
       });
@@ -150,11 +157,11 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 updateCommuterRequestAutoDetected failed",
+            message: " 🍎 updateCommuterRequestAutoDetected failed",
           });
         }
       });
-      app
+    app
       .route("/updateCommuterRequestExpired")
       .post(async (req: Request, res: Response) => {
         try {
@@ -172,7 +179,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 updateCommuterRequestExpired failed: ${err}`,
+            message: `🍎 updateCommuterRequestExpired failed: ${err}`,
           });
         }
       });
@@ -189,7 +196,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterRatingsAggregate failed",
+            message: " 🍎 addCommuterRatingsAggregate failed",
           });
         }
       });
@@ -207,7 +214,7 @@ export class CommuterController {
           log(err);
           res.status(400).json({
             error: JSON.stringify(err),
-            message: " 🍎🍎🍎🍎 addCommuterArrivalLandmark failed",
+            message: " 🍎 addCommuterArrivalLandmark failed",
           });
         }
       });
@@ -224,7 +231,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterPickupLandmark failed",
+            message: " 🍎 addCommuterPickupLandmark failed",
           });
         }
       });
@@ -246,7 +253,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterPickupLandmarks failed",
+            message: " 🍎 getCommuterPickupLandmarks failed",
           });
         }
       });
@@ -269,7 +276,7 @@ export class CommuterController {
           log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterPickupByLandmarkIDs failed",
+            message: " 🍎 getCommuterPickupByLandmarkIDs failed",
           });
         }
       });
@@ -293,7 +300,7 @@ export class CommuterController {
           log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterArrivalLandmarks failed",
+            message: " 🍎 getCommuterArrivalLandmarks failed",
           });
         }
       });
@@ -316,7 +323,7 @@ export class CommuterController {
           log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterArrivalByLandmarkIDs failed",
+            message: " 🍎 getCommuterArrivalByLandmarkIDs failed",
           });
         }
       });
@@ -339,7 +346,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterStartingLandmarks failed",
+            message: " 🍎 getCommuterStartingLandmarks failed",
           });
         }
       });
@@ -356,7 +363,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findCommuterRequestByID failed",
+            message: " 🍎 findCommuterRequestByID failed",
           });
         }
       });
@@ -376,7 +383,7 @@ export class CommuterController {
           log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterStartingLandmark failed",
+            message: " 🍎 addCommuterStartingLandmark failed",
           });
         }
       });
@@ -394,7 +401,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterArrivalLandmark failed",
+            message: " 🍎 addCommuterArrivalLandmark failed",
           });
         }
       });
@@ -425,7 +432,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterRating failed",
+            message: " 🍎 addCommuterRating failed",
           });
         }
       });
@@ -439,7 +446,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addSafetyNetworkBuddy failed",
+            message: " 🍎 addSafetyNetworkBuddy failed",
           });
         }
       });
@@ -454,7 +461,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 commuterClaimPrize failed",
+            message: " 🍎 commuterClaimPrize failed",
           });
         }
       });
@@ -470,7 +477,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getIncentiveTypeByAssociation failed",
+            message: " 🍎 getIncentiveTypeByAssociation failed",
           });
         }
       });
@@ -485,7 +492,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterIncentiveType failed",
+            message: " 🍎 addCommuterIncentiveType failed",
           });
         }
       });
@@ -519,7 +526,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterIncentive failed",
+            message: " 🍎 addCommuterIncentive failed",
           });
         }
       });
@@ -535,7 +542,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findSafetyNetworkBuddiesByUserID failed",
+            message: " 🍎 findSafetyNetworkBuddiesByUserID failed",
           });
         }
       });
@@ -577,7 +584,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterPanicLocation failed",
+            message: " 🍎 addCommuterPanicLocation failed",
           });
         }
       });
@@ -595,7 +602,7 @@ export class CommuterController {
         console.log(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addCommuterPanic failed",
+          message: " 🍎 addCommuterPanic failed",
         });
       }
     });
@@ -614,7 +621,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterFenceDwellEvent failed",
+            message: " 🍎 addCommuterFenceDwellEvent failed",
           });
         }
       });
@@ -632,7 +639,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterFenceExitEvent failed",
+            message: " 🍎 addCommuterFenceExitEvent failed",
           });
         }
       });
@@ -648,7 +655,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 addCommuterVehicleNearby failed",
+            message: " 🍎 addCommuterVehicleNearby failed",
           });
         }
       });
@@ -665,7 +672,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterPanicsByUserID failed",
+            message: " 🍎 getCommuterPanicsByUserID failed",
           });
         }
       });
@@ -682,7 +689,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getPanicLocations failed",
+            message: " 🍎 getPanicLocations failed",
           });
         }
       });
@@ -691,7 +698,9 @@ export class CommuterController {
       .post(async (req: Request, res: Response) => {
         try {
           const uid = req.body.userID;
-          const result = (await CommuterRequest.find({ userID: uid })).reverse();
+          const result = (
+            await CommuterRequest.find({ userID: uid })
+          ).reverse();
 
           if (result == null || result.length == 0) {
             res.status(400).json({
@@ -704,7 +713,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByUser failed",
+            message: " 🍎 getCommuterRequestsByUser failed",
           });
         }
       });
@@ -732,7 +741,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterFenceDwellEvents failed",
+            message: " 🍎 getCommuterFenceDwellEvents failed",
           });
         }
       });
@@ -760,11 +769,11 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByLandmark failed",
+            message: " 🍎 getCommuterRequestsByLandmark failed",
           });
         }
       });
-      app
+    app
       .route("/getCommuterRequestsByRoute")
       .post(async (req: Request, res: Response) => {
         try {
@@ -788,7 +797,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByRoute failed",
+            message: " 🍎 getCommuterRequestsByRoute failed",
           });
         }
       });
@@ -811,7 +820,7 @@ export class CommuterController {
           log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByLandmarkIDs failed",
+            message: " 🍎 getCommuterRequestsByLandmarkIDs failed",
           });
         }
       });
@@ -839,7 +848,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterFenceExitEvents failed",
+            message: " 🍎 getCommuterFenceExitEvents failed",
           });
         }
       });
@@ -861,7 +870,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByID failed",
+            message: " 🍎 getCommuterRequestsByID failed",
           });
         }
       });
@@ -884,7 +893,7 @@ export class CommuterController {
           log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByFromLandmark failed",
+            message: " 🍎 getCommuterRequestsByFromLandmark failed",
           });
         }
       });
@@ -906,7 +915,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getCommuterRequestsByToLandmark failed",
+            message: " 🍎 getCommuterRequestsByToLandmark failed",
           });
         }
       });
@@ -923,7 +932,7 @@ export class CommuterController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findCommuterRequestsByUserID failed",
+            message: " 🍎 findCommuterRequestsByUserID failed",
           });
         }
       });
@@ -956,7 +965,7 @@ export class CommuterController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findCommuterRequestsByLocation failed",
+            message: " 🍎 findCommuterRequestsByLocation failed",
           });
         }
       });

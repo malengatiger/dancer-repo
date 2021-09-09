@@ -26,7 +26,7 @@ class Constants {
     public static COMMUTER_FENCE_EXIT_EVENTS = 'commuterfenceexitevents';
     public static NOTIFICATIONS = 'notifications';
     public static CHAT = 'chat';
-
+    public static SETTINGS = 'settingsmodels';
     public static USER_CONDUCTOR = 'Conductor';
     public static USER_MARSHAL = 'Marshal';
     public static USER_COMMUTER = 'Commuter';

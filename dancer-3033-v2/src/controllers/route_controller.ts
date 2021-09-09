@@ -103,7 +103,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 getRoutes failed",
+            message: " 🍎 getRoutes failed",
           });
         }
       });
@@ -185,7 +185,7 @@ export class RouteController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: `🍎 🍎 🍎 🍎 getRouteByID failed: ${err}`,
+          message: `🍎 getRouteByID failed: ${err}`,
         });
       }
     });
@@ -205,7 +205,7 @@ export class RouteController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addRoute failed",
+          message: " 🍎 addRoute failed",
         });
       }
     });
@@ -254,7 +254,7 @@ export class RouteController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: ` 🍎🍎🍎🍎 addRouteFare failed: ${err}`,
+          message: ` 🍎 addRouteFare failed: ${err}`,
         });
       }
     });
@@ -295,7 +295,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: ` 🍎🍎🍎🍎 getRouteFaresByAssociation failed: ${err}`,
+            message: ` 🍎 getRouteFaresByAssociation failed: ${err}`,
           });
         }
       });
@@ -330,7 +330,7 @@ export class RouteController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: ` 🍎🍎🍎🍎 getRouteFare failed: ${err}`,
+          message: ` 🍎 getRouteFare failed: ${err}`,
         });
       }
     });
@@ -449,7 +449,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: ` 🍎 🍎 🍎 🍎 addRouteDistanceEstimations failed: ${err}`,
+            message: ` 🍎 addRouteDistanceEstimations failed: ${err}`,
           });
         }
       });
@@ -520,7 +520,7 @@ export class RouteController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 addRoutePoints failed",
+          message: " 🍎 addRoutePoints failed",
         });
       }
     });
@@ -553,7 +553,7 @@ export class RouteController {
         console.error(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 updateRoute failed",
+          message: " 🍎 updateRoute failed",
         });
       }
     });
@@ -584,7 +584,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: `🍎🍎🍎🍎 addRawRoutePoints failed`,
+            message: `🍎 addRawRoutePoints failed`,
           });
         }
       });
@@ -650,7 +650,7 @@ export class RouteController {
         } catch (err) {
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findRoutePointNearestToPosition failed",
+            message: " 🍎 findRoutePointNearestToPosition failed",
           });
         }
       });
@@ -714,7 +714,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findRoutesByLocation failed",
+            message: " 🍎 findRoutesByLocation failed",
           });
         }
       });
@@ -786,7 +786,7 @@ export class RouteController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎🍎🍎🍎 findRoutesByLocationDate failed",
+            message: " 🍎 findRoutesByLocationDate failed",
           });
         }
       });
@@ -829,7 +829,7 @@ export class RouteController {
         console.log(err);
         res.status(400).json({
           error: err,
-          message: " 🍎🍎🍎🍎 updateRoutePoint failed",
+          message: " 🍎 updateRoutePoint failed",
         });
       }
     });
@@ -841,7 +841,7 @@ export class RouteController {
         const route: any = await Route.findOne({ routeID: routeID });
         if (!route) {
           res.status(400).json({
-            message: `🍎🍎🍎🍎 deleteRoute failed; route ${routeID} not found`,
+            message: `🍎 deleteRoute failed; route ${routeID} not found`,
           });
           return;
         }
@@ -882,7 +882,7 @@ export class RouteController {
         console.log(err);
         res.status(400).json({
           error: err,
-          message: `🍎🍎🍎🍎 deleteRoute failed: ${err}`,
+          message: `🍎 deleteRoute failed: ${err}`,
         });
       }
     });
