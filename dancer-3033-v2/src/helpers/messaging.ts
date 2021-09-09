@@ -304,7 +304,7 @@ class Messaging {
       },
       data: {
         type: 'settings',
-        heartbeatIntervalSeconds: data.heartbeatIntervalSeconds,
+        heartbeatIntervalSeconds: `${data.heartbeatIntervalSeconds}`,
         associationId: data.associationId,
         geofenceRadius: `${data.geofenceRadius}`,
         vehicleSearchMinutes: `${data.vehicleSearchMinutes}`,
