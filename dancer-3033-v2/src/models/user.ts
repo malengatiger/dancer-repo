@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema(
         userID: {type: String, required: true, index: true, unique: true},
         associationID: {type: String, required: false,  index: true},
         associationName: {type: String, required: false},
-        userType: {type: String, required: true, enum: ['Staff', 'Administrator', 'Owner', 'Driver', 'Marshal', 'Patroller', 'Commuter'],},
+        userType: {type: String, required: true, enum: ['Staff', 'Administrator', 'Owner', 'Driver', 'Vehicle','Marshal', 'Patroller', 'Commuter'],},
         gender: {type: String, required: false, enum: ['Male', 'Female'],},
         created: {type: String, required: true, default: new Date().toISOString()}
     }
