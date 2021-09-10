@@ -11,6 +11,8 @@ import VehicleRouteAssignment from "../models/vehicle_route_assignment";
 import VehicleCommuterNearby from "../models/vehicle_commuter_nearby";
 import Messaging from "../helpers/messaging";
 import VehicleOccupancyRecord from "../models/vehicle_occupancy_record";
+import VehicleCommand from "../models/vehicle_command";
+import VehicleCommandResponse from "../models/vehicle_command_response";
 
 export class VehicleController {
   public routes(app: any): void {
@@ -18,6 +20,65 @@ export class VehicleController {
       `🏓    VehicleController:  💙  setting up default Vehicle routes ...`
     );
     app
+      .route("/addVehicleCommand")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const event: any = new VehicleCommand(req.body);
+          event.created = new Date().toISOString();
+          const result = await event.save();
+          res.status(200).json(result);
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎 addVehicleCommand failed",
+          });
+        }
+      });
+      app
+      .route("/addVehicleCommandResponse")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const event: any = new VehicleCommandResponse(req.body);
+          event.created = new Date().toISOString();
+          const result = await event.save();
+          res.status(200).json(result);
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎 addVehicleCommandResponse failed",
+          });
+        }
+      });
+      app
+      .route("/getVehicleCommandResponse")
+      .post(async (req: Request, res: Response) => {
+       
+        console.log(req.body);
+        try {
+         
+          const vehicleCommandResponseID = req.body.vehicleCommandID;
+          
+          const result = await VehicleCommandResponse.findOne({
+            'vehicleCommandResponseID': vehicleCommandResponseID,});
+
+          if (!result) {
+            res.status(400).json({
+              message: "🍎 getVehicleCommandResponse failed",
+            });
+            return
+          }
+          
+          res.status(200).json(result);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: "🍎 getVehicleCommandResponse failed",
+          });
+        }
+      });
+      app
       .route("/addVehicleCommuterNearby")
       .post(async (req: Request, res: Response) => {
         try {

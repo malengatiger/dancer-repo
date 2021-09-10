@@ -297,6 +297,10 @@ class Messaging {
       priority: "normal",
       timeToLive: 60 * 60,
     };
+    if (!data) {
+      console.log('Messaging: data is null from mongo listener')
+      return
+    }
     const payload: any = {
       notification: {
         title: "Settings Added/Updated",
@@ -321,7 +325,61 @@ class Messaging {
     );
     
   }
-
+  public static async sendVehicleCommandResponse(data: any): Promise<any> {
+    console.log(`😍 😍 😍 sendVehicleCommandResponse: ${JSON.stringify(data)}`)
+    const options: any = {
+      priority: "normal",
+      timeToLive: 60 * 60,
+    };
+    const payload: any = {
+      notification: {
+        title: "Vehicle Command Response",
+        body: `${data.vehicleLocation.vehicleReg} command response received`,
+      },
+      data: {
+        type: 'vehicleCommandResponse',
+        commandSucceeded: data.commandSucceeded,
+        vehicleCommandResponseID: data.vehicleCommandResponseID,
+        created: data.created,
+      },
+    };
+    const topic = data.responseTopic;
+    const result = await fba.sendToTopic(topic, payload, options);
+    console.log(
+      `😍 sendVehicleCommandResponse: FCM message sent: 😍 ${
+        data.name
+      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+    );
+    
+  }
+  public static async sendVehicleCommand(data: any): Promise<any> {
+    console.log(`😍 😍 😍 sendVehicleCommand: ${JSON.stringify(data)}`)
+    const options: any = {
+      priority: "normal",
+      timeToLive: 60 * 60,
+    };
+    const payload: any = {
+      notification: {
+        title: "Vehicle Command",
+        body: `${data.vehicleReg} command received`,
+      },
+      data: {
+        type: 'vehicleCommand',
+        vehicleID: data.vehicleID,
+        vehicleReg: data.vehicleReg,
+        intervalInSeconds: data.intervalInSeconds,
+        created: data.created,
+      },
+    };
+    const topic = "vehicle_" + data.vehicleID;
+    const result = await fba.sendToTopic(topic, payload, options);
+    console.log(
+      `😍 sendVehicleCommand: FCM message sent: 😍 ${
+        data.name
+      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+    );
+    
+  }
   public static async sendFenceDwellEvent(data: any): Promise<any> {
     console.log(`😍 😍 😍 sendFenceDwellEvent: ${JSON.stringify(data)}`)
     const options: any = {

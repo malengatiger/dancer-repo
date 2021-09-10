@@ -8,6 +8,8 @@ class Constants {
     public static VEHICLE_DEPARTURES = 'vehicledepartures';
     public static ASSOCIATIONS = 'associations';
     public static CITIES = 'cities';
+    public static VEHICLE_COMMANDS = 'vehiclecommands';
+    public static VEHICLE_COMMAND_RESPONSES = 'vehiclecommandresponses';
     public static VEHICLE_ARRIVALS = 'vehiclearrivals';
     public static VEHICLES = 'vehicles';
     public static VEHICLE_TYPES = 'vehicletypes';

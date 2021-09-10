@@ -21,6 +21,9 @@ class MongoListeners {
     const vehicles = client.connection.collection(Constants.VEHICLES);
     const cities = client.connection.collection(Constants.CITIES);
 
+    const commands = client.connection.collection(Constants.VEHICLE_COMMANDS);
+    const commandResponses = client.connection.collection(Constants.VEHICLE_COMMAND_RESPONSES);
+
     const vehicleArrivals = client.connection.collection(
       Constants.VEHICLE_ARRIVALS
     );
@@ -53,6 +56,8 @@ class MongoListeners {
     const assocStream = associations.watch({ fullDocument: "default" });
     const routeStream = routes.watch({ fullDocument: "default" });
     const landmarkStream = landmarks.watch({ fullDocument: "default" });
+    const commandStream = commands.watch({ fullDocument: "default" });
+    const commandResponseStream = commandResponses.watch({ fullDocument: "default" });
     const notificationsStream = notifications.watch({
       fullDocument: "default",
     });
@@ -91,6 +96,24 @@ class MongoListeners {
     });
 
     try {
+      commandStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆 🍎 commandStream onChange fired! 🍎 🔆🔆🔆🔆 id: ${JSON.stringify(
+            event._id
+          )}`
+        );
+
+        Messaging.sendVehicleCommand(event.fullDocument);
+      });
+      commandResponseStream.on("change", (event: any) => {
+        log(
+          `\n🔆🔆🔆🔆 🍎 commandResponseStream onChange fired! 🍎 🔆🔆🔆🔆 id: ${JSON.stringify(
+            event._id
+          )}`
+        );
+
+        Messaging.sendVehicleCommandResponse(event.fullDocument);
+      });
       settingsStream.on("change", (event: any) => {
         log(
           `\n🔆🔆🔆🔆 🍎 settingsStream onChange fired! 🍎 🔆🔆🔆🔆 id: ${JSON.stringify(
