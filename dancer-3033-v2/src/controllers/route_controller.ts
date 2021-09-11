@@ -337,10 +337,11 @@ export class RouteController {
     app
       .route("/addRouteDistanceEstimation")
       .post(async (req: Request, res: Response) => {
+        
         try {
           const estimation: any = new RouteDistanceEstimation(req.body);
           if (!estimation.vehicle) {
-            throw new Error(`Vehicle missing from estimation`);
+            throw new Error(`🍎🍎🍎🍎🍎 Vehicle missing from estimation`);
           }
           estimation.created = new Date().toISOString();
           await estimation.save();

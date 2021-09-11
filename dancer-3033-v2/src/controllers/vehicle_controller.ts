@@ -57,9 +57,7 @@ export class VehicleController {
        
         console.log(req.body);
         try {
-         
-          const vehicleCommandResponseID = req.body.vehicleCommandID;
-          
+          const vehicleCommandResponseID = req.body.vehicleCommandResponseID;
           const result = await VehicleCommandResponse.findOne({
             'vehicleCommandResponseID': vehicleCommandResponseID,});
 
@@ -237,6 +235,41 @@ export class VehicleController {
           res.status(400).json({
             error: err,
             message: "🍎 getVehicleArrivalsByLandmarkIDs failed",
+          });
+        }
+      });
+      app
+      .route("/getVehicleLocations")
+      .post(async (req: Request, res: Response) => {
+        log(
+          `\n\n💦  POST: /getVehicleLocations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
+        );
+        console.log(req.body);
+        try {
+          const now = new Date().getTime();
+          let minutes = parseInt(req.body.minutes);
+          if (!minutes) {
+            minutes = 60
+          }
+          const vehicleID = req.body.vehicleID;
+          const cutOff: string = moment()
+            .subtract(minutes, "minutes")
+            .toISOString();
+          const result = await VehicleLocation.find({
+            vehicleID: vehicleID,
+            created: { $gt: cutOff },
+          });
+          const end = new Date().getTime();
+          log(
+            `🔆🔆🔆 elapsed time: 💙 ${
+              end / 1000 - now / 1000
+            } 💙seconds for query. vehicleLocations found: 🍎 ${result.length} 🍎`
+          );
+          res.status(200).json(result);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: "🍎 getVehicleLocations failed",
           });
         }
       });
@@ -518,7 +551,7 @@ export class VehicleController {
           console.log(err);
           res.status(400).json({
             error: err,
-            message: "🍎 addVehicleArrival failed",
+            message: `🍎 addVehicleArrival failed: ${err}`,
           });
         }
       });

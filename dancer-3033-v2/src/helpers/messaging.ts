@@ -326,7 +326,7 @@ class Messaging {
     
   }
   public static async sendVehicleCommandResponse(data: any): Promise<any> {
-    console.log(`😍 😍 😍 sendVehicleCommandResponse: ${JSON.stringify(data)}`)
+    // console.log(`😍 😍 😍 sendVehicleCommandResponse: ${JSON.stringify(data)}`)
     const options: any = {
       priority: "normal",
       timeToLive: 60 * 60,
@@ -346,8 +346,8 @@ class Messaging {
     const topic = data.responseTopic;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleCommandResponse: FCM message sent: 😍 ${
-        data.name
+      `😍 sendVehicleCommandResponse: FCM message sent: 😍 commandSucceeded: ${
+        data.commandSucceeded
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
     
@@ -367,15 +367,16 @@ class Messaging {
         type: 'vehicleCommand',
         vehicleID: data.vehicleID,
         vehicleReg: data.vehicleReg,
-        intervalInSeconds: data.intervalInSeconds,
+        intervalInSeconds: `${data.intervalInSeconds}`,
+        responseTopic: data.responseTopic,
         created: data.created,
       },
     };
     const topic = "vehicle_" + data.vehicleID;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleCommand: FCM message sent: 😍 ${
-        data.name
+      `😍 sendVehicleCommand: FCM message sent to: 😍 ${
+        data.vehicleReg
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
     
