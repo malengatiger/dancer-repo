@@ -340,6 +340,7 @@ class Messaging {
         type: 'vehicleCommandResponse',
         commandSucceeded: data.commandSucceeded,
         vehicleCommandResponseID: data.vehicleCommandResponseID,
+        vehicleCommandID: `${data.vehicleCommand.vehicleCommandID}`,
         created: data.created,
       },
     };
@@ -365,6 +366,7 @@ class Messaging {
       },
       data: {
         type: 'vehicleCommand',
+        vehicleCommandID: data.vehicleCommandID,
         vehicleID: data.vehicleID,
         vehicleReg: data.vehicleReg,
         intervalInSeconds: `${data.intervalInSeconds}`,
