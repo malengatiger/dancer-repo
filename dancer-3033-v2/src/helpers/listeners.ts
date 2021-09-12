@@ -56,8 +56,10 @@ class MongoListeners {
     const assocStream = associations.watch({ fullDocument: "default" });
     const routeStream = routes.watch({ fullDocument: "default" });
     const landmarkStream = landmarks.watch({ fullDocument: "default" });
+
     const commandStream = commands.watch({ fullDocument: "default" });
     const commandResponseStream = commandResponses.watch({ fullDocument: "default" });
+
     const notificationsStream = notifications.watch({
       fullDocument: "default",
     });
@@ -98,18 +100,14 @@ class MongoListeners {
     try {
       commandStream.on("change", (event: any) => {
         log(
-          `\n🔆🔆🔆🔆 🍎 commandStream onChange fired! 🍎 🔆🔆🔆🔆 id: ${JSON.stringify(
-            event._id
-          )}`
+          `\n🔆🔆🔆🔆 🍎 commandStream onChange fired! 🍎 🔆🔆🔆🔆`
         );
 
         Messaging.sendVehicleCommand(event.fullDocument);
       });
       commandResponseStream.on("change", (event: any) => {
         log(
-          `\n🔆🔆🔆🔆 🍎 commandResponseStream onChange fired! 🍎 🔆🔆🔆🔆 id: ${JSON.stringify(
-            event._id
-          )}`
+          `\n🍐🍐🍐🍐 🍎 commandResponseStream onChange fired! 🍎 🍐🍐🍐🍐`
         );
 
         Messaging.sendVehicleCommandResponse(event.fullDocument);

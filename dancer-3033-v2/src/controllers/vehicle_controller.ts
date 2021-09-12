@@ -26,6 +26,7 @@ export class VehicleController {
           const event: any = new VehicleCommand(req.body);
           event.created = new Date().toISOString();
           const result = await event.save();
+          console.log(`🥬🥬🥬🥬🥬🥬 VehicleCommand added ok! created: ${event.created}`)
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -42,6 +43,7 @@ export class VehicleController {
           const event: any = new VehicleCommandResponse(req.body);
           event.created = new Date().toISOString();
           const result = await event.save();
+          console.log(`🍏 🍏 🍏 🍏 VehicleCommandResponse added ok! created: ${event.created}`)
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -244,7 +246,6 @@ export class VehicleController {
         log(
           `\n\n💦  POST: /getVehicleLocations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`
         );
-        console.log(req.body);
         try {
           const now = new Date().getTime();
           let minutes = parseInt(req.body.minutes);
