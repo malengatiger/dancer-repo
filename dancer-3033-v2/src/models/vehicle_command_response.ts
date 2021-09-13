@@ -14,13 +14,13 @@ const VehicleCommandResponseSchema = new mongoose.Schema({
   vehicleCommandResponseID: { type: String, required: true },
   commandSucceeded: { type: String, required: true, default: false },
   vehicleCommand: { type: Map, required: true, default: {}  },
-  vehicleLocation: { type: Map, required: true, default: {}  },
+  vehicleLocation: { type: Map, required: false, default: {}  },
   batteryInfo: { type: Map, required: false, default: {}  },
   responseTopic: {type: String, required: true},
   routeID: {type: String, required: false},
   routeName: {type: String, required: false},
 
-  routeDistanceEstimation: { type: Map, required: true, default: {} },
+  routeDistanceEstimation: { type: Map, required: false, default: {} },
   created: { type: String, required: true, default: new Date().toISOString() },
 });
 
