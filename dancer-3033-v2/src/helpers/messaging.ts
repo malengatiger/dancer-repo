@@ -91,9 +91,7 @@ class Messaging {
     const topic = Constants.ROUTE_DISTANCE_ESTIMATION + "_" + data.routeID;
     await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendRouteDistanceEstimation: FCM message sent from vehicle: 😍 ${
-        data.vehicle.vehicleReg
-      } topic: ${topic} 🍎🍎`
+      `😍 sendRouteDistanceEstimation: FCM message sent from vehicle: 😍 ${data.vehicle.vehicleReg} topic: ${topic} 🍎🍎`
     );
   }
   public static async sendNotification(data: any): Promise<any> {
@@ -123,7 +121,6 @@ class Messaging {
         data.landmarkID
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    
   }
   public static async sendChat(data: any): Promise<any> {
     const options: any = {
@@ -204,36 +201,36 @@ class Messaging {
     const topic = Constants.VEHICLE_ARRIVALS + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 😍 😍 sendVehicleArrival: FCM message sent: 😍 ${
-        data.landmarkName
-      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+      `😍 😍 😍 sendVehicleArrival: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : car: 🍎🍎 ${data.vehicleReg} 🍎🍎`
     );
   }
 
-  public static async sendScannedResultToCommuter(fcmToken: string, commuterRequestID: string): Promise<any> {
+  public static async sendScannedResultToCommuter(
+    fcmToken: string,
+    commuterRequestID: string
+  ): Promise<any> {
     const options: any = {
       priority: "high",
       timeToLive: 60 * 60,
     };
     const payload: any = {
-      
       data: {
         type: Constants.SCANNED,
         commuterRequestID: commuterRequestID,
-        scanned: 'true',
+        scanned: "true",
         created: new Date().toISOString(),
       },
-      token: fcmToken
+      token: fcmToken,
     };
-    
+
     const result = await fba.send(payload);
     console.log(
-      `😍 sendScannedResultToCommuter: FCM message sent to DEVICE: 😍 🍎 ${JSON.stringify(result)}🍎`
+      `😍 sendScannedResultToCommuter: FCM message sent to DEVICE: 😍 🍎 ${JSON.stringify(
+        result
+      )}🍎`
     );
-    
   }
   public static async sendRoute(data: any): Promise<any> {
-    
     if (!data) {
       return;
     }
@@ -244,13 +241,13 @@ class Messaging {
     const payload: any = {
       notification: {
         title: "Route Added",
-        body: data.name? data.name: '',
+        body: data.name ? data.name : "",
       },
       data: {
         type: Constants.ROUTES,
-        routeID: data.routeID? data.routeID : "UNKNOWN",
-        name: data.name? data.name: '',
-        created: data.created? data.created : `${new Date().toISOString()}`,
+        routeID: data.routeID ? data.routeID : "UNKNOWN",
+        name: data.name ? data.name : "",
+        created: data.created ? data.created : `${new Date().toISOString()}`,
       },
     };
     const topic = Constants.ROUTES;
@@ -260,7 +257,6 @@ class Messaging {
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    
   }
   public static async sendCity(data: any): Promise<any> {
     const options: any = {
@@ -285,11 +281,10 @@ class Messaging {
     const topic = Constants.CITIES;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendCity: FCM message sent: 😍 ${
-        JSON.stringify(data)
-      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+      `😍 sendCity: FCM message sent: 😍 ${JSON.stringify(
+        data
+      )} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    
   }
 
   public static async sendSettings(data: any): Promise<any> {
@@ -298,8 +293,8 @@ class Messaging {
       timeToLive: 60 * 60,
     };
     if (!data) {
-      console.log('Messaging: data is null from mongo listener')
-      return
+      console.log("Messaging: data is null from mongo listener");
+      return;
     }
     const payload: any = {
       notification: {
@@ -307,7 +302,7 @@ class Messaging {
         body: `heartbeatIntervalSeconds: ${data.heartbeatIntervalSeconds}`,
       },
       data: {
-        type: 'settings',
+        type: "settings",
         heartbeatIntervalSeconds: `${data.heartbeatIntervalSeconds}`,
         associationID: data.associationID,
         geofenceRadius: `${data.geofenceRadius}`,
@@ -319,14 +314,12 @@ class Messaging {
     const topic = `settings_${data.associationID}`;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendSettings: FCM message sent: 😍 ${
-        JSON.stringify(data)
-      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+      `😍 sendSettings: FCM message sent: 😍 ${JSON.stringify(
+        data
+      )} topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    
   }
   public static async sendVehicleCommandResponse(data: any): Promise<any> {
-    // console.log(`😍 😍 😍 sendVehicleCommandResponse: ${JSON.stringify(data)}`)
     const options: any = {
       priority: "normal",
       timeToLive: 60 * 60,
@@ -337,7 +330,7 @@ class Messaging {
         body: `${data.vehicleLocation.vehicleReg} command response received`,
       },
       data: {
-        type: 'vehicleCommandResponse',
+        type: "vehicleCommandResponse",
         commandSucceeded: data.commandSucceeded,
         vehicleCommandResponseID: data.vehicleCommandResponseID,
         vehicleCommandID: `${data.vehicleCommand.vehicleCommandID}`,
@@ -347,14 +340,10 @@ class Messaging {
     const topic = data.responseTopic;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleCommandResponse: FCM message sent: 😍 commandSucceeded: ${
-        data.commandSucceeded
-      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+      `😍 sendVehicleCommandResponse: FCM message sent: 😍 commandSucceeded: ${data.commandSucceeded} topic: ${topic} : car: 🍎🍎 ${data.vehicleLocation.vehicleReg} 🍎🍎`
     );
-    
   }
   public static async sendVehicleCommand(data: any): Promise<any> {
-    console.log(`😍 😍 😍 sendVehicleCommand: ${JSON.stringify(data)}`)
     const options: any = {
       priority: "normal",
       timeToLive: 60 * 60,
@@ -365,7 +354,7 @@ class Messaging {
         body: `${data.vehicleReg} command received`,
       },
       data: {
-        type: 'vehicleCommand',
+        type: "vehicleCommand",
         vehicleCommandID: data.vehicleCommandID,
         vehicleID: data.vehicleID,
         vehicleReg: data.vehicleReg,
@@ -377,14 +366,11 @@ class Messaging {
     const topic = "vehicle_" + data.vehicleID;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleCommand: FCM message sent to: 😍 ${
-        data.vehicleReg
-      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+      `😍 sendVehicleCommand: FCM message sent to: 😍 ${data.vehicleReg} topic: ${topic} : car: 🍎🍎 ${data.vehicleReg} 🍎🍎`
     );
-    
   }
   public static async sendFenceDwellEvent(data: any): Promise<any> {
-    console.log(`😍 😍 😍 sendFenceDwellEvent: ${JSON.stringify(data)}`)
+    console.log(`😍 😍 😍 sendFenceDwellEvent: ${JSON.stringify(data)}`);
     const options: any = {
       priority: "normal",
       timeToLive: 60 * 60,
@@ -398,7 +384,7 @@ class Messaging {
         type: Constants.COMMUTER_FENCE_DWELL_EVENTS,
         landmarkID: data.landmarkID,
         landmarkName: data.landmarkName,
-        userID: data.userID == null? null: data.userID,
+        userID: data.userID == null ? null : data.userID,
         created: data.created,
       },
     };
@@ -409,7 +395,6 @@ class Messaging {
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    
   }
   public static async sendFenceExitEvent(data: any): Promise<any> {
     const options: any = {
@@ -436,13 +421,12 @@ class Messaging {
         data.name
       } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
     );
-    
   }
   public static async sendLandmark(data: any): Promise<any> {
     if (!data) {
       return;
     }
-    
+
     if (!data.landmarkID) {
       return;
     }
@@ -493,9 +477,7 @@ class Messaging {
     const topic = Constants.VEHICLE_DEPARTURES + "_" + data.landmarkID;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleDeparture: FCM message sent: 😍 ${
-        data.landmarkName
-      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+      `😍 sendVehicleDeparture: FCM message sent: 😍 ${data.landmarkName} topic: ${topic} : car: 🍎🍎 ${data.vehicleReg} 🍎🍎`
     );
   }
   public static async sendCommuterPickupLandmark(data: any): Promise<any> {
@@ -635,6 +617,31 @@ class Messaging {
       );
     }
   }
+  public static async sendCommuterFenceDwell(data: any): Promise<any> {
+    const options: any = {
+      priority: "normal",
+      timeToLive: 60 * 60,
+    };
+    const payload: any = {
+      notification: {
+        title: "Commuter Fence Dwell Event",
+        body: data.created,
+      },
+      data: {
+        type: Constants.COMMUTER_FENCE_DWELL_EVENTS,
+        landmarkID: data.landmarkID,
+        landmarkName: data.landmarkName,
+        userID: data.userID,
+      },
+    };
+    const body = data.fullDocument;
+    const topic =
+      Constants.COMMUTER_FENCE_DWELL_EVENTS + "_" + data.fromLandmarkID;
+    const result = await fba.sendToTopic(topic, payload, options);
+    console.log(
+      `😍 sendCommuterFenceDwell: FCM message sent: 😍 ☘️☘️☘️ ${data.fromLandmarkName} topic: ${topic} : landmark: 🍎🍎 ${data.landmarkName} 🍎🍎`
+    );
+  }
   public static async sendCommuterArrivalLandmark(data: any): Promise<any> {
     const options: any = {
       priority: "normal",
@@ -694,9 +701,7 @@ class Messaging {
       const result = await fba.sendToTopic(topic, payload, options);
       cnt++;
       console.log(
-        `😍 DispatchRecord: FCM message #${cnt} landmarkID: 😍 ${
-          data.landmarkID
-        } on ${data.created} topic: 🍎 ${topic} 🍎`
+        `😍 DispatchRecord: FCM message #${cnt} landmarkID: 😍 ${data.landmarkID} on ${data.created} topic: 🍎 ${topic} 🍎`
       );
     }
   }

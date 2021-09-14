@@ -27,7 +27,7 @@ export class VehicleController {
           event.created = new Date().toISOString();
           const result = await event.save();
           console.log(`🥬🥬🥬🥬🥬🥬 VehicleCommand added ok! created: ${event.created}`)
-          Messaging.sendVehicleCommand(event);
+          Messaging.sendVehicleCommand(result);
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -45,7 +45,7 @@ export class VehicleController {
           event.created = new Date().toISOString();
           const result = await event.save();
           console.log(`🍏 🍏 🍏 🍏 VehicleCommandResponse added ok! created: ${event.created}`)
-          Messaging.sendVehicleCommandResponse(event)
+          Messaging.sendVehicleCommandResponse(result)
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -435,7 +435,7 @@ export class VehicleController {
           c.assignments = [];
         }
         const result = await c.save();
-
+        Messaging.sendVehicleAdded(result);
         res.status(200).json(result);
       } catch (err) {
         console.error(err);

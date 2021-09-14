@@ -43,7 +43,7 @@ export class CommuterController {
             comm.isWallet = false;
           }
           const result = await comm.save();
-          // Messaging.sendCommuterRequest(result);
+          Messaging.sendCommuterRequest(result);
           res.status(200).json(result);
         } catch (err) {
           console.log(err);
@@ -421,7 +421,7 @@ export class CommuterController {
             c.commuterRatingID = uuid();
             c.created = new Date().toISOString();
             const result = await c.save();
-
+            
             res.status(200).json(result);
           } else {
             res.status(400).json({
@@ -574,6 +574,7 @@ export class CommuterController {
             const panic: any = new CommuterPanicLocation(panicData);
             panic.created = new Date().toISOString();
             const result = await panic.save();
+            Messaging.sendCommuterPanic(result)
             res.status(200).json(result);
           } else {
             res.status(400).json({
@@ -594,9 +595,9 @@ export class CommuterController {
         panic.created = new Date().toISOString();
         panic.updated = new Date().toISOString();
         panic.commuterPanicID = uuid();
-
+        
         const result = await panic.save();
-        log(result);
+        Messaging.sendCommuterPanic(result)
         res.status(200).json(result);
       } catch (err) {
         console.log(err);
@@ -615,7 +616,7 @@ export class CommuterController {
           event.commuterFenceEventID = uuid();
 
           const result = await event.save();
-          log(result);
+          Messaging.sendCommuterFenceDwell(result)
           res.status(200).json(result);
         } catch (err) {
           console.log(err);

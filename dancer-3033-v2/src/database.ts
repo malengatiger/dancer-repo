@@ -32,7 +32,7 @@ mongoose
   
     // MongooseDebugSetting.setDebug();
     Messaging.init();
-    MongoListeners.listen(client);
+    // MongoListeners.listen(client);
 
     console.log(
       `🍎 🍎 🍎 MongoDB Atlas collections up and running! 🍎 ... waiting to be of service!!`

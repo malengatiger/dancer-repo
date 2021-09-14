@@ -200,6 +200,7 @@ export class RouteController {
         console.log(
           `result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `
         );
+        Messaging.sendRoute(result);
         res.status(200).json(result);
       } catch (err) {
         console.error(err);

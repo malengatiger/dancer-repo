@@ -7,6 +7,7 @@ import uuid = require("uuid");
 import { Error, Types } from "mongoose";
 import DistanceUtilNew from "../helpers/distance_util_new";
 import City from "../models/city";
+import Messaging from "../helpers/messaging";
 export class LandmarkController {
   public routes(app: any): void {
     console.log(
@@ -525,7 +526,7 @@ export class LandmarkController {
 
         const result = await landmark.save();
         await addCities(landmark.landmarkID);
-
+        Messaging.sendLandmark(result);
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
