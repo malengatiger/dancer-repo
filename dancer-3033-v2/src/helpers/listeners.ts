@@ -98,20 +98,20 @@ class MongoListeners {
     });
 
     try {
-      commandStream.on("change", (event: any) => {
-        log(
-          `\n🔆🔆🔆🔆 🍎 commandStream onChange fired! 🍎 🔆🔆🔆🔆`
-        );
+      // commandStream.on("change", (event: any) => {
+      //   log(
+      //     `\n🔆🔆🔆🔆 🍎 commandStream onChange fired! 🍎 🔆🔆🔆🔆`
+      //   );
 
-        Messaging.sendVehicleCommand(event.fullDocument);
-      });
-      commandResponseStream.on("change", (event: any) => {
-        log(
-          `\n🍐🍐🍐🍐 🍎 commandResponseStream onChange fired! 🍎 🍐🍐🍐🍐`
-        );
+      //   Messaging.sendVehicleCommand(event.fullDocument);
+      // });
+      // commandResponseStream.on("change", (event: any) => {
+      //   log(
+      //     `\n🍐🍐🍐🍐 🍎 commandResponseStream onChange fired! 🍎 🍐🍐🍐🍐`
+      //   );
 
-        Messaging.sendVehicleCommandResponse(event.fullDocument);
-      });
+      //   Messaging.sendVehicleCommandResponse(event.fullDocument);
+      // });
       settingsStream.on("change", (event: any) => {
         log(
           `\n🔆🔆🔆🔆 🍎 settingsStream onChange fired! 🍎 🔆🔆🔆🔆 id: ${JSON.stringify(
@@ -198,25 +198,25 @@ class MongoListeners {
         Messaging.sendFenceExitEvent(event.fullDocument);
       });
       //
-      vehicleArrivalsStream.on("change", (event: any) => {
-        log(
-          `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(
-            event._id
-          )}`
-        );
+      // vehicleArrivalsStream.on("change", (event: any) => {
+      //   log(
+      //     `\n🔆🔆🔆🔆   🍎  vehicleArrivalsStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(
+      //       event._id
+      //     )}`
+      //   );
 
-        Messaging.sendVehicleArrival(event.fullDocument);
-      });
-      //
-      vehicleDeparturesStream.on("change", (event: any) => {
-        log(
-          `\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(
-            event._id
-          )}`
-        );
+      //   Messaging.sendVehicleArrival(event.fullDocument);
+      // });
+      // //
+      // vehicleDeparturesStream.on("change", (event: any) => {
+      //   log(
+      //     `\n🔆🔆🔆🔆   🍎  vehicleDeparturesStream onChange fired!  🍎  🔆🔆🔆🔆 id: ${JSON.stringify(
+      //       event._id
+      //     )}`
+      //   );
 
-        Messaging.sendVehicleDeparture(event.fullDocument);
-      });
+      //   Messaging.sendVehicleDeparture(event.fullDocument);
+      // });
       //
       commuterPickupsStream.on("change", (event: any) => {
         log(

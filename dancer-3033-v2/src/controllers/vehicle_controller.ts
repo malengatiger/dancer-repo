@@ -27,6 +27,7 @@ export class VehicleController {
           event.created = new Date().toISOString();
           const result = await event.save();
           console.log(`🥬🥬🥬🥬🥬🥬 VehicleCommand added ok! created: ${event.created}`)
+          Messaging.sendVehicleCommand(event);
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -44,6 +45,7 @@ export class VehicleController {
           event.created = new Date().toISOString();
           const result = await event.save();
           console.log(`🍏 🍏 🍏 🍏 VehicleCommandResponse added ok! created: ${event.created}`)
+          Messaging.sendVehicleCommandResponse(event)
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -546,7 +548,7 @@ export class VehicleController {
           c.vehicleArrivalID = uuid();
           c.created = new Date().toISOString();
           const result = await c.save();
-
+          Messaging.sendVehicleArrival(result);
           res.status(200).json(result);
         } catch (err) {
           console.log(err);
@@ -584,7 +586,7 @@ export class VehicleController {
           c.vehicleDepartureID = uuid();
           c.created = new Date().toISOString();
           const result = await c.save();
-          // Messaging.sendVehicleDeparture(result);
+          Messaging.sendVehicleDeparture(result);
           res.status(200).json(result);
         } catch (err) {
           console.error(err);

@@ -1,5 +1,6 @@
 echo "🍎 🍎 🍎 Build Docker image and Deploy AftaRobot Backend ............."
-
+echo "🎽 🎽 compile the code with tsc  🎽 🎽"
+tsc
 echo "🎽 🎽 builds submit: starting to build image  🎽 🎽"
 gcloud builds submit --tag gcr.io/taxiyam-2021/arwebapi
 
