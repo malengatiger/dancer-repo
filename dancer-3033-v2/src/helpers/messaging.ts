@@ -327,7 +327,7 @@ class Messaging {
     const payload: any = {
       notification: {
         title: "Vehicle Command Response",
-        body: `${data.vehicleLocation.vehicleReg} command response received`,
+        body: `${data.vehicleCommand.vehicleReg} command response received`,
       },
       data: {
         type: "vehicleCommandResponse",
@@ -340,7 +340,7 @@ class Messaging {
     const topic = data.responseTopic;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleCommandResponse: FCM message sent: 😍 commandSucceeded: ${data.commandSucceeded} topic: ${topic} : car: 🍎🍎 ${data.vehicleLocation.vehicleReg} 🍎🍎`
+      `😍 sendVehicleCommandResponse: FCM message sent: 😍 commandSucceeded: ${data.commandSucceeded} topic: ${topic} : car: 🍎🍎 ${data.vehicleCommand.vehicleReg} 🍎🍎`
     );
   }
   public static async sendVehicleCommand(data: any): Promise<any> {

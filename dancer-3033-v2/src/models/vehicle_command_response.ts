@@ -16,6 +16,7 @@ const VehicleCommandResponseSchema = new mongoose.Schema({
   vehicleCommand: { type: Map, required: true, default: {}  },
   vehicleLocation: { type: Map, required: false, default: {}  },
   batteryInfo: { type: Map, required: false, default: {}  },
+  settingsModel: { type: Map, required: false, default: {}  },
   responseTopic: {type: String, required: true},
   routeID: {type: String, required: false},
   routeName: {type: String, required: false},
