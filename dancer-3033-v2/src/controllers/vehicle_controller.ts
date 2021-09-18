@@ -13,6 +13,7 @@ import Messaging from "../helpers/messaging";
 import VehicleOccupancyRecord from "../models/vehicle_occupancy_record";
 import VehicleCommand from "../models/vehicle_command";
 import VehicleCommandResponse from "../models/vehicle_command_response";
+import RouteDistanceEstimation from "../models/route_distance";
 
 export class VehicleController {
   public routes(app: any): void {
@@ -20,13 +21,46 @@ export class VehicleController {
       `🏓    VehicleController:  💙  setting up default Vehicle routes ...`
     );
     app
+      .route("/addVehicleHeartbeat")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const vehLoc: any = new VehicleLocation(req.body.vehicleLocation);
+          vehLoc.created = new Date().toISOString();
+          const result = await vehLoc.save();
+          console.log(
+            `🍎 🍎 🍎  VehicleLocation added ok! car: ${vehLoc.vehicleReg}`
+          );
+
+          if (req.body.routeDistanceEstimation) {
+            const est: any = new RouteDistanceEstimation(
+              req.body.routeDistanceEstimation
+            );
+            est.created = new Date().toISOString();
+            const result2 = await est.save();
+            console.log(
+              `🍎 🍎 🍎  RouteDistanceEstimation added ok! car: ${vehLoc.vehicleReg} on route: ${est.routeName}`
+            );
+            Messaging.sendRouteDistanceEstimation(result2);
+          }
+          res.status(200).json({message: 'VehicleHeartbeat has been added OK'});
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎 addVehicleHeartbeat failed",
+          });
+        }
+      });
+    app
       .route("/addVehicleCommand")
       .post(async (req: Request, res: Response) => {
         try {
           const event: any = new VehicleCommand(req.body);
           event.created = new Date().toISOString();
           const result = await event.save();
-          console.log(`🥬🥬🥬🥬🥬🥬 VehicleCommand added ok! created: ${event.created}`)
+          console.log(
+            `🥬🥬🥬🥬🥬🥬 VehicleCommand added ok! created: ${event.created}`
+          );
           Messaging.sendVehicleCommand(result);
           res.status(200).json(result);
         } catch (err) {
@@ -37,15 +71,17 @@ export class VehicleController {
           });
         }
       });
-      app
+    app
       .route("/addVehicleCommandResponse")
       .post(async (req: Request, res: Response) => {
         try {
           const event: any = new VehicleCommandResponse(req.body);
           event.created = new Date().toISOString();
           const result = await event.save();
-          console.log(`🍏 🍏 🍏 🍏 VehicleCommandResponse added ok! created: ${event.created}`)
-          Messaging.sendVehicleCommandResponse(result)
+          console.log(
+            `🍏 🍏 🍏 🍏 VehicleCommandResponse added ok! created: ${event.created}`
+          );
+          Messaging.sendVehicleCommandResponse(result);
           res.status(200).json(result);
         } catch (err) {
           console.error(err);
@@ -55,23 +91,23 @@ export class VehicleController {
           });
         }
       });
-      app
+    app
       .route("/getVehicleCommandResponse")
       .post(async (req: Request, res: Response) => {
-       
         console.log(req.body);
         try {
           const vehicleCommandResponseID = req.body.vehicleCommandResponseID;
           const result = await VehicleCommandResponse.findOne({
-            'vehicleCommandResponseID': vehicleCommandResponseID,});
+            vehicleCommandResponseID: vehicleCommandResponseID,
+          });
 
           if (!result) {
             res.status(400).json({
               message: "🍎 getVehicleCommandResponse failed",
             });
-            return
+            return;
           }
-          
+
           res.status(200).json(result);
         } catch (err) {
           res.status(400).json({
@@ -80,7 +116,7 @@ export class VehicleController {
           });
         }
       });
-      app
+    app
       .route("/addVehicleCommuterNearby")
       .post(async (req: Request, res: Response) => {
         try {
@@ -242,7 +278,7 @@ export class VehicleController {
           });
         }
       });
-      app
+    app
       .route("/getVehicleLocations")
       .post(async (req: Request, res: Response) => {
         log(
@@ -252,7 +288,7 @@ export class VehicleController {
           const now = new Date().getTime();
           let minutes = parseInt(req.body.minutes);
           if (!minutes) {
-            minutes = 60
+            minutes = 60;
           }
           const vehicleID = req.body.vehicleID;
           const cutOff: string = moment()
@@ -266,7 +302,9 @@ export class VehicleController {
           log(
             `🔆🔆🔆 elapsed time: 💙 ${
               end / 1000 - now / 1000
-            } 💙seconds for query. vehicleLocations found: 🍎 ${result.length} 🍎`
+            } 💙seconds for query. vehicleLocations found: 🍎 ${
+              result.length
+            } 🍎`
           );
           res.status(200).json(result);
         } catch (err) {

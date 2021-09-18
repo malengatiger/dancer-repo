@@ -12,7 +12,7 @@ const user = process.env.MONGODB_USER || "xxxx";
 const mongoSuffix = process.env.MONGO_SUFFIX || "xxxx";
 const mongoConnectionString = `mongodb+srv://${user}:${password}${mongoSuffix}`;
 
-log(`Check Mongo : ${mongoConnectionString}`);
+log(`Check mongoConnectionString : ${mongoConnectionString}`);
 
 mongoose.Promise = global.Promise;
 mongoose.set("useNewUrlParser", true);
