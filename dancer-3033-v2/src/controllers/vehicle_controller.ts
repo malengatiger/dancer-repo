@@ -14,6 +14,7 @@ import VehicleOccupancyRecord from "../models/vehicle_occupancy_record";
 import VehicleCommand from "../models/vehicle_command";
 import VehicleCommandResponse from "../models/vehicle_command_response";
 import RouteDistanceEstimation from "../models/route_distance";
+import MarshalLocation from "../models/marshal_location";
 
 export class VehicleController {
   public routes(app: any): void {
@@ -48,6 +49,26 @@ export class VehicleController {
           res.status(400).json({
             error: err,
             message: " 🍎 addVehicleHeartbeat failed",
+          });
+        }
+      });
+      app
+      .route("/addMarshalLocation")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const event: any = new MarshalLocation(req.body);
+          event.created = new Date().toISOString();
+          const result = await event.save();
+          console.log(
+            `🎽 🎽 MarshalLocation added ok! marshal: ${event.name}`
+          );
+          
+          res.status(200).json(result);
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎 addMarshalLocation failed",
           });
         }
       });
