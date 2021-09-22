@@ -23,6 +23,12 @@ export class AssociationController {
         });
       }
     });
+    async function writePeak(peakItem: any): Promise<any> {
+      const item: any = new PeakItem(peakItem);
+      item.created = new Date().toISOString();
+      const result = await item.save();
+      return result;
+    }
     app.route("/getAssociationPeakItems").post(async (req: Request, res: Response) => {
       try {
         const asses = await PeakItem.find({associationID: req.body.associationID});
@@ -36,12 +42,17 @@ export class AssociationController {
       }
     });
 
-    app.route("/addAssociationPeakItem").post(async (req: Request, res: Response) => {
+    app.route("/addAssociationPeakItems").post(async (req: Request, res: Response) => {
       try {
-        const item: any = new PeakItem(req.body);
-        item.created = new Date().toISOString();
-        const result = await item.save();
-        res.status(200).json(result);
+        await PeakItem.deleteMany({associationID: req.body.associationID})
+        const results: any[] = []
+        const items: any[] = req.body.items
+        for (const item of items) {
+          const result = await writePeak(item)
+          results.push(result);
+        }
+
+        res.status(200).json(results);
       } catch (err) {
         res.status(400).json({
           error: err,
