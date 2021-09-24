@@ -340,14 +340,23 @@ class Messaging {
     const topic = data.responseTopic;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleCommandResponse: FCM message sent: 😍 commandSucceeded: ${data.commandSucceeded} topic: ${topic} : car: 🍎🍎 ${data.vehicleCommand.vehicleReg} 🍎🍎`
+      `\n\n😍 sendVehicleCommandResponse: FCM message sent: 
+      😍 commandSucceeded: ${data.commandSucceeded} topic: ${topic} : payload data: 🍎🍎 ${JSON.stringify(payload.data)} 🍎🍎\n`
     );
   }
   public static async sendVehicleCommand(data: any): Promise<any> {
     const options: any = {
-      priority: "normal",
+      priority: "high",
       timeToLive: 60 * 60,
     };
+    let reset = 'false'
+    if (data.resetSuspension) {
+      if (data.resetSuspension == 'true') {
+        reset = 'true';
+      } else {
+        reset = 'false'
+      }
+    }
     const payload: any = {
       notification: {
         title: "Vehicle Command",
@@ -358,6 +367,7 @@ class Messaging {
         vehicleCommandID: data.vehicleCommandID,
         vehicleID: data.vehicleID,
         vehicleReg: data.vehicleReg,
+        resetSuspension: reset,
         intervalInSeconds: `${data.intervalInSeconds}`,
         responseTopic: data.responseTopic,
         created: data.created,
@@ -366,7 +376,7 @@ class Messaging {
     const topic = "vehicle_" + data.vehicleID;
     const result = await fba.sendToTopic(topic, payload, options);
     console.log(
-      `😍 sendVehicleCommand: FCM message sent to: 😍 ${data.vehicleReg} topic: ${topic} : car: 🍎🍎 ${data.vehicleReg} 🍎🍎`
+      `\n\n😍 sendVehicleCommand: FCM message sent to: 😍 ${data.vehicleReg} topic: ${topic} : data: 🍎🍎 ${JSON.stringify(payload.data)} 🍎🍎\n`
     );
   }
   public static async sendFenceDwellEvent(data: any): Promise<any> {

@@ -15,6 +15,7 @@ const VehicleCommandSchema = new mongoose.Schema(
         vehicleID: {type: String, required: true},
         vehicleReg: {type: String, required: true},
         intervalInSeconds: {type: Number, required: true, default: 0},
+        resetSuspension: {type: String, required: true, default: 'false'},
         responseTopic: {type: String, required: true},
         userID: {type: String, required: false},
         created: {type: String, required: true, default: new Date().toISOString()},
