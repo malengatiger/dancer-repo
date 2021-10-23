@@ -17,6 +17,7 @@ import { BGController } from "./controllers/bg_controller";
 import { ChatController } from "./controllers/chat_controller";
 import { NotificationsController } from "./controllers/notifications_controller";
 import { ItineraryController } from "./controllers/itinerary_controller";
+import { TicketController } from "./controllers/ticket_controller";
 
 const port = process.env.PORT || "8083";
 
@@ -29,6 +30,8 @@ class AftaRobotApp {
     public assocController: AssociationController = new AssociationController();
     public userController: UserController = new UserController();
     public itineraryController: ItineraryController = new ItineraryController();
+
+    public ticketController: TicketController = new TicketController();
    
     public chatController: ChatController = new ChatController();
     public notificationsController: NotificationsController = new NotificationsController
@@ -43,7 +46,7 @@ class AftaRobotApp {
 
     
     constructor() {
-        // log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
+        console.log(`🥦🥦🥦🥦  AftaRobotApp: Inside Dancer Web API constructor ...`);
         this.app = expressApp;
         this.port = port;
         this.initializeMiddleware();
@@ -66,11 +69,13 @@ class AftaRobotApp {
         this.bgController.routes(this.app);
         this.deleteController.routes(this.app);
 
+        this.ticketController.routes(this.app);
+
         this.itineraryController.routes(this.app);
        
     }
     private initializeMiddleware() {
-        // console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
+        console.log(`🥦🥦🥦🥦  AftaRobotApp: initializeMiddleware .... `);
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(cors());
@@ -78,4 +83,5 @@ class AftaRobotApp {
         
     }
 }
+
 export default AftaRobotApp;
