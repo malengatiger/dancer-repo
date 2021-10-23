@@ -100,7 +100,7 @@ export class TicketController {
       .post(async (req: Request, res: Response) => {
         try {
           const tickets = await Ticket.find({
-            userID: req.body.userID,
+            'user.userID': req.body.userID,
           });
           res.status(200).json(tickets);
         } catch (err) {
