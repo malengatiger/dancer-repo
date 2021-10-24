@@ -2,12 +2,30 @@ import { Request, Response } from "express";
 import { log } from "../log";
 import Ticket from "../models/ticket";
 import TicketScannedEvent from "../models/ticket_scanned_event";
+import TicketTypeAndPrice from "../models/ticket_type_price";
 
 export class TicketController {
   public routes(app: any): void {
     console.log(
       `🏓    TicketController:  💙  setting up default TicketController ...`
     );
+
+    // Before any tickets can be created, the association must create the types first
+    app.route("/addTicketTypeAndPrice").post(async (req: Request, res: Response) => {
+      try {
+        const c: any = new TicketTypeAndPrice(req.body);
+        c.date = new Date().toISOString();
+        const result = await c.save();
+        console.log(`🍎 TicketTypeAndPrice added to the database`);
+        res.status(200).json(result);
+      } catch (err) {
+        res.status(400).json({
+          error: err,
+          message: `🍎 addTicketTypeAndPrice failed: ${err}`,
+        });
+      }
+    });
+
 
     app.route("/addTicket").post(async (req: Request, res: Response) => {
       try {
@@ -79,6 +97,24 @@ export class TicketController {
       });
 
       app
+      .route("/getTicketTypesByAssociation")
+      .post(async (req: Request, res: Response) => {
+        
+        try {
+          const tickets = await TicketTypeAndPrice.find({
+            associationID: req.body.associationID,
+            date: { $gte: req.body.date },
+          });
+          res.status(200).json(tickets);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: `🍎 getTicketTypesByAssociation failed: ${err}`,
+          });
+        }
+      });
+
+      app
       .route("/getTicketsByRoute")
       .post(async (req: Request, res: Response) => {
         try {
@@ -91,6 +127,23 @@ export class TicketController {
           res.status(400).json({
             error: err,
             message: `🍎 getTicketsByRoute failed: ${err}`,
+          });
+        }
+      });
+
+      app
+      .route("/getTicketTypesByRoute")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const tickets = await TicketTypeAndPrice.find({
+            routeID: req.body.routeID,
+            date: { $gte: req.body.date },
+          });
+          res.status(200).json(tickets);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: `🍎 getTicketTypesByRoute failed: ${err}`,
           });
         }
       });
@@ -143,6 +196,24 @@ export class TicketController {
           res.status(400).json({
             error: err,
             message: `🍎 getTicketsScannedByVehicle failed: ${err}`,
+          });
+        }
+      });
+
+      app
+      .route("/getTicketsScannedByVehicleList")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const list: any[] = req.body.vehicleIDs
+          const ticketsScanned = await TicketScannedEvent.find({
+            vehicleID: {$in: list},
+            date: { $gte: req.body.date },
+          });
+          res.status(200).json(ticketsScanned);
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: `🍎 getTicketsScannedByVehicleList failed: ${err}`,
           });
         }
       });

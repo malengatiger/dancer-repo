@@ -4,7 +4,7 @@ const TicketSchema = new mongoose.Schema(
     {
 
         ticketID: {type: String, required: true, trim: true, index: true},
-        ticketType: {type: String, required: true},
+        ticketTypeAndPrice: {type: Map, required: true},
         price: {type: Number, required: true},
         numberOfRiders: {type: Number, required: true,default: 1, trim: true},
         user: {type: Map, required: true},
