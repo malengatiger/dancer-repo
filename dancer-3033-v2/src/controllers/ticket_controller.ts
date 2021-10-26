@@ -286,6 +286,23 @@ export class TicketController {
         }
       });
 
+
+    app
+    .route("/getTicketsScannedByTicket")
+    .post(async (req: Request, res: Response) => {
+      try {
+        const ticketsScanned = await TicketScannedEvent.find({
+          ticketID: req.body.ticketID
+        });
+        res.status(200).json(ticketsScanned);
+      } catch (err) {
+        res.status(400).json({
+          error: err,
+          message: `🍎 getTicketsScannedByTicket failed: ${err}`,
+        });
+      }
+    });
+
     app.route("/getByLocation").post(async (req: Request, res: Response) => {
       try {
         const ticketsScanned = await TicketScannedEvent.find({
