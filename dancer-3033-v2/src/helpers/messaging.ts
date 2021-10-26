@@ -3,6 +3,7 @@ import Landmark from "../models/landmark";
 import { log } from "../log";
 import Constants from "./constants";
 import RouteDistanceEstimation from "../models/route_distance";
+import user from "../models/user";
 // const StringBuffer = require("stringbuffer");
 
 log(`\n☘️ ☘️ ☘️ Loading service accounts from ☘️ .env ☘️  ...`);
@@ -226,6 +227,41 @@ class Messaging {
     const result = await fba.send(payload);
     console.log(
       `😍 sendScannedResultToCommuter: FCM message sent to DEVICE: 😍 🍎 ${JSON.stringify(
+        result
+      )}🍎`
+    );
+  }
+
+  public static async sendScannedTicketEvent(
+    userID: string,
+    ticketScannedEventID: string, ticketID: string
+  ): Promise<any> {
+    const options: any = {
+      priority: "high",
+      timeToLive: 60 * 60,
+    };
+    
+    const payload: any = {
+      notification: {
+        title: "Ticket Scanned",
+        body: `${ticketScannedEventID} ${ticketID}`,
+      },
+      data: {
+        type: Constants.TICKET_SCANNED,
+        ticketScannedEventID: ticketScannedEventID,
+        ticketID: ticketID,
+        userID: userID,
+        scanned: "true",
+        created: new Date().toISOString(),
+      },
+      
+    };
+
+   
+    const topic1 = `${Constants.TICKET_SCANNED}_${userID}`;
+    const result = await fba.sendToTopic(topic1, payload, options);
+    console.log(
+      `😍 sendScannedTicketEvent: FCM message sent to DEVICE: 😍 🍎 ${JSON.stringify(
         result
       )}🍎`
     );

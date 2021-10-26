@@ -1,5 +1,6 @@
 class Constants {
 
+    public static TICKET_SCANNED = 'ticketscannedevents';
     public static SCANNED = 'scanned';
     public static ROUTES = 'routes';
     public static LANDMARKS = 'landmarks';

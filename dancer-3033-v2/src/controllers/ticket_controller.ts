@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import Messaging from "../helpers/messaging";
 import { log } from "../log";
 import Ticket from "../models/ticket";
 import TicketScannedEvent from "../models/ticket_scanned_event";
@@ -48,6 +49,7 @@ export class TicketController {
         c.date = new Date().toISOString();
         const result = await c.save();
         console.log(`🍎 TicketScannedEvent added to the database`);
+        await Messaging.sendScannedTicketEvent(c.fcmToken, c.ticketScannedEventID, c.ticket.ticketID)
         res.status(200).json(result);
       } catch (err) {
         res.status(400).json({
