@@ -525,7 +525,7 @@ export class VehicleController {
       .route("/updateVehicleOwner")
       .post(async (req: Request, res: Response) => {
         try {
-          const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
+          const c: any = await Vehicle.findOne({ vehicleID: req.body.vehicleID });
           if (!c) {
             res.status(400).json({
               message: "🍎 updateVehicleOwner failed. Vehicle not found",
@@ -544,10 +544,58 @@ export class VehicleController {
           });
         }
       });
+          app
+      .route("/updateVehicleInstallation")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const vehicle: any = await Vehicle.findOne({ vehicleID: req.body.vehicleID });
+          
+          if (!vehicle) {
+            console.log(`Update VEHICLE INSTALLED Failed: ${req.body.vehicleID}`)
+            res.status(400).json({
+              message: "🍎 updateVehicleInstallation failed. Vehicle not found",
+            });
+            return
+          } else {
+          
+            vehicle.dateInstalled = new Date().toISOString();
+            const result = await vehicle.save();
+            console.log(`💙 💙 💙 Mongo has updated a vehicle: ${JSON.stringify(result)}`)
+            res.status(200).json({
+              message: `🍎 updateVehicleInstallation Updated OK. Vehicle ${result.vehicleReg}`,
+            });
+           
+          }
+          
+        } catch (err) {
+          console.log(err)
+          res.status(400).json({
+            error: err,
+            message: "🍎 updateVehicleInstallation failed",
+          });
+        }
+      });
+      app
+      .route("/getVehiclesInstalled")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const c: any = await Vehicle.find({ associationID: req.body.associationID, dateInstalled: {$gt: req.body.date} });
+          
+          res.status(200).json(c);
+          
+        } catch (err) {
+          console.log(err)
+          res.status(400).json({
+            error: err,
+            message: "🍎 getVehiclesInstalled failed",
+          });
+        }
+      });
     app.route("/addVehiclePhoto").post(async (req: Request, res: Response) => {
       try {
-        const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
-        if (!c) {
+        const vehicle: any = await Vehicle.findOne({ vehicleID: req.body.vehicleID });
+        
+        if (!vehicle) {
           res.status(400).json({
             message: "🍎 addVehiclePhoto failed. Vehicle not found",
           });
@@ -557,11 +605,11 @@ export class VehicleController {
           comment: req.body.comment,
           created: new Date().toISOString(),
         };
-        c.photos.push(photo);
-        const result = await c.save();
+        vehicle.photos.push(photo);
+        const result = await vehicle.save();
 
         res.status(200).json({
-          message: `vehicle photo added. photos: 🍎 ${c.photos.length}`,
+        message: `vehicle photo added. photos: 🍎 ${vehicle.photos.length}`,
         });
       } catch (err) {
         res.status(400).json({
@@ -575,8 +623,9 @@ export class VehicleController {
       console.log(msg);
 
       try {
-        const c: any = Vehicle.findOne({ vehicleID: req.body.vehicleID });
-        if (!c) {
+        const vehicle: any = await Vehicle.findOne({ vehicleID: req.body.vehicleID });
+       
+        if (vehicle) {
           res.status(400).json({
             message: "🍎 addVehicleVideo failed. Vehicle not found",
           });
@@ -586,11 +635,11 @@ export class VehicleController {
           comment: req.body.comment,
           created: new Date().toISOString(),
         };
-        c.videos.push(video);
-        const result = await c.save();
+        vehicle.videos.push(video);
+        const result = await vehicle.save();
         // log(result);
         res.status(200).json({
-          message: `vehicle video added. videos: 🍎 ${c.photos.length}`,
+          message: `vehicle video added. videos: 🍎 ${result.photos.length}`,
         });
       } catch (err) {
         res.status(400).json({

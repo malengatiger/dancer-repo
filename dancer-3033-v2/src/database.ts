@@ -17,6 +17,7 @@ log(`Check mongoConnectionString : ${mongoConnectionString}`);
 mongoose.Promise = global.Promise;
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useUnifiedTopology", true);
+mongoose.set("autoIndex", false);
 mongoose
   .connect(mongoConnectionString, { maxPoolSize: 2000 })
   .then((client) => {
