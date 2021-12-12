@@ -15,6 +15,7 @@ import VehicleCommand from "../models/vehicle_command";
 import VehicleCommandResponse from "../models/vehicle_command_response";
 import RouteDistanceEstimation from "../models/route_distance";
 import MarshalLocation from "../models/marshal_location";
+import Disconnectivity from "../models/disconnectivity";
 
 export class VehicleController {
   public routes(app: any): void {
@@ -69,6 +70,42 @@ export class VehicleController {
           res.status(400).json({
             error: err,
             message: " 🍎 addMarshalLocation failed",
+          });
+        }
+      });
+      app
+      .route("/addDisconnectivities")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const list: any[] = req.body.list;
+          for (const dis in list) {
+            const rec = new Disconnectivity(dis);
+            await rec.save();
+          }
+          
+          console.log(
+            `🥬🥬🥬🥬🥬🥬 Disconnectivities added ok! created: ${list.length}`
+          );
+          res.status(200).json({message: `Disconnectivities added ok! created: ${list.length}`});
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎 addDisconnectivities failed",
+          });
+        }
+      });
+      app
+      .route("/getDisconnectivities")
+      .post(async (req: Request, res: Response) => {
+        try {
+          const list: any[] = await Disconnectivity.find({vehicleID: req.body.vehicleID});
+          res.status(200).json(list);
+        } catch (err) {
+          console.error(err);
+          res.status(400).json({
+            error: err,
+            message: " 🍎 getDisconnectivities failed",
           });
         }
       });
