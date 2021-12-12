@@ -197,10 +197,7 @@ export class RouteController {
           route.heading = 0;
         }
         const result = await route.save();
-        console.log(
-          `result ${result.routePoints.length} from rawPoints: ${result.rawRoutePoints.length} `
-        );
-        Messaging.sendRoute(result);
+        Messaging.sendRouteUpdate(result);
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -618,6 +615,7 @@ export class RouteController {
           route.routePoints = list;
           route.updated = new Date().toISOString();
           await route.save();
+          await Messaging.sendRouteUpdate({routeID: routeID});
           console.log(
             `🔵 🔵 🔵 RoutePoint ${routePoint.index} updated and marked as a Landmark: ${routePoint.landmarkName}`
           );
@@ -820,6 +818,7 @@ export class RouteController {
         const length = DistanceUtilNew.calculateRouteLength(route);
         route.lengthInMetres = length;
         await route.save();
+        Messaging.sendRouteUpdate({routeID: route.routeID, associationID: route.associationID});
         console.log(
           `💙💙 💙💙 💙💙 RoutePoint index: ${routePoint.index} updated on route: 🧡💛 ${route.name}`
         );

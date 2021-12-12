@@ -114,6 +114,9 @@ export class LandmarkController {
             `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${route.name} 💦 💦`
           );
 
+          await Messaging.sendRouteUpdate({routeID: routeID, associationID: route.associationID})
+          await Messaging.sendLandmark({landmarkID: landmark.landmarkID, landmarkName: landmark.landmarkName})
+
           res.status(200).json({
             message: `Route ${routeName} added to Landmark: ${result.landmarkName}:  `,
             landmark: result,
@@ -521,7 +524,6 @@ export class LandmarkController {
     app.route("/addLandmark").post(async (req: Request, res: Response) => {
       try {
         const landmark: any = new Landmark(req.body);
-        landmark.landmarkID = uuid();
         landmark.created = new Date().toISOString();
 
         const result = await landmark.save();

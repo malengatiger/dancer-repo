@@ -3,6 +3,7 @@ class Constants {
     public static TICKET_SCANNED = 'ticketscannedevents';
     public static SCANNED = 'scanned';
     public static ROUTES = 'routes';
+    public static ROUTE_UPDATES = 'routeUpdates';
     public static LANDMARKS = 'landmarks';
     public static COUNTRIES = 'countries';
     public static VEHICLE_LOCATIONS = 'vehiclelocations';

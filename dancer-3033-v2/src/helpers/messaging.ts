@@ -266,6 +266,34 @@ class Messaging {
       )}🍎`
     );
   }
+  public static async sendRouteUpdate(data: any): Promise<any> {
+    if (!data) {
+      return;
+    }
+    const options: any = {
+      priority: "high",
+      timeToLive: 60 * 60,
+    };
+    const payload: any = {
+      notification: {
+        title: "Route Updated or Added",
+        body: data.routeID ?  data.routeID : "" ,
+      },
+      data: {
+        type: Constants.ROUTE_UPDATES,
+        routeID: data.routeID ? data.routeID : "UNKNOWN",
+        created: data.created ? data.created : `${new Date().toISOString()}`,
+      },
+    };
+    const topic = `${Constants.ROUTE_UPDATES}_${data.associationID}`;
+    const result = await fba.sendToTopic(topic, payload, options);
+    console.log(
+      `😍 sendRouteUpdate: FCM message sent: 😍 routeID: ${
+        data.routeID
+      } topic: ${topic} : result: 🍎🍎 ${JSON.stringify(result)} 🍎🍎`
+    );
+  }
+  
   public static async sendRoute(data: any): Promise<any> {
     if (!data) {
       return;
@@ -489,7 +517,7 @@ class Messaging {
         type: Constants.LANDMARKS,
         landmarkID: data.landmarkID,
         landmarkName: data.landmarkName,
-        created: data.created,
+        created: new Date().toISOString(),
       },
     };
     const topic = Constants.LANDMARKS;
