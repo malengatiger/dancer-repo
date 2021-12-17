@@ -26,11 +26,10 @@ const VehicleCommandResponseSchema = new mongoose.Schema({
 });
 
 VehicleCommandResponseSchema.indexes().push(
-  { vehicleID: 1 },
-  { unique: false }
+  { vehicleID: 1 }
 );
-VehicleCommandResponseSchema.indexes().push({ created: 1 }, { unique: false });
-VehicleCommandResponseSchema.indexes().push({ 'vehicleCommand.vehicleID': 1 }, { unique: false });
+VehicleCommandResponseSchema.indexes().push({ created: 1 });
+VehicleCommandResponseSchema.indexes().push({ 'vehicleCommand.vehicleID': 1 });
 
 const VehicleCommandResponse = mongoose.model(
   "VehicleCommandResponse",

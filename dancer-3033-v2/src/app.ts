@@ -59,8 +59,8 @@ server.listen(port, () => {
   );
 });
 
-mongoose.set("useCreateIndex", true);
-log(`🥦🥦🥦 Mongoose useCreateIndex has been set`);
+// mongoose.set("useCreateIndex", true);
+// log(`🥦🥦🥦 Mongoose useCreateIndex has been set`);
 
 const ar = new AftaRobotApp();
 log(

@@ -114,7 +114,7 @@ export class LandmarkController {
             `🔆🔆🔆 addRouteToLandmark: ${landmark.landmarkName} updated with route:  💦 💦 ${route.name} 💦 💦`
           );
 
-          await Messaging.sendRouteUpdate({routeID: routeID, associationID: route.associationID})
+          await Messaging.sendRouteUpdate({routeID: routeID, associationID: savedRoute.associationID})
           await Messaging.sendLandmark({landmarkID: landmark.landmarkID, landmarkName: landmark.landmarkName})
 
           res.status(200).json({

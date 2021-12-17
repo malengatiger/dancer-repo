@@ -30,11 +30,11 @@ const CommuterRequestSchema = new mongoose.Schema(
 );
 
 CommuterRequestSchema.index({ position: "2dsphere" });
-CommuterRequestSchema.indexes().push({associationID: 1}, {unique: false});
-CommuterRequestSchema.indexes().push({fromLandmarkID: 1}, {unique: false});
-CommuterRequestSchema.indexes().push({toLandmarkID: 1}, {unique: false});
-CommuterRequestSchema.indexes().push({routeID: 1}, {unique: false});
-CommuterRequestSchema.indexes().push({created: 1}, {unique: false});
+CommuterRequestSchema.indexes().push({associationID: 1});
+CommuterRequestSchema.indexes().push({fromLandmarkID: 1});
+CommuterRequestSchema.indexes().push({toLandmarkID: 1});
+CommuterRequestSchema.indexes().push({routeID: 1});
+CommuterRequestSchema.indexes().push({created: 1});
 
 const CommuterRequest = mongoose.model('CommuterRequest', CommuterRequestSchema);
 export default CommuterRequest

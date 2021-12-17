@@ -23,8 +23,8 @@ const VehicleCommandSchema = new mongoose.Schema(
     }
 );
 
-VehicleCommandSchema.indexes().push({vehicleID: 1}, {unique: false});
-VehicleCommandSchema.indexes().push({created: 1}, {unique: false});
+VehicleCommandSchema.indexes().push({vehicleID: 1});
+VehicleCommandSchema.indexes().push({created: 1});
 
 const VehicleCommand = mongoose.model('VehicleCommand', VehicleCommandSchema);
 export default VehicleCommand

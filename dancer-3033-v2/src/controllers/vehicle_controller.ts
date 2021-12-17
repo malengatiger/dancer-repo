@@ -78,7 +78,8 @@ export class VehicleController {
       .post(async (req: Request, res: Response) => {
         try {
           const list: any[] = req.body.list;
-          for (const dis in list) {
+          console.log(`Disconnectivities to be added : ${list.length} ...`)
+          for (const dis of list) {
             const rec = new Disconnectivity(dis);
             await rec.save();
           }
@@ -91,7 +92,7 @@ export class VehicleController {
           console.error(err);
           res.status(400).json({
             error: err,
-            message: " 🍎 addDisconnectivities failed",
+            message: ` 🍎 addDisconnectivities failed: ${err}`,
           });
         }
       });
@@ -753,7 +754,6 @@ export class VehicleController {
         }
         try {
           const c: any = new VehicleLocation(req.body);
-          c.created = new Date().toISOString();
           const result = await c.save();
           console.log(
             `💙 💙 .... Added vehicle location: ${

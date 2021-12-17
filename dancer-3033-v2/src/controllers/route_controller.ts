@@ -197,7 +197,7 @@ export class RouteController {
           route.heading = 0;
         }
         const result = await route.save();
-        Messaging.sendRouteUpdate(result);
+        await Messaging.sendRouteUpdate({routeID: route.routeID, associationID: route.associationID});
         res.status(200).json(result);
       } catch (err) {
         console.error(err);
@@ -615,7 +615,7 @@ export class RouteController {
           route.routePoints = list;
           route.updated = new Date().toISOString();
           await route.save();
-          await Messaging.sendRouteUpdate({routeID: routeID});
+          await Messaging.sendRouteUpdate({routeID: routeID, associationID: route.associationID});
           console.log(
             `🔵 🔵 🔵 RoutePoint ${routePoint.index} updated and marked as a Landmark: ${routePoint.landmarkName}`
           );

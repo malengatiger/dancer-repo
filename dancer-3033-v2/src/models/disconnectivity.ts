@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const DisconnectivitySchema = new mongoose.Schema({
-  vehicleReg: { type: String, required: true, trim: true, unique: true },
+  vehicleReg: { type: String, required: true, trim: true},
   vehicleID: {
     type: String,
     required: true,

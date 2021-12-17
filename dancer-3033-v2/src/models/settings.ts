@@ -17,8 +17,8 @@ const SettingsModelSchema = new mongoose.Schema(
     }
 );
 
-SettingsModelSchema.indexes().push({associationID: 1}, {unique: false});
-SettingsModelSchema.indexes().push({created: 1}, {unique: false});
+SettingsModelSchema.indexes().push({associationID: 1});
+SettingsModelSchema.indexes().push({created: 1});
 
 const SettingsModel = mongoose.model('SettingsModel', SettingsModelSchema);
 export default SettingsModel

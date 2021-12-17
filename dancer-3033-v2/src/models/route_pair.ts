@@ -15,8 +15,8 @@ const RoutePairSchema = new mongoose.Schema(
 
     }
 );
-RoutePairSchema.indexes().push({routePairID: 1}, {unique: true});
-RoutePairSchema.indexes().push({routeID1: 1}, {unique: false});
-RoutePairSchema.indexes().push({routeID2: 1}, {unique: false});
+RoutePairSchema.indexes().push({routePairID: 1});
+RoutePairSchema.indexes().push({routeID1: 1});
+RoutePairSchema.indexes().push({routeID2: 1});
 const RoutePair = mongoose.model('RoutePair', RoutePairSchema);
 export default RoutePair

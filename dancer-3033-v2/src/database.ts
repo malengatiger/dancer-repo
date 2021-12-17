@@ -15,8 +15,8 @@ const mongoConnectionString = `mongodb+srv://${user}:${password}${mongoSuffix}`;
 log(`Check mongoConnectionString : ${mongoConnectionString}`);
 
 mongoose.Promise = global.Promise;
-mongoose.set("useNewUrlParser", true);
-mongoose.set("useUnifiedTopology", true);
+// mongoose.set("useNewUrlParser", true);
+// mongoose.set("useUnifiedTopology", true);
 mongoose.set("autoIndex", false);
 mongoose
   .connect(mongoConnectionString, { maxPoolSize: 2000 })
@@ -60,6 +60,7 @@ async function getAssociations() {
     let cnt = 1;
     asses.forEach((association) => {
       console.log(`Association #${cnt} 🍎 ${association.associationName} `);
+      cnt++
     });
   } catch (err) {
     console.log(err);
