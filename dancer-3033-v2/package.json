@@ -42,7 +42,7 @@
     "mongoose": "^6.1.2",
     "mongoose-validator": "^2.1.0",
     "morgan": "^1.9.18",
-    "node-forge": ">=0.10.0",
+    "node-forge": ">=1.0.0",
     "qrcode": "^1.4.4",
     "request": "^2.81.0",
     "response-time": "^2.3.2",
