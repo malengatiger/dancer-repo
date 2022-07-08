@@ -37,7 +37,7 @@
     "lodash": "^4.17.4",
     "mime": "^2.4.4",
     "mocha": "^8.2.1",
-    "moment": "2.29.1",
+    "moment": "2.29.4",
     "mongodb": "^4.2.2",
     "mongoose": "^6.1.2",
     "mongoose-validator": "^2.1.0",
