@@ -31,7 +31,7 @@
     "event-emitter": "^0.3.5",
     "express": "^5.0.0-alpha.8",
     "express-list-endpoints": "^6.0.0",
-    "firebase-admin": "^10.0.1",
+    "firebase-admin": "^11.4.1",
     "geolib": "^3.3.3",
     "jszip": "^3.7.0",
     "lodash": "^4.17.4",
